@@ -1,15 +1,19 @@
 import React from "react";
 import Button from "./components/Button/Button";
 import Header from "./components/Header/Header";
-import "./../src/App.css"
+import Footer from "./components/Footer/Footer";
+import "./../src/App.css";
 
 const App = () => {
   return (
-    <div>
+    <div className="app">
       <Header />
-      <div id="test">
-        <Button text="Cadastrar" onClick={() => alert("Botão clicado!")} />
-      </div>
+      <main>
+        <div id="test">
+          <Button text="Cadastrar" onClick={() => alert("Botão clicado!")} />
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 };

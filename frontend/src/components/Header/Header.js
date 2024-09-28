@@ -1,12 +1,11 @@
 import React from "react";
-import "./Header.css"; // Para estilos opcionais
+import "./Header.css";
 import logo from "../../assets/logo-ifrs-branco.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell } from "@fortawesome/free-solid-svg-icons"; // Ícone de sino
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
   const handleLogout = () => {
-    // Lógica para sair, como limpar o estado ou redirecionar
     alert("Você saiu!");
   };
   return (
@@ -22,7 +21,6 @@ const Header = () => {
           </button>
           <button>
             <FontAwesomeIcon icon={faBell} id="bell-icon" />{" "}
-            {/* Ícone de sino branco */}
           </button>
         </div>
       </div>

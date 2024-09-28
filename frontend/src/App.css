@@ -1,42 +1,14 @@
-.App {
-  text-align: center;
+html, body {
+  height: 100%; /* Garante que o HTML e o body ocupem 100% da altura */
+  margin: 0; /* Remove margens padrão */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-direction: column; /* Layout em coluna */
+  min-height: 100vh; /* Garante que a altura mínima seja a da viewport */
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-#test{
-  margin-top: 10%;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+main {
+  flex: 1; /* Permite que o conteúdo principal ocupe o espaço disponível */
 }
