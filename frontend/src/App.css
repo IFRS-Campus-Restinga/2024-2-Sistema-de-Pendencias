@@ -1,14 +1,20 @@
 html, body {
-  height: 100%; /* Garante que o HTML e o body ocupem 100% da altura */
-  margin: 0; /* Remove margens padrão */
+  height: 100%;
+  margin: 0;
 }
 
 .app {
   display: flex;
-  flex-direction: column; /* Layout em coluna */
-  min-height: 100vh; /* Garante que a altura mínima seja a da viewport */
+  flex-direction: column; 
+  min-height: 100vh; 
 }
 
 main {
-  flex: 1; /* Permite que o conteúdo principal ocupe o espaço disponível */
+  flex: 1; 
+}
+
+#back-button{
+  display: flex;
+  margin-top: 100px;
+  margin-left: 50px;
 }

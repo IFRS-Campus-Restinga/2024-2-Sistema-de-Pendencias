@@ -1,16 +1,16 @@
 footer {
-    background-color: #D9D9D9; /* Cor de fundo do footer */
+    background-color: #D9D9D9;
     color: white;
     display: flex;
-    justify-content: space-between; /* Espaça os itens igualmente */
-    align-items: center; /* Alinha verticalmente */
-    padding: 20px; /* Espaçamento interno */
-    flex-shrink: 0; /* Impede que o footer encolha */
-    position: relative; /* Para permitir o posicionamento fixo, se necessário */
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    flex-shrink: 0; 
+    position: relative; 
 }
 
 #logo {
-    height: 70px; /* Ajuste a altura do logo */
+    height: 70px;
 }
 
 #emec{
@@ -20,14 +20,14 @@ footer {
 
 .phrases {
     display: flex;
-    flex-direction: column; /* Alinha as frases em coluna */
-    align-items: center; /* Centraliza as frases horizontalmente */
+    flex-direction: column; 
+    align-items: center; 
     color: black;
     font-size: 20px;
 }
 
 .phrases p {
-    margin: 5px 0; /* Espaço entre as frases */
+    margin: 5px 0; 
 }
 
 #ifrs{
@@ -38,12 +38,12 @@ footer {
 /* Responsividade */
 @media (max-width: 600px) {
     footer {
-        flex-direction: column; /* Muda a direção do layout para coluna em telas menores */
-        align-items: center; /* Centraliza os itens no footer */
+        flex-direction: column; 
+        align-items: center; 
     }
 
     .phrases {
-        align-items: center; /* Centraliza as frases no footer */
+        align-items: center;
         font-size: 12px;
     }
 
@@ -52,8 +52,8 @@ footer {
     }
 
     #logo {
-        height: 40px; /* Reduz a altura do logo em telas pequenas */
-        margin: 10px 0; /* Adiciona margem entre os logos e as frases */
+        height: 40px; 
+        margin: 10px 0;
     }
     
     #emec{
