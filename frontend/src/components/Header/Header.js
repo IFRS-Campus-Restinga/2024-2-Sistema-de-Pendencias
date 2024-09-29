@@ -4,7 +4,7 @@ import logo from "../../assets/logo-ifrs-branco.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 
-const Header = () => {
+const Header = ({greeting, title, titleButton, showBellIcon}) => {
   const handleLogout = () => {
     alert("Você saiu!");
   };
@@ -14,14 +14,16 @@ const Header = () => {
       <div className="menu">
         <div className="header">
           <h1 id="header-title">
-            Bem vindo, <span id="header-span">Gestão Escolar.</span>
+          {greeting} <span id="header-span">{title}</span>
           </h1>
           <button onClick={handleLogout} id="button-logout">
-            Sair
+            {titleButton}
           </button>
+          {showBellIcon && (
           <button>
             <FontAwesomeIcon icon={faBell} id="bell-icon" />{" "}
           </button>
+          )}
         </div>
       </div>
     </header>
