@@ -7,7 +7,9 @@ import "./../src/App.css";
 const App = () => {
   return (
     <div className="app">
-      <Header />
+      <Header greeting="Voce ainda nao se identificou." titleButton="(Acessar)" showBellIcon={false}/>
+       {/* OU*/}
+       {/*  <Header greeting="Bem vindo," title="Gestao Escolar." titleButton="Sair" showBellIcon={true}/>*/}
       <main>
         <div id="test">
           <Button text="Cadastrar" onClick={() => alert("Botão clicado!")} />
