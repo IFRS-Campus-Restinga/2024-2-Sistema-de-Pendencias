@@ -70,7 +70,7 @@ body {
 @media (max-width: 600px) {
     header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
     }
 
     .menu {
@@ -85,7 +85,7 @@ body {
     .logo {
         margin-top: 10px;
         width: 150px;
-        margin-right: 20px;
+        margin-right: 60%;
     }
 
     #button-logout{
