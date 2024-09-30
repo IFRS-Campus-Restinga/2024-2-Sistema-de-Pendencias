@@ -21,3 +21,5 @@ Após a instalação das dependências, inicie o servidor de desenvolvimento com
 npm start
 
 Isso deve abrir automaticamente a página principal do projeto em seu navegador padrão na seguinte URL: http://localhost:1300
+
+## Teste UAHSUHAS
