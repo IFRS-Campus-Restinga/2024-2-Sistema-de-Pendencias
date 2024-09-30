@@ -1,0 +1,24 @@
+<h1>Lista de Disciplinas</h1>
+<p><a href="{% url 'create_disciplina' %}">Cadastrar Nova Disciplina</a></p> <!-- Retorna ao cadastro de disciplina-->
+{% if mensagem %}
+    <p>{{ mensagem }}</p>  <!-- Caso não tenha disciplinas cadastradas uma mensagem será enviada-->
+{% else %}
+<table>
+    <thead>
+        <tr>
+            <th>Nome da Disciplina</th>
+            <th>Carga Horária</th>
+            <th>Curso</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for disciplina in disciplinas %}
+        <tr>
+            <td>{{ disciplina.nome }}</td>
+            <td>{{ disciplina.carga_horaria }}</td>
+            <td>{{ disciplina.curso.nome }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
