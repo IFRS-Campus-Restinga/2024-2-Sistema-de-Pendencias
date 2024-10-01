@@ -43,3 +43,13 @@
     font-size: 22px;
     margin-bottom: 36px;
 }
+
+@media (max-width: 480px) {
+    .modal {
+        padding: 25px; /* Menos padding em telas pequenas */
+    }
+
+    #mensagem-modal {
+        font-size: 18px; /* Reduzir ainda mais o tamanho da fonte */
+    }
+}
