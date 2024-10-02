@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Servidor</title>
+</head>
+
+<body>
+        <h1>Cadastrar Servidor</h1>
+        <hr>
+        <form id="servidor" action="{% url 'cadastrar_servidor' %}" method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success btn-lg" form="servidor" value="Salvar">Salvar</button>
+                <button type="submit" class="btn btn-danger btn-lg" form="servidor" value="Reset">Limpar</button>
+        </form>
+</body>
+</html>
