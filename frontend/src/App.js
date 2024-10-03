@@ -3,7 +3,9 @@ import Button from "./components/Button/Button";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import BackButton from "./components/BackButton/BackButton";
-import Modal from "./components/Modal/Modal"
+import Modal from "./components/Modal/Modal";
+import Dropdown from "./components/Dropdown/Dropdown";
+import Input from "./components/Input/Input";
 import "./../src/App.css";
 
 const App = () => {
@@ -11,7 +13,8 @@ const App = () => {
 
   const abrirModal = () => setModalAberto(true);
   const fecharModal = () => setModalAberto(false);
-  
+
+  const itensDropdown = ["Plano de estudos", "Atividades", "Finalização"];
   const handleBack = () => {
     // Lógica para voltar, como redirecionar ou fechar uma página
     alert("Voltando...");
@@ -34,11 +37,17 @@ const App = () => {
         </div>
 
         <button onClick={abrirModal}>Abrir Modal</button>
-      <Modal
-        estaAberto={modalAberto}
-        aoFechar={fecharModal}
-        mensagem="Cadastro realizado com sucesso!"
-      />
+        <Modal
+          estaAberto={modalAberto}
+          aoFechar={fecharModal}
+          mensagem="Cadastro realizado com sucesso!"
+        />
+
+        <Input tipo="texto" />
+        <Input tipo="numero" largura="300px" />
+        <div id="dropdown">
+          <Dropdown titulo="Editar" itens={itensDropdown} />
+        </div>
       </main>
       <Footer />
     </div>
