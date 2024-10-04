@@ -1,0 +1,14 @@
+#back-button{
+  display: flex;
+  margin-top: 100px;
+  margin-left: 50px;
+}
+
+#dropdown{
+  margin-top: 40px;
+}
+
+main {
+  align-items: center;
+  justify-content: center;
+}
