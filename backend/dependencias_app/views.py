@@ -1,9 +1,10 @@
 from dependencias_app.models.aluno import Aluno
 from dependencias_app.forms import AlunoForm
+from dependencias_app.models import Curso
 from django.shortcuts import render, get_object_or_404, redirect, render
 
 from dependencias_app.forms import ServidorForm
-
+from dependencias_app.forms import CursoForm
 
 def create(request):
     if request.method == 'POST':
@@ -35,3 +36,17 @@ def cadastrar_servidor(request):
         'form': form
     }
     return render(request, 'servidor/cadastrar_servidor.html', context)
+
+
+def cadastro_curso(request):
+    if request.method == 'POST':
+        form = CursoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('list_curso')
+    else:
+        form = CursoForm()
+    context = {
+        'form': form
+     }
+    return render(request, 'cursos/cadastro_curso.html', context)
