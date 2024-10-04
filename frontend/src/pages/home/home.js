@@ -6,7 +6,7 @@ import BackButton from "../../components/BackButton/BackButton";
 import Modal from "../../components/Modal/Modal";
 import Dropdown from "../../components/Dropdown/Dropdown";
 import Input from "../../components/Input/Input";
-import styles from "../home.module.css";
+import styles from "./home.module.css";
 
 const Home = () => {
   const [modalAberto, setModalAberto] = useState(false);

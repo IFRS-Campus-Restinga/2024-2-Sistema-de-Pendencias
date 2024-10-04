@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
-import CadastroCurso from './pages/pageCurso'
+import CadastroCurso from './pages/cadastroCurso/pageCurso'
 import Home from './pages/home/home'
 
 const router = createBrowserRouter([
@@ -8,7 +8,7 @@ const router = createBrowserRouter([
         element: <Home/>
     },
     {
-        path: '/cadastroCurso',
+        path: '/CadastroCurso',
         element: <CadastroCurso/>
     }
 ])
