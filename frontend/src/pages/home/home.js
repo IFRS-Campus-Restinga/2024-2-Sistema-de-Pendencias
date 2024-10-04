@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import Button from "../components/Button/Button";
-import Header from "../components/Header/Header";
-import Footer from "../components/Footer/Footer";
-import BackButton from "../components/BackButton/BackButton";
-import Modal from "../components/Modal/Modal";
-import Dropdown from "../components/Dropdown/Dropdown";
-import Input from "../components/Input/Input";
+import Button from "../../components/Button/Button";
+import Header from "../../components/Header/Header";
+import Footer from "../../components/Footer/Footer";
+import BackButton from "../../components/BackButton/BackButton";
+import Modal from "../../components/Modal/Modal";
+import Dropdown from "../../components/Dropdown/Dropdown";
+import Input from "../../components/Input/Input";
 import styles from "../home.module.css";
 
 const Home = () => {
