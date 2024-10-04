@@ -1,0 +1,9 @@
+.content {
+    display: flex;
+    justify-self: center;
+    align-self: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 50px;
+    position: absolute;
+}

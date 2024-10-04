@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import Button from "../../components/Button/Button";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import BackButton from "../../components/BackButton/BackButton";
 import Modal from "../../components/Modal/Modal";
 import Dropdown from "../../components/Dropdown/Dropdown";
 import Input from "../../components/Input/Input";
-import styles from "../home.module.css";
+import "./homeSemAutentic.css";
+import PageContainer from "../../components/PageContainer/PageContainer";
 
-const Home = () => {
+const HomeSemAutentic = () => {
   const [modalAberto, setModalAberto] = useState(false);
 
   const abrirModal = () => setModalAberto(true);
@@ -20,18 +20,9 @@ const Home = () => {
     alert("Voltando...");
   };
   return (
-    <div className="app">
-      <Header
-        greeting="Voce ainda nao se identificou."
-        titleButton="(Acessar)"
-        showBellIcon={false}
-      />
-      {/* OU*/}
-      {/*  <Header greeting="Bem vindo," title="Gestao Escolar." titleButton="Sair" showBellIcon={true}/>*/}
+    <PageContainer>
+      <Header usuario={false} />
       <main>
-        <div id="test">
-          <Button text="Cadastrar" onClick={() => alert("Botão clicado!")} />
-        </div>
         <div id="back-button">
           <BackButton onClick={handleBack} />
         </div>
@@ -45,13 +36,13 @@ const Home = () => {
 
         <Input tipo="texto" />
         <Input tipo="numero" largura="300px" />
-        <div id={styles.dropdown}>
+        <div id="dropdown">
           <Dropdown titulo="Editar" itens={itensDropdown} />
         </div>
       </main>
       <Footer />
-    </div>
+    </PageContainer>
   );
 };
 
-export default Home;
+export default HomeSemAutentic;
