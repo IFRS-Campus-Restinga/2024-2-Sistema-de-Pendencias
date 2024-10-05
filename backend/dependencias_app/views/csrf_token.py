@@ -7,5 +7,4 @@ from rest_framework.decorators import api_view
 @api_view(['GET'])
 def csrf_token_view(request):
     token = get_token(request)
-
     return Response({'csrfToken': token})
