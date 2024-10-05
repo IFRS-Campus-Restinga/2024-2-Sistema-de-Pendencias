@@ -9,4 +9,3 @@ class AlunoForm(ModelForm):
         widgets = {
             'dataNascimento': forms.DateInput(format='%d-%m-%Y', attrs={'type': 'date'}),
         }
-
