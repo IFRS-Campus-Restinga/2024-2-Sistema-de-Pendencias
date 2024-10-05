@@ -1,6 +1,7 @@
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import PageContainer from "../../components/PageContainer/PageContainer";
+import testeService from "../../services/testeService";
 import "./homeAutentic.css";
 
 const HomeAutentic = () => {
