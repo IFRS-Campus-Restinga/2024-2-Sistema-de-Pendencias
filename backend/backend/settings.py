@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-7jt7#zg-+cgon0@ssb5ih-yq5^d-9@5_ixys$=mh+t^d9g%50_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['http://localhost:3000']
+CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
+CSRF_ALLOWED_ORIGINS = ["http://localhost:3000"]
+CORS_ORIGINS_WHITELIST = ["http://localhost:3000"]
 
 # Application definition
 
@@ -83,7 +86,7 @@ DATABASES = {
 }
 
 # Insira seu servidor de frontend aqui ===>
-CORS_ALLOWED_ORIGINS = ['http://localhost:5050']
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
 
 CORS_ALLOW_HEADERS = [
     "content-type",
