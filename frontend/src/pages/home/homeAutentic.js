@@ -26,7 +26,7 @@ const HomeAutentic = () => {
     <PageContainer>
       <Header
         usuario={{
-          nome: "Cássio Renan",
+          nome: "",
         }}
       />
       <div className="content">
