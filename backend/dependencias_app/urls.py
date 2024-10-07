@@ -1,8 +1,8 @@
 from django.urls import path
 from dependencias_app.views import teste
-from backend.dependencias_app.views import servidorViews
+from dependencias_app.views import servidorViews
 from dependencias_app.views import alunoViews
-from backend.dependencias_app.views import cursoViews
+from dependencias_app.views import cursoViews
 
 urlpatterns = [
     path('teste', teste.view_teste),
