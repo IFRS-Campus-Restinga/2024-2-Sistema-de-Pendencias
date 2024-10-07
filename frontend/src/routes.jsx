@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import CadastroCurso from './pages/cadastroCurso/pageCurso'
 import HomeSemAutentic from './pages/home/homeSemAutentic'
+import CadastroAluno from "./pages/cadastroAluno/pageCadastroAluno";
 import HomeAutentic from './pages/home/homeAutentic'
 import CadastroServidor from './pages/cadastroServidor/CadastroServidor'
 import MenuGestao from './pages/menu/menuGestao'
