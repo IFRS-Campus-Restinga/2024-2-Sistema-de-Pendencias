@@ -1,0 +1,117 @@
+/* estiloCadastroAluno.css */
+
+body {
+  background-color: #f0f0f0;
+}
+
+form {
+  background-color: white;
+  width: 60%;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+input, select {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+span {
+  margin-left: 5px;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+  font-size: 14px;
+}
+
+h2, h3 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+select {
+  appearance: none;
+  background: #fff url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-caret-down-fill" viewBox="0 0 16 16"><path d="M7.247 11.14L2.451 6.344c-.58-.58-.195-1.364.65-1.364h9.798c.845 0 1.23.784.65 1.364L8.753 11.14a.733.733 0 0 1-1.06 0z"/></svg>') no-repeat right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.container {
+  margin-top: 40px;
+}
+
+input[type="date"] {
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+}
+
+input::placeholder {
+  color: #aaa;
+}
+
+@media screen and (max-width: 768px) {
+  form {
+    width: 90%;
+  }
+}
+
+form {
+  background-color: white;
+  width: 60%;
+  margin: 100px auto; /* Ajusta a margem superior para empurrar o formulário para baixo */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Garante que o container ocupe toda a altura da página */
+  padding: 20px;
+}
+
+.radio-container {
+  display: flex;
+  align-items: center; /* Alinha os radio buttons e o texto verticalmente */
+  gap: 2%; /* Espaço horizontal entre cada radio button */
+  margin-bottom: 10px;
+  margin-top: -10px;
+}
+
+.radio-container label {
+  display: inline-flex; /* Garante que o radio button e o texto fiquem na mesma linha */
+  align-items: center; /* Alinha o texto e o radio button verticalmente ao centro */
+  white-space: nowrap; /* Garante que o texto não quebre em várias linhas */
+}
+
+.subtitulo_esquerda {
+  text-align: left;
+  margin-left: 0; /* Garante que o título fique totalmente à esquerda */
+  font-weight: bold; /* Caso você queira destacar um pouco mais */
+}
+
+.ajuste-button {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px; /* Adiciona um pouco de espaço acima do botão */
+}
+
+
+
+
+
