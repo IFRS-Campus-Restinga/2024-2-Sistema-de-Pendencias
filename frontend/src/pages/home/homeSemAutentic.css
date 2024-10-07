@@ -1,13 +1,7 @@
-.login-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f0f0f0;
-}
-
 .login-container {
   display: flex;
+  height: 50%;
+  align-self: center;
   flex-direction: column;
   background-color: white;
   border-radius: 10px;

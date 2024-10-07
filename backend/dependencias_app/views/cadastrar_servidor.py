@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from dependencias_app.models import Servidor
-from dependencias_app.serializers import ServidorSerializer
+from dependencias_app.serializers.servidorSerializers import ServidorSerializer
 
 @api_view(['POST'])
 def cadastrar_servidor(request):
