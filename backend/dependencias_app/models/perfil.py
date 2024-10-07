@@ -5,3 +5,4 @@ class Perfil(models.TextChoices):
     REGISTROS_ESCOLARES = "Registros Escolares"
     GESTAO_ESCOLAR = "Gestão Escolar"
     COORDENADOR = "Coordenador"
+    ALUNO = "Aluno"

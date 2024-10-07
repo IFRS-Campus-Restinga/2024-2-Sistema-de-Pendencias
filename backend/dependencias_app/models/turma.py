@@ -8,5 +8,8 @@ class Turma(BaseModel):
         max_length=10,validators=[MinLengthValidator(1)],null=False,blank=False)
     curso = models.ForeignKey('Curso', on_delete=models.CASCADE)
 
+    class Meta:
+        abstract = False
+
     def __str__(self):
         return f'Turma {self.numero} - {self.curso.nome}'
