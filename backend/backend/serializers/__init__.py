@@ -1,1 +1,1 @@
-from .serializers import serializers
+from .auth_serializer import *

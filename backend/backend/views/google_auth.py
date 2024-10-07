@@ -1,32 +1,40 @@
 from django.http import HttpResponse
-from backend.serializers.serializers import AuthSerializer
+from backend.serializers.auth_serializer import AuthSerializer
 from dependencias_app.models.aluno import Aluno
-from django.shortcuts import render, get_object_or_404, redirect, render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login, logout
-from django.shortcuts import redirect
 from django.conf import settings
 from rest_framework.views import APIView
 from backend.services import get_user_data
 from django.contrib.auth.models import User
 
-# Classe GoogleLoginApi: 
-# Esta classe é responsável por gerenciar a autenticação de usuários via Google. Ela herda de APIView, permitindo a criação de endpoints de API.
+# Classe para o login
 class GoogleLoginApi(APIView):
     def get(self, request, *args, **kwargs):
-        # Cria uma instância do AuthSerializer com os dados da requisição GET.
+        # Valida o código de autorização do Google recebido na URL.
         auth_serializer = AuthSerializer(data=request.GET)
-        # Valida os dados do serializer e levanta uma exceção se a validação falhar.
         auth_serializer.is_valid(raise_exception=True)
-        
-        # Obtém os dados validados do serializer.
-        validated_data = auth_serializer.validated_data
-        # Chama a função get_user_data para obter as informações do usuário.
-        user_data = get_user_data(validated_data)
-        
-        # Busca o usuário no banco de dados pelo email obtido.
-        user = User.objects.get(email=user_data['email'])
-        # Faz login do usuário na sessão atual.
-        login(request, user)
 
-        # Redireciona para a URL base da aplicação.
-        return redirect(settings.BASE_APP_URL) #(precisa ser mudado futuramente)
+        # Obtém os dados validados
+        validated_data = auth_serializer.validated_data
+
+        # Usa o código de autorização para obter os dados do usuário do Google
+        user_data = get_user_data(validated_data)
+
+        # Verifica se o usuário com esse email já existe no banco de dados
+        user = User.objects.get(email=user_data['email'])
+
+        # Se o usuário existir ou for criado, autentica e cria a sessão
+        login(request, user)  # Cria a sessão no Django
+
+        # Redireciona o usuário para uma URL.
+        return redirect(settings.BASE_APP_URL)  # Precisa ser mudado futuramente
+
+# Classe para o logout
+class LogoutApi(APIView):
+    def get(self, request, *args, **kwargs):
+        # Finaliza a sessão do usuário
+        logout(request)
+        
+        # Retorna uma resposta indicando que o logout foi bem-sucedido
+        return HttpResponse('200')
