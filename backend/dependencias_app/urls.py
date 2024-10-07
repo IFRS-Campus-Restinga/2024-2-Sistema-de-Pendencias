@@ -1,16 +1,13 @@
 from django.urls import path
 from dependencias_app.views import teste
-<<<<<<< HEAD
-from dependencias_app.views import cadastrar_servidor
+from backend.dependencias_app.views import servidorViews
+from dependencias_app.views import alunoViews
+from backend.dependencias_app.views import cursoViews
 
 urlpatterns = [
     path('teste', teste.view_teste),
-    path('cadastrar-servidor/', cadastrar_servidor.cadastrar_servidor, name='cadastrar_servidor'),
-=======
-from dependencias_app.views import csrf_token
-
-urlpatterns = [
+    path('cadastrar-servidor/', servidorViews.cadastrar_servidor),
+    path('cadastrar-aluno/', alunoViews.cadastrar_aluno),
+    path('cadastrar-curso/', cursoViews.cadastrar_curso),
     path('teste', teste.view_teste),
-    path('auth/csrf_token', csrf_token.csrf_token_view)
->>>>>>> c2407baa83cea70b16090b6f3b42ea1a2ecdbcb8
 ]
