@@ -17,12 +17,13 @@ h3 {
 form {
     display: flex;
     flex-direction: column;
-    gap: 10px; 
+    gap: 20px; 
 }
 
 .form-item {
     display: flex;
-    flex-direction: column;
+    padding: 6px ;
+    font-size: 15px;
 }
   
 fieldset {
@@ -34,11 +35,12 @@ fieldset {
   
 label {
     font-weight: bold;
-    font-size: 20px;
+    font-size: 15px;
+    margin: 6px;
 }
 
 input, select {
-    padding: 8px;
+    padding: 1px;
     border-radius: 4px;
     border: 1px solid #ccc;
 }
@@ -58,25 +60,11 @@ input, select {
 .custom-button:hover {
     opacity: 0.9;
 }
-  
-.custom-button {
-    padding: 9px 10px;
-    border: none;
-    border-radius: 20px;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-    font-family: 'Roboto', sans-serif;
-    font-weight: bold;
-  }
-  
-.custom-button:hover {
-    opacity: 0.9;
-}
-  
+
 .radio-container label {
-    display: inline-flex; /* Garante que o radio button e o texto fiquem na mesma linha */
-    align-items: center; /* Alinha o texto e o radio button verticalmente ao centro */
-    white-space: nowrap; /* Garante que o texto não quebre em várias linhas */
+    display: inline-flex; 
+    align-items: center; 
+    white-space: nowrap;
+    font-size: 15px;
+    padding: 6px;
   }
