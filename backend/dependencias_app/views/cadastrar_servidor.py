@@ -1,12 +1,11 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from dependencias_app.models import Servidor
-from dependencias_app.serializers import ServidorSerializer
+from dependencias_app.serializers import ServidorSerializers
 
 @api_view(['POST'])
 def cadastrar_servidor(request):
-    serializer = ServidorSerializer(data=request.data)
+    serializer = ServidorSerializers(data=request.data)
 
     if serializer.is_valid():
         serializer.save()
