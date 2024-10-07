@@ -83,7 +83,7 @@ DATABASES = {
 }
 
 # Insira seu servidor de frontend aqui ===>
-CORS_ALLOWED_ORIGINS = ['http://localhost:5050']
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
 
 CORS_ALLOW_HEADERS = [
     "content-type",

@@ -1,8 +1,14 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.BASE_URL,
+  baseURL: 'http://localhost:8000/api', // ou a URL que você estiver usando
+  headers: {
+      'Content-Type': 'application/json',
+  },
 });
+ //comenteni 
+//   baseURL: process.env.BASE_URL,
+// }); ate esta parte
 
 // api.interceptors.request.use(
 //   (config) => {
