@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import CadastroCurso from './pages/cadastroCurso/pageCurso'
 import HomeSemAutentic from './pages/home/homeSemAutentic'
+import CadastroAluno from "./pages/cadastroAluno/pageCadastroAluno";
 import HomeAutentic from './pages/home/homeAutentic'
 
 const router = createBrowserRouter([
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
         //     },
         //     // Adicionar outros caminhos que vão derivar da tela de home após autenticação
         // ]
+    },
+    {
+        path: '/cadastroAluno',
+        element: <CadastroAluno/>, // Adicione a nova rota
     }
 ])
 
