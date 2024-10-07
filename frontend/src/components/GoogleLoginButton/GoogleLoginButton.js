@@ -41,7 +41,7 @@ const GoogleLoginButton = () => {
         alt="Google Icon"
         className="google-icon" 
       />
-      Google  // Texto exibido no botão.
+      Google
     </button>
   );
 };
