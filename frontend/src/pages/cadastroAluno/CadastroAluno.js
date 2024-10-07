@@ -1,10 +1,11 @@
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import PageContainer from "../../components/PageContainer/PageContainer";
-import "./estiloCadastroAluno.css";
+import "./CadastroAluno.css";
 import Button from "../../components/Button/Button";
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import MainContainer from "../../components/MainContainer/mainContainer";
 
 const CadastroAluno = () => {
   const [alunos, setAlunos] = useState([]);
@@ -34,18 +35,11 @@ const CadastroAluno = () => {
     }
   };
 
-  useEffect(() => {
-    fetchAlunos();
-  }, []);
+  // useEffect(() => {
+  //   fetchAlunos();
+  // }, []);
 
   return (
-    <PageContainer>
-      <Header
-        usuario={{
-          nome: "Gestão Escolar",
-        }}
-      />
-      <div>
         <form onSubmit={handleSubmit}>
           <h3>Cadastro Aluno</h3>
           <hr/>
@@ -154,17 +148,14 @@ const CadastroAluno = () => {
             />
           </div>
         </form>
-        <h1>Alunos cadastrados (somente para testar)</h1>
+        /* <h1>Alunos cadastrados (somente para testar)</h1>
         <ul>
           {alunos.map((aluno) => (
               <li key={aluno.id}>
                 {aluno.nome} - {aluno.email} - {aluno.perfil} - {aluno.cpf} - {aluno.matricula} - {aluno.telefone}
               </li>
           ))}
-        </ul>
-      </div>
-      <Footer/>
-    </PageContainer>
+        </ul> */
   );
 };
 

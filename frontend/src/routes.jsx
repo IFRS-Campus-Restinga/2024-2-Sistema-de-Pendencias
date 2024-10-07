@@ -1,7 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import CadastroCurso from './pages/cadastroCurso/pageCurso'
 import HomeSemAutentic from './pages/home/homeSemAutentic'
-import CadastroAluno from "./pages/cadastroAluno/pageCadastroAluno";
 import HomeAutentic from './pages/home/homeAutentic'
 import CadastroServidor from './pages/cadastroServidor/CadastroServidor'
 import MenuGestao from './pages/menu/menuGestao'
@@ -23,20 +22,18 @@ const router = createBrowserRouter([
             {
                 path: '/secao/:idUsuario',
                 element: <MenuGestao />,
-                children: [
-                    {
-                        path: '/secao/:idUsuario/cadastroCurso',
-                        element: <CadastroCurso />
-                    },
-                    {
-                        path: 'secao/:idUsuario/cadastroServidor',
-                        element: <CadastroServidor />
-                    },
-                    {
-                        path: 'secao/:idUsuario/cadastroAluno',
-                        element: <CadastroAluno />
-                    }
-                ]
+            },
+            {
+                path: '/secao/:idUsuario/cadastroCurso',
+                element: <CadastroCurso />
+            },
+            {
+                path: '/secao/:idUsuario/cadastroServidor',
+                element: <CadastroServidor />
+            },
+            {
+                path: '/secao/:idUsuario/cadastroAluno',
+                element: <CadastroAluno />
             }
             // Adicionar outros caminhos que vão derivar da tela de home após autenticação
         ]
