@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 //import CadastroCurso from './pages/cadastroCurso/pageCurso'
 import HomeSemAutentic from './pages/home/homeSemAutentic'
 import HomeAutentic from './pages/home/homeAutentic'
+import CadastroServidor from './pages/cadastroServidor/pageCadastroServidor'
 
 const router = createBrowserRouter([
     {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
         // ]
         
         
+    },
+    {
+      path: '/cadastroServidor',
+      element: <CadastroServidor/>
     },
 
 ])
