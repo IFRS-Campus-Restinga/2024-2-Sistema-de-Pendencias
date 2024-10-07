@@ -1,6 +1,8 @@
 from django.contrib import admin
-from dependencias_app.models import Aluno
-from dependencias_app.models import Usuario
+from dependencias_app.models import Curso
+from dependencias_app.models import Disciplina
 
-admin.site.register(Aluno)
-admin.site.register(Usuario)
+
+admin.site.register(Curso)
+admin.site.register(Disciplina)
+
