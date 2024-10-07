@@ -10,11 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-import os
 from pathlib import Path
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +25,7 @@ SECRET_KEY = 'django-insecure-7jt7#zg-+cgon0@ssb5ih-yq5^d-9@5_ixys$=mh+t^d9g%50_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'http://localhost:3000']
+ALLOWED_HOSTS = ['http://localhost:3000', '127.0.0.1']
 CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
 CSRF_ALLOWED_ORIGINS = ["http://localhost:3000"]
 CORS_ORIGINS_WHITELIST = ["http://localhost:3000"]
@@ -139,10 +135,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-GOOGLE_OAUTH2_CLIENT_ID = os.getenv('GOOGLE_OAUTH2_CLIENT_ID')
-GOOGLE_OAUTH2_CLIENT_SECRET = os.getenv('GOOGLE_OAUTH2_CLIENT_SECRET')
-GOOGLE_OAUTH2_PROJECT_ID = os.getenv('GOOGLE_OAUTH2_PROJECT_ID')
-BASE_APP_URL = os.getenv('BASE_APP_URL')
-BASE_API_URL = os.getenv('BASE_API_URL')
-LOGIN_URL = os.getenv('LOGIN_URL')
