@@ -7,14 +7,14 @@ const CadastroCurso = () => {
   const [modalidade, setModalidade] = useState('');
 
   const modalidades = [
-    { value: 'online', label: 'Online' },
-    { value: 'presencial', label: 'Presencial' }
+    { value: 'PROEJA', label: 'PROEJA' },
+    { value: 'EMI', label: 'EMI' }
   ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/cursos/', {
+      const response = await axios.post('http://127.0.0.1:8000/api/cadastrar-curso', {
         nome,
         carga_horaria: cargaHoraria,
         modalidade

@@ -52,15 +52,6 @@ const CadastroServidor = () => {
       };
 
     return (
-        <PageContainer>
-            <Header
-                usuario={{
-                    nome: "Gestão Escolar",
-                }}
-            />
-            <div id="back-button">
-          <BackButton onClick={handleBack} />
-        </div>
             <div className="content">
                 <form className="form-container" onSubmit={envioHandler}>
                     <fieldset>
@@ -117,7 +108,6 @@ const CadastroServidor = () => {
                 <button className="custom-button" type="submit">Cadastrar</button>
                 </form>
             </div>
-        </PageContainer>
     );
 };
 

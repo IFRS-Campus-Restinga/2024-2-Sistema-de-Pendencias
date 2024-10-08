@@ -6,7 +6,7 @@ from dependencias_app.views import cursoViews
 
 urlpatterns = [
     path('teste', teste.view_teste),
-    path('cadastrar-servidor/', servidorViews.cadastrar_servidor),
+    path('cadastrar-servidor', servidorViews.cadastrar_servidor),
     path('cadastrar-aluno/', alunoViews.cadastrar_aluno),
     path('cadastrar-curso/', cursoViews.cadastrar_curso),
     path('teste', teste.view_teste),
