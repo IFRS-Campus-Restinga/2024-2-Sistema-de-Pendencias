@@ -1,11 +1,10 @@
 from django.http import HttpResponse
-from backend.serializers.auth_serializer import AuthSerializer
-from dependencias_app.models.aluno import Aluno
+from googleauth_app.serializer import AuthSerializer
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login, logout
 from django.conf import settings
 from rest_framework.views import APIView
-from backend.services import get_user_data
+from googleauth_app.services import get_user_data
 from django.contrib.auth.models import User
 
 # Classe para o login

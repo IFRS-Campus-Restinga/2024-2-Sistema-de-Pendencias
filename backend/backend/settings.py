@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'dependencias_app',
+    'googleauth_app'
 ]
 
 MIDDLEWARE = [
