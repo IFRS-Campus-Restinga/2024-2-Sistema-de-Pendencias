@@ -1,10 +1,21 @@
 import axios from "axios";
 import { TOKEN_ACESSO } from "./const"; // Importando TOKEN_ACESSO
 
+<<<<<<< HEAD
+const api = axios.create({
+  baseURL: 'http://localhost:8000/api', // ou a URL que você estiver usando
+  headers: {
+      'Content-Type': 'application/json',
+  },
+=======
 // Criação da instância do axios
 export const api = axios.create({
   baseURL: process.env.REACT_APP_BASE_API_URL + "/api", // URL base da API
+>>>>>>> 66bf1417164ddf7298b8883126ad2d50c9f7a071
 });
+ //comenteni 
+//   baseURL: process.env.BASE_URL,
+// }); ate esta parte
 
 // Função para obter o valor de um cookie pelo nome
 function obterCookie(nome) {

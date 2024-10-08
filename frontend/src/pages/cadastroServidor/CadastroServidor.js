@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import servidorService from '../../services/servidorService';
 import Header from "../../components/Header/Header";
 import PageContainer from "../../components/PageContainer/PageContainer";
-import "./pageCadastroServidor.css";
+import "./CadastroServidor.css";
 import BackButton from '../../components/BackButton/BackButton';
 
 //import axios from 'axios';

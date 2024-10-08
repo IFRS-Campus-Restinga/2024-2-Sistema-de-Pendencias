@@ -1,13 +1,16 @@
-.input-container {
-    margin: 0 auto;
-}
-
-input {
+.input, .inputErro {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 16px;
+}
+
+.input {
+    border: 1px solid #ccc;
+}
+
+.inputErro {
+    border: 2px solid #c00
 }
 
 input:focus {
@@ -15,7 +18,7 @@ input:focus {
     outline: none;
 }
 
-.sem-setas::-webkit-inner-spin-button,
+/* .sem-setas::-webkit-inner-spin-button,
 .sem-setas::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
@@ -23,4 +26,4 @@ input:focus {
 
 .sem-setas {
     -moz-appearance: textfield;
-}
+} */

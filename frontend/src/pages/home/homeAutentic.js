@@ -1,10 +1,15 @@
-import Footer from "../../components/Footer/Footer";
-import Header from "../../components/Header/Header";
+import { Outlet } from "react-router-dom";
 import PageContainer from "../../components/PageContainer/PageContainer";
 import testeService from "../../services/testeService";
-import "./homeAutentic.css";
+import MainContainer from "../../components/MainContainer/mainContainer";
+import { useEffect, useState } from "react";
 
-const HomeAutentic = () => {
+const HomeAutentic = ({ usuario }) => {
+  // const [usuario, setUsuario] = useState({});
+  // useEffect(() => {
+  //   setUsuario(usuario);
+  // });
+
   const envioHandler = async (e) => {
     e.preventDefault();
 
@@ -23,14 +28,9 @@ const HomeAutentic = () => {
   };
 
   return (
-    <PageContainer>
-      <Header
-        usuario={{
-          nome: "",
-        }}
-      />
-      <div className="content">
-        <h3>FORM TESTE</h3>
+    <PageContainer usuario={usuario}>
+      <MainContainer>
+        {/* <h3>FORM TESTE</h3>
         <form onSubmit={envioHandler}>
           <input
             type="text"
@@ -40,10 +40,10 @@ const HomeAutentic = () => {
             }}
           />
           <button type="submit">ENVIAR</button>
-        </form>
-      </div>
+        </form> */}
+        <Outlet />
+      </MainContainer>
       {/* Conteúdo da Home depois de autenticado */}
-      <Footer />
     </PageContainer>
   );
 };
