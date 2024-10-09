@@ -30,6 +30,7 @@ class Disciplina(BaseModel):
     class Meta:
         abstract = False
 
+
     def __str__(self):
         return f"{self.name} ({self.curso} - {self.curso.modalidade})"
 
