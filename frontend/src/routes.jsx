@@ -15,24 +15,8 @@ const router = createBrowserRouter([
         //     // Adicionar a tela de login
         // }
     },
-    
+
     {
-<<<<<<< HEAD
-        path: '/cadastroCurso',
-        element: <CadastroCurso/>
-    }
-    // {
-    //     path: '/secao/:idUsuario',
-    //     element: <HomeAutentic/>,
-    //      children: [
-    //          {
-    //              path: '/cadastroCurso',
-    //             element: <CadastroCurso/>
-    //          },
-    //     //     // Adicionar outros caminhos que vão derivar da tela de home após autenticação
-    //      ]
-    // }
-=======
         path: '/secao',
         element: <HomeAutentic />,
         children: [
@@ -58,7 +42,6 @@ const router = createBrowserRouter([
 
     },
 
->>>>>>> 66bf1417164ddf7298b8883126ad2d50c9f7a071
 ])
 
 export default router
