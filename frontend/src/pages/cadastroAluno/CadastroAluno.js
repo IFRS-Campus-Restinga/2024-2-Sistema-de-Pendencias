@@ -26,10 +26,10 @@ const CadastroAluno = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData)
     try {
-      const response = await axios.post('http://localhost:8000/api/cadastrar-aluno/', formData);
+      const response = await axios.post('http://127.0.0.1:8000/api/cadastrar-aluno/', formData);
       console.log(response.data);
-      fetchAlunos();
     } catch (error) {
       console.error('Erro ao cadastrar aluno!', error);
     }

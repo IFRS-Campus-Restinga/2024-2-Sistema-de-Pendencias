@@ -3,9 +3,9 @@ import { api } from "../config/axiosConfig";
 const servidorService = {
     create: async (params) => {
         const res = await api
-            .post("/cadastrar_servidor", params, {
+            .post("/cadastrar-servidor", params, {
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/json"
                 },
             })
             .catch((erro) => {
