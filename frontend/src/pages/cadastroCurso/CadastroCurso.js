@@ -5,37 +5,28 @@ import Switch from '../../components/Switch/Switch';
 import Button from '../../components/Button/Button';
 
 const CadastroCurso = () => {
-    // const handleCursoChange = (e) => {
-    //     setCurso({ ...curso, [e.target.name]: e.target.value });
-    // };
+  const [nome, setNome] = useState('');
+  const [cargaHoraria, setCargaHoraria] = useState('');
+  const [modalidade, setModalidade] = useState('');
 
-    // const handleTurmaAdd = () => {
-    //     if (newTurma.trim() && !turmas.some(turma => turma.codigo === newTurma)) {
-    //         setTurmas([...turmas, { codigo: newTurma }]);
-    //         setNewTurma('');
-    //     } else {
-    //         alert('Turma já existe ou está vazia!');
-    //     }
-    // };
+  const modalidades = [
+    { value: 'PROEJA', label: 'PROEJA' },
+    { value: 'EMI', label: 'EMI' }
+  ];
 
-    // const handleTurmaDelete = (index) => {
-    //     const updatedTurmas = turmas.filter((_, i) => i !== index);
-    //     setTurmas(updatedTurmas);
-    // };
-
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     console.log('Curso enviado:', curso);
-    //     console.log('Turmas:', turmas);
-        
-    //     // Exemplo de chamada API (descomente quando a API estiver pronta)
-    //     // try {
-    //     //     const response = await axios.post('/api/cursos', { curso, turmas });
-    //     //     console.log('Resposta da API:', response.data);
-    //     // } catch (error) {
-    //     //     console.error('Erro ao salvar o curso:', error);
-    //     // }
-    // };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/cadastrar-curso', {
+        nome,
+        carga_horaria: cargaHoraria,
+        modalidade
+      });
+      console.log('Curso cadastrado com sucesso', response.data);
+    } catch (error) {
+      console.error('Erro ao cadastrar curso', error);
+    }
+  };
 
     return (
         <form className='form' onSubmit={envioHandler}>
@@ -91,6 +82,5 @@ const CadastroCurso = () => {
     );
     
 };
-
 
 export default CadastroCurso;
