@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
-import CadastroCurso from './pages/cadastroCurso/pageCurso'
+import CadastroCurso from './pages/cadastroCurso/CadastroCurso'
 import HomeSemAutentic from './pages/home/homeSemAutentic'
 import HomeAutentic from './pages/home/homeAutentic'
 import CadastroServidor from './pages/cadastroServidor/CadastroServidor'
