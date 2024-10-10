@@ -1,5 +1,8 @@
-//import React, { useState } from 'react';
-//import axios from 'axios';
+import React, { useState } from 'react';
+import cursoService from '../../services/cursoService'; 
+import './CadastroCurso.css'; 
+import Switch from '../../components/Switch/Switch';
+import Button from '../../components/Button/Button';
 
 const CadastroCurso = () => {
     // const handleCursoChange = (e) => {
@@ -35,61 +38,56 @@ const CadastroCurso = () => {
     // };
 
     return (
-        <div>
+        <form className='form' onSubmit={envioHandler}>
             <h1>Cadastro Curso</h1>
-            <form>
-                <div>
-                    <label>Modalidade:</label>
-                    <div>
-                        <label>
-                            <input type="radio" name="modalidade" value="ProEja" /> ProEja
-                        </label>
-                        <label>
-                            <input type="radio" name="modalidade" value="Integrado" /> Integrado
-                        </label>
-                    </div>
+                <h4>Modalidade</h4>
+            <div className='containerOpcoes'>
+                    <label className='modalidadeLabel' htmlFor='Proeja'>
+                    <span className='labelTexto'>ProEja</span>
+                        <input
+                            type="radio"
+                            name="Proeja"
+                            value="ProEja"
+                            onChange={(e) => setFormData({ ...formData, modalidade: e.target.value })}
+                        />
+                    </label>
+                    <label className='modalidadeLabel' htmlFor='Integrado' >
+                    <span className='labelTexto'>Integrado</span>
+                        <input
+                            type="radio"
+                            name="modalidade"
+                            value="Integrado"
+                            onChange={(e) => setFormData({ ...formData, modalidade: e.target.value })}
+                        />
+                    </label>
                 </div>
-    
-                <div>
-                    <label htmlFor="nome_curso">Nome do Curso:</label>
-                    <input type="text" name="nome_curso" id="nome_curso" required />
-                </div>
-    
-                <div>
-                    <label htmlFor="carga_horaria">Carga Horária:</label>
-                    <input type="text" name="carga_horaria" id="carga_horaria" required />
-                </div>
-    
-                <div>
-                    <h3>Adicionar Turma:</h3>
-                    <input type="text" placeholder="Código da Turma" />
-                    <button type="button">Adicionar</button>
-                </div>
-    
-                <ul>
-                    <li>
-                        Código da Turma
-                        <button type="button">Excluir</button>
-                    </li>
-                </ul>
-    
-                <button type="submit">Salvar Curso</button>
-            </form>
-    
-            <h2>Lista das Turmas já criadas:</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Código da Turma</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Código da Turma</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <div>
+                <label htmlFor="nome_curso">Nome do Curso:</label>
+                <input
+                    type="text"
+                    name="nome_curso"
+                    id="nome_curso"
+                    required
+                    onChange={(e) => setFormData({ ...formData, nome_curso: e.target.value })}
+                />
+            </div>
+            <div>
+                <label htmlFor="carga_horaria">Carga Horária:</label>
+                <input
+                    type="text"
+                    name="carga_horaria"
+                    id="carga_horaria"
+                    required
+                    onChange={(e) => setFormData({ ...formData, carga_horaria: e.target.value })} 
+                />
+            </div>
+            <Button
+              width="30%"
+              color="#28A745"
+              text="Cadastrar"
+              onClick={envioHandler}
+            />
+        </form>
     );
     
 };

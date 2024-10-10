@@ -43,7 +43,6 @@ const CadastroAluno = () => {
         <form onSubmit={handleSubmit}>
           <h3>Cadastro Aluno</h3>
           <hr/>
-          <br/>
           <h3 className="subtitulo_esquerda">Dados Pessoais</h3>
           <div>
             <label className="perfil">Perfil:</label>

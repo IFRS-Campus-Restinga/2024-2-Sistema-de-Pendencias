@@ -1,8 +1,6 @@
 .container {
     display: flex;
-    justify-content: center;
-    max-height: fit-content;
+    flex-direction: column;
     flex: 1;
-    background-color: #f0f0f0;
-    overflow-y: scroll;
+    background-color: #f1f1f1;
 }

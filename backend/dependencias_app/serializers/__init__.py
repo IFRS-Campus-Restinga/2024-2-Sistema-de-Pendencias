@@ -1,1 +1,1 @@
-from .servidorSerializers import *
+from .servidorSerializer import *

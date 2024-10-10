@@ -1,9 +1,9 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from dependencias_app.models import Servidor
+from dependencias_app.models.servidor import Servidor
 from django.views.decorators.csrf import csrf_exempt
-from dependencias_app.serializers.servidorSerializers import ServidorSerializer
+from dependencias_app.serializers.servidorSerializer import ServidorSerializer
 
 @csrf_exempt
 @api_view(['POST'])

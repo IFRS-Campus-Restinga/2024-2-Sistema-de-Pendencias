@@ -1,0 +1,50 @@
+.navBarGestao {
+    width: 100vw;
+    height: 40px;
+    display: flex;
+    justify-content: space-around;
+    align-self: flex-start;
+    align-items: center;
+    padding: 5px;
+    background-color: rgba(#d9d9d9, 0.1);
+}
+
+.navItemContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navTexto {
+    color: #000000;
+    text-align: center;
+    width: max-content;
+    padding: 3px;
+    border-radius: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 10px;
+    display: flex;
+    text-align: center;
+}
+
+.navTexto:hover {
+    background-color: #28A745;
+    transition: ease-in;
+}
+
+.titulo {
+    color: #000000;
+    font-size: 2rem;
+    justify-self: center;
+    text-align: center;
+    margin: 25px;
+    font-weight: bold;
+}
+
+hr {
+    width: 50%;
+    justify-self: center;
+    align-self: center;
+    border: 1px #28A745 solid;
+}

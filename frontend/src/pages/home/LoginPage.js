@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import logo from "../../assets/logo-ifrs.png";
 import PageContainer from "../../components/PageContainer/PageContainer";
 import GoogleLoginButton from "../../components/GoogleLoginButton/GoogleLoginButton"; // Certifique-se de que esse caminho esteja correto
-import "./homeSemAutentic.css";
-import MainContainer from "../../components/MainContainer/mainContainer";
+import "./LoginPage.css";
 
 const LoginPage = () => {
   const [error, setError] = useState(null); // Estado para gerenciar mensagens de erro
@@ -20,7 +19,6 @@ const LoginPage = () => {
 
   return (
     <PageContainer usuario={{}}>
-      <MainContainer>
         <div className="login-container">
           <h1 className="login-title">Sistema de Dependências</h1>
           <div className="login-content">
@@ -39,7 +37,6 @@ const LoginPage = () => {
             </div>
           </div>
         </div>
-      </MainContainer>
     </PageContainer>
   );
 };

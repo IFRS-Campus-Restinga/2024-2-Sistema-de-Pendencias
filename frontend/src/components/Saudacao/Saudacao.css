@@ -1,0 +1,10 @@
+.titulo {
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+hr {
+    width: 50%;
+    border: 2px solid #28A745;
+    justify-self: center;
+}

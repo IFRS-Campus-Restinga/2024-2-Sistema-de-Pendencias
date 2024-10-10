@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './Dropdown.css'; // Estilização do dropdown
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 const Dropdown = ({ titulo, itens }) => {
   const [aberto, setAberto] = useState(false);
@@ -12,16 +11,17 @@ const Dropdown = ({ titulo, itens }) => {
 
   return (
     <div className="dropdown">
-      <button className="dropdown-titulo" onClick={alternarDropdown}>
+      <button className="dropdown-titulo" onMouseEnter={alternarDropdown}>
         {titulo}
-        <FontAwesomeIcon icon={aberto ? faChevronUp : faChevronDown} className="icone-flecha" />
       </button>
       {aberto && (
-        <div className="dropdown-conteudo">
+        <div className="dropdown-conteudo" onMouseLeave={alternarDropdown}>
           {itens.map((item, index) => (
-            <div key={index} className="dropdown-item">
-              {item}
-            </div>
+            <Link to={item.link} className='link'>
+              <div key={index} className="dropdown-item">
+                {item.name}
+              </div>
+            </Link>
           ))}
         </div>
       )}

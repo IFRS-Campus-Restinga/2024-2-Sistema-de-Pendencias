@@ -4,6 +4,7 @@ import Header from "../../components/Header/Header";
 import PageContainer from "../../components/PageContainer/PageContainer";
 import "./CadastroServidor.css";
 import BackButton from '../../components/BackButton/BackButton';
+import Button from '../../components/Button/Button';
 
 //import axios from 'axios';
 
@@ -52,62 +53,65 @@ const CadastroServidor = () => {
       };
 
     return (
-            <div className="content">
-                <form className="form-container" onSubmit={envioHandler}>
-                    <fieldset>
-                        <h3>Cadastro de Servidor</h3>
-                        <div>
-                            <label className="form-item">Perfil:</label>
-                            <br/>
-                            <div className="radio-container">
-                            <label>
-                                <input type="radio" value="Aluno" checked={formData.perfil === 'Aluno'}
-                                    onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
-                                <span>Aluno</span>
-                            </label>
-                            <label>
-                                <input type="radio" value="Professor" checked={formData.perfil === 'Professor'}
-                                    onChange={(e) => setFormData({...formData, perfil: e.target.value})}
-                                />
-                                <span>Professor</span>
-                            </label>
-                            <label>
-                                <input type="radio" value="Registros Escolares" checked={formData.perfil === 'Registros Escolares'}
-                                    onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
-                                <span>Registros Escolares</span>
-                            </label>
-                            <label>
-                                <input type="radio" value="Gestão Escolar" checked={formData.perfil === 'Gestão Escolar'}
-                                    onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
-                                <span>Gestão Escolar</span>
-                            </label>
-                            <label>
-                                <input type="radio" value="Coordenador" checked={formData.perfil === 'Coordenador'}
-                                    onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
-                                <span>Coordenador</span>
-                            </label>
-                            </div>
-                        </div>
-                        <div className="form-item">
-                            <label>Nome</label>
-                            <input type="text" value={formData.nome} onChange={(e) => setFormData({...formData, nome: e.target.value})} required />
-                        </div>
-                        <div className="form-item">
-                            <label>CPF</label>
-                            <input type="text" value={formData.cpf} onChange={(e) => setFormData({...formData, cpf: e.target.value})} required />
-                        </div>
-                        <div className="form-item">
-                            <label>Matrícula</label>
-                            <input type="text" value={formData.matricula} onChange={(e) => setFormData({...formData, matricula: e.target.value})} required />
-                        </div>
-                        <div className="form-item">
-                            <label>Email</label>
-                            <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required />
-                        </div>
-                    </fieldset>
-                <button className="custom-button" type="submit">Cadastrar</button>
-                </form>
-            </div>
+        <form className="form-servidor" onSubmit={envioHandler}>
+                <h3>Cadastro de Servidor</h3>
+                <div>
+                    <label className="form-item">Perfil:</label>
+                    <br/>
+                    <div className="radio-container">
+                    <label>
+                        <input type="radio" value="Aluno" checked={formData.perfil === 'Aluno'}
+                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
+                        <span>Aluno</span>
+                    </label>
+                    <label>
+                        <input type="radio" value="Professor" checked={formData.perfil === 'Professor'}
+                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                        />
+                        <span>Professor</span>
+                    </label>
+                    <label>
+                        <input type="radio" value="Registros Escolares" checked={formData.perfil === 'Registros Escolares'}
+                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
+                        <span>Registros Escolares</span>
+                    </label>
+                    <label>
+                        <input type="radio" value="Gestão Escolar" checked={formData.perfil === 'Gestão Escolar'}
+                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
+                        <span>Gestão Escolar</span>
+                    </label>
+                    <label>
+                        <input type="radio" value="Coordenador" checked={formData.perfil === 'Coordenador'}
+                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
+                        <span>Coordenador</span>
+                    </label>
+                    </div>
+                </div>
+                <div className="form-item">
+                    <label>Nome</label>
+                    <input type="text" value={formData.nome} onChange={(e) => setFormData({...formData, nome: e.target.value})} required />
+                </div>
+                <div className="form-item">
+                    <label>CPF</label>
+                    <input type="text" value={formData.cpf} onChange={(e) => setFormData({...formData, cpf: e.target.value})} required />
+                </div>
+                <div className="form-item">
+                    <label>Matrícula</label>
+                    <input type="text" value={formData.matricula} onChange={(e) => setFormData({...formData, matricula: e.target.value})} required />
+                </div>
+                <div className="form-item">
+                    <label>Email</label>
+                    <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required />
+                </div>
+                <div className='botaoContainer'>
+                    <Button
+                        width="30%"
+                        color="#28A745"
+                        text="Cadastrar"
+                        onClick={envioHandler}
+                    />
+                </div>
+        </form>
     );
 };
 

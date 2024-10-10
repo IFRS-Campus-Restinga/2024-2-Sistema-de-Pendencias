@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import AuthSerializer
 from google_auth.services import get_user_data
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractBaseUser
 from rest_framework.exceptions import ValidationError
 
 @api_view(['GET'])
