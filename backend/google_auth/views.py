@@ -24,16 +24,16 @@ def google_login(request):
     user_data = get_user_data(validated_data)
 
     # Verifica se o usuário com esse email já existe no banco de dados
-    try:
-        user = User.objects.get(email=user_data['email'])
-    except User.DoesNotExist:
-        return Response({'mensagem':'Email inválido para login'}, status=403)
+    # try:
+    #     user = User.objects.get(email=user_data['email'])
+    # except User.DoesNotExist:
+    #     return Response({'mensagem':'Email inválido para login'}, status=403)
         
     # Se o usuário existir ou for criado, autentica e cria a sessão
-    login(request, user)  # Cria a sessão no Django
+    # login(request, user)  # Cria a sessão no Django
     token = get_token(request)
 
-    return Response({'Mensagem': 'login concluído com sucesso', 'csrfToken': token}, status=200) 
+    return Response({'Mensagem': 'login concluído com sucesso', 'csrfToken': token, 'user_data': user_data}, status=200) 
 
 
 # Classe para o logout

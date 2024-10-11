@@ -5,6 +5,9 @@ import { TOKEN_ACESSO } from "./const"; // Importando TOKEN_ACESSO
 export const api = axios.create({
   baseURL: process.env.REACT_APP_BASE_API_URL + "/api", // URL base da API
 });
+ //comenteni 
+//   baseURL: process.env.BASE_URL,
+// }); ate esta parte
 
 // Função para obter o valor de um cookie pelo nome
 function obterCookie(nome) {
