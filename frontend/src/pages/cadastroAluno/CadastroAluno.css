@@ -103,5 +103,22 @@ form {
   display: flex;
   justify-content: center;
   margin-top: 20px;
-  /* Adiciona um pouco de espaço acima do botão */
 }
+
+.erros {
+  color: red;
+  margin-top: -13px;
+}
+
+div {
+  margin-bottom: 10px;
+}
+
+/* Customiza o ícone de sucesso para ter fundo branco */
+.Toastify__toast--success .Toastify__toast-icon {
+  background-color: white; /* Cor de fundo branca */
+  color: #28A745; /* Cor do ícone verde */
+  border-radius: 50%; /* Mantém o formato circular */
+}
+
+

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './CadastroCurso.css'; 
-import { FaPlusCircle, FaTrashAlt } from 'react-icons/fa';
+//import { FaPlusCircle, FaTrashAlt } from 'react-icons/fa';
 
 const CadastroCurso = () => {
   const [nome, setNome] = useState('');
