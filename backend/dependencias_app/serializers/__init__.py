@@ -1,1 +1,1 @@
-from .servidorSerializer import *
+from .professorSerializer import *

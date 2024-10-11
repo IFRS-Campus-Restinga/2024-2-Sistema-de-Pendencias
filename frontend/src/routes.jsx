@@ -8,7 +8,7 @@ import Saudacao from './components/Saudacao/Saudacao'
 
 const router = createBrowserRouter([
     {
-        path: '/',
+        path: '',
         element: <LoginPage />,
     },
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './CadastroCurso.css'; 
-//import { FaPlusCircle, FaTrashAlt } from 'react-icons/fa';
+// import { FaPlusCircle, FaTrashAlt } from 'react-icons/fa';
 
 const CadastroCurso = () => {
   const [nome, setNome] = useState('');
@@ -105,7 +105,7 @@ const CadastroCurso = () => {
           onClick={addTurma}
           className="add-button"
         >
-          <FaPlusCircle size={24} style={{ color: '#28A745' }} />
+          {/* <FaPlusCircle size={24} style={{ color: '#28A745' }} /> */}
           <span>Adicionar Turma</span>
         </button>
       </div>
@@ -134,11 +134,11 @@ const CadastroCurso = () => {
                     />
                   </td>
                   <td>
-                    <FaTrashAlt
+                    {/* <FaTrashAlt
                       size={20}
                       style={{ cursor: 'pointer', color: 'red' }}
                       onClick={() => removeTurma(index)}
-                    />
+                    /> */}
                   </td>
                 </tr>
               ))}
@@ -171,11 +171,11 @@ const CadastroCurso = () => {
                 <tr key={index}>
                   <td>{turma.nome}</td>
                   <td>
-                    <FaTrashAlt
+                    {/* <FaTrashAlt
                       size={20}
                       style={{ cursor: 'pointer', color: 'red' }}
                       onClick={() => setTurmasSalvas(turmasSalvas.filter((_, i) => i !== index))}
-                    />
+                    /> */}
                   </td>
                 </tr>
               ))}

@@ -3,7 +3,7 @@ import { TOKEN_ACESSO } from "./const"; // Importando TOKEN_ACESSO
 
 // Criação da instância do axios
 export const api = axios.create({
-  baseURL: process.env.REACT_APP_BASE_API_URL + "/api", // URL base da API
+  baseURL: process.env.REACT_APP_BASE_API_URL, // URL base da API
 });
  //comenteni 
 //   baseURL: process.env.BASE_URL,
@@ -31,7 +31,7 @@ api.interceptors.request.use(
   (config) => {
     const csrftoken = obterCookie("csrftoken"); // Obtendo o token CSRF
     if (csrftoken) {
-      config.headers["X-CSRFToken"] = csrftoken; // Adicionando o token ao header
+      config.headers["csrfToken"] = csrftoken; // Adicionando o token ao header
     }
     return config; // Retorna a configuração da requisição
   },

@@ -62,7 +62,6 @@ def get_user_data(validated_data):
     #Processa os dados de autorização e obtém as informações do usuário autenticado via Google.
 
     # Define a URI de redirecionamento
-    domain = BASE_API_URL
     redirect_uri = f'{BASE_API_URL}auth/api/login/google/'
 
     # Obtém o código de autorização e qualquer erro dos dados validados
@@ -80,13 +79,6 @@ def get_user_data(validated_data):
     # Obtém as informações do usuário usando o token de acesso
     user_data = google_get_user_info(access_token=access_token)
 
-    # Cria o usuário se for o primeiro login
-    # User.objects.get_or_create(
-    #     username=user_data['email'],
-    #     email=user_data['email'],
-    #     first_name=user_data.get('given_name'),
-    #     last_name=user_data.get('family_name')
-    # )
     
     # Cria um dicionário contendo os dados do perfil do usuário
     profile_data = {

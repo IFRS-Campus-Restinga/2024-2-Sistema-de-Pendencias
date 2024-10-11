@@ -1,21 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../assets/logo-ifrs.png";
 import PageContainer from "../../components/PageContainer/PageContainer";
 import GoogleLoginButton from "../../components/GoogleLoginButton/GoogleLoginButton"; // Certifique-se de que esse caminho esteja correto
 import "./LoginPage.css";
+import { loginService } from "../../services/loginService";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
-  const [error, setError] = useState(null); // Estado para gerenciar mensagens de erro
+  const [erro, setErro] = useState('')
+  const redirect = useNavigate()
 
-  const handleLoginSuccess = (response) => {
-    console.log("Login bem-sucedido:", response);
-  };
+  const handleSuccess = async(response) => {
+    console.log(response)
+    const res = await loginService.login(response)
 
-  const handleLoginError = (error) => {
-    // Lógica para lidar com erro no login
-    setError("Erro ao fazer login. Tente novamente."); // Mensagem de erro
-    console.error("Erro de login:", error);
-  };
+    if (res.status !== 200) handleFailure(res)
+    
+    // localStorage.setItem('permission', res.data.permission)
+    // localStorage.setItem('csrfToken', res.data.csrfToken)
+
+    // redirect(`/secao/${res.data.id}`)
+  }
+
+  const handleFailure = (response) => {
+    setErro(response.erro)
+  }
+
+  useEffect(() => {
+
+  }, [erro])
 
   return (
     <PageContainer usuario={{}}>
@@ -28,12 +41,14 @@ const LoginPage = () => {
             <div className="login-divider" />
             <div className="login-right">
               <h2>Acesse sua Conta</h2>
-              {error && <p style={{ color: "red" }}>{error}</p>}{" "}
+              {/* {error && <p style={{ color: "red" }}>{error}</p>}{" "} */}
               {/* Exibe mensagem de erro */}
-              <GoogleLoginButton
-                onLoginSuccess={handleLoginSuccess}
-                onLoginError={handleLoginError}
-              />
+              <GoogleLoginButton handleLogin={handleSuccess} handleLoginFailure={handleFailure}/>
+              {erro ? (
+                <span className="mensagemErro">{erro}</span>
+                ) : (
+                  <></>
+              )}
             </div>
           </div>
         </div>
