@@ -11,13 +11,13 @@
 }
 
 h1 {
-  font-size: 22px; /* Tamanho do título reduzido */
+  font-size: 22px; 
   margin-bottom: 15px;
 }
 
 .input-group {
   margin-bottom: 15px;
-  width: 100%; /* Largura total */
+  width: 100%; 
 }
 
 .input-group label {
@@ -26,7 +26,7 @@ h1 {
 }
 
 .input-group input {
-  width: 100%; /* Aumenta a largura da entrada */
+  width: 100%; 
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -34,23 +34,23 @@ h1 {
 
 .containerOpcoes {
   display: flex;
-  flex-direction: row; /* Alterado para linha */
-  justify-content: space-around; /* Espaço entre as opções */
-  width: 100%; /* Largura total */
+  flex-direction: row;
+  justify-content: space-around; 
+  width: 100%; 
 }
 
 .modalidadeLabel {
-  margin-right: 15px; /* Espaçamento entre as opções */
+  margin-right: 15px; 
   display: flex;
-  align-items: center; /* Alinha o texto e o input verticalmente */
+  align-items: center; 
 }
 
 .modalidadeLabel input {
-  margin-top: 5px; /* Ajusta a posição das bolinhas de opção */
+  margin-top: 5px; 
 }
 
 .add-turma {
-  margin: 10px 0; /* Espaçamento vertical */
+  margin: 10px 0; 
 }
 
 .add-button {
@@ -62,22 +62,22 @@ h1 {
 }
 
 .turmas-lista {
-  width: 100%; /* Largura total */
+  width: 100%; 
   margin-top: 20px;
 }
 
 .turmas-tabela {
-  width: 100%; /* Tabela ocupa 100% */
+  width: 100%; 
   border-collapse: collapse;
 }
 
 .turmas-tabela th, .turmas-tabela td {
-  border: 1px solid #ddd; /* Borda das células */
-  padding: 8px; /* Espaçamento interno */
+  border: 1px solid #ddd; 
+  padding: 8px; 
 }
 
 .turmaInput {
-  width: calc(100% - 40px); /* Reduzir a largura para acomodar o ícone de exclusão */
+  width: calc(100% - 40px);
 }
 
 .submitButton {
@@ -91,7 +91,7 @@ h1 {
 }
 
 .submitButton:hover {
-  background-color: #0056b3; /* Cor de fundo ao passar o mouse */
+  background-color: #0056b3; 
 }
 
 
