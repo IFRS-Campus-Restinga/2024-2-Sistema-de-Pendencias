@@ -1,7 +1,8 @@
-from dependencias_app.models.curso import Curso
 from rest_framework import serializers
+from dependencias_app.models.curso import Curso
 
 class CursoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Curso
-        fiels: '__all__'
+        fields = ['nome', 'carga_horaria', 'modalidade', 'turmas']
+
