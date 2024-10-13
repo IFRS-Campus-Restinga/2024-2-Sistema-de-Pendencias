@@ -26,8 +26,8 @@ const CadastroServidor = () => {
             email,
         };
     
-        // Adicione cpf e matricula apenas se o perfil não for 'registroEscolar'
-        if (perfil !== 'registroEscolar') {
+        // Adicione cpf e matricula apenas se o perfil não for 'registroEscolar' ou 'gestaoEscolar'
+        if (perfil !== 'registroEscolar' || perfil !== 'gestaoEscolar') {
             dataToSend.cpf = cpf;
             dataToSend.matricula = matricula;
         }
