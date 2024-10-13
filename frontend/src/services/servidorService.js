@@ -11,7 +11,7 @@ const endpoints = [
     },
     {
         tipo: "gestaoEscolar",
-        endpoint: ""
+        endpoint: "/cadastrar-gestao-escolar/"
     },
     {
         tipo: "coordenador",
