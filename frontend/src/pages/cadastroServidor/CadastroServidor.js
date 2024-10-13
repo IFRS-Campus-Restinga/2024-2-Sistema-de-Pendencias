@@ -36,7 +36,8 @@ const CadastroServidor = () => {
             const res = await servidorService.create(dataToSend, 'csrftoken');
     
             if (res && res.status) {
-                if (res.status === 200) {
+                console.log(res);
+                if (res.status === 200 || res.status === 201) {
                     alert('Servidor cadastrado com sucesso!');
                 } else {
                     alert('Erro ao cadastrar servidor: ' + (res.data ? res.data.message : 'Erro desconhecido'));
