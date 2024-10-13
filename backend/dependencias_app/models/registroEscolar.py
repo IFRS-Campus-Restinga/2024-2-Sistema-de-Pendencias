@@ -3,4 +3,4 @@ from dependencias_app.models.base import *
 
 class RegistroEscolar(Usuario):
     class Meta:
-        abstract = False
+        db_table = 'dependencias_app_registroescolar'  
