@@ -5,9 +5,6 @@ from dependencias_app.models.base import BaseModel
 class Turma(BaseModel):
     numero = models.CharField(verbose_name="Número da Turma",help_text="Informe o número da turma",
         max_length=10,validators=[MinLengthValidator(1)],null=False,blank=False)
-    #curso = models.ForeignKey('Curso', on_delete=models.CASCADE)
-    curso = models.ForeignKey('Curso', related_name='turmas', on_delete=models.CASCADE)
-    
 
     class Meta:
         abstract = False

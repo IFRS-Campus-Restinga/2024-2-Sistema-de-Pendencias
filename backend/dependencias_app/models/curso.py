@@ -1,6 +1,7 @@
 from django.db import models
 from .modalidade import Modalidade
 from dependencias_app.models.base import *
+from dependencias_app.models.turma import Turma
 from django.core.validators import MinLengthValidator
 
 class Curso(BaseModel):
@@ -8,8 +9,9 @@ class Curso(BaseModel):
         max_length=100,validators=[MinLengthValidator(3)],null=False,blank=False)
     carga_horaria = models.CharField(verbose_name="Carga Horária",help_text="Informe a carga horária do curso",
         max_length=5,null=False,blank=False)
-    modalidade = models.CharField(verbose_name="Modalidade",choices=Modalidade.choices,
-        max_length=22,null=False,blank=False)
+    modalidade = models.CharField(verbose_name="Modalidade",help_text="Selecione a modalidade do curso",
+        choices=Modalidade.choices,max_length=20,null=False,blank=False)
+    turma = models.ManyToManyField(Turma)
     
     class Meta:
         abstract = False
