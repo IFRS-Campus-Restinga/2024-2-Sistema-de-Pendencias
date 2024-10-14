@@ -1,0 +1,29 @@
+.input, .inputErro {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.input {
+    border: 1px solid #ccc;
+}
+
+.inputErro {
+    border: 2px solid #c00
+}
+
+input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* .sem-setas::-webkit-inner-spin-button,
+.sem-setas::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.sem-setas {
+    -moz-appearance: textfield;
+} */

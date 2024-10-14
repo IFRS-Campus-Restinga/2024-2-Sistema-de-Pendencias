@@ -1,0 +1,9 @@
+.titulo {
+    font-size: large;
+    font-weight: bold;
+}
+
+hr {
+    width: 50%;
+    border: 2px solid #28A745;
+}

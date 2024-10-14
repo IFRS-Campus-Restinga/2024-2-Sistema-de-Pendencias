@@ -1,0 +1,106 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+  max-width: 800px;
+  width: 100%;
+  margin: auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  font-size: 14px;
+}
+
+h1 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.input-group {
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.input-group label {
+  font-size: 14px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.containerOpcoes {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.modalidadeLabel {
+  font-size: 14px;
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.add-turma {
+  margin: 10px 0;
+}
+
+.add-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.turmas-lista {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.turmas-tabela {
+  width: 100%; 
+  border-collapse: collapse;
+}
+
+.turmas-tabela th,
+.turmas-tabela td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  font-size: 14px; 
+}
+
+.turmaInput {
+  width: calc(100% - 40px);
+}
+
+.submitButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 14px; 
+}
+
+.submitButton:hover {
+  background-color: #0056b3; 
+}
+
+.mensagem {
+  font-size: 14px; 
+  color: green;
+}

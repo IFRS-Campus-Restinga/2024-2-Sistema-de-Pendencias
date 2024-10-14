@@ -1,0 +1,35 @@
+.containerSwitch {
+    display: flex;
+    align-items: center;
+    border: 2px solid black;
+    padding: 5px;
+    border-radius: 20px;
+    width: 20%;
+    position: relative;
+    cursor: pointer;
+}
+
+.direita,
+.esquerda {
+    width: 50%;
+    text-align: center;
+}
+
+.switcher {
+    width: 50%;
+    height: 90%;
+    border-radius: 20px;
+    background-color: gray;
+    position: absolute;
+    transition: left 0.3s;
+    left: 0;
+}
+
+/* .containerSwitch:active .switcher {
+    left: 50%;
+} */
+
+.containerSwitch.ligado .switcher {
+    left: 50%;
+    background-color: green;
+}
