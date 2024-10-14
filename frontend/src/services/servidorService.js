@@ -2,20 +2,20 @@ import { api } from "../config/axiosConfig";
 
 const endpoints = [
     {
-        tipo: "professor",
+        tipo: "Professor",
         endpoint: "/cadastrar-professor/"
     },
     {
-        tipo: "registroEscolar",
+        tipo: "RegistroEscolar",
         endpoint: "/cadastrar-registro-escolar/"
     },
     {
-        tipo: "gestaoEscolar",
+        tipo: "GestaoEscolar",
         endpoint: "/cadastrar-gestao-escolar/"
     },
     {
-        tipo: "coordenador",
-        endpoint: ""
+        tipo: "Coordenador",
+        endpoint: "/cadastrar-coordenador/"
     },
 ]
 

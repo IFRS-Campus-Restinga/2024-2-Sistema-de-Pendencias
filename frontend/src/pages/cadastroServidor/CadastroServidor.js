@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import servidorService from '../../services/servidorService';
-import Header from "../../components/Header/Header";
-import PageContainer from "../../components/PageContainer/PageContainer";
 import "./CadastroServidor.css";
-import BackButton from '../../components/BackButton/BackButton';
 import Button from '../../components/Button/Button';
 
 const CadastroServidor = () => {
@@ -27,7 +24,7 @@ const CadastroServidor = () => {
         };
     
         // Adicione cpf e matricula apenas se o perfil não for 'registroEscolar' ou 'gestaoEscolar'
-        if (perfil !== 'registroEscolar' && perfil !== 'gestaoEscolar') {
+        if (perfil !== 'RegistroEscolar' && perfil !== 'GestaoEscolar') {
             dataToSend.cpf = cpf;
             dataToSend.matricula = matricula;
         }
@@ -73,25 +70,25 @@ const CadastroServidor = () => {
                 <br/>
                 <div className="radio-container">
                     <label>
-                        <input type="radio" value="professor" checked={formData.perfil === 'professor'}
+                        <input type="radio" value="Professor" checked={formData.perfil === 'Professor'}
                             onChange={(e) => setFormData({...formData, perfil: e.target.value})}
                         />
                         <span>Professor</span>
                     </label>
                     <label>
-                        <input type="radio" value="registroEscolar" checked={formData.perfil === 'registroEscolar'}
+                        <input type="radio" value="RegistroEscolar" checked={formData.perfil === 'RegistroEscolar'}
                             onChange={(e) => setFormData({...formData, perfil: e.target.value})}
                         />
                         <span>Registros Escolares</span>
                     </label>
                     <label>
-                        <input type="radio" value="gestaoEscolar" checked={formData.perfil === 'gestaoEscolar'}
+                        <input type="radio" value="GestaoEscolar" checked={formData.perfil === 'GestaoEscolar'}
                             onChange={(e) => setFormData({...formData, perfil: e.target.value})}
                         />
                         <span>Gestão Escolar</span>
                     </label>
                     <label>
-                        <input type="radio" value="coordenador" checked={formData.perfil === 'coordenador'}
+                        <input type="radio" value="Coordenador" checked={formData.perfil === 'Coordenador'}
                             onChange={(e) => setFormData({...formData, perfil: e.target.value})}
                         />
                         <span>Coordenador</span>
@@ -104,7 +101,7 @@ const CadastroServidor = () => {
             </div>
 
             {/* Renderização condicional para CPF e Matrícula */}
-            {formData.perfil !== 'registroEscolar' && (
+            {formData.perfil !== 'RegistroEscolar' && (
                 <>
                     <div className="form-item">
                         <label>CPF</label>

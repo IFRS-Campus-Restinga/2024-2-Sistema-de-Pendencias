@@ -7,16 +7,20 @@ from dependencias_app.serializers.registroEscolarSerializer import RegistroEscol
 @api_view(['POST'])
 def cadastrar_registro_escolar(request):
     try:
+        name = request.data.get('perfil', None)
+
+        print(name)
         # extrai o nome do perfil da requisição
-        grupo = Group.objects.get(name=request.data.get('perfil', None))
+        grupo = Group.objects.get(name=name)
 
         # valida o perfil
         if not isinstance(grupo, Group): raise Exception('perfil inválido')
 
         # adiciona o id do grupo correspondente ao perfil em um dicionario
-        data = request.data.copy()
-        data['grupo'] = grupo.id
+        data = request.data
+        data['perfil'] = grupo.id
 
+        print(data)
         # passa o dicionario para o serializador
         serializer = RegistroEscolarSerializer(data=data)
 
