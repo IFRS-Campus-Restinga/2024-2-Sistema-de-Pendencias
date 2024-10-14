@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import servidorService from '../../services/servidorService';
-import Header from "../../components/Header/Header";
-import PageContainer from "../../components/PageContainer/PageContainer";
 import "./CadastroServidor.css";
-import BackButton from '../../components/BackButton/BackButton';
 import Button from '../../components/Button/Button';
+import { validarFormulario, validarCampo } from './validacoes';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CadastroServidor = () => {
     const [formData, setFormData] = useState({
@@ -15,9 +14,13 @@ const CadastroServidor = () => {
         email: ''
     });
 
-    const envioHandler = async (e) => {
+    const [errors, setErrors] = useState({});
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
+
+    const enviarHandler = async (e) => {
         e.preventDefault();
-    
+        const validationErrors = validarFormulario(formData);
+
         // Crie um objeto a ser enviado, incluindo apenas os campos necessários
         const { perfil, nome, email, cpf, matricula } = formData;
         const dataToSend = {
@@ -25,108 +28,137 @@ const CadastroServidor = () => {
             nome,
             email,
         };
-    
+
         // Adicione cpf e matricula apenas se o perfil não for 'registroEscolar' ou 'gestaoEscolar'
-        if (perfil !== 'registroEscolar' && perfil !== 'gestaoEscolar') {
+        if (perfil !== 'registroEscolar' || perfil !== 'gestaoEscolar') {
             dataToSend.cpf = cpf;
             dataToSend.matricula = matricula;
         }
-    
-        try {
-            const res = await servidorService.create(dataToSend, 'csrftoken');
-    
-            if (res && res.status) {
-                console.log(res);
-                if (res.status === 200 || res.status === 201) {
-                    alert('Servidor cadastrado com sucesso!');
+
+        if (Object.keys(validationErrors).length === 0) {
+            setShowErrorMessage(false);
+            try {
+                const res = await servidorService.create(dataToSend, 'csrftoken');
+
+                if (res && res.status) {
+                    console.log(res);
+                    if (res.status === 200 || res.status === 201) {
+                        alert('Servidor cadastrado com sucesso!');
+                    } else {
+                        alert('Erro ao cadastrar servidor: ' + (res.data ? res.data.message : 'Erro desconhecido'));
+                    }
                 } else {
-                    alert('Erro ao cadastrar servidor: ' + (res.data ? res.data.message : 'Erro desconhecido'));
+                    alert('Erro na requisição: resposta indefinida.');
                 }
-            } else {
-                alert('Erro na requisição: resposta indefinida.');
+            } catch (error) {
+                console.error("Erro ao enviar os dados:", error);
+                alert("Falha na comunicação com o servidor.");
             }
-        } catch (error) {
-            if (error.response) {
-                alert(`Erro no servidor: ${error.response.data.error || 'Erro desconhecido'}`);
-            } else if (error.request) {
-                alert("Nenhuma resposta do servidor.");
-            } else {
-                alert(`Erro na requisição: ${error.message}`);
-            }
-            console.error("Erro ao enviar os dados:", error);
-            alert("Falha na comunicação com o servidor.");
+        } else {
+            setErrors(validationErrors);
+            setShowErrorMessage(true);
         }
-        
+
         console.log(dataToSend); // Mostra o objeto que será enviado
     };
-    
-    
-    const handleBack = () => {
-        alert("Voltando...");
+
+    const validarHandler = (campo) => {
+        const error = validarCampo(campo, formData[campo]);
+        if (error) {
+            setErrors((prevErrors) => ({ ...prevErrors, [campo]: error }));
+        } else {
+            setErrors((prevErrors) => {
+                const { [campo]: removed, ...rest } = prevErrors;
+                return rest;
+            });
+        }
     };
 
     return (
-        <form className="form-servidor" onSubmit={envioHandler}>
-            <h3>Cadastro de Servidor</h3>
+        <form className="form-servidor" onSubmit={enviarHandler}>
+            <h3>Cadastro Servidor</h3>
+            <hr />
+            <br />
             <div>
-                <label className="form-item">Perfil:</label>
-                <br/>
+                <label htmlFor="perfil">Perfil:</label>
+                <br />
                 <div className="radio-container">
                     <label>
                         <input type="radio" value="professor" checked={formData.perfil === 'professor'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
                         <span>Professor</span>
                     </label>
                     <label>
                         <input type="radio" value="registroEscolar" checked={formData.perfil === 'registroEscolar'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
                         <span>Registros Escolares</span>
                     </label>
                     <label>
                         <input type="radio" value="gestaoEscolar" checked={formData.perfil === 'gestaoEscolar'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
                         <span>Gestão Escolar</span>
                     </label>
                     <label>
                         <input type="radio" value="coordenador" checked={formData.perfil === 'coordenador'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
                         <span>Coordenador</span>
                     </label>
                 </div>
             </div>
             <div className="form-item">
-                <label>Nome</label>
-                <input type="text" value={formData.nome} onChange={(e) => setFormData({...formData, nome: e.target.value})} required />
+                <label htmlFor="nome">Nome completo:</label>
+                <input type="text" value={formData.nome}
+                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })} required
+                    onBlur={() => validarHandler('nome')}
+                    placeholder="Nome"
+                    style={{ borderColor: errors.nome ? 'red' : '' }}
+                />
             </div>
 
             {/* Renderização condicional para CPF e Matrícula */}
-            {formData.perfil !== 'registroEscolar' && (
+            {formData.perfil !== 'registroEscolar' && formData.perfil !== 'gestaoEscolar' && (
                 <>
                     <div className="form-item">
                         <label>CPF</label>
-                        <input type="text" value={formData.cpf} onChange={(e) => setFormData({...formData, cpf: e.target.value})} required />
+                        <input type="text" value={formData.cpf}
+                            onChange={(e) => setFormData({ ...formData, cpf: e.target.value })} required
+                            onBlur={() => validarHandler('cpf')}
+                            placeholder="CPF"
+                            style={{ borderColor: errors.nome ? 'red' : '' }}
+                        />
                     </div>
                     <div className="form-item">
                         <label>Matrícula</label>
-                        <input type="text" value={formData.matricula} onChange={(e) => setFormData({...formData, matricula: e.target.value})} required />
+                        <input type="text" value={formData.matricula}
+                            onChange={(e) => setFormData({ ...formData, matricula: e.target.value })} required
+                            onBlur={() => validarHandler('matricula')}
+                            placeholder="Matrícula"
+                            style={{ borderColor: errors.nome ? 'red' : '' }}
+                        />
                     </div>
                 </>
             )}
 
             <div className="form-item">
-                <label>Email</label>
-                <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required />
+                <label>E-mail</label>
+                <input type="email" value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })} required
+                    onBlur={() => validarHandler('email')}
+                    placeholder="E-mail"
+                    style={{ borderColor: errors.nome ? 'red' : '' }}
+                />
             </div>
+            {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
             <div className='botaoContainer'>
                 <Button
                     width="30%"
                     color="#28A745"
                     text="Cadastrar"
-                    onClick={envioHandler}
+                    onClick={enviarHandler}
                 />
             </div>
         </form>
