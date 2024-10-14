@@ -7,67 +7,33 @@ from dependencias_app.serializers.cursoSerializer import CursoSerializer
 from dependencias_app.serializers.turmaSerializer import TurmaSerializer
 
 import logging
-
-# Inicializa o logger
 logger = logging.getLogger(__name__)
 
-@csrf_exempt
 @api_view(['POST'])
 def cadastrar_curso(request):
-    logger.info('Dados recebidos: %s', request.data)
+    # Extraia os dados da requisição
+    turmas_numeros = request.data.get('turmas', [])  # Lista de números das turmas
     serializer = CursoSerializer(data=request.data)
-    
+
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-    logger.error('Erros de validação: %s', serializer.errors)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        curso = serializer.save()  # Cria o curso
 
-@api_view(['GET'])
-def visualizar_cursos(request):
-    cursos = Curso.objects.all()
-    serializer = CursoSerializer(cursos, many=True)
-    return Response(serializer.data)
+        # Criar uma turma para cada número na lista
+        for numero in turmas_numeros:
+            turma_data = {
+                'numero': numero,
+                'curso': curso.id  # Vincula a turma ao curso recém-criado
+            }
+            turma_serializer = TurmaSerializer(data=turma_data)
 
+            if turma_serializer.is_valid():
+                turma_serializer.save()  # Salva a turma no banco de dados
+            else:
+                # Se houver erro na criação da turma, pode ser interessante retornar o erro
+                return Response(turma_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# import logging
-
-# logger = logging.getLogger(__name__)
-
-# @csrf_exempt
-# @api_view(['POST'])
-# def cadastrar_curso(request):
-#     logger.info('Dados recebidos: %s', request.data)
-#     serializer = CursoSerializer(data=request.data)
-    
-#     if serializer.is_valid():
-#         serializer.save()
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-#     logger.error('Erros de validação: %s', serializer.errors)
-#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# @api_view(['GET'])
-# def visualizar_cursos(request):
-#     cursos = Curso.objects.all()
-#     serializer = CursoSerializer(cursos, many=True)
-#     return Response(serializer.data)
+        return Response({'id': curso.id, 'message': 'Curso cadastrado com sucesso!'}, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

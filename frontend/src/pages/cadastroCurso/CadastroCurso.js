@@ -7,28 +7,26 @@ const CadastroCurso = () => {
   const [nome, setNome] = useState('');
   const [cargaHoraria, setCargaHoraria] = useState('');
   const [modalidade, setModalidade] = useState('');
-  const [turmas, setTurmas] = useState([]); // Estado das turmas a serem adicionadas
-  const [mensagem, setMensagem] = useState(null); // Para feedback visual
+  const [turmas, setTurmas] = useState([]);
+  const [mensagem, setMensagem] = useState(null); 
 
-  // Função para adicionar uma nova turma
   const addTurma = () => {
-    setTurmas([...turmas, { numero: '' }]); // Adiciona turma com campo "numero"
+    setTurmas([...turmas, { numero: '' }]);
   };
 
-  // Função para atualizar o número da turma
+
   const handleTurmaChange = (index, value) => {
     const newTurmas = [...turmas];
-    newTurmas[index].numero = value; // Atualiza "numero"
+    newTurmas[index].numero = value;
     setTurmas(newTurmas);
   };
 
-  // Função para remover uma turma
+
   const removeTurma = (index) => {
     const newTurmas = turmas.filter((_, i) => i !== index);
     setTurmas(newTurmas);
   };
 
-  // Função para enviar os dados do curso
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -38,19 +36,18 @@ const CadastroCurso = () => {
         nome,
         carga_horaria: cargaHoraria,
         modalidade,
-        turmas: turmasIds // Enviando os números das turmas
+        turmas: turmasIds 
       });
       console.log('Curso cadastrado com sucesso', response.data);
       
-      // Limpar o formulário após o sucesso
       setNome('');
       setCargaHoraria('');
       setModalidade('');
-      setTurmas([]); // Limpar turmas
-      setMensagem('Curso cadastrado com sucesso!'); // Exibir mensagem de sucesso
+      setTurmas([]);
+      setMensagem('Curso cadastrado com sucesso!');
     } catch (error) {
       console.error('Erro ao cadastrar curso', error.response ? error.response.data : error.message);
-      setMensagem('Erro ao cadastrar o curso.'); // Exibir mensagem de erro
+      setMensagem('Erro ao cadastrar o curso.');
     }
   };
 
