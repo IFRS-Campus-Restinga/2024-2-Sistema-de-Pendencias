@@ -19,8 +19,8 @@ def cadastrar_gestao_escolar(request):
         if not isinstance(grupo, Group): raise Exception('Perfil inválido')
 
         # adiciona o id do grupo correspondente ao perfil em um dicionario
-        data = request.data.copy()
-        data['grupo'] = grupo.id
+        data = request.data
+        data['perfil'] = grupo.id
 
         # passa o dicionario para o serializador
         serializer = GestaoEscolarSerializer(data=data)

@@ -19,8 +19,8 @@ def cadastrar_aluno(request):
         if not isinstance(grupo, Group): raise Exception('Perfil Inválido!')
         
         #  adiciona o id do grupo a data e envia para o serializador
-        data = request.data.copy()
-        data['grupo'] = grupo.id
+        data = request.data
+        data['perfil'] = grupo.id
         serializer = AlunoSerializer(data=request.data)
         
         # valida o serializador
