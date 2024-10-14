@@ -1,26 +1,26 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './CadastroCurso.css'; 
-import { FaPlusCircle, FaTrashAlt } from 'react-icons/fa';
+import React, { useState } from "react";
+import axios from "axios";
+import "./CadastroCurso.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const CadastroCurso = () => {
-  const [nome, setNome] = useState('');
-  const [cargaHoraria, setCargaHoraria] = useState('');
-  const [modalidade, setModalidade] = useState('');
+  const [nome, setNome] = useState("");
+  const [cargaHoraria, setCargaHoraria] = useState("");
+  const [modalidade, setModalidade] = useState("");
   const [turmas, setTurmas] = useState([]);
-  const [mensagem, setMensagem] = useState(null); 
+  const [mensagem, setMensagem] = useState(null);
 
   const addTurma = () => {
-    setTurmas([...turmas, { numero: '' }]);
+    setTurmas([...turmas, { numero: "" }]);
   };
-
 
   const handleTurmaChange = (index, value) => {
     const newTurmas = [...turmas];
     newTurmas[index].numero = value;
     setTurmas(newTurmas);
   };
-
 
   const removeTurma = (index) => {
     const newTurmas = turmas.filter((_, i) => i !== index);
@@ -30,37 +30,44 @@ const CadastroCurso = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const turmasIds = turmas.map(turma => turma.numero).filter(numero => numero.trim() !== ''); // Obter os números das turmas
+      const turmasIds = turmas
+        .map((turma) => turma.numero)
+        .filter((numero) => numero.trim() !== ""); // Obter os números das turmas
 
-      const response = await axios.post('http://127.0.0.1:8000/api/cadastrar-curso/', {
-        nome,
-        carga_horaria: cargaHoraria,
-        modalidade,
-        turmas: turmasIds 
-      });
-      console.log('Curso cadastrado com sucesso', response.data);
-      
-      setNome('');
-      setCargaHoraria('');
-      setModalidade('');
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/cadastrar-curso/",
+        {
+          nome,
+          carga_horaria: cargaHoraria,
+          modalidade,
+          turmas: turmasIds,
+        }
+      );
+      console.log("Curso cadastrado com sucesso", response.data);
+
+      setNome("");
+      setCargaHoraria("");
+      setModalidade("");
       setTurmas([]);
-      setMensagem('Curso cadastrado com sucesso!');
+      setMensagem("Curso cadastrado com sucesso!");
     } catch (error) {
-      console.error('Erro ao cadastrar curso', error.response ? error.response.data : error.message);
-      setMensagem('Erro ao cadastrar o curso.');
+      console.error(
+        "Erro ao cadastrar curso",
+        error.response ? error.response.data : error.message
+      );
+      setMensagem("Erro ao cadastrar o curso.");
     }
   };
 
   return (
-    <form className='form' onSubmit={handleSubmit}>
+    <form className="form" onSubmit={handleSubmit}>
       <h1>Cadastro Curso</h1>
-
-      {mensagem && <p className='mensagem'>{mensagem}</p>} {/* Exibir mensagem de feedback */}
-
-      <div className='modalidade-container'>
+      {mensagem && <p className="mensagem">{mensagem}</p>}{" "}
+      {/* Exibir mensagem de feedback */}
+      <div className="modalidade-container">
         <h4>Modalidade:</h4>
-        <div className='containerOpcoes'>
-          <label className='modalidadeLabel'>
+        <div className="containerOpcoes">
+          <label className="modalidadeLabel">
             <input
               type="radio"
               name="modalidade"
@@ -69,7 +76,7 @@ const CadastroCurso = () => {
             />
             ProEja
           </label>
-          <label className='modalidadeLabel'>
+          <label className="modalidadeLabel">
             <input
               type="radio"
               name="modalidade"
@@ -80,8 +87,7 @@ const CadastroCurso = () => {
           </label>
         </div>
       </div>
-
-      <div className='input-group'>
+      <div className="input-group">
         <label htmlFor="nome_curso">Nome do Curso:</label>
         <input
           type="text"
@@ -92,8 +98,7 @@ const CadastroCurso = () => {
           onChange={(e) => setNome(e.target.value)}
         />
       </div>
-
-      <div className='input-group'>
+      <div className="input-group">
         <label htmlFor="carga_horaria">Carga Horária:</label>
         <input
           type="text"
@@ -104,22 +109,19 @@ const CadastroCurso = () => {
           onChange={(e) => setCargaHoraria(e.target.value)}
         />
       </div>
-
-      <div className='add-turma'>
-        <button
-          type="button"
-          onClick={addTurma}
-          className="add-button"
-        >
-          <FaPlusCircle size={24} style={{ color: '#28A745' }} />
+      <div className="add-turma">
+        <button type="button" onClick={addTurma} className="add-button">
+          <FontAwesomeIcon
+            icon={faPlusCircle}
+            style={{ color: "#28A745", cursor: "pointer", fontSize: "24px" }}
+          />
           <span>Adicionar Turma</span>
         </button>
       </div>
-
       {turmas.length > 0 && (
-        <div className='turmas-lista'>
+        <div className="turmas-lista">
           <h4>Turmas a serem adicionadas:</h4>
-          <table className='turmas-tabela'>
+          <table className="turmas-tabela">
             <thead>
               <tr>
                 <th>Número da Turma</th>
@@ -133,17 +135,21 @@ const CadastroCurso = () => {
                     <input
                       type="text"
                       className="turmaInput"
-                      value={turma.numero} 
+                      value={turma.numero}
                       onChange={(e) => handleTurmaChange(index, e.target.value)}
                       required
                       placeholder="Digite o número da turma"
                     />
                   </td>
                   <td>
-                    <FaTrashAlt
-                      size={20}
-                      style={{ cursor: 'pointer', color: 'red' }}
-                      onClick={() => removeTurma(index)}
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      style={{
+                        cursor: "pointer",
+                        color: "red",
+                        fontSize: "20px",
+                      }}
+                      onClick={() => console.log("Ícone clicado!")} // Substitua pela sua função
                     />
                   </td>
                 </tr>
@@ -152,17 +158,15 @@ const CadastroCurso = () => {
           </table>
         </div>
       )}
-
       <button
         type="submit"
         className="submitButton"
-        style={{ marginTop: '20px' }}
+        style={{ marginTop: "20px" }}
       >
         Cadastrar Curso
       </button>
     </form>
   );
-  
 };
 
 export default CadastroCurso;
