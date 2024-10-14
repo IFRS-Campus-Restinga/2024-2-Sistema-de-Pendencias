@@ -1,12 +1,18 @@
 h3 {
     font-size: 35px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
+    text-align: center;
 }
 
 .form-servidor {
+    background-color: white;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    width: 60%;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .botaoContainer {
@@ -27,9 +33,42 @@ label {
 
 input,
 select {
-    padding: 8px;
-    border-radius: 4px;
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    font-size: 16px;
     border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+select {
+    appearance: none;
+    background: #fff url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-caret-down-fill" viewBox="0 0 16 16"><path d="M7.247 11.14L2.451 6.344c-.58-.58-.195-1.364.65-1.364h9.798c.845 0 1.23.784.65 1.364L8.753 11.14a.733.733 0 0 1-1.06 0z"/></svg>') no-repeat right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+span {
+    margin-left: 10px;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+    font-size: 14px;
+}
+  
+.radio-container {
+  display: flex;
+  align-items: center;
+  /* Alinha os radio buttons e o texto verticalmente */
+  gap: 2%;
+  /* Espaço horizontal entre cada radio button */
+  margin-bottom: 10px;
+  margin-top: -10px;
 }
 
 .radio-container label {
@@ -40,3 +79,9 @@ select {
     white-space: nowrap;
     /* Garante que o texto não quebre em várias linhas */
 }
+
+input::placeholder {
+    color: #aaa;
+    font-size: 14px; 
+}
+
