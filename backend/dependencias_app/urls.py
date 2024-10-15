@@ -10,6 +10,7 @@ from dependencias_app.views import disciplinaViews
 from dependencias_app.views import turmaViews
 #from dependencias_app.views import listarTurmasViews
 from dependencias_app.views import registroEscolarViews
+from dependencias_app.views import coordenadorViews
 
 urlpatterns = [
     path('teste', teste.view_teste),
@@ -17,6 +18,7 @@ urlpatterns = [
     path('cadastrar-curso/', cursoViews.cadastrar_curso),
     path('cadastrar-turma/', turmaViews.cadastrar_turma),
     path('cadastrar-registro-escolar/', registroEscolarViews.cadastrar_registro_escolar),
+    path('cadastrar-coordenador/', coordenadorViews.cadastrarCoordenador),
     path('status', teste.get_status),
 
 # URLS Disciplinas

@@ -87,18 +87,19 @@ export const validarCPF = (cpf) => {
 export const validarFormulario = (formData) => {
   const erros = {};
 
+  const perfil = formData.perfil;
+  if (perfil === 'Professor'){
+    const erroMatricula = validarMatricula(formData.matricula);
+    if (erroMatricula) erros.matricula = erroMatricula;
+
+    const erroCpf = validarCPF(formData.cpf);
+    if (erroCpf) erros.cpf = erroCpf;
+  }
   const erroNome = validarNome(formData.nome);
   if (erroNome) erros.nome = erroNome;
 
   const erroEmail = validarEmail(formData.email);
   if (erroEmail) erros.email = erroEmail;
-
-  const erroMatricula = validarMatricula(formData.matricula);
-  if (erroMatricula) erros.matricula = erroMatricula;
-
-  const erroCpf = validarCPF(formData.cpf);
-  if (erroCpf) erros.cpf = erroCpf;
-
   return erros;
 };
 

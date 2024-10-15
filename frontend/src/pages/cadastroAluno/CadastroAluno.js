@@ -1,3 +1,7 @@
+import Footer from "../../components/Footer/Footer";
+import Header from "../../components/Header/Header";
+import PageContainer from "../../components/PageContainer/PageContainer";
+import "./CadastroAluno.css";
 import Button from "../../components/Button/Button";
 import axios from 'axios';
 import React, { useState } from 'react';
