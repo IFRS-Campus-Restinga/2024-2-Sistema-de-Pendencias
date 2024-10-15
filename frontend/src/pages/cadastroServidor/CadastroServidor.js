@@ -120,7 +120,7 @@ const CadastroServidor = () => {
             </div>
 
             {/* Renderização condicional para CPF e Matrícula */}
-            {formData.perfil !== 'RegistroEscolar' && formData.perfil !== 'Coordenador' (
+            {formData.perfil !== 'RegistroEscolar' && formData.perfil !== 'Coordenador' && formData.perfil !== "GestaoEscolar" ? (
                 <>
                     <div className="form-item">
                         <label>CPF</label>
@@ -141,6 +141,8 @@ const CadastroServidor = () => {
                         />
                     </div>
                 </>
+            ) : (
+                <></>
             )}
 
             <div className="form-item">
