@@ -5,6 +5,7 @@ import CadastroServidor from './pages/cadastroServidor/CadastroServidor'
 import CadastroAluno from './pages/cadastroAluno/CadastroAluno'
 import HomeGestao from './pages/home/HomeGestao'
 import Saudacao from './components/Saudacao/Saudacao'
+import ListarServidor from './pages/listarServidor/ListarServidor'
 
 const router = createBrowserRouter([
     {
@@ -31,7 +32,11 @@ const router = createBrowserRouter([
             {
                 path: '/secao/:idUsuario/cadastroAluno',
                 element: <CadastroAluno />
-            }
+            },
+            {
+                path: '/secao/:idUsuario/listaServidor',
+                element: <ListarServidor />
+            },
             // Adicionar outros caminhos que vão derivar da tela de home após autenticação
         ]
 

@@ -1,5 +1,5 @@
 header {
-    background-color: #28A745;
+    background-color: #006b3f;
     color: white;
     padding: 6px 10px;
     display: flex;
@@ -38,12 +38,15 @@ a {
 .logo {
     max-width: 100%;
     height: auto;
-    width: 180px; 
-    margin-left: 30px; 
+    width: 230px; 
 }
 
-.header{
+.header {
+    margin: 0;
     display: flex;
+    align-items: center; 
+    height: 100%;
+    padding-top: 10%;
 }
 
 #header-title{
@@ -66,6 +69,7 @@ a {
     height: 30px;
     margin-right: 25px;
 }
+
 
 
 @media (max-width: 600px) {
@@ -100,3 +104,4 @@ a {
         margin-left: 50px;
     }
 }
+

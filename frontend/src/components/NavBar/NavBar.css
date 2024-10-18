@@ -6,31 +6,41 @@
     align-self: flex-start;
     align-items: center;
     padding: 5px;
-    background-color: rgba(#d9d9d9, 0.1);
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 0px 3px rgba(0, 0, 0, 0.2);
 }
 
 .navItemContainer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    padding: 0 0px;
+    position: relative;
 }
 
-.navTexto {
+.navTexto, .dropdown-titulo {
     color: #000000;
     text-align: center;
     width: max-content;
     padding: 3px;
-    border-radius: 15px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-left: 10px;
+    border-radius: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-left: 5px;
     display: flex;
-    text-align: center;
+    align-items: center;
+    justify-content: center;
 }
 
-.navTexto:hover {
-    background-color: #28A745;
-    transition: ease-in;
+.navTexto:hover, .dropdown-titulo:hover {
+    color: #fff;
+    background-color: #006b3f;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.icone {
+    height: 30px;
+    width: 30px;
 }
 
 .titulo {
@@ -46,5 +56,35 @@ hr {
     width: 50%;
     justify-self: center;
     align-self: center;
-    border: 1px #28A745 solid;
+    border: 1px #00420c solid;
+}
+
+/* Novo estilo para garantir que o dropdown seja integrado */
+.dropdown-conteudo {
+    position: absolute;
+    top: 40px; /* Alinha o dropdown logo abaixo do item da navbar */
+    left: 0;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    min-width: 160px;
+    border-radius: 5px;
+    border: 1px solid black;
+    padding: 10px 0;
+}
+
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f1f1;
+}
+
+.link {
+    font-weight: 400;
+    color: black;
 }

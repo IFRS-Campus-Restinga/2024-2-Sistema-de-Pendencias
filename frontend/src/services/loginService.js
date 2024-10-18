@@ -13,3 +13,5 @@ export const loginService = {
 
     }
 }
+
+export default loginService

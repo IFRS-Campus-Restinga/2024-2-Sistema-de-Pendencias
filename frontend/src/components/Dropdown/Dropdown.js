@@ -10,15 +10,15 @@ const Dropdown = ({ titulo, itens }) => {
   };
 
   return (
-    <div className="dropdown">
+    <div className="navItemContainer">
       <button className="dropdown-titulo" onMouseEnter={alternarDropdown}>
         {titulo}
       </button>
       {aberto && (
         <div className="dropdown-conteudo" onMouseLeave={alternarDropdown}>
           {itens.map((item, index) => (
-            <Link to={item.link} className='link'>
-              <div key={index} className="dropdown-item">
+            <Link key={index} to={item.link} className="link">
+              <div className="dropdown-item">
                 {item.name}
               </div>
             </Link>

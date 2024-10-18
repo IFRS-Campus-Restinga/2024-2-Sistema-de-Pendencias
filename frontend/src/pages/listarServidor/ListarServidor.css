@@ -1,0 +1,144 @@
+.container-listar-servidor {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  max-width: 60%;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-height: 100px;
+  overflow-x: auto;
+}
+
+h3 {
+  margin-bottom: 5px;
+}
+
+hr {
+  margin-bottom: 30px;
+}
+
+table {
+  width: auto;
+  border-collapse: collapse;
+  margin-top: 20px;
+  table-layout: auto;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr:nth-child(odd) {
+  background-color: white;
+}
+
+th,
+td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+  border-left: none;
+  border-right: none;
+}
+
+th {
+  cursor: pointer;
+  background-color: #006b3f;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.ordenadores {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.ordenadores span {
+  cursor: pointer;
+}
+
+.filtro-nome {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.filtro-nome label {
+  font-weight: bold;
+  margin-right: 10px;
+  color: #333;
+}
+
+.filtro-periodo {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.filtro-periodo label {
+  margin-bottom: 5px;
+}
+
+.filtro-periodo div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+input[type="text"],
+input[type="date"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 200px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s;
+  height: 36px;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus {
+  border-color: #006b3f;
+  outline: none;
+}
+
+.botoes-busca {
+  margin-bottom: 20px;
+}
+
+.botoes-busca button {
+  margin-right: 10px;
+}
+
+button {
+  padding: 8px 12px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.seta {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+}
+
+.seta-baixo {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #ffffff;
+}
+
+.seta-cima {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #ffffff;
+}

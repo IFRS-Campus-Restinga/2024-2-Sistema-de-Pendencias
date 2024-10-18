@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import logo from "../../assets/logo-ifrs.png";
 import PageContainer from "../../components/PageContainer/PageContainer";
-import GoogleLoginButton from "../../components/GoogleLoginButton/GoogleLoginButton"; // Certifique-se de que esse caminho esteja correto
+import GoogleLoginButton from "../../components/GoogleLoginButton/GoogleLoginButton";
 import "./LoginPage.css";
 import { loginService } from "../../services/loginService";
 import { useNavigate } from "react-router-dom";

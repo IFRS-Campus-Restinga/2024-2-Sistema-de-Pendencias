@@ -4,8 +4,7 @@ from dependencias_app.views import teste
 from dependencias_app.views import alunoViews
 from dependencias_app.views import cursoViews
 from dependencias_app.views import disciplinaViews
-
-
+from dependencias_app.views import servidorViews
 
 from dependencias_app.views import turmaViews
 #from dependencias_app.views import listarTurmasViews
@@ -29,4 +28,5 @@ urlpatterns = [
     path('disciplina/<int:id>/delete/', disciplinaViews.delete_disciplina, name='delete_disciplina'),  # Deletar uma Disciplina
 
 
+    path('listar-servidores/', servidorViews.listar_servidores, name='listar_servidores'),
 ]
