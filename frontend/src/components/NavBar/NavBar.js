@@ -85,6 +85,10 @@ const NavBar = () => {
                 {
                   name: "Cadastro Servidor",
                   link: "/secao/123456/cadastroServidor"
+                },
+                {
+                  name: "Lista de Servidores",
+                  link: "/secao/123456/listaServidor"
                 }
               ]}/>  
           </div>

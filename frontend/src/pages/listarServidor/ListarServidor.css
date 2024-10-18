@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   width: auto;
-  max-width: 60%;
+  max-width: 80%;
   margin: 50px auto;
   padding: 20px;
   border-radius: 8px;
@@ -17,7 +17,7 @@ h3 {
 }
 
 hr {
-  margin-bottom: 30px;
+  margin-bottom: 35px;
 }
 
 table {
@@ -35,6 +35,18 @@ tr:nth-child(odd) {
   background-color: white;
 }
 
+
+th {
+  cursor: pointer;
+  background-color: #006b3f;
+  color: white;
+  position: sticky;
+  width: auto;
+  top: 0;
+  z-index: 10;
+}
+
+
 th,
 td {
   padding: 10px;
@@ -44,14 +56,6 @@ td {
   border-right: none;
 }
 
-th {
-  cursor: pointer;
-  background-color: #006b3f;
-  color: white;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
 
 .ordenadores {
   display: flex;
@@ -70,6 +74,7 @@ th {
 }
 
 .filtro-nome label {
+  margin-bottom: 8px;
   font-weight: bold;
   margin-right: 10px;
   color: #333;
@@ -141,4 +146,17 @@ button {
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-bottom: 5px solid #ffffff;
+}
+
+.icone-container img {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  margin: 0 10px;
+}
+
+.Toastify__toast--success .Toastify__toast-icon {
+  background-color: white; /* Cor de fundo branca */
+  color: #006b3f; /* Cor do ícone verde */
+  border-radius: 50%; /* Mantém o formato circular */
 }

@@ -5,6 +5,8 @@ from dependencias_app.views import alunoViews
 from dependencias_app.views import cursoViews
 from dependencias_app.views import disciplinaViews
 from dependencias_app.views import servidorViews
+from dependencias_app.views.servidorViews import deletar_servidor
+
 
 from dependencias_app.views import turmaViews
 #from dependencias_app.views import listarTurmasViews
@@ -29,4 +31,5 @@ urlpatterns = [
 
 
     path('listar-servidores/', servidorViews.listar_servidores, name='listar_servidores'),
+    path('deletar-servidor/<int:id>/', deletar_servidor, name='deletar_servidor'),
 ]
