@@ -6,6 +6,7 @@ from dependencias_app.views import cursoViews
 from dependencias_app.views import disciplinaViews
 from dependencias_app.views import servidorViews
 from dependencias_app.views.servidorViews import deletar_servidor
+from dependencias_app.views import gestaoEscolarViews
 
 
 from dependencias_app.views import turmaViews
@@ -18,6 +19,7 @@ urlpatterns = [
     path('cadastrar-aluno/', alunoViews.cadastrar_aluno),
     path('cadastrar-curso/', cursoViews.cadastrar_curso),
     path('cadastrar-turma/', turmaViews.cadastrar_turma),
+    path('cadastrar-gestao-escolar/', gestaoEscolarViews.cadastrar_gestao_escolar),
     path('cadastrar-registro-escolar/', registroEscolarViews.cadastrar_registro_escolar),
     path('cadastrar-coordenador/', coordenadorViews.cadastrarCoordenador),
     path('status', teste.get_status),
