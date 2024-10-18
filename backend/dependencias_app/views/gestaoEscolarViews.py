@@ -14,11 +14,16 @@ def cadastrar_gestao_escolar(request):
     logger.info('Dados recebidos: %s', request.data)
     try:
         # extrai o nome do perfil da requisição
-        grupo = Group.objects.get(name=request.data.get('perfil', None))
+        perfil_nome = request.data.get('perfil', None)
+        if not perfil_nome:
+            raise ValueError("O campo 'perfil' é obrigatório.")
 
-        # valida o perfil
-        if not isinstance(grupo, Group): raise Exception('Perfil inválido')
-
+        # tenta encontrar o grupo pelo nome
+        try:
+            grupo = Group.objects.get(name=perfil_nome)
+        except Group.DoesNotExist:
+            raise ValueError(f"Perfil '{perfil_nome}' não encontrado.")
+        
         # adiciona o id do grupo correspondente ao perfil em um dicionario
         data = request.data
         data['perfil'] = grupo.id
@@ -27,7 +32,7 @@ def cadastrar_gestao_escolar(request):
         serializer = GestaoEscolarSerializer(data=data)
 
         # valida os dados do serializador
-        if not serializer.is_valid(): raise Exception(f'{serializer.error_messages}')
+        if not serializer.is_valid(): raise Exception(f'{serializer.erros}')
 
         serializer.save()
         # retorna uma resposta positiva
