@@ -34,4 +34,8 @@ urlpatterns = [
 
     path('listar-servidores/', servidorViews.listar_servidores, name='listar_servidores'),
     path('deletar-servidor/<int:id>/', deletar_servidor, name='deletar_servidor'),
+
+
+    path('listar-turmas/', turmaViews.listar_turmas, name='listar_turmas'),
+    path('listar-cursos/', cursoViews.listar_cursos, name='listar_cursos'),
 ]
