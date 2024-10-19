@@ -4,6 +4,7 @@ import "./CadastroServidor.css";
 import Button from '../../components/Button/Button';
 import { validarFormulario, validarCampo } from './validacoes';
 import 'react-toastify/dist/ReactToastify.css';
+import InputMask from 'react-input-mask';
 
 const CadastroServidor = () => {
     const [formData, setFormData] = useState({
@@ -21,6 +22,8 @@ const CadastroServidor = () => {
         e.preventDefault();
         const validationErrors = validarFormulario(formData);
 
+        const cpfSemFormatacao = formData.cpf.replace(/\D/g, '');
+
         // Crie um objeto a ser enviado, incluindo apenas os campos necessários
         const { perfil, nome, email, cpf, matricula } = formData;
         const dataToSend = {
@@ -31,7 +34,7 @@ const CadastroServidor = () => {
 
         // Adicione cpf e matricula apenas se o perfil não for 'registroEscolar' ou 'gestaoEscolar'
         if (perfil !== 'RegistroEscolar' && perfil !== 'GestaoEscolar' && perfil !== 'Coordenador') {
-            dataToSend.cpf = cpf;
+            dataToSend.cpf = cpfSemFormatacao;
             dataToSend.matricula = matricula;
         }
 
@@ -73,7 +76,14 @@ const CadastroServidor = () => {
     };
 
     const validarHandler = (campo) => {
-        const error = validarCampo(campo, formData[campo]);
+        let valorCampo = formData[campo];
+
+        // Remover formatação do CPF antes de validar
+        if (campo === 'cpf') {
+            valorCampo = valorCampo.replace(/\D/g, '');
+        }
+
+        const error = validarCampo(campo, valorCampo);
         if (error) {
             setErrors((prevErrors) => ({ ...prevErrors, [campo]: error }));
         } else {
@@ -135,11 +145,14 @@ const CadastroServidor = () => {
                 <>
                     <div className="form-item">
                         <label>CPF</label>
-                        <input type="text" value={formData.cpf}
-                            onChange={(e) => setFormData({ ...formData, cpf: e.target.value })} required
+                        <InputMask
+                            mask="999.999.999-99" // Formato do CPF
+                            value={formData.cpf}
+                            onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+                            required
                             onBlur={() => validarHandler('cpf')}
                             placeholder="CPF"
-                            style={{ borderColor: errors.nome ? 'red' : '' }}
+                            style={{ borderColor: errors.cpf ? 'red' : '' }}
                         />
                         {errors.cpf && <p className="erros">{errors.cpf}</p>}
                     </div>
