@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from dependencias_app.models.curso import Curso
 from dependencias_app.serializers.cursoSerializer import CursoSerializer
 from dependencias_app.serializers.turmaSerializer import TurmaSerializer
+from django.http import JsonResponse
 
 import logging
 logger = logging.getLogger(__name__)
@@ -36,4 +37,7 @@ def cadastrar_curso(request):
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+def listar_cursos(request):
+    cursos = Curso.objects.all().values('id', 'nome')
+    return JsonResponse(list(cursos), safe=False)
 
