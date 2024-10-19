@@ -3,9 +3,14 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import "./CadastroCurso.css";
+import {
+  validarCargaHoraria,
+  validarModalidade,
+  validarFormularioCurso,
+} from "./validacoes"; // Importar as validações
 
 const CadastroCurso = () => {
-  const [nome, setNome] = useState("");
+  const [nome, setNome] = useState(""); // Nome do curso
   const [cargaHoraria, setCargaHoraria] = useState("");
   const [modalidade, setModalidade] = useState("");
   const [turmas, setTurmas] = useState([]);
@@ -14,25 +19,16 @@ const CadastroCurso = () => {
   const [error, setError] = useState(null);
   const [cursoSelecionado, setCursoSelecionado] = useState(""); // Para selecionar o curso
   const [cursos, setCursos] = useState([]); // Para armazenar os cursos disponíveis
+  const [formErros, setFormErros] = useState({}); // Erros do formulário
 
-  // Fetching cursos existentes
-  useEffect(() => {
-    const fetchCursos = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/api/listar-cursos/");
-        // Remover duplicatas
-        const cursosUnicos = response.data.filter(
-          (curso, index, self) =>
-            index === self.findIndex((c) => c.id === curso.id)
-        );
-        setCursos(cursosUnicos);
-      } catch (error) {
-        setError("Erro ao carregar os cursos.");
-      }
-    };
-
-    fetchCursos();
-  }, []);
+  // Cursos disponíveis
+  const cursosDisponiveis = [
+    "eletrônica",
+    "lazer",
+    "informática",
+    "comércio",
+    "agroecologia",
+  ];
 
   // Fetching turmas based on the selected course
   useEffect(() => {
@@ -69,6 +65,24 @@ const CadastroCurso = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validar o formulário antes do envio
+    const formData = {
+      nome,
+      cargaHoraria,
+      modalidade,
+      turmas,
+    };
+
+    const erros = validarFormularioCurso(formData);
+
+    if (Object.keys(erros).length > 0) {
+      setFormErros(erros); // Exibir erros se houver
+      return;
+    } else {
+      setFormErros({}); // Limpar erros se o formulário estiver correto
+    }
+
     try {
       const turmasIds = turmas
         .map((turma) => turma.numero)
@@ -83,8 +97,10 @@ const CadastroCurso = () => {
           turmas: turmasIds,
         }
       );
+
       console.log("Curso cadastrado com sucesso", response.data);
 
+      // Resetando campos
       setNome("");
       setCargaHoraria("");
       setModalidade("");
@@ -95,21 +111,54 @@ const CadastroCurso = () => {
       const updatedTurmas = await axios.get("http://127.0.0.1:8000/api/listar-turmas/");
       setTurmasExistentes(updatedTurmas.data);
     } catch (error) {
-      console.error(
-        "Erro ao cadastrar curso",
-        error.response ? error.response.data : error.message
-      );
+      console.error("Erro ao cadastrar curso", error.response ? error.response.data : error.message);
       setMensagem("Erro ao cadastrar o curso.");
     }
   };
 
   return (
     <div className="cadastro-curso-container">
-      {/* Formulário de Cadastro de Curso */}
       <form className="form" onSubmit={handleSubmit}>
         <h1>Cadastro Curso</h1>
         {mensagem && <p className="mensagem">{mensagem}</p>}
         {error && <p className="error">{error}</p>}
+
+        <div className="input-group">
+          <label htmlFor="nome_curso">Nome do Curso:</label>
+          <select
+            name="nome_curso"
+            id="nome_curso"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            className={formErros.nome ? "input-error" : ""}
+            required
+          >
+            <option value="">Selecione um curso</option>
+            {cursosDisponiveis.map((curso) => (
+              <option key={curso} value={curso}>
+                {curso}
+              </option>
+            ))}
+          </select>
+          {formErros.nome && <span className="error-message">{formErros.nome}</span>}
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="carga_horaria">Carga Horária:</label>
+          <input
+            type="text"
+            name="carga_horaria"
+            id="carga_horaria"
+            value={cargaHoraria}
+            onChange={(e) => setCargaHoraria(e.target.value)}
+            className={formErros.carga_horaria ? "input-error" : ""}
+            required
+            placeholder="Formato: 40:00"
+          />
+          {formErros.carga_horaria && (
+            <span className="error-message">{formErros.carga_horaria}</span>
+          )}
+        </div>
 
         <div className="modalidade-container">
           <h4>Modalidade:</h4>
@@ -120,6 +169,7 @@ const CadastroCurso = () => {
                 name="modalidade"
                 value="PROEJA"
                 onChange={(e) => setModalidade(e.target.value)}
+                required
               />
               ProEja
             </label>
@@ -127,36 +177,16 @@ const CadastroCurso = () => {
               <input
                 type="radio"
                 name="modalidade"
-                value="EMI"
+                value="INTEGRADO"
                 onChange={(e) => setModalidade(e.target.value)}
+                required
               />
               Integrado
             </label>
           </div>
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="nome_curso">Nome do Curso:</label>
-          <input
-            type="text"
-            name="nome_curso"
-            id="nome_curso"
-            value={nome}
-            required
-            onChange={(e) => setNome(e.target.value)}
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="carga_horaria">Carga Horária:</label>
-          <input
-            type="text"
-            name="carga_horaria"
-            id="carga_horaria"
-            value={cargaHoraria}
-            required
-            onChange={(e) => setCargaHoraria(e.target.value)}
-          />
+          {formErros.modalidade && (
+            <span className="error-message">{formErros.modalidade}</span>
+          )}
         </div>
 
         <div className="add-turma">
@@ -185,12 +215,19 @@ const CadastroCurso = () => {
                     <td>
                       <input
                         type="text"
-                        className="turmaInput"
+                        className={`turmaInput ${
+                          formErros.turmas && formErros.turmas[index] ? "input-error" : ""
+                        }`}
                         value={turma.numero}
                         onChange={(e) => handleTurmaChange(index, e.target.value)}
                         required
                         placeholder="Digite o número da turma"
                       />
+                      {formErros.turmas && formErros.turmas[index] && (
+                        <span className="error-message">
+                          {formErros.turmas[index]}
+                        </span>
+                      )}
                     </td>
                     <td>
                       <FontAwesomeIcon
@@ -215,7 +252,6 @@ const CadastroCurso = () => {
         </button>
       </form>
 
-      {/* Seção de Listagem de Turmas Existentes após o formulário */}
       <div className="turmas-selecionadas">
         <h2>Listar Turmas por Curso</h2>
         <div className="input-group">
