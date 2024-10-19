@@ -40,6 +40,16 @@ const CadastroServidor = () => {
             try {
                 const res = await servidorService.create(dataToSend, 'csrftoken');
 
+                // Limpar o formulário após o sucesso
+                setFormData({
+                    perfil: '',
+                    nome: '',
+                    cpf: '',
+                    matricula: '',
+                    email: '',
+                });
+                setErrors({}); // Limpar os erros também
+
                 if (res && res.status) {
                     console.log(res);
                     if (res.status === 200 || res.status === 201) {
@@ -85,25 +95,25 @@ const CadastroServidor = () => {
                 <div className="radio-container">
                     <label>
                         <input type="radio" value="Professor" checked={formData.perfil === 'Professor'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
                         <span>Professor</span>
                     </label>
                     <label>
                         <input type="radio" value="RegistroEscolar" checked={formData.perfil === 'RegistroEscolar'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
                         <span>Registros Escolares</span>
                     </label>
                     <label>
                         <input type="radio" value="GestaoEscolar" checked={formData.perfil === 'GestaoEscolar'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
                         <span>Gestão Escolar</span>
                     </label>
                     <label>
                         <input type="radio" value="Coordenador" checked={formData.perfil === 'Coordenador'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
                         <span>Coordenador</span>
                     </label>
@@ -117,6 +127,7 @@ const CadastroServidor = () => {
                     placeholder="Nome"
                     style={{ borderColor: errors.nome ? 'red' : '' }}
                 />
+                {errors.nome && <p className="erros">{errors.nome}</p>}
             </div>
 
             {/* Renderização condicional para CPF e Matrícula */}
@@ -130,6 +141,7 @@ const CadastroServidor = () => {
                             placeholder="CPF"
                             style={{ borderColor: errors.nome ? 'red' : '' }}
                         />
+                        {errors.cpf && <p className="erros">{errors.cpf}</p>}
                     </div>
                     <div className="form-item">
                         <label>Matrícula</label>
@@ -139,6 +151,7 @@ const CadastroServidor = () => {
                             placeholder="Matrícula"
                             style={{ borderColor: errors.nome ? 'red' : '' }}
                         />
+                        {errors.matricula && <p className="erros">{errors.matricula}</p>}
                     </div>
                 </>
             ) : (
@@ -153,6 +166,7 @@ const CadastroServidor = () => {
                     placeholder="E-mail"
                     style={{ borderColor: errors.nome ? 'red' : '' }}
                 />
+                {errors.email && <p className="erros">{errors.email}</p>}
             </div>
             {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
             <div className='botaoContainer'>
