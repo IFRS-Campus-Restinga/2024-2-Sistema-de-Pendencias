@@ -17,6 +17,7 @@ h3 {
 }
 
 hr {
+  margin: 0 auto 35px auto;
   margin-bottom: 35px;
 }
 
@@ -77,7 +78,6 @@ td {
   margin-bottom: 8px;
   font-weight: bold;
   margin-right: 10px;
-  color: #333;
 }
 
 .filtro-periodo {

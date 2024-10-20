@@ -1,87 +1,27 @@
-.dropdown {
-  position: relative;
-}
-
 .navItemContainer {
-  padding-top: 14px;
+  padding-top: 10px;
 }
 
 .dropdown-titulo {
   background-color: transparent;
-  color: #000000;
-  text-align: center;
-  width: max-content;
-  border-radius: 2px;
-  margin-left: 10px;
-  display: flex;
-  text-align: center;
-
   font-weight: bold;
   font-size: 1rem;
-  border-radius: 2px;
+  cursor: pointer;
   margin-left: 10px;
-}
-
-.dropdown-titulo:hover {
-  background-color: #006b3f;
-  color: #fff;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  cursor: pointer;
+  height: 40px;
+  line-height: 40px;
 }
 
 .dropdown-conteudo {
   position: absolute;
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  min-width: 160px;
-  border-radius: 5px;
-  border: 1px solid black;
-  margin-top: 5px;
-}
-
-.dropdown-item {
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 5px;
-  width: 100%;
-}
-
-.dropdown-item:hover {
-  background-color: #f1f1f1;
-}
-
-.icone-flecha {
-  margin-left: 15px;
-}
-
-.link {
-  font-weight: 400;
-  color: black;
-}
-
-
-@media (max-width: 600px) {
-  .dropdown-titulo {
-    font-size: 14px;
-  }
-
-  .dropdown-item {
-    font-size: 14px;
-  }
-}
-
-/* Novo estilo para garantir que o dropdown seja integrado */
-.dropdown-conteudo {
-  position: absolute;
-  top: 40px; /* Alinha o dropdown logo abaixo do item da navbar */
+  top: 50px; 
   left: 0;
-  background-color: white;
+  background-color: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1;
   min-width: 160px;
   border-radius: 5px;
-  border: 1px solid black;
+  border: 1px solid #000;
   padding: 10px 0;
 }
 
@@ -92,11 +32,15 @@
   width: 100%;
 }
 
-.dropdown-item:hover {
-  background-color: #f1f1f1;
-}
-
 .link {
   font-weight: 400;
   color: black;
 }
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .dropdown-titulo,
+  .dropdown-item {
+    font-size: 14px;
+  }
+} 
