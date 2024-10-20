@@ -1,27 +1,39 @@
 import React, { useState } from 'react';
-import './Dropdown.css'; // Estilização do dropdown
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import './Dropdown.css';
+import { Link } from 'react-router-dom';
 
 const Dropdown = ({ titulo, itens }) => {
   const [aberto, setAberto] = useState(false);
+  let timeoutId; // Variável para armazenar o timeout
 
-  const alternarDropdown = () => {
-    setAberto(!aberto);
+  const handleMouseEnter = () => {
+    clearTimeout(timeoutId); // Cancela o timeout se o mouse voltar ao dropdown ou botão
+    setAberto(true); // Mostra o dropdown
+  };
+
+  const handleMouseLeave = () => {
+    timeoutId = setTimeout(() => {
+      setAberto(false); // Oculta o dropdown após o tempo definido
+    }, 300); // 300ms de atraso
   };
 
   return (
-    <div className="dropdown">
-      <button className="dropdown-titulo" onClick={alternarDropdown}>
-        {titulo}
-        <FontAwesomeIcon icon={aberto ? faChevronUp : faChevronDown} className="icone-flecha" />
-      </button>
+    <div 
+      className="navItemContainer"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <button className="dropdown-titulo">{titulo}</button>
       {aberto && (
-        <div className="dropdown-conteudo">
+        <div 
+          className="dropdown-conteudo"
+          onMouseEnter={handleMouseEnter} 
+          onMouseLeave={handleMouseLeave} 
+        >
           {itens.map((item, index) => (
-            <div key={index} className="dropdown-item">
-              {item}
-            </div>
+            <Link key={index} to={item.link} className="link">
+              <div className="dropdown-item">{item.name}</div>
+            </Link>
           ))}
         </div>
       )}

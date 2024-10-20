@@ -1,82 +1,155 @@
-.content {
-    display: grid;
-    justify-self: center;
-    align-self: center;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    font-size:12px;
-    position: absolute;
-}
-
 h3 {
     font-size: 35px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
+    text-align: center;
 }
 
-form {
+/* Estilo padrão para telas maiores */
+.form-servidor {
+    background-color: white;
     display: flex;
     flex-direction: column;
-    gap: 10px; 
+    width: 60%;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsividade para tablets */
+@media (max-width: 768px) {
+    .form-servidor {
+        width: 80%;
+        margin: 40px auto;
+    }
+
+    h3 {
+        font-size: 28px;
+    }
+
+    label {
+        font-size: 16px;
+    }
+
+    input, select {
+        font-size: 14px;
+    }
+}
+
+/* Responsividade para smartphones */
+@media (max-width: 480px) {
+    .form-servidor {
+        width: 95%;
+        padding: 10px;
+        margin: 30px auto;
+    }
+
+    h3 {
+        font-size: 22px;
+    }
+
+    label {
+        font-size: 14px;
+    }
+
+    input, select {
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    .radio-container {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .botaoContainer button {
+        width: 100%;
+    }
+}
+
+.botaoContainer {
+    display: flex;
+    justify-content: center; 
+    width: 100%;
+}
+
+.botaoContainer button {
+    font-size: 16px; 
+    padding: 10px 20px;
+    white-space: nowrap;
+    overflow: hidden; /* Impede que o texto se estenda para fora do botão */
+    text-overflow: ellipsis; /* Mostra reticências (...) se o texto for muito longo */
+    display: inline-block;
+}
+
+@media (max-width: 480px) {
+    .botaoContainer button {
+        font-size: 14px; /* Reduz o tamanho da fonte em telas menores */
+        padding: 8px 16px; /* Ajusta o padding para se adequar a telas menores */
+    }
 }
 
 .form-item {
     display: flex;
     flex-direction: column;
 }
-  
-fieldset {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px; 
-}
-  
+
 label {
     font-weight: bold;
     font-size: 20px;
 }
 
-input, select {
-    padding: 8px;
-    border-radius: 4px;
+input,
+select {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    font-size: 16px;
     border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
-  
-.custom-button {
-    padding: 9px 10px;
-    border: none;
-    border-radius: 20px;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-    font-family: 'Roboto', sans-serif;
+
+select {
+    appearance: none;
+    background: #fff url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-caret-down-fill" viewBox="0 0 16 16"><path d="M7.247 11.14L2.451 6.344c-.58-.58-.195-1.364.65-1.364h9.798c.845 0 1.23.784.65 1.364L8.753 11.14a.733.733 0 0 1-1.06 0z"/></svg>') no-repeat right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+span {
+    margin-left: 10px;
+}
+
+label {
     font-weight: bold;
-  }
-  
-.custom-button:hover {
-    opacity: 0.9;
+    margin-bottom: 5px;
+    display: block;
+    font-size: 14px;
 }
   
-.custom-button {
-    padding: 9px 10px;
-    border: none;
-    border-radius: 20px;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-    font-family: 'Roboto', sans-serif;
-    font-weight: bold;
-  }
-  
-.custom-button:hover {
-    opacity: 0.9;
+.radio-container {
+  display: flex;
+  align-items: center;
+  /* Alinha os radio buttons e o texto verticalmente */
+  gap: 2%;
+  /* Espaço horizontal entre cada radio button */
+  margin-bottom: 10px;
+  margin-top: -10px;
 }
-  
+
 .radio-container label {
-    display: inline-flex; /* Garante que o radio button e o texto fiquem na mesma linha */
-    align-items: center; /* Alinha o texto e o radio button verticalmente ao centro */
-    white-space: nowrap; /* Garante que o texto não quebre em várias linhas */
-  }
+    display: inline-flex;
+    /* Garante que o radio button e o texto fiquem na mesma linha */
+    align-items: center;
+    /* Alinha o texto e o radio button verticalmente ao centro */
+    white-space: nowrap;
+    /* Garante que o texto não quebre em várias linhas */
+}
+
+input::placeholder {
+    color: #aaa;
+    font-size: 14px; 
+}
+

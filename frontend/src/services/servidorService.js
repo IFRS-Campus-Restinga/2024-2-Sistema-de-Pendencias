@@ -1,9 +1,36 @@
 import { api } from "../config/axiosConfig";
 
+const endpoints = [
+    {
+        tipo: "Professor",
+        endpoint: "/cadastrar-professor/"
+    },
+    {
+        tipo: "RegistroEscolar",
+        endpoint: "/cadastrar-registro-escolar/"
+    },
+    {
+        tipo: "GestaoEscolar",
+        endpoint: "/cadastrar-gestao-escolar/"
+    },
+    {
+        tipo: "Coordenador",
+        endpoint: "/cadastrar-coordenador/"
+    },
+]
+
 const servidorService = {
     create: async (params) => {
+        let endpoint;
+
+        endpoints.forEach((endpointObject) => {
+            if (endpointObject.tipo === params.perfil) {
+                endpoint = endpointObject.endpoint;
+            }
+        });
+
         const res = await api
-            .post("/cadastrar-servidor", params, {
+            .post(`/api${endpoint}`, params, {
                 headers: {
                     "Content-Type": "application/json"
                 },

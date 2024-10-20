@@ -1,5 +1,7 @@
 form {
   background-color: white;
+  display: flex;
+  flex-direction: column;
   width: 60%;
   margin: 0 auto;
   padding: 20px;
@@ -45,10 +47,6 @@ select {
   padding-right: 40px;
 }
 
-.container {
-  margin-top: 40px;
-}
-
 input[type="date"] {
   font-family: 'Arial', sans-serif;
   font-size: 16px;
@@ -72,15 +70,6 @@ form {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  /* Garante que o container ocupe toda a altura da página */
-  padding: 20px;
 }
 
 .radio-container {
@@ -114,5 +103,20 @@ form {
   display: flex;
   justify-content: center;
   margin-top: 20px;
-  /* Adiciona um pouco de espaço acima do botão */
+}
+
+.erros {
+  color: red;
+  margin-top: -13px;
+}
+
+div {
+  margin-bottom: 10px;
+}
+
+/* Customiza o ícone de sucesso para ter fundo branco */
+.Toastify__toast--success .Toastify__toast-icon {
+  background-color: white; /* Cor de fundo branca */
+  color: #28A745; /* Cor do ícone verde */
+  border-radius: 50%; /* Mantém o formato circular */
 }

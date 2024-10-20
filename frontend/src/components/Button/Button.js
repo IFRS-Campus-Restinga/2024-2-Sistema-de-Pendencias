@@ -4,7 +4,7 @@ import './Button.css';
 const Button = ({ width, color, text, onClick }) => {
   const buttonStyle = {
     width: width || '211px',
-    backgroundColor: color || '#28A745'
+    backgroundColor: color || '#218838'
   };
 
   return (

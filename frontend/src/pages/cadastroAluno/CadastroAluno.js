@@ -4,158 +4,127 @@ import PageContainer from "../../components/PageContainer/PageContainer";
 import "./CadastroAluno.css";
 import Button from "../../components/Button/Button";
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import MainContainer from "../../components/MainContainer/mainContainer";
+import React, { useState } from 'react';
+import { validarFormulario, validarCampo } from './validacoes';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CadastroAluno = () => {
-  const [alunos, setAlunos] = useState([]);
   const [formData, setFormData] = useState({
     nome: '',
     email: '',
-    perfil: '',
-    cpf: '',
-    dataNascimento: '',
-    matricula: '',
-    telefone: ''
+    perfil: 'Aluno',
+    matricula: ''
   });
-
-  const fetchAlunos = async () => {
-    const response = await axios.get('http://localhost:8000/api/visualizar-alunos/');
-    setAlunos(response.data);
-  };
+  const [errors, setErrors] = useState({});
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData)
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/api/cadastrar-aluno/', formData);
-      console.log(response.data);
-    } catch (error) {
-      console.error('Erro ao cadastrar aluno!', error);
+    const validationErrors = validarFormulario(formData);
+    if (Object.keys(validationErrors).length === 0) {
+      setShowErrorMessage(false);
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/api/cadastrar-aluno/', formData);
+        console.log(response.data);
+
+        // Limpar o formulário após o sucesso
+        setFormData({
+          nome: '',
+          email: '',
+          perfil: 'Aluno',
+          matricula: ''
+        });
+        setErrors({}); // Limpar os erros também
+
+        // Mostrar toast de sucesso
+        toast.success("Registro realizado com sucesso!", {
+          position: "bottom-center",
+          autoClose: 3000,
+          style: { backgroundColor: '#28A745', color: '#fff' },
+          progressStyle: { backgroundColor: '#fff' }
+        });
+      } catch (error) {
+        console.error('Erro ao cadastrar aluno!', error);
+      }
+    } else {
+      setErrors(validationErrors);
+      setShowErrorMessage(true);
     }
   };
 
-  // useEffect(() => {
-  //   fetchAlunos();
-  // }, []);
+  const handleBlur = (campo) => {
+    const error = validarCampo(campo, formData[campo]);
+    if (error) {
+      setErrors((prevErrors) => ({ ...prevErrors, [campo]: error }));
+    } else {
+      setErrors((prevErrors) => {
+        const { [campo]: removed, ...rest } = prevErrors;
+        return rest;
+      });
+    }
+  };
 
   return (
-        <form onSubmit={handleSubmit}>
-          <h3>Cadastro Aluno</h3>
-          <hr/>
-          <br/>
-          <h3 className="subtitulo_esquerda">Dados Pessoais</h3>
-          <div>
-            <label className="perfil">Perfil:</label>
-            <br/>
-            <div className="radio-container">
-              <label>
-                <input type="radio" value="Aluno" checked={formData.perfil === 'Aluno'}
-                       onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
-                <span>Aluno</span>
-              </label>
-              <label>
-                <input type="radio" value="Professor" checked={formData.perfil === 'Professor'}
-                       onChange={(e) => setFormData({...formData, perfil: e.target.value})}
-                />
-                <span>Professor</span>
-              </label>
-              <label>
-                <input type="radio" value="Registros Escolares" checked={formData.perfil === 'Registros Escolares'}
-                       onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
-                <span>Registros Escolares</span>
-              </label>
-              <label>
-                <input type="radio" value="Gestão Escolar" checked={formData.perfil === 'Gestão Escolar'}
-                       onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
-                <span>Gestão Escolar</span>
-              </label>
-              <label>
-                <input type="radio" value="Coordenador" checked={formData.perfil === 'Coordenador'}
-                       onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
-                <span>Coordenador</span>
-              </label>
-            </div>
+    <>
+      <ToastContainer />
+      <form onSubmit={handleSubmit}>
+        <h3>Cadastro Aluno</h3>
+        <hr />
+        <br />
+        {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
+        <br />
+        <div>
+          <label htmlFor="nome">Nome completo:</label>
+          <input
+            type="text"
+            id="nome"
+            value={formData.nome}
+            onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+            onBlur={() => handleBlur('nome')}
+            placeholder="Nome"
+            style={{ borderColor: errors.nome ? 'red' : '' }}
+          />
+          {errors.nome && <p className="erros">{errors.nome}</p>}
+        </div>
+        <div>
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onBlur={() => handleBlur('email')}
+            placeholder="Email"
+            style={{ borderColor: errors.email ? 'red' : '' }}
+          />
+          {errors.email && <p className="erros">{errors.email}</p>}
+        </div>
+        <div>
+          <label htmlFor="matricula">Matrícula:</label>
+          <input
+            type="text"
+            id="matricula"
+            value={formData.matricula}
+            onChange={(e) => setFormData({ ...formData, matricula: e.target.value })}
+            onBlur={() => handleBlur('matricula')}
+            placeholder="Matrícula"
+            maxLength="10"
+            style={{ borderColor: errors.matricula ? 'red' : '' }}
+          />
+          {errors.matricula && <p className="erros">{errors.matricula}</p>}
+        </div>
 
-          </div>
-          <div>
-            <label htmlFor="nome">Nome completo:</label>
-            <input
-                type="text"
-                id="nome"
-                value={formData.nome}
-                onChange={(e) => setFormData({...formData, nome: e.target.value})}
-                placeholder="Nome"
-            />
-          </div>
-          <div>
-            <label htmlFor="cpf">CPF:</label>
-            <input
-                type="text"
-                id="cpf"
-                value={formData.cpf}
-                onChange={(e) => setFormData({...formData, cpf: e.target.value})}
-                placeholder="CPF"
-            />
-          </div>
-          <div>
-            <label htmlFor="dataNascimento">Data de Nascimento:</label>
-            <input
-                type="date"
-                id="dataNascimento"
-                value={formData.dataNascimento}
-                onChange={(e) => setFormData({...formData, dataNascimento: e.target.value})}
-                placeholder="Data de Nascimento"
-            />
-          </div>
-          <div>
-            <label htmlFor="matricula">Matrícula:</label>
-            <input
-                type="text"
-                id="matricula"
-                value={formData.matricula}
-                onChange={(e) => setFormData({...formData, matricula: e.target.value})}
-                placeholder="Matrícula"
-            />
-          </div>
-          <h3 className="subtitulo_esquerda">Dados de Contato</h3>
-          <div>
-            <label htmlFor="email">Email:</label>
-            <input
-                type="email"
-                id="email"
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                placeholder="Email"
-            />
-          </div>
-          <div>
-            <label htmlFor="telefone">Telefone:</label>
-            <input
-                type="text"
-                id="telefone"
-                value={formData.telefone}
-                onChange={(e) => setFormData({...formData, telefone: e.target.value})}
-                placeholder="Telefone"
-            />
-          </div>
-          <div className="ajuste-button">
-            <Button
-              width="30%"
-              color="#28A745"
-              text="Cadastrar"
-              onClick={handleSubmit}
-            />
-          </div>
-        </form>
-        /* <h1>Alunos cadastrados (somente para testar)</h1>
-        <ul>
-          {alunos.map((aluno) => (
-              <li key={aluno.id}>
-                {aluno.nome} - {aluno.email} - {aluno.perfil} - {aluno.cpf} - {aluno.matricula} - {aluno.telefone}
-              </li>
-          ))}
-        </ul> */
+        <div className="ajuste-button">
+          <Button
+            width="30%"
+            color="#28A745"
+            text="Cadastrar"
+            onClick={handleSubmit}
+          />
+        </div>
+      </form>
+    </>
   );
 };
 
