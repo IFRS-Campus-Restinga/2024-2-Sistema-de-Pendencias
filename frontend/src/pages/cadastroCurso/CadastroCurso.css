@@ -104,3 +104,25 @@ h1 {
   font-size: 14px; 
   color: green;
 }
+
+.input-error {
+  border-color: red;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+}
+
+.input-error {
+  border-color: red;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+}
+.input-error {
+  border: 1px solid red; /* Altera a borda para vermelha */
+}
+

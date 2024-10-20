@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./CadastroCurso.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { validarFormularioCurso } from './validacoes'; // Importa suas funções de validação
+import "./CadastroCurso.css";
 
 const CadastroCurso = () => {
   const [nome, setNome] = useState("");
@@ -11,6 +11,15 @@ const CadastroCurso = () => {
   const [modalidade, setModalidade] = useState("");
   const [turmas, setTurmas] = useState([]);
   const [mensagem, setMensagem] = useState(null);
+  const [error, setError] = useState(null);
+
+  const opcoesCursos = [
+    "eletrônica",
+    "lazer",
+    "informática",
+    "comércio",
+    "agroecologia"
+  ];
 
   const addTurma = () => {
     setTurmas([...turmas, { numero: "" }]);
@@ -29,6 +38,24 @@ const CadastroCurso = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Crie um objeto com os dados do formulário
+    const formData = {
+      nome,
+      cargaHoraria,
+      modalidade,
+      turmas,
+    };
+
+    // Valide os dados do formulário
+    const erros = validarFormularioCurso(formData);
+    
+    if (Object.keys(erros).length > 0) {
+      setError(erros); // Armazene os erros no estado
+      return; // Não envie o formulário se houver erros
+    }
+
+    // Se não houver erros, prossiga com o envio do formulário
     try {
       const turmasIds = turmas
         .map((turma) => turma.numero)
@@ -45,11 +72,14 @@ const CadastroCurso = () => {
       );
       console.log("Curso cadastrado com sucesso", response.data);
 
+      // Limpe os campos após o cadastro
       setNome("");
       setCargaHoraria("");
       setModalidade("");
       setTurmas([]);
       setMensagem("Curso cadastrado com sucesso!");
+      setError(null); // Limpa os erros após o sucesso
+
     } catch (error) {
       console.error(
         "Erro ao cadastrar curso",
@@ -62,8 +92,9 @@ const CadastroCurso = () => {
   return (
     <form className="form" onSubmit={handleSubmit}>
       <h1>Cadastro Curso</h1>
-      {mensagem && <p className="mensagem">{mensagem}</p>}{" "}
-      {/* Exibir mensagem de feedback */}
+      {mensagem && <p className="mensagem">{mensagem}</p>}
+      {error && <p className="error">{error.global || "Verifique os campos."}</p>} {/* Mensagem de erro global */}
+
       <div className="modalidade-container">
         <h4>Modalidade:</h4>
         <div className="containerOpcoes">
@@ -73,6 +104,7 @@ const CadastroCurso = () => {
               name="modalidade"
               value="PROEJA"
               onChange={(e) => setModalidade(e.target.value)}
+              checked={modalidade === "PROEJA"} // Mantém o estado do radio
             />
             ProEja
           </label>
@@ -80,24 +112,35 @@ const CadastroCurso = () => {
             <input
               type="radio"
               name="modalidade"
-              value="EMI"
+              value="INTEGRADO" // Corrigido para "INTEGRADO"
               onChange={(e) => setModalidade(e.target.value)}
+              checked={modalidade === "INTEGRADO"} // Mantém o estado do radio
             />
             Integrado
           </label>
         </div>
+        {error && error.modalidade && <p className="error">{error.modalidade}</p>} {/* Exibe erro da modalidade */}
       </div>
+
       <div className="input-group">
         <label htmlFor="nome_curso">Nome do Curso:</label>
-        <input
-          type="text"
+        <select
           name="nome_curso"
           id="nome_curso"
           value={nome}
-          required
+          className={error && error.nome ? 'error-input' : ''}
           onChange={(e) => setNome(e.target.value)}
-        />
+        >
+          <option value="">Selecione um curso</option>
+          {opcoesCursos.map((curso, index) => (
+            <option key={index} value={curso}>
+              {curso}
+            </option>
+          ))}
+        </select>
+        {error && error.nome && <p className="error">{error.nome}</p>}
       </div>
+
       <div className="input-group">
         <label htmlFor="carga_horaria">Carga Horária:</label>
         <input
@@ -105,19 +148,22 @@ const CadastroCurso = () => {
           name="carga_horaria"
           id="carga_horaria"
           value={cargaHoraria}
-          required
+          className={error && error.carga_horaria ? 'error-input' : ''}
           onChange={(e) => setCargaHoraria(e.target.value)}
         />
+        {error && error.carga_horaria && <p className="error">{error.carga_horaria}</p>}
       </div>
+
       <div className="add-turma">
         <button type="button" onClick={addTurma} className="add-button">
           <FontAwesomeIcon
             icon={faPlusCircle}
             style={{ color: "#28A745", cursor: "pointer", fontSize: "24px" }}
           />
-          <span>Adicionar Turma</span>
+          <span style={{ color: "black" }}> Adicionar Turma</span>
         </button>
       </div>
+
       {turmas.length > 0 && (
         <div className="turmas-lista">
           <h4>Turmas a serem adicionadas:</h4>
@@ -134,22 +180,18 @@ const CadastroCurso = () => {
                   <td>
                     <input
                       type="text"
-                      className="turmaInput"
+                      className={`turmaInput ${error && error.turmas && error.turmas[index] ? 'error-input' : ''}`}
                       value={turma.numero}
                       onChange={(e) => handleTurmaChange(index, e.target.value)}
-                      required
                       placeholder="Digite o número da turma"
                     />
+                    {error && error.turmas && error.turmas[index] && <p className="error">{error.turmas[index]}</p>}
                   </td>
                   <td>
                     <FontAwesomeIcon
                       icon={faTrash}
-                      style={{
-                        cursor: "pointer",
-                        color: "red",
-                        fontSize: "20px",
-                      }}
-                      onClick={() => console.log("Ícone clicado!")} // Substitua pela sua função
+                      style={{ cursor: "pointer", color: "red", fontSize: "20px" }}
+                      onClick={() => removeTurma(index)}
                     />
                   </td>
                 </tr>
@@ -158,6 +200,7 @@ const CadastroCurso = () => {
           </table>
         </div>
       )}
+
       <button
         type="submit"
         className="submitButton"
