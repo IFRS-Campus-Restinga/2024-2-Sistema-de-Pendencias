@@ -1,17 +1,3 @@
-// src/utils/validacoes.js
-
-// Validação para o campo "nome do curso"
-export const validarNomeCurso = (nome) => {
-    const nomeRegex = /^[a-zA-ZÀ-ÿ\s]{3,100}$/; // Aceita letras e espaços entre 3 e 100 caracteres
-    if (!nome) {
-        return 'Campo obrigatório.';
-    }
-    if (!nomeRegex.test(nome)) {
-        return 'Nome do curso deve conter de 3 a 100 caracteres e aceitar apenas letras.';
-    }
-    return '';
-};
-
 // Validação para o campo "carga horária"
 export const validarCargaHoraria = (cargaHoraria) => {
     const cargaHorariaRegex = /^\d{1,2}:\d{2}$/; // Aceita formato HH:MM (ex: 40:00)
@@ -30,14 +16,18 @@ export const validarCargaHoraria = (cargaHoraria) => {
 
 // Validação para o campo "modalidade"
 export const validarModalidade = (modalidade) => {
-    const modalidadesValidas = ['PROEJA', 'INTEGRADO']; // Modalidades válidas
     if (!modalidade) {
-        return 'Campo obrigatório.';
+        return 'Campo obrigatório.'; // Verifica se o campo está vazio
     }
-    if (!modalidadesValidas.includes(modalidade.toUpperCase())) {
-        return 'Modalidade inválida. As opções válidas são: ProEja, Integrado.';
+    return ''; // Não faz validação adicional
+};
+
+// Validação para o campo "curso"
+export const validarCurso = (curso) => {
+    if (!curso) {
+        return 'Campo obrigatório.'; // Garante que um curso seja selecionado
     }
-    return '';
+    return ''; // Não faz validação adicional
 };
 
 // Validação para o campo "turmas"
@@ -45,7 +35,7 @@ export const validarTurma = (turma) => {
     const turmaIntegradoRegex = /^\d{3}$/; // Aceita exatamente 3 dígitos
     const turmaProejaRegex = /^\d{4}\/\d{1}$/; // Aceita o formato 2023/2
     if (!turma.numero) {
-        return 'Campo obrigatório.';
+        return 'Campo obrigatório.'; // Verifica se o número da turma está vazio
     }
     if (!turmaIntegradoRegex.test(turma.numero) && !turmaProejaRegex.test(turma.numero)) {
         return 'Número da turma deve ser no formato "211" para Integrado ou "2023/2" para ProEja.';
@@ -57,8 +47,8 @@ export const validarTurma = (turma) => {
 export const validarFormularioCurso = (formData) => {
     const erros = {};
 
-    const erroNomeCurso = validarNomeCurso(formData.nome);
-    if (erroNomeCurso) erros.nome = erroNomeCurso;
+    const erroCurso = validarCurso(formData.nome);
+    if (erroCurso) erros.nome = erroCurso;
 
     const erroCargaHoraria = validarCargaHoraria(formData.cargaHoraria);
     if (erroCargaHoraria) erros.carga_horaria = erroCargaHoraria;
@@ -67,11 +57,8 @@ export const validarFormularioCurso = (formData) => {
     if (erroModalidade) erros.modalidade = erroModalidade;
 
     // Validação para turmas
-    const turmasErros = (formData.turmas || []).map((turma, index) => {
-        const erroTurma = validarTurma(turma);
-        return erroTurma ? `Turma ${index + 1}: ${erroTurma}` : '';
-    }).filter(error => error !== '');
-
+    const turmasErros = (formData.turmas || []).map((turma) => validarTurma(turma)).filter(error => error !== '');
+    
     if (turmasErros.length > 0) {
         erros.turmas = turmasErros;
     }
@@ -83,7 +70,7 @@ export const validarFormularioCurso = (formData) => {
 export const validarCampo = (campo, valor) => {
     switch (campo) {
         case 'nome':
-            return validarNomeCurso(valor);
+            return validarCurso(valor); // Chama a validação para curso
         case 'carga_horaria':
             return validarCargaHoraria(valor);
         case 'modalidade':
