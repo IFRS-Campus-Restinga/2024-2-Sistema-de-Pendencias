@@ -5,8 +5,12 @@ from django.views.decorators.csrf import csrf_exempt
 from dependencias_app.models.curso import Curso
 from dependencias_app.serializers.cursoSerializer import CursoSerializer
 from dependencias_app.serializers.turmaSerializer import TurmaSerializer
+from dependencias_app.utils.error_handler import handle_view_errors
 
 import logging
+
+
+
 logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
@@ -36,4 +40,14 @@ def cadastrar_curso(request):
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@handle_view_errors
+def listar_cursos(request):
+    """
+    Função que lista todos os cursos cadastrados.
+    Retorna uma lista de cursos em formato JSON ou um erro.
+    """
+    cursos = Curso.objects.all()  # Obtém todos os cursos
+    serializer = CursoSerializer(cursos, many=True)  # Serializa os cursos
+    return Response(serializer.data, safe=False, status=status.HTTP_200_OK)
 
