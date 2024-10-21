@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ListarServidor.css';
 import Button from "../../components/Button/Button";
-import Lixeira from "../../assets/lixeira-preto.png";
-import Olho from "../../assets/olho-preto.png";
+import Deletar from "../../assets/deletar-preto.png";
+import Visualizar from "../../assets/visualizar-preto.png";
+import Ordenar from "../../assets/ordenar-branco.png";
 import Modal from "../../components/Modal/Modal";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -15,6 +16,8 @@ const ListarServidor = () => {
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
   const [nomeFiltro, setNomeFiltro] = useState('');
+  const [perfilFiltro, setPerfilFiltro] = useState('');
+  const [matriculaFiltro, setMatriculaFiltro] = useState('');
 
   const perfilMap = {
     1: 'Gestão Escolar',
@@ -73,7 +76,9 @@ const ListarServidor = () => {
     const servidoresFiltrados = servidores.filter(servidor =>
       servidor.nome.toLowerCase().includes(nomeFiltro.toLowerCase()) &&
       (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
-      (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim))
+      (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
+      (!perfilFiltro || servidor.perfil === parseInt(perfilFiltro)) &&
+      (!matriculaFiltro || (servidor.matricula && servidor.matricula.includes(matriculaFiltro)))
     );
     setServidoresFiltrados(servidoresFiltrados);
   };
@@ -82,6 +87,12 @@ const ListarServidor = () => {
     setDataInicio('');
     setDataFim('');
     setNomeFiltro('');
+    setPerfilFiltro('');
+    setMatriculaFiltro('');
+    fetchServidores();
+
+    setOrdenacao({ coluna: '', ordem: 'asc' });
+
     fetchServidores();
   };
 
@@ -104,12 +115,37 @@ return (
     <ToastContainer />
     <h3>Lista de Servidores</h3>
     <hr />
-    <div className="filtro-nome">
+    <div className="filtro">
       <label>Filtrar por Nome:</label>
       <input
         type="text"
         value={nomeFiltro}
         onChange={(e) => setNomeFiltro(e.target.value)}
+        style={{ width: '200px' }}
+      />
+    </div>
+
+    <div className="filtro">
+    <label>Filtrar por Perfil:</label>
+    <select
+      value={perfilFiltro}
+      onChange={(e) => setPerfilFiltro(e.target.value)}
+      style={{ width: '200px' }}
+    >
+      <option value="">Todos</option>
+      <option value="1">Gestão Escolar</option>
+      <option value="2">Registros Escolares</option>
+      <option value="4">Coordenador</option>
+      <option value="5">Professor</option>
+    </select>
+    </div>
+
+    <div className="filtro">
+      <label>Filtrar por Matrícula:</label>
+      <input
+        type="text"
+        value={matriculaFiltro}
+        onChange={(e) => setMatriculaFiltro(e.target.value)}
         style={{ width: '200px' }}
       />
     </div>
@@ -149,10 +185,19 @@ return (
       <thead>
         <tr>
           <th onClick={() => ordenarPorColuna('perfil')}>
-            Perfil
-            {ordenacao.coluna === 'perfil' && (
+            <div className="th-conteudo">
+              <img
+                id="icone-ordenar"
+                src={Ordenar}
+                alt="Ordenar"
+                style={{ cursor: 'pointer', marginLeft: '8px' }}
+                title="Ordenar"
+              />
+              Perfil
+              {ordenacao.coluna === 'perfil' && (
               <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
-            )}
+              )}
+            </div>
           </th>
           <th onClick={() => ordenarPorColuna('nome')}>
             Nome
@@ -198,13 +243,13 @@ return (
             <td>{servidor.data_ingresso || '-'}</td>
             <td className='icone-container'>
             <img 
-              src={Olho} 
+              src={Visualizar} 
               alt="Visualizar" 
               onClick={() => console.log('Visualizar servidor')} 
               style={{ cursor: 'pointer', marginRight: '8px' }} 
               title="Visualizar"/>
             <img 
-              src={Lixeira} 
+              src={Deletar} 
               alt="Deletar" 
               onClick={() => deletarServidor(servidor.id, servidor.nome)} 
               style={{ cursor: 'pointer' }} 
