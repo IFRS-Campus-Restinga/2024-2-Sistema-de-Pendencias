@@ -1,6 +1,7 @@
 import React from "react";
 import "./Header.css";
 import logo from "../../assets/logo-ifrs-branco.png";
+import logo_pequeno from "../../assets/logo-ifrs-branco-pequeno.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";

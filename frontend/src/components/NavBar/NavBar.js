@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 import "./NavBar.css";
 import Dropdown from '../Dropdown/Dropdown'
+import home from "../../assets/home-preto.png";
+import dependencia from "../../assets/dependencia-preto.png";
+import calendario from "../../assets/calendario-preto.png";
+import configuracoes from "../../assets/configuracoes-preto.png";
 
 const NavBar = () => {
   return (
@@ -8,8 +12,8 @@ const NavBar = () => {
         <div className="navItemContainer">
           <Link to={"/secao/123456"}>
             <img
-              className="itemImage"
-              src="/navBarImages/inicio.png"
+              className="icone"
+              src={home}
               alt="Início"
             />
             <span className="navTexto">
@@ -19,8 +23,8 @@ const NavBar = () => {
         </div>
         <div className="navItemContainer">
             <img
-              className="itemImage"
-              src="/navBarImages/dependencias.png"
+              className="icone"
+              src={dependencia}
               alt="Dependências"
             />
             <Dropdown titulo='Dependências' itens={[
@@ -44,8 +48,8 @@ const NavBar = () => {
         </div>
         <div className="navItemContainer">
             <img
-              className="itemImage"
-              src="/navBarImages/calendario.png"
+              className="icone"
+              src={calendario}
               alt="Calendário"
             />
             <Dropdown titulo='Calendário' itens={[
@@ -61,8 +65,8 @@ const NavBar = () => {
         </div>
         <div className="navItemContainer">
             <img
-              className="itemImage"
-              src="/navBarImages/gerenciar_cadastros.png"
+              className="icone"
+              src={configuracoes}
               alt="Cadastros"
             />
               <Dropdown titulo='Gerenciar Cadastros' itens={[
@@ -81,6 +85,10 @@ const NavBar = () => {
                 {
                   name: "Cadastro Servidor",
                   link: "/secao/123456/cadastroServidor"
+                },
+                {
+                  name: "Lista de Servidores",
+                  link: "/secao/123456/listaServidor"
                 }
               ]}/>  
           </div>

@@ -51,3 +51,4 @@ def listar_cursos(request):
     serializer = CursoSerializer(cursos, many=True)  # Serializa os cursos
     return Response(serializer.data, safe=False, status=status.HTTP_200_OK)
 
+

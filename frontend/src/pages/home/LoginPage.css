@@ -15,6 +15,7 @@
 .login-title {
   color: black;
   text-align: center;
+  font-size: 28px;
   margin-bottom: 20px;
 }
 
@@ -51,4 +52,18 @@
 
 .login-right h2 {
   margin-bottom: 20px;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0; /* Começa invisível */
+  }
+  100% {
+    opacity: 1; /* Termina totalmente visível */
+  }
+}
+
+.login-logo {
+  max-width: 100%;
+  animation: fadeIn 0.9s ease-in; /* Aplica a animação */
 }
