@@ -1,4 +1,4 @@
-import Button from "../../components/Button/Button";
+import Button from "../../../../components/Button/Button";
 import axios from 'axios';
 import React, { useState } from 'react';
 import { validarFormulario, validarCampo } from './validacoes';

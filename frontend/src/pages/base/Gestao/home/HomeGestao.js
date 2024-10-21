@@ -1,6 +1,6 @@
-import './Saudacao.css'
+import './HomeGestao.css'
 
-const Saudacao = () => {
+const HomeGestao = () => {
     return (
         <>
         <span className="titulo">Sistema de Dependências</span>
@@ -9,4 +9,4 @@ const Saudacao = () => {
     )
 }
 
-export default Saudacao
+export default HomeGestao

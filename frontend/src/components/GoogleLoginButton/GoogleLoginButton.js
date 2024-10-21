@@ -2,7 +2,7 @@ import React from "react";
 import "./GoogleLoginButton.css";
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from "react-router-dom";
-import loginService from "../../services/loginService";
+import loginService from "../../services/authService";
 
 // Componente GoogleLoginButton:
 const GoogleLoginButton = ({handleLogin, handleLoginFailure}) => {

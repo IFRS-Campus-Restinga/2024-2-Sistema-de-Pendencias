@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import servidorService from '../../services/servidorService';
+import servidorService from '../../../../services/servidorService';
 import "./CadastroServidor.css";
-import Button from '../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import { validarFormulario, validarCampo } from './validacoes';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -22,18 +22,17 @@ const CadastroServidor = () => {
         const validationErrors = validarFormulario(formData);
 
         // Crie um objeto a ser enviado, incluindo apenas os campos necessários
-        const { perfil, nome, email, cpf, matricula } = formData;
+        const { perfil, email } = formData;
         const dataToSend = {
             perfil,
-            nome,
             email,
         };
 
         // Adicione cpf e matricula apenas se o perfil não for 'registroEscolar' ou 'gestaoEscolar'
-        if (perfil !== 'RegistroEscolar' && perfil !== 'GestaoEscolar') {
-            dataToSend.cpf = cpf;
-            dataToSend.matricula = matricula;
-        }
+        // if (perfil !== 'RegistroEscolar' && perfil !== 'GestaoEscolar') {
+        //     dataToSend.cpf = cpf;
+        //     dataToSend.matricula = matricula;
+        // }
 
         if (Object.keys(validationErrors).length === 0) {
             setShowErrorMessage(false);
@@ -118,9 +117,7 @@ const CadastroServidor = () => {
                     style={{ borderColor: errors.nome ? 'red' : '' }}
                 />
             </div>
-
-            {/* Renderização condicional para CPF e Matrícula */}
-            {formData.perfil !== 'RegistroEscolar' && formData.perfil !== 'Coordenador' && formData.perfil !== "GestaoEscolar" ? (
+            {/* {formData.perfil !== 'RegistroEscolar' && formData.perfil !== 'Coordenador' && formData.perfil !== "GestaoEscolar" ? (
                 <>
                     <div className="form-item">
                         <label>CPF</label>
@@ -143,7 +140,7 @@ const CadastroServidor = () => {
                 </>
             ) : (
                 <></>
-            )}
+            )} */}
 
             <div className="form-item">
                 <label>E-mail</label>

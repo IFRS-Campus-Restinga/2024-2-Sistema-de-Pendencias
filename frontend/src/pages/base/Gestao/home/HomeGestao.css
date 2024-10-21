@@ -34,17 +34,15 @@
 }
 
 .titulo {
-    color: #000000;
-    font-size: 2rem;
-    justify-self: center;
-    text-align: center;
-    margin: 25px;
     font-weight: bold;
+    font-size: 2rem;
+    align-self: center;
+    margin-top: 20px;
+    padding-bottom: 10px;
 }
 
 hr {
     width: 50%;
-    justify-self: center;
+    border: 2px solid #28A745;
     align-self: center;
-    border: 1px #28A745 solid;
 }
