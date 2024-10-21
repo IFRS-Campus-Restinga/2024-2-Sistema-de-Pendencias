@@ -1,19 +1,17 @@
 from django.http import JsonResponse
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from dependencias_app.permissoes import *
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from dependencias_app.models import Disciplina
+from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.serializers.disciplinaSerializer import DisciplinaSerializer
 from dependencias_app.utils.errorsHandler import handle_view_errors
 
 @api_view(['POST'])
 @handle_view_errors
+@permission_classes([GestaoEscolar])
 def create_disciplina(request):
-    """
-    Função que realiza o cadastro de uma nova Disciplina a partir do JSON recebido.
-    Espera receber um JSON com os campos da Disciplina; caso contrário, retorna um erro.
-    """
     serializer = DisciplinaSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
@@ -21,6 +19,7 @@ def create_disciplina(request):
 
 @api_view(['GET'])
 @handle_view_errors
+@permission_classes([GestaoEscolar])
 def list_disciplinas(request):
     """
     Função que lista todas as disciplinas cadastradas.
@@ -32,6 +31,7 @@ def list_disciplinas(request):
 
 @api_view(['GET'])
 @handle_view_errors
+@permission_classes([GestaoEscolar])
 def get_disciplina(request, id):
     """
     Tenta buscar a Disciplina pelo ID.
@@ -47,6 +47,7 @@ def get_disciplina(request, id):
 
 @api_view(['PUT'])
 @handle_view_errors
+@permission_classes([GestaoEscolar])
 def update_disciplina(request, pk):
     """
     Função que realiza a atualização de uma Disciplina existente.
@@ -60,6 +61,7 @@ def update_disciplina(request, pk):
 
 @api_view(['DELETE'])
 @handle_view_errors
+@permission_classes([GestaoEscolar])
 def delete_disciplina(request, pk):
     """
     Função que realiza a exclusão de uma Disciplina existente.

@@ -1,0 +1,317 @@
+[
+    {
+        "group_name": "GestaoEscolar",
+        "permissions": [
+            {
+                "codename": "add_aluno",
+                "name": "Can add aluno",
+                "content_type": "dependencias_app.aluno"
+            },
+            {
+                "codename": "change_aluno",
+                "name": "Can change aluno",
+                "content_type": "dependencias_app.aluno"
+            },
+            {
+                "codename": "delete_aluno",
+                "name": "Can delete aluno",
+                "content_type": "dependencias_app.aluno"
+            },
+            {
+                "codename": "view_aluno",
+                "name": "Can view aluno",
+                "content_type": "dependencias_app.aluno"
+            },
+            {
+                "codename": "add_curso",
+                "name": "Can add curso",
+                "content_type": "dependencias_app.curso"
+            },
+            {
+                "codename": "change_curso",
+                "name": "Can change curso",
+                "content_type": "dependencias_app.curso"
+            },
+            {
+                "codename": "delete_curso",
+                "name": "Can delete curso",
+                "content_type": "dependencias_app.curso"
+            },
+            {
+                "codename": "view_curso",
+                "name": "Can view curso",
+                "content_type": "dependencias_app.curso"
+            },
+            {
+                "codename": "add_disciplina",
+                "name": "Can add disciplina",
+                "content_type": "dependencias_app.disciplina"
+            },
+            {
+                "codename": "change_disciplina",
+                "name": "Can change disciplina",
+                "content_type": "dependencias_app.disciplina"
+            },
+            {
+                "codename": "delete_disciplina",
+                "name": "Can delete disciplina",
+                "content_type": "dependencias_app.disciplina"
+            },
+            {
+                "codename": "view_disciplina",
+                "name": "Can view disciplina",
+                "content_type": "dependencias_app.disciplina"
+            },
+            {
+                "codename": "add_professor",
+                "name": "Can add professor",
+                "content_type": "dependencias_app.professor"
+            },
+            {
+                "codename": "change_professor",
+                "name": "Can change professor",
+                "content_type": "dependencias_app.professor"
+            },
+            {
+                "codename": "delete_professor",
+                "name": "Can delete professor",
+                "content_type": "dependencias_app.professor"
+            },
+            {
+                "codename": "view_professor",
+                "name": "Can view professor",
+                "content_type": "dependencias_app.professor"
+            },
+            {
+                "codename": "add_turma",
+                "name": "Can add turma",
+                "content_type": "dependencias_app.turma"
+            },
+            {
+                "codename": "change_turma",
+                "name": "Can change turma",
+                "content_type": "dependencias_app.turma"
+            },
+            {
+                "codename": "delete_turma",
+                "name": "Can delete turma",
+                "content_type": "dependencias_app.turma"
+            },
+            {
+                "codename": "view_turma",
+                "name": "Can view turma",
+                "content_type": "dependencias_app.turma"
+            },
+            {
+                "codename": "add_usuariobase",
+                "name": "Can add Usu\u00e1rio Base",
+                "content_type": "google_auth.usuariobase"
+            },
+            {
+                "codename": "change_usuariobase",
+                "name": "Can change Usu\u00e1rio Base",
+                "content_type": "google_auth.usuariobase"
+            },
+            {
+                "codename": "delete_usuariobase",
+                "name": "Can delete Usu\u00e1rio Base",
+                "content_type": "google_auth.usuariobase"
+            },
+            {
+                "codename": "view_usuariobase",
+                "name": "Can view Usu\u00e1rio Base",
+                "content_type": "google_auth.usuariobase"
+            },
+            {
+                "codename": "add_session",
+                "name": "Can add session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "change_session",
+                "name": "Can change session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "delete_session",
+                "name": "Can delete session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "view_session",
+                "name": "Can view session",
+                "content_type": "sessions.session"
+            }
+        ]
+    },
+    {
+        "group_name": "RegistroEscolar",
+        "permissions": [
+            {
+                "codename": "view_aluno",
+                "name": "Can view aluno",
+                "content_type": "dependencias_app.aluno"
+            },
+            {
+                "codename": "add_session",
+                "name": "Can add session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "change_session",
+                "name": "Can change session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "delete_session",
+                "name": "Can delete session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "view_session",
+                "name": "Can view session",
+                "content_type": "sessions.session"
+            }
+        ]
+    },
+    {
+        "group_name": "Coordenador",
+        "permissions": [
+            {
+                "codename": "view_curso",
+                "name": "Can view curso",
+                "content_type": "dependencias_app.curso"
+            },
+            {
+                "codename": "view_disciplina",
+                "name": "Can view disciplina",
+                "content_type": "dependencias_app.disciplina"
+            },
+            {
+                "codename": "view_professor",
+                "name": "Can view professor",
+                "content_type": "dependencias_app.professor"
+            },
+            {
+                "codename": "view_usuariobase",
+                "name": "Can view Usu\u00e1rio Base",
+                "content_type": "google_auth.usuariobase"
+            },
+            {
+                "codename": "add_session",
+                "name": "Can add session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "change_session",
+                "name": "Can change session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "delete_session",
+                "name": "Can delete session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "view_session",
+                "name": "Can view session",
+                "content_type": "sessions.session"
+            }
+        ]
+    },
+    {
+        "group_name": "Professor",
+        "permissions": [
+            {
+                "codename": "view_curso",
+                "name": "Can view curso",
+                "content_type": "dependencias_app.curso"
+            },
+            {
+                "codename": "view_disciplina",
+                "name": "Can view disciplina",
+                "content_type": "dependencias_app.disciplina"
+            },
+            {
+                "codename": "add_professor",
+                "name": "Can add professor",
+                "content_type": "dependencias_app.professor"
+            },
+            {
+                "codename": "change_professor",
+                "name": "Can change professor",
+                "content_type": "dependencias_app.professor"
+            },
+            {
+                "codename": "view_professor",
+                "name": "Can view professor",
+                "content_type": "dependencias_app.professor"
+            },
+            {
+                "codename": "view_usuariobase",
+                "name": "Can view Usu\u00e1rio Base",
+                "content_type": "google_auth.usuariobase"
+            },
+            {
+                "codename": "add_session",
+                "name": "Can add session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "change_session",
+                "name": "Can change session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "delete_session",
+                "name": "Can delete session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "view_session",
+                "name": "Can view session",
+                "content_type": "sessions.session"
+            }
+        ]
+    },
+    {
+        "group_name": "Aluno",
+        "permissions": [
+            {
+                "codename": "add_aluno",
+                "name": "Can add aluno",
+                "content_type": "dependencias_app.aluno"
+            },
+            {
+                "codename": "change_aluno",
+                "name": "Can change aluno",
+                "content_type": "dependencias_app.aluno"
+            },
+            {
+                "codename": "view_aluno",
+                "name": "Can view aluno",
+                "content_type": "dependencias_app.aluno"
+            },
+            {
+                "codename": "add_session",
+                "name": "Can add session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "change_session",
+                "name": "Can change session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "delete_session",
+                "name": "Can delete session",
+                "content_type": "sessions.session"
+            },
+            {
+                "codename": "view_session",
+                "name": "Can view session",
+                "content_type": "sessions.session"
+            }
+        ]
+    }
+]

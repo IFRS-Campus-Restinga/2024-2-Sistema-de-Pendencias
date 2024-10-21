@@ -1,8 +1,8 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from dependencias_app.permissoes import *
 from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
-from dependencias_app.models.curso import Curso
 from dependencias_app.serializers.cursoSerializer import CursoSerializer
 from dependencias_app.serializers.turmaSerializer import TurmaSerializer
 
@@ -10,6 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
+@permission_classes([GestaoEscolar])
 def cadastrar_curso(request):
     # Extraia os dados da requisição
     turmas_numeros = request.data.get('turmas', [])  # Lista de números das turmas

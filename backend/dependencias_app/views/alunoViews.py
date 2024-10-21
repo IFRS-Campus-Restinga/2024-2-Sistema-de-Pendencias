@@ -1,14 +1,17 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from dependencias_app.models.aluno import Aluno
-from dependencias_app.serializers.alunoSerializer import AlunoSerializer
-from django.contrib.auth.models import Group
+from django.views.decorators.csrf import csrf_exempt
+from dependencias_app.permissoes import *
+from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
+from django.contrib.auth.models import Group, User
 import logging
 
 logger = logging.getLogger(__name__)
 
+@csrf_exempt
 @api_view(['POST'])
+@permission_classes([GestaoEscolar])
 def cadastrar_aluno(request):
     logger.info('Dados recebidos: %s', request.data)
     try :
@@ -21,11 +24,12 @@ def cadastrar_aluno(request):
         #  adiciona o id do grupo a data e envia para o serializador
         data = request.data
         data['perfil'] = grupo.id
-        serializer = AlunoSerializer(data=request.data)
+        serializer = UsuarioBaseSerializer(data=request.data)
         
         # valida o serializador
         if not serializer.is_valid(): raise Exception(f'{serializer.error_messages}')
-            
+        
+        User.objects.create(email=request.data.get('email', None), grupo=grupo)
         serializer.save()
         logger.info('Aluno criado com sucesso: %s', serializer.data)
         # retorna uma resposta positiva
@@ -35,8 +39,8 @@ def cadastrar_aluno(request):
         # retorna um erro
         return Response({'mensagem': str(e)}, status=400)
 
-@api_view(['GET'])
-def visualizar_alunos(request):
-    alunos = Aluno.objects.all()
-    serializer = AlunoSerializer(alunos, many=True)
-    return Response(serializer.data)
+# @api_view(['GET'])
+# def visualizar_alunos(request):
+#     alunos = Aluno.objects.all()
+#     serializer = AlunoSerializer(alunos, many=True)
+#     return Response(serializer.data)
