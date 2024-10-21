@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Header.css";
 import logo from "../../assets/logo-ifrs-branco.png";
+import Dropdown from '../../components/Dropdown/Dropdown'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { jwtDecode } from "jwt-decode";
@@ -50,7 +51,8 @@ const Header = () => {
       <div className="menu">
         {typeof nome === 'string' ? (
           <div className="header">
-            <h1 id="header-title">Bem vindo <p className="nome">{nome}</p>!</h1>
+            <h1 id="header-title">Bem vindo <p className="nome">{nome}</p></h1>
+            <img src={sessionStorage.getItem('fotoPerfil')} className="fotoPerfil"/>
             <button onClick={handleLogout} id="button-logout">
               Logout
             </button>

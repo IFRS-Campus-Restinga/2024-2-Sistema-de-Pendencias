@@ -14,18 +14,21 @@ def export_groups_and_permissions(filename='grupos_permissoes.json'):
     # Percorrer todos os grupos
     for group in Group.objects.all():
         group_data = {
-            'group_name': group.name,
-            'permissions': []
+            'model': 'auth.group',
+            'pk': group.id,
+            'fields': {
+                'name': group.name,
+                'permissions': []
+            }
         }
         
         # Obter permissões associadas ao grupo
         for permission in group.permissions.all():
             permission_data = {
-                'codename': permission.codename,
-                'name': permission.name,
-                'content_type': f"{permission.content_type.app_label}.{permission.content_type.model}"
+                'model': f"{permission.content_type.app_label}.{permission.content_type.model}",
+                'codename': permission.codename
             }
-            group_data['permissions'].append(permission_data)
+            group_data['fields']['permissions'].append(permission_data)
         
         data.append(group_data)
     
@@ -37,3 +40,4 @@ def export_groups_and_permissions(filename='grupos_permissoes.json'):
 
 if __name__ == '__main__':
     export_groups_and_permissions()
+

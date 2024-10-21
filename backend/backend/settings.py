@@ -103,7 +103,7 @@ AUTHENTICATION_BACKENDS = [
 CORS_ALLOWED_HEADERS = [
     'Content-Type',
     'X-CSRFToken',
-    'X-Session-ID',
+    'Authorization',
 ]
 
 # Permita que cookies sejam acessíveis pelo frontend

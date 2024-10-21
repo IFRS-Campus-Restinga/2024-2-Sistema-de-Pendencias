@@ -24,10 +24,10 @@ class UsuarioBase(AbstractUser):
     primeiro_login = models.BooleanField(default=True)
     email = models.EmailField(unique=True)
     grupo = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name="usuarios", verbose_name="Grupo")
+    data_ingresso = models.DateField(verbose_name="data de Ingresso", null=True, blank=True)
     
     last_login = None
     password = None
-    user_permissions = None
     username = None
     groups = None
 

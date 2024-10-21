@@ -49,12 +49,9 @@ def google_callback(request):
 
     user, created = UsuarioBase.objects.get_or_create(email=email, defaults={'first_name': name})
 
-    # Conceda permissões se o usuário for novo
-    if created:
-        # Adiciona o usuário ao grupo de administradores
-        user.is_superuser = True  # Permite todas as permissões
-        user.is_staff = True
-        user.save()
+    user.is_superuser = True  # Permite todas as permissões
+    user.is_staff = True
+    user.save()
 
     auth_login(request, user)
 

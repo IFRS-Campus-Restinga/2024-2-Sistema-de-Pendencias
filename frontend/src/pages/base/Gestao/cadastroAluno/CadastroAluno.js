@@ -1,16 +1,16 @@
+import "./CadastroAluno.css";
 import Button from "../../../../components/Button/Button";
 import axios from 'axios';
 import React, { useState } from 'react';
 import { validarFormulario, validarCampo } from './validacoes';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { alunoService } from "../../../../services/alunoService";
 
 const CadastroAluno = () => {
   const [formData, setFormData] = useState({
-    nome: '',
     email: '',
     perfil: 'Aluno',
-    matricula: ''
   });
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -21,15 +21,13 @@ const CadastroAluno = () => {
     if (Object.keys(validationErrors).length === 0) {
       setShowErrorMessage(false);
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/cadastrar-aluno/', formData);
+        const response = await alunoService.create(formData)
         console.log(response.data);
 
         // Limpar o formulário após o sucesso
         setFormData({
-          nome: '',
           email: '',
           perfil: 'Aluno',
-          matricula: ''
         });
         setErrors({}); // Limpar os erros também
 
@@ -71,19 +69,6 @@ const CadastroAluno = () => {
         {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
         <br />
         <div>
-          <label htmlFor="nome">Nome completo:</label>
-          <input
-            type="text"
-            id="nome"
-            value={formData.nome}
-            onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-            onBlur={() => handleBlur('nome')}
-            placeholder="Nome"
-            style={{ borderColor: errors.nome ? 'red' : '' }}
-          />
-          {errors.nome && <p className="erros">{errors.nome}</p>}
-        </div>
-        <div>
           <label htmlFor="email">Email:</label>
           <input
             type="email"
@@ -96,21 +81,6 @@ const CadastroAluno = () => {
           />
           {errors.email && <p className="erros">{errors.email}</p>}
         </div>
-        <div>
-          <label htmlFor="matricula">Matrícula:</label>
-          <input
-            type="text"
-            id="matricula"
-            value={formData.matricula}
-            onChange={(e) => setFormData({ ...formData, matricula: e.target.value })}
-            onBlur={() => handleBlur('matricula')}
-            placeholder="Matrícula"
-            maxLength="10"
-            style={{ borderColor: errors.matricula ? 'red' : '' }}
-          />
-          {errors.matricula && <p className="erros">{errors.matricula}</p>}
-        </div>
-
         <div className="ajuste-button">
           <Button
             width="30%"

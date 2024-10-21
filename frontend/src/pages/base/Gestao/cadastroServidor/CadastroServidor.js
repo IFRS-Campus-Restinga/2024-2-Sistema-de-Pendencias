@@ -8,9 +8,6 @@ import 'react-toastify/dist/ReactToastify.css';
 const CadastroServidor = () => {
     const [formData, setFormData] = useState({
         perfil: '',
-        nome: '',
-        cpf: '',
-        matricula: '',
         email: ''
     });
 
@@ -21,6 +18,8 @@ const CadastroServidor = () => {
         e.preventDefault();
         const validationErrors = validarFormulario(formData);
 
+        // const cpfSemFormatacao = formData.cpf.replace(/\D/g, '');
+
         // Crie um objeto a ser enviado, incluindo apenas os campos necessários
         const { perfil, email } = formData;
         const dataToSend = {
@@ -28,16 +27,17 @@ const CadastroServidor = () => {
             email,
         };
 
-        // Adicione cpf e matricula apenas se o perfil não for 'registroEscolar' ou 'gestaoEscolar'
-        // if (perfil !== 'RegistroEscolar' && perfil !== 'GestaoEscolar') {
-        //     dataToSend.cpf = cpf;
-        //     dataToSend.matricula = matricula;
-        // }
-
         if (Object.keys(validationErrors).length === 0) {
             setShowErrorMessage(false);
             try {
                 const res = await servidorService.create(dataToSend, 'csrftoken');
+
+                // Limpar o formulário após o sucesso
+                setFormData({
+                    perfil: '',
+                    email: '',
+                });
+                setErrors({}); // Limpar os erros também
 
                 if (res && res.status) {
                     console.log(res);
@@ -62,7 +62,14 @@ const CadastroServidor = () => {
     };
 
     const validarHandler = (campo) => {
-        const error = validarCampo(campo, formData[campo]);
+        let valorCampo = formData[campo];
+
+        // Remover formatação do CPF antes de validar
+        if (campo === 'cpf') {
+            valorCampo = valorCampo.replace(/\D/g, '');
+        }
+
+        const error = validarCampo(campo, valorCampo);
         if (error) {
             setErrors((prevErrors) => ({ ...prevErrors, [campo]: error }));
         } else {
@@ -84,49 +91,44 @@ const CadastroServidor = () => {
                 <div className="radio-container">
                     <label>
                         <input type="radio" value="Professor" checked={formData.perfil === 'Professor'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
                         <span>Professor</span>
                     </label>
                     <label>
                         <input type="radio" value="RegistroEscolar" checked={formData.perfil === 'RegistroEscolar'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
                         <span>Registros Escolares</span>
                     </label>
                     <label>
                         <input type="radio" value="GestaoEscolar" checked={formData.perfil === 'GestaoEscolar'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
                         <span>Gestão Escolar</span>
                     </label>
                     <label>
                         <input type="radio" value="Coordenador" checked={formData.perfil === 'Coordenador'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
                         <span>Coordenador</span>
                     </label>
                 </div>
             </div>
-            <div className="form-item">
-                <label htmlFor="nome">Nome completo:</label>
-                <input type="text" value={formData.nome}
-                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })} required
-                    onBlur={() => validarHandler('nome')}
-                    placeholder="Nome"
-                    style={{ borderColor: errors.nome ? 'red' : '' }}
-                />
-            </div>
             {/* {formData.perfil !== 'RegistroEscolar' && formData.perfil !== 'Coordenador' && formData.perfil !== "GestaoEscolar" ? (
                 <>
                     <div className="form-item">
                         <label>CPF</label>
-                        <input type="text" value={formData.cpf}
-                            onChange={(e) => setFormData({ ...formData, cpf: e.target.value })} required
+                        <InputMask
+                            mask="999.999.999-99" // Formato do CPF
+                            value={formData.cpf}
+                            onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+                            required
                             onBlur={() => validarHandler('cpf')}
                             placeholder="CPF"
-                            style={{ borderColor: errors.nome ? 'red' : '' }}
+                            style={{ borderColor: errors.cpf ? 'red' : '' }}
                         />
+                        {errors.cpf && <p className="erros">{errors.cpf}</p>}
                     </div>
                     <div className="form-item">
                         <label>Matrícula</label>
@@ -136,6 +138,7 @@ const CadastroServidor = () => {
                             placeholder="Matrícula"
                             style={{ borderColor: errors.nome ? 'red' : '' }}
                         />
+                        {errors.matricula && <p className="erros">{errors.matricula}</p>}
                     </div>
                 </>
             ) : (
@@ -150,6 +153,7 @@ const CadastroServidor = () => {
                     placeholder="E-mail"
                     style={{ borderColor: errors.nome ? 'red' : '' }}
                 />
+                {errors.email && <p className="erros">{errors.email}</p>}
             </div>
             {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
             <div className='botaoContainer'>

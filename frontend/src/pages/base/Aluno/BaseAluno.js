@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import './BaseAluno.css'
 import { useNavigate } from 'react-router-dom'
 import { validaUsuario } from '../validaUsuario'
@@ -7,7 +7,7 @@ const BaseAluno = () => {
     const redirect = useNavigate()
 
     const validaAluno = () => {
-        const res = validaUsuario('Registro')
+        const res = validaUsuario('Aluno')
 
         if (!res.status) {
             if (res.perfil === undefined) redirect('/')

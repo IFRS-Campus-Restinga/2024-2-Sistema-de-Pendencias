@@ -4,7 +4,7 @@ from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from dependencias_app.permissoes import *
 from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,21 +16,22 @@ def cadastrar_aluno(request):
     logger.info('Dados recebidos: %s', request.data)
     try :
         # extrai o perfil da requisicao e busca um grupo com o nome
-        grupo = Group.objects.get(name=request.data.get('perfil', None))
+        data = request.data
 
         # valida o grupo 
-        if not isinstance(grupo, Group): raise Exception('Perfil Inválido!')
+        grupo = Group.objects.get(name='Aluno')
         
         #  adiciona o id do grupo a data e envia para o serializador
-        data = request.data
-        data['perfil'] = grupo.id
-        serializer = UsuarioBaseSerializer(data=request.data)
-        
+        data['grupo'] = grupo.id
+        data.pop('perfil', None)  # Remove 'perfil' se existir
+
+        print(data)
+        serializer = UsuarioBaseSerializer(data=data)
         # valida o serializador
         if not serializer.is_valid(): raise Exception(f'{serializer.error_messages}')
-        
-        User.objects.create(email=request.data.get('email', None), grupo=grupo)
+
         serializer.save()
+        
         logger.info('Aluno criado com sucesso: %s', serializer.data)
         # retorna uma resposta positiva
         return Response(serializer.data, status=status.HTTP_201_CREATED)

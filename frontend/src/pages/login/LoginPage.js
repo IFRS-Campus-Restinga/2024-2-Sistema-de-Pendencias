@@ -3,7 +3,7 @@ import logo from "../../assets/logo-ifrs.png";
 import PageContainer from "../../components/PageContainer/PageContainer";
 import GoogleLoginButton from "../../components/GoogleLoginButton/GoogleLoginButton"; // Certifique-se de que esse caminho esteja correto
 import "./LoginPage.css";
-import { authService } from "../../services/authService";
+import {authService} from "../../services/authService";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -15,11 +15,12 @@ const LoginPage = () => {
   const handleSuccess = async(response) => {
     // Envia a credencial do google (jwt) para ser decodificada no backend
     const res = await authService.login(response)
+    
     try {
       if (res.status !== 200) throw new Error()
         // adiciona o token jwt contendo os dados do cliente ao session storage
         sessionStorage.setItem('token', res.data.token)
-        sessionStorage.setItem('refresh', res.data.refresh)
+        sessionStorage.setItem('fotoPerfil', res.data.fotoPerfil)
 
         const decoded = jwtDecode(res.data.token)
 

@@ -24,17 +24,3 @@ api.interceptors.request.use(
     return Promise.reject(erro); // Retorna erro, se houver
   }
 );
-
-api.interceptors.request.use(
-  (config) => {
-    const sessionid = Cookies.get('sessionid') // Obtendo o token 
-    console.log(sessionid)
-    if (sessionid) {
-      config.headers.Authorization = `Session ${sessionid}`; // Nome correto do header
-    }
-    return config; // Retorna a configuração da requisição
-  },
-  (erro) => {
-    return Promise.reject(erro); // Retorna erro, se houver
-  }
-);
