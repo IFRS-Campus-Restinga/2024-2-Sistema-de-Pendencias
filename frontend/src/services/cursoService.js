@@ -1,20 +1,16 @@
-import { api } from "../config/axiosConfig";
+import {api} from '../config/axiosConfig';
 
-const cursoService = {
-  create: async (params, csrfToken) => {
-    const res = await api
-      .post("/cadastrar_curso", params, {
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": csrfToken,
-        },
-      })
-      .catch((erro) => {
-        if (erro.response.status === 400) return erro.response;
-      });
+  const cursoService = {
+    create: async (data) => {
+      try {
+        const response = await api.post('http://localhost:8000/api/cursos/', data);
+        return response.data;
+      } catch (error) {
+        console.error("Erro ao criar curso:", error);
+        throw error;
+      }
+    }
 
-    return res;
-  },
-};
-
+  };
+  
 export default cursoService;

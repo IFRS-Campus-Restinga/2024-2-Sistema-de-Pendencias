@@ -16,6 +16,7 @@ def cadastrar_disciplina(request):
     serializer = DisciplinaSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
+
     return Response({
         "message": "Disciplina criada com sucesso.",
         "data": serializer.data
@@ -40,9 +41,13 @@ def buscar_disciplina(request, id):
     Retorna um JSON com os campos da Disciplina buscada ou erro.
     """
     disciplina = get_object_or_404(Disciplina, id=id)
+
     return Response({
+
         'id': disciplina.id,
         'nome': disciplina.name,
         'carga_horaria': disciplina.carga_horaria,
         'curso': disciplina.curso.nome
+
     }, status=status.HTTP_200_OK)
+

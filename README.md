@@ -27,6 +27,10 @@ Confira se há migrations a fazer ou migrar
 - py manage.py makemigrations
 - py manage.py migrate
 
+Carregue os grupos e permissões
+
+- py manage.py loaddata grupos_com_permissoes.json
+
 Rode o servidor
 
 - py manage.py runserver

@@ -3,4 +3,6 @@ from .aluno import *
 from .curso import *
 from .turma import *
 from .disciplina import *
-from .emi_ped import *
+
+from .gestaoEscolar import *
+

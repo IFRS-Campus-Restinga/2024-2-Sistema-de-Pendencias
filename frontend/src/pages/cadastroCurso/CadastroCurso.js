@@ -1,86 +1,172 @@
-import React, { useState } from 'react';
-import cursoService from '../../services/cursoService'; 
-import './CadastroCurso.css'; 
-import Switch from '../../components/Switch/Switch';
-import Button from '../../components/Button/Button';
+import React, { useState } from "react";
+import axios from "axios";
+import "./CadastroCurso.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const CadastroCurso = () => {
-  const [nome, setNome] = useState('');
-  const [cargaHoraria, setCargaHoraria] = useState('');
-  const [modalidade, setModalidade] = useState('');
+  const [nome, setNome] = useState("");
+  const [cargaHoraria, setCargaHoraria] = useState("");
+  const [modalidade, setModalidade] = useState("");
+  const [turmas, setTurmas] = useState([]);
+  const [mensagem, setMensagem] = useState(null);
 
-  const modalidades = [
-    { value: 'PROEJA', label: 'PROEJA' },
-    { value: 'EMI', label: 'EMI' }
-  ];
+  const addTurma = () => {
+    setTurmas([...turmas, { numero: "" }]);
+  };
+
+  const handleTurmaChange = (index, value) => {
+    const newTurmas = [...turmas];
+    newTurmas[index].numero = value;
+    setTurmas(newTurmas);
+  };
+
+  const removeTurma = (index) => {
+    const newTurmas = turmas.filter((_, i) => i !== index);
+    setTurmas(newTurmas);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/cadastrar-curso', {
-        nome,
-        carga_horaria: cargaHoraria,
-        modalidade
-      });
-      console.log('Curso cadastrado com sucesso', response.data);
+      const turmasIds = turmas
+        .map((turma) => turma.numero)
+        .filter((numero) => numero.trim() !== ""); // Obter os números das turmas
+
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/cadastrar-curso/",
+        {
+          nome,
+          carga_horaria: cargaHoraria,
+          modalidade,
+          turmas: turmasIds,
+        }
+      );
+      console.log("Curso cadastrado com sucesso", response.data);
+
+      setNome("");
+      setCargaHoraria("");
+      setModalidade("");
+      setTurmas([]);
+      setMensagem("Curso cadastrado com sucesso!");
     } catch (error) {
-      console.error('Erro ao cadastrar curso', error);
+      console.error(
+        "Erro ao cadastrar curso",
+        error.response ? error.response.data : error.message
+      );
+      setMensagem("Erro ao cadastrar o curso.");
     }
   };
 
-    return (
-        <form className='form' onSubmit={envioHandler}>
-            <h1>Cadastro Curso</h1>
-                <h4>Modalidade</h4>
-            <div className='containerOpcoes'>
-                    <label className='modalidadeLabel' htmlFor='Proeja'>
-                    <span className='labelTexto'>ProEja</span>
-                        <input
-                            type="radio"
-                            name="Proeja"
-                            value="ProEja"
-                            onChange={(e) => setFormData({ ...formData, modalidade: e.target.value })}
-                        />
-                    </label>
-                    <label className='modalidadeLabel' htmlFor='Integrado' >
-                    <span className='labelTexto'>Integrado</span>
-                        <input
-                            type="radio"
-                            name="modalidade"
-                            value="Integrado"
-                            onChange={(e) => setFormData({ ...formData, modalidade: e.target.value })}
-                        />
-                    </label>
-                </div>
-            <div>
-                <label htmlFor="nome_curso">Nome do Curso:</label>
-                <input
-                    type="text"
-                    name="nome_curso"
-                    id="nome_curso"
-                    required
-                    onChange={(e) => setFormData({ ...formData, nome_curso: e.target.value })}
-                />
-            </div>
-            <div>
-                <label htmlFor="carga_horaria">Carga Horária:</label>
-                <input
-                    type="text"
-                    name="carga_horaria"
-                    id="carga_horaria"
-                    required
-                    onChange={(e) => setFormData({ ...formData, carga_horaria: e.target.value })} 
-                />
-            </div>
-            <Button
-              width="30%"
-              color="#28A745"
-              text="Cadastrar"
-              onClick={envioHandler}
+  return (
+    <form className="form" onSubmit={handleSubmit}>
+      <h1>Cadastro Curso</h1>
+      {mensagem && <p className="mensagem">{mensagem}</p>}{" "}
+      {/* Exibir mensagem de feedback */}
+      <div className="modalidade-container">
+        <h4>Modalidade:</h4>
+        <div className="containerOpcoes">
+          <label className="modalidadeLabel">
+            <input
+              type="radio"
+              name="modalidade"
+              value="PROEJA"
+              onChange={(e) => setModalidade(e.target.value)}
             />
-        </form>
-    );
-    
+            ProEja
+          </label>
+          <label className="modalidadeLabel">
+            <input
+              type="radio"
+              name="modalidade"
+              value="EMI"
+              onChange={(e) => setModalidade(e.target.value)}
+            />
+            Integrado
+          </label>
+        </div>
+      </div>
+      <div className="input-group">
+        <label htmlFor="nome_curso">Nome do Curso:</label>
+        <input
+          type="text"
+          name="nome_curso"
+          id="nome_curso"
+          value={nome}
+          required
+          onChange={(e) => setNome(e.target.value)}
+        />
+      </div>
+      <div className="input-group">
+        <label htmlFor="carga_horaria">Carga Horária:</label>
+        <input
+          type="text"
+          name="carga_horaria"
+          id="carga_horaria"
+          value={cargaHoraria}
+          required
+          onChange={(e) => setCargaHoraria(e.target.value)}
+        />
+      </div>
+      <div className="add-turma">
+        <button type="button" onClick={addTurma} className="add-button">
+          <FontAwesomeIcon
+            icon={faPlusCircle}
+            style={{ color: "#28A745", cursor: "pointer", fontSize: "24px" }}
+          />
+          <span>Adicionar Turma</span>
+        </button>
+      </div>
+      {turmas.length > 0 && (
+        <div className="turmas-lista">
+          <h4>Turmas a serem adicionadas:</h4>
+          <table className="turmas-tabela">
+            <thead>
+              <tr>
+                <th>Número da Turma</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody>
+              {turmas.map((turma, index) => (
+                <tr key={index}>
+                  <td>
+                    <input
+                      type="text"
+                      className="turmaInput"
+                      value={turma.numero}
+                      onChange={(e) => handleTurmaChange(index, e.target.value)}
+                      required
+                      placeholder="Digite o número da turma"
+                    />
+                  </td>
+                  <td>
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      style={{
+                        cursor: "pointer",
+                        color: "red",
+                        fontSize: "20px",
+                      }}
+                      onClick={() => console.log("Ícone clicado!")} // Substitua pela sua função
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <button
+        type="submit"
+        className="submitButton"
+        style={{ marginTop: "20px" }}
+      >
+        Cadastrar Curso
+      </button>
+    </form>
+  );
 };
 
 export default CadastroCurso;

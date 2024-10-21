@@ -5,12 +5,14 @@ import CadastroServidor from './pages/cadastroServidor/CadastroServidor'
 import CadastroAluno from './pages/cadastroAluno/CadastroAluno'
 import HomeGestao from './pages/home/HomeGestao'
 import Saudacao from './components/Saudacao/Saudacao'
+import CadastroDisciplina from "./pages/cadastroDisciplina/CadastroDisciplina"
 
 const router = createBrowserRouter([
     {
-        path: '/',
+        path: '',
         element: <LoginPage />,
     },
+
     {
         path: '/secao',
         element: <HomeGestao />,
@@ -30,6 +32,10 @@ const router = createBrowserRouter([
             {
                 path: '/secao/:idUsuario/cadastroAluno',
                 element: <CadastroAluno />
+            },
+            {
+                path: '/secao/:idUsuario/cadastroDisciplina',
+                element: <CadastroDisciplina />
             }
             // Adicionar outros caminhos que vão derivar da tela de home após autenticação
         ]

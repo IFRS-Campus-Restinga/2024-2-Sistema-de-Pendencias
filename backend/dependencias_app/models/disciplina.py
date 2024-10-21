@@ -26,6 +26,7 @@ class Disciplina(BaseModel):
         blank=False,
         null=False,
         validators=[MaxValueValidator(800)]
+
     )
 
     class Meta:

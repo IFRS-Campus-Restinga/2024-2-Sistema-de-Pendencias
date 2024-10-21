@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 import servidorService from '../../services/servidorService';
-import Header from "../../components/Header/Header";
-import PageContainer from "../../components/PageContainer/PageContainer";
 import "./CadastroServidor.css";
-import BackButton from '../../components/BackButton/BackButton';
 import Button from '../../components/Button/Button';
-
-//import axios from 'axios';
-
+import { validarFormulario, validarCampo } from './validacoes';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CadastroServidor = () => {
     const [formData, setFormData] = useState({
@@ -16,54 +12,77 @@ const CadastroServidor = () => {
         cpf: '',
         matricula: '',
         email: ''
-      });
+    });
 
-    const envioHandler = async (e) => {  // Handler para envio do formulário de cadastro de servidor
+    const [errors, setErrors] = useState({});
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
+
+    const enviarHandler = async (e) => {
         e.preventDefault();
+        const validationErrors = validarFormulario(formData);
 
-        try {
-            const res = await servidorService.create(formData, 'csrftoken');
-           
-            if (res && res.status) {
-                if (res.status === 200) {
-                    alert('Servidor cadastrado com sucesso!');
-                } else {
-                    alert('Erro ao cadastrar servidor: ' + (res.data ? res.data.message : 'Erro desconhecido'));
-                }
-            } else {
-                alert('Erro na requisição: resposta indefinida.'); // res indefinido
-            }
-        } catch (error) {
-            if (error.response) {
-                alert(`Erro no servidor: ${error.response.data.error || 'Erro desconhecido'}`);
-            } else if (error.request) {
-                alert("Nenhuma resposta do servidor.");
-            } else {
-                alert(`Erro na requisição: ${error.message}`);
-            }
-            console.error("Erro ao enviar os dados:", error);
-            alert("Falha na comunicação com o servidor.");
+        // Crie um objeto a ser enviado, incluindo apenas os campos necessários
+        const { perfil, nome, email, cpf, matricula } = formData;
+        const dataToSend = {
+            perfil,
+            nome,
+            email,
+        };
+
+        // Adicione cpf e matricula apenas se o perfil não for 'registroEscolar' ou 'gestaoEscolar'
+        if (perfil !== 'RegistroEscolar' && perfil !== 'GestaoEscolar' && perfil !== 'Coordenador') {
+            dataToSend.cpf = cpf;
+            dataToSend.matricula = matricula;
         }
-        console.log(formData)
+
+        if (Object.keys(validationErrors).length === 0) {
+            setShowErrorMessage(false);
+            try {
+                const res = await servidorService.create(dataToSend, 'csrftoken');
+
+                if (res && res.status) {
+                    console.log(res);
+                    if (res.status === 200 || res.status === 201) {
+                        alert('Servidor cadastrado com sucesso!');
+                    } else {
+                        alert('Erro ao cadastrar servidor: ' + (res.data ? res.data.message : 'Erro desconhecido'));
+                    }
+                } else {
+                    alert('Erro na requisição: resposta indefinida.');
+                }
+            } catch (error) {
+                console.error("Erro ao enviar os dados:", error);
+                alert("Falha na comunicação com o servidor.");
+            }
+        } else {
+            setErrors(validationErrors);
+            setShowErrorMessage(true);
+        }
+
+        console.log(dataToSend); // Mostra o objeto que será enviado
     };
-    
-    const handleBack = () => {
-        // Lógica para voltar, como redirecionar ou fechar uma página
-        alert("Voltando...");
-      };
+
+    const validarHandler = (campo) => {
+        const error = validarCampo(campo, formData[campo]);
+        if (error) {
+            setErrors((prevErrors) => ({ ...prevErrors, [campo]: error }));
+        } else {
+            setErrors((prevErrors) => {
+                const { [campo]: removed, ...rest } = prevErrors;
+                return rest;
+            });
+        }
+    };
 
     return (
-        <form className="form-servidor" onSubmit={envioHandler}>
-                <h3>Cadastro de Servidor</h3>
-                <div>
-                    <label className="form-item">Perfil:</label>
-                    <br/>
-                    <div className="radio-container">
-                    <label>
-                        <input type="radio" value="Aluno" checked={formData.perfil === 'Aluno'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
-                        <span>Aluno</span>
-                    </label>
+        <form className="form-servidor" onSubmit={enviarHandler}>
+            <h3>Cadastro Servidor</h3>
+            <hr />
+            <br />
+            <div>
+                <label htmlFor="perfil">Perfil:</label>
+                <br />
+                <div className="radio-container">
                     <label>
                         <input type="radio" value="Professor" checked={formData.perfil === 'Professor'}
                             onChange={(e) => setFormData({...formData, perfil: e.target.value})}
@@ -71,46 +90,79 @@ const CadastroServidor = () => {
                         <span>Professor</span>
                     </label>
                     <label>
-                        <input type="radio" value="Registros Escolares" checked={formData.perfil === 'Registros Escolares'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
+                        <input type="radio" value="RegistroEscolar" checked={formData.perfil === 'RegistroEscolar'}
+                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                        />
                         <span>Registros Escolares</span>
                     </label>
                     <label>
-                        <input type="radio" value="Gestão Escolar" checked={formData.perfil === 'Gestão Escolar'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
+                        <input type="radio" value="GestaoEscolar" checked={formData.perfil === 'GestaoEscolar'}
+                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                        />
                         <span>Gestão Escolar</span>
                     </label>
                     <label>
                         <input type="radio" value="Coordenador" checked={formData.perfil === 'Coordenador'}
-                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}/>
+                            onChange={(e) => setFormData({...formData, perfil: e.target.value})}
+                        />
                         <span>Coordenador</span>
                     </label>
+                </div>
+            </div>
+            <div className="form-item">
+                <label htmlFor="nome">Nome completo:</label>
+                <input type="text" value={formData.nome}
+                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })} required
+                    onBlur={() => validarHandler('nome')}
+                    placeholder="Nome"
+                    style={{ borderColor: errors.nome ? 'red' : '' }}
+                />
+            </div>
+
+            {/* Renderização condicional para CPF e Matrícula */}
+            {formData.perfil !== 'RegistroEscolar' && formData.perfil !== 'Coordenador' && formData.perfil !== "GestaoEscolar" ? (
+                <>
+                    <div className="form-item">
+                        <label>CPF</label>
+                        <input type="text" value={formData.cpf}
+                            onChange={(e) => setFormData({ ...formData, cpf: e.target.value })} required
+                            onBlur={() => validarHandler('cpf')}
+                            placeholder="CPF"
+                            style={{ borderColor: errors.nome ? 'red' : '' }}
+                        />
                     </div>
-                </div>
-                <div className="form-item">
-                    <label>Nome</label>
-                    <input type="text" value={formData.nome} onChange={(e) => setFormData({...formData, nome: e.target.value})} required />
-                </div>
-                <div className="form-item">
-                    <label>CPF</label>
-                    <input type="text" value={formData.cpf} onChange={(e) => setFormData({...formData, cpf: e.target.value})} required />
-                </div>
-                <div className="form-item">
-                    <label>Matrícula</label>
-                    <input type="text" value={formData.matricula} onChange={(e) => setFormData({...formData, matricula: e.target.value})} required />
-                </div>
-                <div className="form-item">
-                    <label>Email</label>
-                    <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required />
-                </div>
-                <div className='botaoContainer'>
-                    <Button
-                        width="30%"
-                        color="#28A745"
-                        text="Cadastrar"
-                        onClick={envioHandler}
-                    />
-                </div>
+                    <div className="form-item">
+                        <label>Matrícula</label>
+                        <input type="text" value={formData.matricula}
+                            onChange={(e) => setFormData({ ...formData, matricula: e.target.value })} required
+                            onBlur={() => validarHandler('matricula')}
+                            placeholder="Matrícula"
+                            style={{ borderColor: errors.nome ? 'red' : '' }}
+                        />
+                    </div>
+                </>
+            ) : (
+                <></>
+            )}
+
+            <div className="form-item">
+                <label>E-mail</label>
+                <input type="email" value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })} required
+                    onBlur={() => validarHandler('email')}
+                    placeholder="E-mail"
+                    style={{ borderColor: errors.nome ? 'red' : '' }}
+                />
+            </div>
+            {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
+            <div className='botaoContainer'>
+                <Button
+                    width="30%"
+                    color="#28A745"
+                    text="Cadastrar"
+                    onClick={enviarHandler}
+                />
+            </div>
         </form>
     );
 };

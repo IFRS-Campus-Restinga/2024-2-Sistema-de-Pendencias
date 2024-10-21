@@ -1,0 +1,41 @@
+
+
+h3 {
+    font-size: 35px;
+    margin-bottom: 20px;
+}
+
+.form-disciplina {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.botaoContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.form-item {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+input,
+select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.radio-container label {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+}

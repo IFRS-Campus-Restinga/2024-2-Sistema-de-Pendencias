@@ -1,18 +1,35 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from django.contrib.auth.models import Group
 from dependencias_app.serializers.registroEscolarSerializer import RegistroEscolarSerializer
 
 @api_view(['POST'])
 def cadastrar_registro_escolar(request):
-    return cadastrar_usuario(request, 'registro_escolar')
+    try:
+        name = request.data.get('perfil', None)
 
-def cadastrar_usuario(request, perfil):
-    if request.method == 'POST':
+        print(name)
+        # extrai o nome do perfil da requisição
+        grupo = Group.objects.get(name=name)
+
+        # valida o perfil
+        if not isinstance(grupo, Group): raise Exception('perfil inválido')
+
+        # adiciona o id do grupo correspondente ao perfil em um dicionario
         data = request.data
-        data['perfil'] = perfil  # Adiciona o tipo de perfil
+        data['perfil'] = grupo.id
+
+        print(data)
+        # passa o dicionario para o serializador
         serializer = RegistroEscolarSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # valida os dados do serializador
+        if not serializer.is_valid(): raise Exception(f'{serializer.error_messages}')
+
+        serializer.save()
+        # retorna uma resposta positiva
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        # retorna um erro
+        return Response({'mensagem': str(e)}, status=400)
