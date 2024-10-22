@@ -1,21 +1,23 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from dependencias_app.permissoes import *
 from django.contrib.auth.models import Group
-from dependencias_app.serializers.gestaoEscolarSerializer import GestaoEscolarSerializer
+from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
 from django.contrib.auth.models import Group
 import logging
-from dependencias_app.models.gestaoEscolar import GestaoEscolar
 
 logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
+@permission_classes([GestaoEscolar])
 def cadastrar_gestao_escolar(request):
     logger.info('Dados recebidos: %s', request.data)
     try:
         # extrai o nome do perfil da requisição
         perfil_nome = request.data.get('perfil', None)
-        if not perfil_nome:
+
+        if perfil_nome != 'GestaoEscolar':
             raise ValueError("O campo 'perfil' é obrigatório.")
 
         # tenta encontrar o grupo pelo nome
@@ -26,10 +28,10 @@ def cadastrar_gestao_escolar(request):
         
         # adiciona o id do grupo correspondente ao perfil em um dicionario
         data = request.data
-        data['perfil'] = grupo.id
+        data['grupo'] = grupo.id
 
         # passa o dicionario para o serializador
-        serializer = GestaoEscolarSerializer(data=data)
+        serializer = UsuarioBaseSerializer(data=data)
 
         # valida os dados do serializador
         if not serializer.is_valid(): raise Exception(f'{serializer.erros}')
@@ -60,7 +62,7 @@ def listarGestaoEscolar(request):
             gestao_escolar = gestao_escolar.order_by(ordenar_por)
 
         # Serialização dos dados
-        serializer = GestaoEscolarSerializer(gestao_escolar, many=True)
+        serializer = UsuarioBaseSerializer(gestao_escolar, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)

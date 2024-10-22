@@ -1,4 +1,3 @@
-# alunoSerializer.py
 from rest_framework import serializers
 from dependencias_app.models.aluno import Aluno
 

@@ -1,4 +1,4 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator
 from .base import *
 from .curso import Curso
 
@@ -8,28 +8,29 @@ class Disciplina(BaseModel):
         on_delete=models.CASCADE,
         related_name="disciplinas",
         verbose_name="Curso",
-        help_text="Selecione o curso da Disciplina",
-        blank = False,
-        null = False
+        help_text="Selecione o Curso",
+        blank=False,
+        null=False
     )
+
     name = models.CharField(
         max_length=36,
         verbose_name="Nome da Disciplina",
-        help_text="Informe o nome da Disciplina",
+        help_text="Nome disciplina",
         blank = False,
         null = False
     )
-    carga_horaria = models.IntegerField(
-        verbose_name="Carga Horária",
-        help_text="Informe a carga horária da Disciplina",
+    carga_horaria = models.PositiveIntegerField(
+        verbose_name="Carga Horaria",
+        help_text="Carga horaria",
         blank=False,
         null=False,
-        validators=[MinValueValidator(1), MaxValueValidator(850)]
+        validators=[MaxValueValidator(800)]
+
     )
 
     class Meta:
         abstract = False
-
 
     def __str__(self):
         return f"{self.name} ({self.curso} - {self.curso.modalidade})"

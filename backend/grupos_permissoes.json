@@ -1,0 +1,299 @@
+[
+    {
+        "model": "auth.group",
+        "pk": 1,
+        "fields": {
+            "name": "GestaoEscolar",
+            "permissions": [
+                {
+                    "model": "dependencias_app.aluno",
+                    "codename": "add_aluno"
+                },
+                {
+                    "model": "dependencias_app.aluno",
+                    "codename": "change_aluno"
+                },
+                {
+                    "model": "dependencias_app.aluno",
+                    "codename": "delete_aluno"
+                },
+                {
+                    "model": "dependencias_app.aluno",
+                    "codename": "view_aluno"
+                },
+                {
+                    "model": "dependencias_app.curso",
+                    "codename": "add_curso"
+                },
+                {
+                    "model": "dependencias_app.curso",
+                    "codename": "change_curso"
+                },
+                {
+                    "model": "dependencias_app.curso",
+                    "codename": "delete_curso"
+                },
+                {
+                    "model": "dependencias_app.curso",
+                    "codename": "view_curso"
+                },
+                {
+                    "model": "dependencias_app.disciplina",
+                    "codename": "add_disciplina"
+                },
+                {
+                    "model": "dependencias_app.disciplina",
+                    "codename": "change_disciplina"
+                },
+                {
+                    "model": "dependencias_app.disciplina",
+                    "codename": "delete_disciplina"
+                },
+                {
+                    "model": "dependencias_app.disciplina",
+                    "codename": "view_disciplina"
+                },
+                {
+                    "model": "dependencias_app.professor",
+                    "codename": "add_professor"
+                },
+                {
+                    "model": "dependencias_app.professor",
+                    "codename": "change_professor"
+                },
+                {
+                    "model": "dependencias_app.professor",
+                    "codename": "delete_professor"
+                },
+                {
+                    "model": "dependencias_app.professor",
+                    "codename": "view_professor"
+                },
+                {
+                    "model": "dependencias_app.turma",
+                    "codename": "add_turma"
+                },
+                {
+                    "model": "dependencias_app.turma",
+                    "codename": "change_turma"
+                },
+                {
+                    "model": "dependencias_app.turma",
+                    "codename": "delete_turma"
+                },
+                {
+                    "model": "dependencias_app.turma",
+                    "codename": "view_turma"
+                },
+                {
+                    "model": "google_auth.usuariobase",
+                    "codename": "add_usuariobase"
+                },
+                {
+                    "model": "google_auth.usuariobase",
+                    "codename": "change_usuariobase"
+                },
+                {
+                    "model": "google_auth.usuariobase",
+                    "codename": "delete_usuariobase"
+                },
+                {
+                    "model": "google_auth.usuariobase",
+                    "codename": "view_usuariobase"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "add_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "change_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "delete_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "view_session"
+                }
+            ]
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 2,
+        "fields": {
+            "name": "RegistroEscolar",
+            "permissions": [
+                {
+                    "model": "dependencias_app.disciplina",
+                    "codename": "view_disciplina"
+                },
+                {
+                    "model": "dependencias_app.turma",
+                    "codename": "view_turma"
+                },
+                {
+                    "model": "google_auth.usuariobase",
+                    "codename": "view_usuariobase"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "add_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "change_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "delete_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "view_session"
+                }
+            ]
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 3,
+        "fields": {
+            "name": "Coordenador",
+            "permissions": [
+                {
+                    "model": "dependencias_app.aluno",
+                    "codename": "view_aluno"
+                },
+                {
+                    "model": "dependencias_app.curso",
+                    "codename": "view_curso"
+                },
+                {
+                    "model": "dependencias_app.disciplina",
+                    "codename": "view_disciplina"
+                },
+                {
+                    "model": "dependencias_app.professor",
+                    "codename": "view_professor"
+                },
+                {
+                    "model": "dependencias_app.turma",
+                    "codename": "view_turma"
+                },
+                {
+                    "model": "google_auth.usuariobase",
+                    "codename": "view_usuariobase"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "add_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "change_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "delete_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "view_session"
+                }
+            ]
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 4,
+        "fields": {
+            "name": "Professor",
+            "permissions": [
+                {
+                    "model": "dependencias_app.aluno",
+                    "codename": "view_aluno"
+                },
+                {
+                    "model": "dependencias_app.curso",
+                    "codename": "view_curso"
+                },
+                {
+                    "model": "dependencias_app.disciplina",
+                    "codename": "view_disciplina"
+                },
+                {
+                    "model": "dependencias_app.professor",
+                    "codename": "add_professor"
+                },
+                {
+                    "model": "dependencias_app.professor",
+                    "codename": "change_professor"
+                },
+                {
+                    "model": "dependencias_app.professor",
+                    "codename": "view_professor"
+                },
+                {
+                    "model": "dependencias_app.turma",
+                    "codename": "view_turma"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "add_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "change_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "delete_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "view_session"
+                }
+            ]
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 5,
+        "fields": {
+            "name": "Aluno",
+            "permissions": [
+                {
+                    "model": "dependencias_app.aluno",
+                    "codename": "add_aluno"
+                },
+                {
+                    "model": "dependencias_app.aluno",
+                    "codename": "change_aluno"
+                },
+                {
+                    "model": "dependencias_app.aluno",
+                    "codename": "view_aluno"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "add_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "change_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "delete_session"
+                },
+                {
+                    "model": "sessions.session",
+                    "codename": "view_session"
+                }
+            ]
+        }
+    }
+]
