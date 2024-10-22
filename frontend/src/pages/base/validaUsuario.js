@@ -7,9 +7,15 @@ export const validaUsuario = (perfilPagina) => {
     
     const decoded = jwtDecode(token)
 
-    if (decoded.perfil !== perfilPagina) return {
-        status: false,
-        perfil: decoded.perfil,
-        idUsuario: decoded.idUsuario
+    if (decoded.perfil !== perfilPagina) {
+         return {
+            status: false,
+            perfil: decoded.perfil,
+            idUsuario: decoded.idUsuario
+        }
+    } else {
+        return {
+            status: true
+        }
     }
 }

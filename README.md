@@ -7,6 +7,22 @@
 - O .env da pasta backend do google drive na sua pasta backend onde encontra-se o manage.py
 - O .env da pasta frontend do google drive na sua pasta frontend onde encontra-se o package.json
 
+## CLIENT_SECRET.JSON
+
+- vá até https://console.cloud.google.com/apis/credentials?authuser=1&project=sistema-de-dependencias
+
+- faça login com a conta de sistemas se necessário
+
+- vá até credenciais
+
+- encontre a linha do projeto dependencias
+
+- clique em "Baixar OAuth"
+
+- renomeie o arquivo para "client_secret.json"
+
+- mova-o para a pasta backend junto com o .env
+
 ## Como rodar o BACKEND
 
 entre na pasta backend e crie um venv
@@ -34,6 +50,12 @@ Carregue os grupos e permissões
 Rode o servidor
 
 - py manage.py runserver
+
+## Como usar django-admin
+
+- o login no django admin agora é feito pelo google, e pela url http://127.0.0.1:8000/django-admin/login
+
+- selecione uma conta do google para fazer login, clique em continuar
 
 ## Como rodar o FRONTEND
 

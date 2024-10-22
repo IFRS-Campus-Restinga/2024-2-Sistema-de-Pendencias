@@ -22,6 +22,8 @@ import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
 // Filhos de Professor
 
 // Filhos de Aluno
+import DadosAdicionaisAluno from './pages/base/Aluno/dadosAdicionaisAluno/DadosAdicionaisAluno'
+import HomeAluno from './pages/base/Aluno/home/HomeAluno'
 
 
 const router = createBrowserRouter([
@@ -67,27 +69,37 @@ const router = createBrowserRouter([
     },
     // Rotas de Registro Escolar
     {
-        path: 'sessao/RegistroEscolar',
+        path: '/sessao/RegistroEscolar/',
         element: <BaseRegistro />,
         // adicionar abaixo, as children de registro
     },
     // Rotas de Coordenador
     {
-        path: 'sessao/Coordenador',
+        path: '/sessao/Coordenador/',
         element: <BaseCoordenador />,
         // adicionar abaixo, as children de coordenador
     },
     // Rotas de Professor
     {
-        path: 'sessao/Professor',
+        path: '/sessao/Professor/',
         element: <BaseProfessor />,
         // adicionar abaixo, as children de professor
     },
     // Rotas de Aluno
     {
-        path: 'sessao/Aluno',
+        path: '/sessao/Aluno/',
         element: <BaseAluno />,
         // adicionar abaixo, as children de aluno
+        children: [
+            {
+                path: ':idUsuario/perfil',
+                element: <DadosAdicionaisAluno />
+            },
+            {
+                path: ':idUsuario/',
+                element: <HomeAluno />
+            }
+        ]
     },
 ])
 

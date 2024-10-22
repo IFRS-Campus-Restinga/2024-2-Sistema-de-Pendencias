@@ -3,19 +3,17 @@ import "./Header.css";
 import logo from "../../assets/logo-ifrs-branco.png";
 import Dropdown from '../../components/Dropdown/Dropdown'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { jwtDecode } from "jwt-decode";
 import { authService } from '../../../src/services/authService'
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const Header = () => {
+const Header = ({homeUrl}) => {
   const [nome, setNome] = useState()
   const redirect = useNavigate()
 
   const handleLogout = async () => {
     const res = await authService.logout()
-
-    console.log(res)
 
     if (res.status === 200) {
       sessionStorage.clear()
@@ -46,20 +44,32 @@ const Header = () => {
   }, [nome])
 
   return (
-    <header>
+    <header className="header">
       <img src={logo} alt="Logo do Site" className="logo" />
       <div className="menu">
         {typeof nome === 'string' ? (
-          <div className="header">
-            <h1 id="header-title">Bem vindo <p className="nome">{nome}</p></h1>
-            <img src={sessionStorage.getItem('fotoPerfil')} className="fotoPerfil"/>
-            <button onClick={handleLogout} id="button-logout">
-              Logout
-            </button>
-            <button>
+          <>
+            <h2 className="header-title">Bem vindo <p className="nome">{nome}</p></h2>
+            <Dropdown 
+              titulo={
+                <img src={sessionStorage.getItem('fotoPerfil')} className="fotoPerfil"/>
+              } 
+                itens={[
+                  {
+                    name: 'Minha Conta',
+                    link: `${homeUrl}/perfil`
+                  },
+                  {
+                    name: 'Logout',
+                    link: null,
+                    onClick: handleLogout
+                  }
+              ]}
+            />
+            <button className="buttonNotif">
               <FontAwesomeIcon icon={faBell} id="bell-icon" />{" "}
             </button>
-          </div>
+          </>
         ) : (
           <></>
         )}

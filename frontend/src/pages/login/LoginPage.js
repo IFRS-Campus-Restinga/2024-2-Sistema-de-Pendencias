@@ -1,6 +1,7 @@
 import React from "react";
 import logo from "../../assets/logo-ifrs.png";
 import PageContainer from "../../components/PageContainer/PageContainer";
+import MainContainer from "../../components/MainContainer/mainContainer";
 import GoogleLoginButton from "../../components/GoogleLoginButton/GoogleLoginButton"; // Certifique-se de que esse caminho esteja correto
 import "./LoginPage.css";
 import {authService} from "../../services/authService";
@@ -26,10 +27,10 @@ const LoginPage = () => {
 
         // redireciona os usuários professores e alunos para preenchimento de informações adicionais de perfil no primeiro login
         if (res.data.primeiroLogin === true && (decoded.perfil === 'Aluno' || decoded.perfil === 'Professor')) {
-          redirect(`sessao/${decoded.perfil}/${decoded.idUsuario}/dadosAdicionais`)
+          redirect(`sessao/${decoded.perfil}/${decoded.idUsuario}/perfil`)
         } else {
           // redireciona os usuários para sua respectiva página home após o primeiro login
-          redirect(`sessao/${decoded.perfil}/${decoded.user_id}`)
+          redirect(`sessao/${decoded.perfil}/${decoded.idUsuario}`)
         }
   
     } catch (error) {
@@ -50,6 +51,7 @@ const LoginPage = () => {
 
   return (
     <PageContainer usuario={{}}>
+      <MainContainer>
       <ToastContainer/>
         <div className="login-container">
           <h1 className="login-title">Sistema de Dependências</h1>
@@ -66,6 +68,7 @@ const LoginPage = () => {
             </div>
           </div>
         </div>
+      </MainContainer>
     </PageContainer>
   );
 };

@@ -1,26 +1,25 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { validarFormularioCurso } from './validacoes'; // Importa suas funções de validação
-import "./CadastroCurso.css";
 import { cursoService } from "../../../../services/cursoService";
+import FormContainer from "../../../../components/FormContainer/FormContainer";
+import "./CadastroCurso.css";
+import Switch from "../../../../components/Switch/Switch";
+import { ToastContainer, toast } from "react-toastify";
 
 const CadastroCurso = () => {
   const [nome, setNome] = useState("");
   const [carga_horaria, setCargaHoraria] = useState("");
-  const [modalidade, setModalidade] = useState("");
+  const [modalidade, setModalidade] = useState("Integrado");
   const [turmas, setTurmas] = useState([]);
   const [mensagem, setMensagem] = useState(null);
   const [error, setError] = useState(null);
 
-  const opcoesCursos = [
-    "eletrônica",
-    "lazer",
-    "informática",
-    "comércio",
-    "agroecologia"
-  ];
+  const trocaModalidade = (novoValor) => {
+    console.log(novoValor)
+    setModalidade(novoValor);
+  };
 
   const addTurma = () => {
     setTurmas([...turmas, { numero: "" }]);
@@ -48,160 +47,128 @@ const CadastroCurso = () => {
       turmas,
     };
 
-    // Valide os dados do formulário
-    const erros = validarFormularioCurso(formData);
-    
-    if (Object.keys(erros).length > 0) {
-      setError(erros); // Armazene os erros no estado
-      return; // Não envie o formulário se houver erros
-    }
-
-    // Se não houver erros, prossiga com o envio do formulário
     try {
-      const turmasIds = turmas
-        .map((turma) => turma.numero)
-        .filter((numero) => numero.trim() !== ""); // Obter os números das turmas
+      // Valide os dados do formulário
+      const erros = validarFormularioCurso(formData);
 
-      const response = await cursoService.create(formData);
-      console.log("Curso cadastrado com sucesso", response.data);
+      if (Object.keys(erros).length > 0) {
+        setError(erros);
+        throw new Error()
+      }
 
-      // Limpe os campos após o cadastro
+      const response = await cursoService.create(formData)
+
+      console.log(response.status)
+
+      if (response.status === 400) throw new Error(response.status)
+      
+      toast.success("Curso cadastrado com sucesso!", {
+        position: "bottom-center",
+        autoClose: 3000,
+        style: { backgroundColor: '#28A745', color: '#fff' },
+        progressStyle: { backgroundColor: '#fff' }
+      });
+
+      // limpa os campos do formulário
       setNome("");
       setCargaHoraria("");
       setModalidade("");
       setTurmas([]);
-      setMensagem("Curso cadastrado com sucesso!");
-      setError(null); // Limpa os erros após o sucesso
 
-    } catch (error) {
-      console.error(
-        "Erro ao cadastrar curso",
-        error.response ? error.response.data : error.message
-      );
-      setMensagem("Erro ao cadastrar o curso.");
+      // limpa os erros
+      setError(null);
+
+    } catch (erro) {
+      console.log(`Erro ao cadastrar curso: ${erro}`)
     }
   };
 
   return (
-    <form className="form" onSubmit={handleSubmit}>
-      <h1>Cadastro Curso</h1>
+    <>
+    <ToastContainer />
+    <FormContainer onSubmit={handleSubmit} titulo='Cadastrar Curso'>
       {mensagem && <p className="mensagem">{mensagem}</p>}
       {error && <p className="error">{error.global || "Verifique os campos."}</p>} {/* Mensagem de erro global */}
 
-      <div className="modalidade-container">
-        <h4>Modalidade:</h4>
-        <div className="containerOpcoes">
-          <label className="modalidadeLabel">
-            <input
-              type="radio"
-              name="modalidade"
-              value="PROEJA"
-              onChange={(e) => setModalidade(e.target.value)}
-              checked={modalidade === "PROEJA"} // Mantém o estado do radio
-            />
-            ProEja
-          </label>
-          <label className="modalidadeLabel">
-            <input
-              type="radio"
-              name="modalidade"
-              value="INTEGRADO" // Corrigido para "INTEGRADO"
-              onChange={(e) => setModalidade(e.target.value)}
-              checked={modalidade === "INTEGRADO"} // Mantém o estado do radio
-            />
-            Integrado
-          </label>
+        <div className="modalidade-container">
+        <label className="labelCadastroCurso">Modalidade</label>
+          <Switch valor={modalidade} valor1='PROEJA' valor2='Integrado' stateHandler={trocaModalidade}/>
         </div>
-        {error && error.modalidade && <p className="error">{error.modalidade}</p>} {/* Exibe erro da modalidade */}
-      </div>
-
-      <div className="input-group">
-        <label htmlFor="nome_curso">Nome do Curso:</label>
-        <select
-          name="nome_curso"
-          id="nome_curso"
-          value={nome}
-          className={error && error.nome ? 'error-input' : ''}
-          onChange={(e) => setNome(e.target.value)}
-        >
-          <option value="">Selecione um curso</option>
-          {opcoesCursos.map((curso, index) => (
-            <option key={index} value={curso}>
-              {curso}
-            </option>
-          ))}
-        </select>
-        {error && error.nome && <p className="error">{error.nome}</p>}
-      </div>
-
-      <div className="input-group">
-        <label htmlFor="carga_horaria">Carga Horária:</label>
-        <input
-          type="text"
-          name="carga_horaria"
-          id="carga_horaria"
-          value={carga_horaria}
-          className={error && error.carga_horaria ? 'error-input' : ''}
-          onChange={(e) => setCargaHoraria(e.target.value)}
-        />
-        {error && error.carga_horaria && <p className="error">{error.carga_horaria}</p>}
-      </div>
-
-      <div className="add-turma">
-        <button type="button" onClick={addTurma} className="add-button">
-          <FontAwesomeIcon
-            icon={faPlusCircle}
-            style={{ color: "#28A745", cursor: "pointer", fontSize: "24px" }}
+  
+        <div className="input-group">
+          <label htmlFor="nome">Nome Do Curso:</label>
+          <input
+            type="text"
+            name="nome"
+            id="nome"
+            value={nome}
+            className={error && error.nome ? 'error-input' : ''}
+            onChange={(e) => setNome(e.target.value)}
           />
-          <span style={{ color: "black" }}> Adicionar Turma</span>
-        </button>
-      </div>
-
-      {turmas.length > 0 && (
-        <div className="turmas-lista">
-          <h4>Turmas a serem adicionadas:</h4>
-          <table className="turmas-tabela">
-            <thead>
-              <tr>
-                <th>Número da Turma</th>
-                <th>Ação</th>
-              </tr>
-            </thead>
-            <tbody>
-              {turmas.map((turma, index) => (
-                <tr key={index}>
-                  <td>
-                    <input
-                      type="text"
-                      className={`turmaInput ${error && error.turmas && error.turmas[index] ? 'error-input' : ''}`}
-                      value={turma.numero}
-                      onChange={(e) => handleTurmaChange(index, e.target.value)}
-                      placeholder="Digite o número da turma"
-                    />
-                    {error && error.turmas && error.turmas[index] && <p className="error">{error.turmas[index]}</p>}
-                  </td>
-                  <td>
-                    <FontAwesomeIcon
-                      icon={faTrash}
-                      style={{ cursor: "pointer", color: "red", fontSize: "20px" }}
-                      onClick={() => removeTurma(index)}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {error && error.nome && <p className="error">{error.nome}</p>}
         </div>
+  
+        <div className="input-group">
+          <label htmlFor="carga_horaria">Carga Horária:</label>
+          <input
+            type="text"
+            name="carga_horaria"
+            id="carga_horaria"
+            value={carga_horaria}
+            className={error && error.carga_horaria ? 'error-input' : ''}
+            onChange={(e) => setCargaHoraria(e.target.value)}
+          />
+          {error && error.carga_horaria && <p className="error">{error.carga_horaria}</p>}
+        </div>
+  
+        <div className="add-turma">
+          <button type="button" onClick={addTurma} className="add-button">
+            <FontAwesomeIcon
+              icon={faPlusCircle}
+              style={{ color: "#28A745", cursor: "pointer", fontSize: "24px" }}
+            />
+            <span style={{ color: "black" }}> Adicionar Turma</span>
+          </button>
+        </div>
+  
+        {turmas.length > 0 && (
+          <div className="turmas-lista">
+            <h4>Turmas a serem adicionadas:</h4>
+            <table className="turmas-tabela">
+              <thead>
+                <tr>
+                  <th>Número da Turma</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody>
+                {turmas.map((turma, index) => (
+                  <tr key={index}>
+                    <td>
+                      <input
+                        type="text"
+                        className={`turmaInput ${error && error.turmas && error.turmas[index] ? 'error-input' : ''}`}
+                        value={turma.numero}
+                        onChange={(e) => handleTurmaChange(index, e.target.value)}
+                        placeholder="Digite o número da turma"
+                      />
+                      {error && error.turmas && error.turmas[index] && <p className="error">{error.turmas[index]}</p>}
+                    </td>
+                    <td>
+                      <FontAwesomeIcon
+                        icon={faTrash}
+                        style={{ cursor: "pointer", color: "red", fontSize: "20px" }}
+                        onClick={() => removeTurma(index)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
       )}
-
-      <button
-        type="submit"
-        className="submitButton"
-        style={{ marginTop: "20px" }}
-      >
-        Cadastrar Curso
-      </button>
-    </form>
+      </FormContainer>
+    </>
   );
 };
 

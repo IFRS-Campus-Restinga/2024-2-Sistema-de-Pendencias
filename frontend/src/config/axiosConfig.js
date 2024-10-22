@@ -14,7 +14,6 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const csrftoken = Cookies.get('csrftoken') // Obtendo o token
-    console.log(csrftoken)
     if (csrftoken) {
       config.headers['X-CSRFToken'] = `${csrftoken}`; // Nome correto do header
     }

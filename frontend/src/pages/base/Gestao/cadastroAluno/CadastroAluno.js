@@ -1,11 +1,10 @@
 import "./CadastroAluno.css";
-import Button from "../../../../components/Button/Button";
-import axios from 'axios';
 import React, { useState } from 'react';
 import { validarFormulario, validarCampo } from './validacoes';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { alunoService } from "../../../../services/alunoService";
+import FormContainer from "../../../../components/FormContainer/FormContainer";
 
 const CadastroAluno = () => {
   const [formData, setFormData] = useState({
@@ -22,8 +21,8 @@ const CadastroAluno = () => {
       setShowErrorMessage(false);
       try {
         const response = await alunoService.create(formData)
-        console.log(response.data);
 
+        if (response.status !== 201) throw new Error(response.error)
         // Limpar o formulário após o sucesso
         setFormData({
           email: '',
@@ -62,14 +61,11 @@ const CadastroAluno = () => {
   return (
     <>
       <ToastContainer />
-      <form onSubmit={handleSubmit}>
-        <h3>Cadastro Aluno</h3>
-        <hr />
-        <br />
+      <FormContainer onSubmit={handleSubmit} titulo='Cadastro Aluno'>
         {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
         <br />
-        <div>
-          <label htmlFor="email">Email:</label>
+        <div className="divCadastroAluno">
+          <label htmlFor="email" className="labelCadastroAluno">Email:</label>
           <input
             type="email"
             id="email"
@@ -82,14 +78,8 @@ const CadastroAluno = () => {
           {errors.email && <p className="erros">{errors.email}</p>}
         </div>
         <div className="ajuste-button">
-          <Button
-            width="30%"
-            color="#28A745"
-            text="Cadastrar"
-            onClick={handleSubmit}
-          />
         </div>
-      </form>
+      </FormContainer>
     </>
   );
 };

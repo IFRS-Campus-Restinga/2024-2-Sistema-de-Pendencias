@@ -6,7 +6,7 @@ import json
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 django.setup()
 
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group
 
 def export_groups_and_permissions(filename='grupos_permissoes.json'):
     data = []
@@ -18,18 +18,11 @@ def export_groups_and_permissions(filename='grupos_permissoes.json'):
             'pk': group.id,
             'fields': {
                 'name': group.name,
-                'permissions': []
+                'permissions': [perm.id for perm in group.permissions.all()]
             }
         }
         
-        # Obter permissões associadas ao grupo
-        for permission in group.permissions.all():
-            permission_data = {
-                'model': f"{permission.content_type.app_label}.{permission.content_type.model}",
-                'codename': permission.codename
-            }
-            group_data['fields']['permissions'].append(permission_data)
-        
+        # Adicionar o grupo aos dados exportados
         data.append(group_data)
     
     # Exportar para um arquivo JSON
@@ -40,4 +33,3 @@ def export_groups_and_permissions(filename='grupos_permissoes.json'):
 
 if __name__ == '__main__':
     export_groups_and_permissions()
-

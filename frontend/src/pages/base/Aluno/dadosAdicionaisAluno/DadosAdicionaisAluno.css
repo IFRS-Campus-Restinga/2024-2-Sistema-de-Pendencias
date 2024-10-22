@@ -1,8 +1,11 @@
-.container {
+.labelDadosAdicionaisAluno {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex: 1;
-    background-color: #f1f1f1;
+}
+
+.inputDadosAdicionaisAluno {
+    margin: 10px;
 }

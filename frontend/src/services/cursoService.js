@@ -4,10 +4,9 @@ export const cursoService = {
     create: async (data) => {
       try {
         const response = await api.post('/api/cadastrar-curso/', data);
-        return response.data;
+        return response;
       } catch (error) {
-        console.error("Erro ao criar curso:", error);
-        throw error;
+        return error
       }
     },
 

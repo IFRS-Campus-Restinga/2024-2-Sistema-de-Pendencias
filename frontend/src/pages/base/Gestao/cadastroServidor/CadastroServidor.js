@@ -4,6 +4,8 @@ import "./CadastroServidor.css";
 import Button from '../../../../components/Button/Button';
 import { validarFormulario, validarCampo } from './validacoes';
 import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
+import FormContainer from '../../../../components/FormContainer/FormContainer';
 
 const CadastroServidor = () => {
     const [formData, setFormData] = useState({
@@ -16,49 +18,46 @@ const CadastroServidor = () => {
 
     const enviarHandler = async (e) => {
         e.preventDefault();
-        const validationErrors = validarFormulario(formData);
-
-        // const cpfSemFormatacao = formData.cpf.replace(/\D/g, '');
-
         // Crie um objeto a ser enviado, incluindo apenas os campos necessários
         const { perfil, email } = formData;
         const dataToSend = {
             perfil,
             email,
         };
+        
+        try {
+            // valida o formulário
+            const validationErrors = validarFormulario(dataToSend);
 
-        if (Object.keys(validationErrors).length === 0) {
-            setShowErrorMessage(false);
-            try {
-                const res = await servidorService.create(dataToSend, 'csrftoken');
+            console.log(dataToSend)
 
-                // Limpar o formulário após o sucesso
-                setFormData({
-                    perfil: '',
-                    email: '',
-                });
-                setErrors({}); // Limpar os erros também
-
-                if (res && res.status) {
-                    console.log(res);
-                    if (res.status === 200 || res.status === 201) {
-                        alert('Servidor cadastrado com sucesso!');
-                    } else {
-                        alert('Erro ao cadastrar servidor: ' + (res.data ? res.data.message : 'Erro desconhecido'));
-                    }
-                } else {
-                    alert('Erro na requisição: resposta indefinida.');
-                }
-            } catch (error) {
-                console.error("Erro ao enviar os dados:", error);
-                alert("Falha na comunicação com o servidor.");
+            if (Object.keys(validationErrors).length !== 0) {
+                setErrors(validationErrors)
+                setShowErrorMessage(true);
+                throw new Error(validationErrors)
             }
-        } else {
-            setErrors(validationErrors);
+            
+            const response = await servidorService.create(dataToSend, 'csrftoken');
+
+            if (response.status !== 201) throw new Error(response.erro)
+
+            toast.success(`Novo ${perfil} cadastrado com sucesso!`, {
+                position: "bottom-center",
+                autoClose: 3000,
+                style: { backgroundColor: '#28A745', color: '#fff' },
+                progressStyle: { backgroundColor: '#fff' }
+            });
+
+            // Limpar o formulário após o sucesso
+            setFormData({
+                perfil: '',
+                email: '',
+            });
+            setErrors({}); // Limpar os erros também
+        } catch (erro) {
+            setErrors(erro);
             setShowErrorMessage(true);
         }
-
-        console.log(dataToSend); // Mostra o objeto que será enviado
     };
 
     const validarHandler = (campo) => {
@@ -81,70 +80,36 @@ const CadastroServidor = () => {
     };
 
     return (
-        <form className="form-servidor" onSubmit={enviarHandler}>
-            <h3>Cadastro Servidor</h3>
-            <hr />
-            <br />
-            <div>
-                <label htmlFor="perfil">Perfil:</label>
-                <br />
+        <>
+        <ToastContainer/>
+        <FormContainer titulo='Cadastro Servidor' onSubmit={enviarHandler}>
+                <span className='spanCadastroServidor'>Perfil</span>
                 <div className="radio-container">
-                    <label>
-                        <input type="radio" value="Professor" checked={formData.perfil === 'Professor'}
+                    <label className='labelCadastroServidor' htmlFor='Professor'>
+                        <input className='radioCadastroServidor' id='Professor' type="radio" name='perfil' value="Professor" checked={formData.perfil === 'Professor'}
                             onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
-                        <span>Professor</span>
+                        <span className='spanRadioCadastroServidor'>Professor</span>
                     </label>
-                    <label>
-                        <input type="radio" value="RegistroEscolar" checked={formData.perfil === 'RegistroEscolar'}
+                    <label className='labelCadastroServidor' htmlFor='RegistroEscolar'>
+                        <input className='radioCadastroServidor' id='RegistroEscolar' type="radio" name='perfil' value="RegistroEscolar" checked={formData.perfil === 'RegistroEscolar'}
                             onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
-                        <span>Registros Escolares</span>
+                        <span className='spanRadioCadastroServidor'>Registros Escolares</span>
                     </label>
-                    <label>
-                        <input type="radio" value="GestaoEscolar" checked={formData.perfil === 'GestaoEscolar'}
+                    <label className='labelCadastroServidor' htmlFor='GestaoEscolar'>
+                        <input className='radioCadastroServidor' id='GestaoEscolar' type="radio" value="GestaoEscolar" name='perfil' checked={formData.perfil === 'GestaoEscolar'}
                             onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
-                        <span>Gestão Escolar</span>
+                        <span className='spanRadioCadastroServidor'>Gestão Escolar</span>
                     </label>
-                    <label>
-                        <input type="radio" value="Coordenador" checked={formData.perfil === 'Coordenador'}
+                    <label className='labelCadastroServidor' name='Coordenador' htmlFor='Coordenador'>
+                        <input className='radioCadastroServidor' id='Coordenador' name='perfil' type="radio" value="Coordenador" checked={formData.perfil === 'Coordenador'}
                             onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
                         />
-                        <span>Coordenador</span>
+                        <span className='spanRadioCadastroServidor'>Coordenador</span>
                     </label>
                 </div>
-            </div>
-            {/* {formData.perfil !== 'RegistroEscolar' && formData.perfil !== 'Coordenador' && formData.perfil !== "GestaoEscolar" ? (
-                <>
-                    <div className="form-item">
-                        <label>CPF</label>
-                        <InputMask
-                            mask="999.999.999-99" // Formato do CPF
-                            value={formData.cpf}
-                            onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
-                            required
-                            onBlur={() => validarHandler('cpf')}
-                            placeholder="CPF"
-                            style={{ borderColor: errors.cpf ? 'red' : '' }}
-                        />
-                        {errors.cpf && <p className="erros">{errors.cpf}</p>}
-                    </div>
-                    <div className="form-item">
-                        <label>Matrícula</label>
-                        <input type="text" value={formData.matricula}
-                            onChange={(e) => setFormData({ ...formData, matricula: e.target.value })} required
-                            onBlur={() => validarHandler('matricula')}
-                            placeholder="Matrícula"
-                            style={{ borderColor: errors.nome ? 'red' : '' }}
-                        />
-                        {errors.matricula && <p className="erros">{errors.matricula}</p>}
-                    </div>
-                </>
-            ) : (
-                <></>
-            )} */}
-
             <div className="form-item">
                 <label>E-mail</label>
                 <input type="email" value={formData.email}
@@ -156,15 +121,8 @@ const CadastroServidor = () => {
                 {errors.email && <p className="erros">{errors.email}</p>}
             </div>
             {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
-            <div className='botaoContainer'>
-                <Button
-                    width="30%"
-                    color="#28A745"
-                    text="Cadastrar"
-                    onClick={enviarHandler}
-                />
-            </div>
-        </form>
+        </FormContainer>
+        </>
     );
 };
 

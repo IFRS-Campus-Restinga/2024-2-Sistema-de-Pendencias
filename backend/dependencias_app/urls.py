@@ -17,6 +17,7 @@ from dependencias_app.views import servidorViews
 
 urlpatterns = [
     path('cadastrar-aluno/', alunoViews.cadastrar_aluno),
+    path('dados-adicionais-aluno/', alunoViews.infos_adicionais_aluno),
     path('cadastrar-curso/', cursoViews.cadastrar_curso),
 
     path('listar-cursos/', cursoViews.listar_cursos, name='listar_cursos'),

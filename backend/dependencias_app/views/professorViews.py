@@ -25,9 +25,10 @@ def cadastrar_professor(request):
         data['grupo'] = grupo.id
         data.pop('perfil',None)
 
+
         # valida pelo serializer
         serializer = UsuarioBaseSerializer(data=data)
-
+        
         if not serializer.is_valid(): raise Exception(serializer.errors)
 
         # salva o novo usuário

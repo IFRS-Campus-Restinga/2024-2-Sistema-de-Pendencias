@@ -96,10 +96,6 @@ DATABASES = {
     }
 }
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-]
-
 CORS_ALLOWED_HEADERS = [
     'Content-Type',
     'X-CSRFToken',
@@ -122,20 +118,12 @@ AUTH_USER_MODEL = 'google_auth.UsuarioBase'
 CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated"
     ]
-}
-
-SIMPLE_JWT = {
-    'TOKEN_OBTAIN_SERIALIZER': 'google_auth.payLoadJWT.CustomPayLoad',
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  # Tempo de expiração do token de acesso
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Tempo de expiração do token de refresh
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,  # Use sua chave secreta aqui
-    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 # Password validation

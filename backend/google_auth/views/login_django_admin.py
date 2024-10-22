@@ -29,7 +29,7 @@ def admin_login(request):
 
 def google_callback(request):
     flow = Flow.from_client_secrets_file(
-        f'{settings.BASE_DIR}/client_secret.json',
+        f'{BASE_DIR}/client_secret.json',
         scopes=[
             'https://www.googleapis.com/auth/userinfo.email',
             'https://www.googleapis.com/auth/userinfo.profile',

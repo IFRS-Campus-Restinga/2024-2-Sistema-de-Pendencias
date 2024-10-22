@@ -1,10 +1,13 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import './BaseAluno.css'
-import { useNavigate } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { validaUsuario } from '../validaUsuario'
+import PageContainer from '../../../components/PageContainer/PageContainer'
+import MainContainer from '../../../components/MainContainer/mainContainer'
 
 const BaseAluno = () => {
     const redirect = useNavigate()
+    const [homeUrl] = useState(useLocation().pathname)
 
     const validaAluno = () => {
         const res = validaUsuario('Aluno')
@@ -20,8 +23,11 @@ const BaseAluno = () => {
     },[])
 
     return (
-        <>
-        </>
+        <PageContainer homeUrl={homeUrl}>
+            <MainContainer>
+                <Outlet homeUrl={homeUrl}/>
+            </MainContainer>
+        </PageContainer>
     )
 }
 

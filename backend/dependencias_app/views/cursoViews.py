@@ -17,9 +17,12 @@ logger = logging.getLogger(__name__)
 @permission_classes([GestaoEscolar])
 def cadastrar_curso(request):
     # Extraia os dados da requisição
-    print(request.data)
     turmas = request.data.get('turmas', [])  # Lista de números das turmas
-    serializer = CursoSerializer(data=request.data)
+    data = request.data
+    data.pop('turmas')
+
+    print(data)
+    serializer = CursoSerializer(data=data)
 
     if serializer.is_valid():
         curso = serializer.save()  # Cria o curso

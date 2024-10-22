@@ -1,15 +1,15 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from django.views.decorators.csrf import csrf_exempt
 from dependencias_app.permissoes import *
 from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
 from django.contrib.auth.models import Group
+from dependencias_app.serializers.alunoSerializer import AlunoSerializer
+from google_auth.models import UsuarioBase
 import logging
 
 logger = logging.getLogger(__name__)
 
-@csrf_exempt
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
 def cadastrar_aluno(request):
@@ -20,12 +20,12 @@ def cadastrar_aluno(request):
 
         # valida o grupo 
         grupo = Group.objects.get(name='Aluno')
+        print(grupo)
         
         #  adiciona o id do grupo a data e envia para o serializador
         data['grupo'] = grupo.id
         data.pop('perfil', None)  # Remove 'perfil' se existir
 
-        print(data)
         serializer = UsuarioBaseSerializer(data=data)
         # valida o serializador
         if not serializer.is_valid(): raise Exception(f'{serializer.error_messages}')
@@ -39,6 +39,29 @@ def cadastrar_aluno(request):
     except Exception as e:
         # retorna um erro
         return Response({'mensagem': str(e)}, status=400)
+
+@api_view(['POST'])
+@permission_classes([Aluno])  # Ajuste para a permissão adequada
+def infos_adicionais_aluno(request):
+    try:
+        # Obter o ID do usuário enviado na requisição
+        usuario_id = request.data.get('usuario', None)
+        aluno = UsuarioBase.objects.get(pk=usuario_id)  # Busca o aluno pelo ID do usuário
+
+        # Atualizar os dados do aluno
+        serializer_aluno = AlunoSerializer(aluno, data=request.data, partial=True)
+
+        if serializer_aluno.is_valid():
+            serializer_aluno.save()
+            return Response(serializer_aluno.data, status=status.HTTP_200_OK)
+        else:
+            print(serializer_aluno.errors)  # Adicione esta linha para depuração
+            raise Exception(serializer_aluno.errors)  # Levanta um erro se a validação falhar
+
+    except aluno.DoesNotExist:
+        return Response({'mensagem': 'Aluno não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 # @api_view(['GET'])
 # def visualizar_alunos(request):

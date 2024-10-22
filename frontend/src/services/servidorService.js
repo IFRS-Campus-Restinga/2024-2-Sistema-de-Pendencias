@@ -3,19 +3,19 @@ import { api } from "../config/axiosConfig";
 const endpoints = [
     {
         tipo: "Professor",
-        endpoint: "/cadastrar-professor/"
+        endpoint: "cadastrar-professor/"
     },
     {
         tipo: "RegistroEscolar",
-        endpoint: "/cadastrar-registro-escolar/"
+        endpoint: "cadastrar-registro-escolar/"
     },
     {
         tipo: "GestaoEscolar",
-        endpoint: "/cadastrar-gestao-escolar/"
+        endpoint: "cadastrar-gestao-escolar/"
     },
     {
         tipo: "Coordenador",
-        endpoint: "/cadastrar-coordenador/"
+        endpoint: "cadastrar-coordenador/"
     },
 ]
 
@@ -30,7 +30,7 @@ const servidorService = {
         });
 
         const res = await api
-            .post(`/api${endpoint}`, params, {
+            .post(`/api/${endpoint}`, params, {
                 headers: {
                     "Content-Type": "application/json"
                 },
