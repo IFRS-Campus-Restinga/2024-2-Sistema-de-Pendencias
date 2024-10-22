@@ -12,7 +12,7 @@ const BaseGestao = ({ usuario }) => {
   const url = useLocation()
 
     const validaGestao = () => {
-      const res = validaUsuario('Registro')
+      const res = validaUsuario('Gestao')
 
       if (!res.status) {
           if (res.perfil === undefined) redirect('/')
@@ -21,8 +21,8 @@ const BaseGestao = ({ usuario }) => {
     }
 
     useEffect(() => {
-        validaGestao()
-        setHomeUrl(url.pathname)
+        // validaGestao()
+        setHomeUrl(url)
     },[])
 
 

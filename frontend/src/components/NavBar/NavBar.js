@@ -5,8 +5,29 @@ import home from "../../assets/home-preto.png";
 import dependencia from "../../assets/dependencia-preto.png";
 import calendario from "../../assets/calendario-preto.png";
 import configuracoes from "../../assets/configuracoes-preto.png";
+import { useEffect, useState } from "react";
 
 const NavBar = () => {
+  const [id, setId] = useState('')
+  const [perfil, setPerfil] = useState('')
+  
+  const decode = (token) => {
+    try {
+        const decoded = jwt_decode(token);
+        setId(decoded.idUsuario)
+        setPerfil(decoded.perfil)
+        
+    } catch (error) {
+        console.error("Erro ao decodificar o token:", error);
+        return null; // Retorna null em caso de erro
+    }
+  };
+
+
+  useEffect(() => {
+    decode(sessionStorage.getItem('token'))
+  }, [])
+
   return (
       <nav className="navBarGestao">
         <div className="navItemContainer">
@@ -30,11 +51,11 @@ const NavBar = () => {
             <Dropdown titulo='Dependências' itens={[
               {
                 name: "Consultar Dependências",
-                link: "/secao/123456/dependencias"
+                link: "dependencias"
               },
               {
                 name: "Cadastro PED - EMI",
-                link: "/secao/123456/cadastroPED_EMI"
+                link: "/secao/123456/CadastroEmiPed"
               },
               {
                 name: "Cadastro PED - PROEJA",
@@ -72,23 +93,23 @@ const NavBar = () => {
               <Dropdown titulo='Gerenciar Cadastros' itens={[
                 {
                   name: "Cadastro Aluno",
-                  link: "/secao/123456/cadastroAluno"
+                  link: `/sessao/${perfil}/${id}/cadastroAluno`
                 },
                 {
                   name: "Cadastro Curso",
-                  link: "/secao/123456/cadastroCurso"
+                  link: `/sessao/${perfil}/${id}/cadastroCurso`
                 },
                 {
                   name: "Cadastro Disciplina",
-                  link: "/secao/123456"
+                  link: `/sessao/${perfil}/${id}/cadastroDisciplina`
                 },
                 {
                   name: "Cadastro Servidor",
-                  link: "/secao/123456/cadastroServidor"
+                  link: `/sessao/${perfil}/${id}/cadastroServidor`
                 },
                 {
                   name: "Lista de Servidores",
-                  link: "/secao/123456/listaServidor"
+                  link: `/sessao/${perfil}/${id}/listaServidor`
                 }
               ]}/>  
           </div>

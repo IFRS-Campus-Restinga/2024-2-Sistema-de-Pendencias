@@ -9,6 +9,14 @@ export const cursoService = {
         console.error("Erro ao criar curso:", error);
         throw error;
       }
+    },
+
+    list: async (data) => {
+      const res = api.get('api/listar-cursos/', data).catch((erro) => {
+        return erro
+      })
+
+      return res
     }
 
   };

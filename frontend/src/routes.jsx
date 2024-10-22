@@ -12,6 +12,8 @@ import HomeGestao from './pages/base/Gestao/home/HomeGestao'
 import CadastroCurso from './pages/base/Gestao/cadastroCurso/CadastroCurso'
 import CadastroServidor from './pages/base/Gestao/cadastroServidor/CadastroServidor'
 import CadastroAluno from './pages/base/Gestao/cadastroAluno/CadastroAluno'
+import CadastroDisciplina from "./pages/base/Gestao/cadastroDisciplina/CadastroDisciplina"
+import CadastroEmiPed from "./pages/base/Gestao/cadastroEmiPed/cadastroEmiPed";
 import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
 // Filhos de Registro
 
@@ -49,13 +51,19 @@ const router = createBrowserRouter([
                 element: <CadastroAluno />
             },
             {
+                path: ':idUsuario/cadastroDisciplina',
+                element: <CadastroDisciplina />
+            },
+            {
+                path: ':idUsuario/cadastroEmiPed',
+                element: <CadastroEmiPed />
+            },
+            {
                 path: ':idUsuario/listaServidor',
                 element: <ListarServidor />
             },
             // Adicionar outros caminhos que vão derivar da tela de home após autenticação
         ]
-
-
     },
     // Rotas de Registro Escolar
     {
