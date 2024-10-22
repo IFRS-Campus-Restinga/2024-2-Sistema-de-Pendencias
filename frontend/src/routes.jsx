@@ -62,7 +62,6 @@ const router = createBrowserRouter([
                 path: ':idUsuario/listaServidor',
                 element: <ListarServidor />
             },
->>>>>>> 980b8f1a49f7ba3fafb2c6116feef56e6f70b1bf
             // Adicionar outros caminhos que vão derivar da tela de home após autenticação
         ]
     },
