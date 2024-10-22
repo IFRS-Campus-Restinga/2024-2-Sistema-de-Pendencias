@@ -41,7 +41,6 @@ def cadastrar_disciplina(request):
         "data": serializer.data
     }, status=status.HTTP_201_CREATED)
 
-
 @api_view(['GET'])
 @handle_view_errors
 def listar_disciplinas(request):
