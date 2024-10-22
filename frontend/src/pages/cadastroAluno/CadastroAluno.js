@@ -118,7 +118,7 @@ const CadastroAluno = () => {
         <div className="ajuste-button">
           <Button
             width="30%"
-            color="#28A745"
+            color="#006B3FFF"
             text="Cadastrar"
             onClick={handleSubmit}
           />
