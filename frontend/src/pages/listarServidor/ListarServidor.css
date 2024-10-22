@@ -68,13 +68,13 @@ td {
   cursor: pointer;
 }
 
-.filtro-nome {
+.filtro {
   display: flex;
   align-items: center;
   margin-bottom: 15px;
 }
 
-.filtro-nome label {
+.filtro label {
   margin-bottom: 8px;
   font-weight: bold;
   margin-right: 10px;
@@ -153,6 +153,15 @@ button {
   height: 24px;
   cursor: pointer;
   margin: 0 10px;
+}
+
+#icone-ordenar {
+  position: relative;
+  top: 7px;
+  right: 10px;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
 }
 
 .Toastify__toast--success .Toastify__toast-icon {

@@ -34,7 +34,7 @@ const NavBar = () => {
               },
               {
                 name: "Cadastro PED - EMI",
-                link: "/secao/123456/cadastroPED_EMI"
+                link: "/secao/123456/CadastroEmiPed"
               },
               {
                 name: "Cadastro PED - PROEJA",
@@ -80,7 +80,7 @@ const NavBar = () => {
                 },
                 {
                   name: "Cadastro Disciplina",
-                  link: "/secao/123456"
+                  link: "/secao/123456/cadastroDisciplina"
                 },
                 {
                   name: "Cadastro Servidor",
