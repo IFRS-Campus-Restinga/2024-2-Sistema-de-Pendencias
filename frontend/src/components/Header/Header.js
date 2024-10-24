@@ -1,36 +1,77 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Header.css";
 import logo from "../../assets/logo-ifrs-branco.png";
-import logo_pequeno from "../../assets/logo-ifrs-branco-pequeno.png";
+import Dropdown from '../../components/Dropdown/Dropdown'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { faBell, faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import { jwtDecode } from "jwt-decode";
+import { authService } from '../../../src/services/authService'
+import { useLocation, useNavigate } from "react-router-dom";
 
-const Header = ({ usuario }) => {
-  const handleLogout = () => {
-    alert("Você saiu!");
+const Header = ({homeUrl}) => {
+  const [nome, setNome] = useState()
+  const redirect = useNavigate()
+
+  const handleLogout = async () => {
+    const res = await authService.logout()
+
+    if (res.status === 200) {
+      sessionStorage.clear()
+      escreveNome()
+
+      redirect('/')
+    }
+
+    else return
   };
 
+  const escreveNome = () => {
+    const token = sessionStorage.getItem('token')
+
+    try {
+      if (!token) throw new Error('Token inválido')
+      
+      const decoded = jwtDecode(token)
+      setNome(`${decoded.primeiroNome} ${decoded.ultimoNome}`)
+      
+    } catch (error) {
+        return error
+    }
+  }
+
+  useEffect(() => {
+    escreveNome()
+  }, [nome])
+
   return (
-    <header>
+    <header className="header">
       <img src={logo} alt="Logo do Site" className="logo" />
       <div className="menu">
-        {usuario ? (
-          <div className="header">
-            <h1 id="header-title">Bem vindo {usuario.nome}!</h1>
-            <button onClick={handleLogout} id="button-logout">
-              Logout
-            </button>
-            <button>
+        {typeof nome === 'string' ? (
+          <>
+            <h2 className="header-title">Bem vindo <p className="nome">{nome}</p></h2>
+            <Dropdown 
+              titulo={
+                <img src={sessionStorage.getItem('fotoPerfil')} className="fotoPerfil"/>
+              } 
+                itens={[
+                  {
+                    name: 'Minha Conta',
+                    link: `${homeUrl}/perfil`
+                  },
+                  {
+                    name: 'Logout',
+                    link: null,
+                    onClick: handleLogout
+                  }
+              ]}
+            />
+            <button className="buttonNotif">
               <FontAwesomeIcon icon={faBell} id="bell-icon" />{" "}
             </button>
-          </div>
+          </>
         ) : (
-          <div className="header">
-            <h1 id="header-title">Você ainda não se identificou.</h1>{" "}
-            {/* Inserir aqui a página de login com a conta google */}
-            <Link to={"/secao/123456"}>(Acessar)</Link>
-          </div>
+          <></>
         )}
       </div>
     </header>

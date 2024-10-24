@@ -17,27 +17,60 @@ const Dropdown = ({ titulo, itens }) => {
     }, 300); // 300ms de atraso
   };
 
-  return (
-    <div 
-      className="navItemContainer"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <button className="dropdown-titulo">{titulo}</button>
-      {aberto && (
-        <div 
-          className="dropdown-conteudo"
-          onMouseEnter={handleMouseEnter} 
-          onMouseLeave={handleMouseLeave} 
-        >
-          {itens.map((item, index) => (
-            <Link key={index} to={item.link} className="link">
-              <div className="dropdown-item">{item.name}</div>
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
+    return (
+      <>
+        {typeof titulo === 'string' ? (
+          <>
+            <button
+              className="dropdown-titulo"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              {titulo}
+            </button>
+            {aberto && (
+              <div
+                className="dropdown-conteudo"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                {itens.map((item, index) => (
+                  <Link key={index} to={item.link} className="link">
+                    <div className="dropdown-item">{item.name}</div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <span 
+             onMouseEnter={handleMouseEnter}
+             onMouseLeave={handleMouseLeave}
+             className='dropdown-usuario'
+            >{titulo}
+            </span>
+            {aberto && (
+              <div
+                className="dropdown-conteudo-header"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                {itens.map((item, index) => (
+                  item.link ? (
+                    <Link key={index} to={item.link} className="link">
+                      <div className="dropdown-item">{item.name}</div>
+                    </Link>
+                  ) : (
+                    <div className="dropdown-item" onClick={item.onClick}>{item.name}</div>
+                  )
+                ))
+              }
+              </div>
+            )}
+          </>
+        )}
+      </>
   );
 };
 

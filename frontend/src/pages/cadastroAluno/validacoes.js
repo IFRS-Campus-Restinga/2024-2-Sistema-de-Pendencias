@@ -1,5 +1,3 @@
-// src/utils/validacoes.js
-
 // Validação para o campo "nome"
 export const validarNome = (nome) => {
   const nameRegex = /^[a-zA-ZÀ-ÿ\s]{3,100}$/;

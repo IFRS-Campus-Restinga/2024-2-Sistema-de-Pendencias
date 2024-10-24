@@ -1,9 +1,9 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from dependencias_app.permissoes import *
 from rest_framework.response import Response
 from rest_framework import status
-from django.views.decorators.csrf import csrf_exempt
-from dependencias_app.models.curso import Curso
 from dependencias_app.serializers.cursoSerializer import CursoSerializer
+from dependencias_app.models.curso import Curso
 from dependencias_app.serializers.turmaSerializer import TurmaSerializer
 from dependencias_app.utils.error_handler import handle_view_errors
 
@@ -14,21 +14,23 @@ import logging
 logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
+@permission_classes([GestaoEscolar])
 def cadastrar_curso(request):
     # Extraia os dados da requisição
-    turmas_numeros = request.data.get('turmas', [])  # Lista de números das turmas
-    serializer = CursoSerializer(data=request.data)
+    turmas = request.data.get('turmas', [])  # Lista de números das turmas
+    data = request.data
+    data.pop('turmas')
+
+    print(data)
+    serializer = CursoSerializer(data=data)
 
     if serializer.is_valid():
         curso = serializer.save()  # Cria o curso
 
         # Criar uma turma para cada número na lista
-        for numero in turmas_numeros:
-            turma_data = {
-                'numero': numero,
-                'curso': curso.id  # Vincula a turma ao curso recém-criado
-            }
-            turma_serializer = TurmaSerializer(data=turma_data)
+        for turma in turmas:
+            turma['curso'] = curso.id
+            turma_serializer = TurmaSerializer(data=turma)
 
             if turma_serializer.is_valid():
                 turma_serializer.save()  # Salva a turma no banco de dados
@@ -49,6 +51,6 @@ def listar_cursos(request):
     """
     cursos = Curso.objects.all()  # Obtém todos os cursos
     serializer = CursoSerializer(cursos, many=True)  # Serializa os cursos
-    return Response(serializer.data, safe=False, status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
