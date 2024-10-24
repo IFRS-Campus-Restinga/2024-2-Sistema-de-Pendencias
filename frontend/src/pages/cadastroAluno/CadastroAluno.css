@@ -24,11 +24,15 @@ div {
   margin-bottom: 10px;
 }
 
-/* Customiza o ícone de sucesso para ter fundo branco */
 .Toastify__toast--success .Toastify__toast-icon {
+  background-color: white;
+  color: #28A745;
+  border-radius: 50%;
+}
+
+.Toastify__toast--error .Toastify__toast-icon {
   background-color: white; /* Cor de fundo branca */
-  color: #28A745; /* Cor do ícone verde */
-  border-radius: 50%; /* Mantém o formato circular */
+  border-radius: 100%; /* Mantém o formato circular */
 }
 
 #email{
