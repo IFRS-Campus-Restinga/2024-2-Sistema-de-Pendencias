@@ -1,0 +1,51 @@
+input,
+select {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.labelCadastroAluno {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+  font-size: 14px;
+}
+
+input[type="date"] {
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+}
+
+input::placeholder {
+  color: #aaa;
+}
+
+.ajuste-button {
+  display: flex;
+  justify-content: center;
+}
+
+.erros {
+  color: red;
+  margin-top: -13px;
+}
+
+.divCadastroAluno {
+  margin-bottom: 10px;
+}
+
+/* Customiza o ícone de sucesso para ter fundo branco */
+.Toastify__toast--success .Toastify__toast-icon {
+  background-color: white;
+  /* Cor de fundo branca */
+  color: #28A745;
+  /* Cor do ícone verde */
+  border-radius: 50%;
+  /* Mantém o formato circular */
+}

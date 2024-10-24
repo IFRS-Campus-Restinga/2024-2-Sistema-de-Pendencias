@@ -1,32 +1,37 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from dependencias_app.models.aluno import Aluno
-from dependencias_app.serializers.alunoSerializer import AlunoSerializer
+from dependencias_app.permissoes import *
+from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
 from django.contrib.auth.models import Group
+from dependencias_app.serializers.alunoSerializer import AlunoSerializer
+from google_auth.models import UsuarioBase
 import logging
 
 logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
+@permission_classes([GestaoEscolar])
 def cadastrar_aluno(request):
     logger.info('Dados recebidos: %s', request.data)
     try :
         # extrai o perfil da requisicao e busca um grupo com o nome
-        grupo = Group.objects.get(name=request.data.get('perfil', None))
+        data = request.data
 
         # valida o grupo 
-        if not isinstance(grupo, Group): raise Exception('Perfil Inválido!')
+        grupo = Group.objects.get(name='Aluno')
+        print(grupo)
         
         #  adiciona o id do grupo a data e envia para o serializador
-        data = request.data
-        data['perfil'] = grupo.id
-        serializer = AlunoSerializer(data=request.data)
-        
+        data['grupo'] = grupo.id
+        data.pop('perfil', None)  # Remove 'perfil' se existir
+
+        serializer = UsuarioBaseSerializer(data=data)
         # valida o serializador
         if not serializer.is_valid(): raise Exception(f'{serializer.error_messages}')
-            
+
         serializer.save()
+        
         logger.info('Aluno criado com sucesso: %s', serializer.data)
         # retorna uma resposta positiva
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -35,8 +40,31 @@ def cadastrar_aluno(request):
         # retorna um erro
         return Response({'mensagem': str(e)}, status=400)
 
-@api_view(['GET'])
-def visualizar_alunos(request):
-    alunos = Aluno.objects.all()
-    serializer = AlunoSerializer(alunos, many=True)
-    return Response(serializer.data)
+@api_view(['POST'])
+@permission_classes([Aluno])  # Ajuste para a permissão adequada
+def infos_adicionais_aluno(request):
+    try:
+        # Obter o ID do usuário enviado na requisição
+        usuario_id = request.data.get('usuario', None)
+        aluno = UsuarioBase.objects.get(pk=usuario_id)  # Busca o aluno pelo ID do usuário
+
+        # Atualizar os dados do aluno
+        serializer_aluno = AlunoSerializer(aluno, data=request.data, partial=True)
+
+        if serializer_aluno.is_valid():
+            serializer_aluno.save()
+            return Response(serializer_aluno.data, status=status.HTTP_200_OK)
+        else:
+            print(serializer_aluno.errors)  # Adicione esta linha para depuração
+            raise Exception(serializer_aluno.errors)  # Levanta um erro se a validação falhar
+
+    except aluno.DoesNotExist:
+        return Response({'mensagem': 'Aluno não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+# @api_view(['GET'])
+# def visualizar_alunos(request):
+#     alunos = Aluno.objects.all()
+#     serializer = AlunoSerializer(alunos, many=True)
+#     return Response(serializer.data)

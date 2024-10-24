@@ -1,0 +1,52 @@
+.spanRadioCadastroServidor {
+    font-size: 80%;
+    display: flex;
+    justify-content: center;
+    width: 180px;
+    height: fit-content;
+    padding: 5px;
+    background-color: #fff;
+    border: 2px solid #006b3f;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+.spanRadioCadastroServidor:hover {
+    transition: 0.3s ease;
+    scale: calc(1.05);
+    cursor: pointer;
+    background-color: #006b3f;
+    color: #fff;
+}
+
+
+.radioCadastroServidor:checked+.spanRadioCadastroServidor {
+    background-color: #006b3f;
+    color: #fff;
+}
+
+.spanCadastroServidor {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    font-weight: bold;
+    width: 100%;
+}
+
+.radio-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin: 15px;
+}
+
+.radioCadastroServidor {
+    display: none;
+}
+
+
+input::placeholder {
+    color: #aaa;
+    font-size: 14px;
+}

@@ -1,15 +1,12 @@
 import Footer from "../Footer/Footer";
 import Header from "../Header/Header";
-import MainContainer from "../MainContainer/mainContainer";
 import "./PageContainer.css";
 
-const PageContainer = ({ children }, { usuario }) => {
+const PageContainer = ({ children }, { homeUrl }) => {  
   return (
     <div className="PageContainer">
-      <Header usuario={usuario} />
-      <MainContainer>
-        {children}
-      </MainContainer>
+      <Header homeUrl={homeUrl} />
+      {children}
       <Footer />
     </div>
   );

@@ -1,16 +1,21 @@
 import {api} from '../config/axiosConfig';
 
-  const cursoService = {
+export const cursoService = {
     create: async (data) => {
       try {
-        const response = await api.post('http://localhost:8000/api/cursos/', data);
-        return response.data;
+        const response = await api.post('/api/cadastrar-curso/', data);
+        return response;
       } catch (error) {
-        console.error("Erro ao criar curso:", error);
-        throw error;
+        return error
       }
+    },
+
+    list: async (data) => {
+      const res = api.get('api/listar-cursos/', data).catch((erro) => {
+        return erro
+      })
+
+      return res
     }
 
   };
-  
-export default cursoService;
