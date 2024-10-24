@@ -45,7 +45,7 @@ Confira se há migrations a fazer ou migrar
 
 Carregue os grupos e permissões
 
-- py manage.py loaddata grupos_com_permissoes.json
+-py manage.py loaddata grupos_permissoes.json
 
 Rode o servidor
 
