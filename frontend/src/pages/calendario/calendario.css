@@ -1,0 +1,62 @@
+.calendario-container {
+  width: 60%;
+  margin: 50px auto;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendario-titulo {
+  text-align: center;
+  color: #333;
+}
+
+.lista-eventos {
+  list-style-type: none;
+  padding: 0;
+}
+
+.evento-item {
+  background-color: #f8f9fa;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.form-novo-evento {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.input-evento, .textarea-evento {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.textarea-evento {
+  height: 100px;
+  width: 200px;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background-color: #006B3FFF;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background-color: #005A2C;
+}
