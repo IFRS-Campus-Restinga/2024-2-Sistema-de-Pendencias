@@ -15,7 +15,8 @@ import CadastroAluno from './pages/base/Gestao/cadastroAluno/CadastroAluno'
 import CadastroDisciplina from "./pages/base/Gestao/cadastroDisciplina/CadastroDisciplina"
 import CadastroEmiPed from "./pages/base/Gestao/cadastroEmiPed/cadastroEmiPed";
 import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
-import CalendarioPage from "./pages/calendario/calendario";
+import EventoCalendarioPage from "./pages/calendario/eventoCalendario";
+import CalendarioPage from "./pages/calendario/calendario"
 // Filhos de Registro
 
 // Filhos de Coordenador
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
             },
             {
                 path: ':idUsuario/calendario_EMI',
+                element: <EventoCalendarioPage />
+            },
+                        {
+                path: ':idUsuario/calendario_Proeja',
                 element: <CalendarioPage />
             }
 

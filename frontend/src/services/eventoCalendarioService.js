@@ -1,6 +1,6 @@
 import { api } from "../config/axiosConfig"
 
-export const eventoService = {
+export const eventoCalendarioService = {
     create: async (params) => {
         try {
             const res = await api.post('api/cadastrar-evento/', params);
