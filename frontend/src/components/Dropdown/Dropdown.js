@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Dropdown.css';
 import { Link } from 'react-router-dom';
 
-const Dropdown = ({ titulo, itens }) => {
+const Dropdown = ({ titulo, icone, itens }) => {
   const [aberto, setAberto] = useState(false);
   let timeoutId; // Variável para armazenar o timeout
 
@@ -22,11 +22,14 @@ const Dropdown = ({ titulo, itens }) => {
         {typeof titulo === 'string' ? (
           <>
             <button
-              className="dropdown-titulo"
+              className="dropdown-cabecalho"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              {titulo}
+              {icone}
+              <span className="dropdown-titulo">
+                {titulo}
+              </span>
             </button>
             {aberto && (
               <div
@@ -52,7 +55,7 @@ const Dropdown = ({ titulo, itens }) => {
             </span>
             {aberto && (
               <div
-                className="dropdown-conteudo-header"
+                className="dropdown-usuario-conteudo"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
               >

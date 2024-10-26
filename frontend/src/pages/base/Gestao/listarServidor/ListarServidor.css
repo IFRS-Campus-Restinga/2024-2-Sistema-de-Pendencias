@@ -16,12 +16,7 @@ h3 {
   margin-bottom: 5px;
 }
 
-hr {
-  margin: 0 auto 35px auto;
-  margin-bottom: 35px;
-}
-
-table {
+.tabelaListarServidor {
   width: auto;
   border-collapse: collapse;
   margin-top: 20px;
@@ -96,8 +91,7 @@ td {
   align-items: center;
 }
 
-input[type="text"],
-input[type="date"] {
+.inputListarServidor {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -108,8 +102,7 @@ input[type="date"] {
   height: 36px;
 }
 
-input[type="text"]:focus,
-input[type="date"]:focus {
+.inputLiistarServidor:focus {
   border-color: #006b3f;
   outline: none;
 }
@@ -120,13 +113,6 @@ input[type="date"]:focus {
 
 .botoes-busca button {
   margin-right: 10px;
-}
-
-button {
-  padding: 8px 12px;
-  color: white;
-  border: none;
-  cursor: pointer;
 }
 
 .seta {
@@ -165,7 +151,10 @@ button {
 }
 
 .Toastify__toast--success .Toastify__toast-icon {
-  background-color: white; /* Cor de fundo branca */
-  color: #006b3f; /* Cor do ícone verde */
-  border-radius: 50%; /* Mantém o formato circular */
+  background-color: white;
+  /* Cor de fundo branca */
+  color: #006b3f;
+  /* Cor do ícone verde */
+  border-radius: 50%;
+  /* Mantém o formato circular */
 }

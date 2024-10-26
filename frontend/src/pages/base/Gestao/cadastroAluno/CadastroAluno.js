@@ -5,6 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { alunoService } from "../../../../services/alunoService";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
+import Button from "../../../../components/Button/Button";
 
 const CadastroAluno = () => {
   const [formData, setFormData] = useState({
@@ -79,6 +80,7 @@ const CadastroAluno = () => {
         </div>
         <div className="ajuste-button">
         </div>
+        <Button tipo='submit' text='Cadastrar Aluno'/>        
       </FormContainer>
     </>
   );

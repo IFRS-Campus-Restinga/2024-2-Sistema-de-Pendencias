@@ -38,7 +38,6 @@ const BaseGestao = () => {
         </Link>
         </div>
         <div className="navItemContainer">
-        <FontAwesomeIcon icon={faBook}  color="black" size="xl"/>
         <Dropdown titulo='Dependências' itens={[
         {
         name: "Consultar Dependências",
@@ -56,10 +55,10 @@ const BaseGestao = () => {
         name: "Cadastro PPT",
         link: `${homeUrl}/cadastroPPT`
         }
-        ]} />
+        ]} icone={<FontAwesomeIcon icon={faBook}  color="black" size="xl"/>}
+        />
         </div>
         <div className="navItemContainer">
-        <FontAwesomeIcon icon={faCalendarDays} color="black" size="xl"/>
         <Dropdown titulo='Calendário' itens={[
         {
         name: "Calendário EMI",
@@ -69,10 +68,11 @@ const BaseGestao = () => {
         name: "Calendário PROEJA",
         link: `${homeUrl}/calendario_Proeja`
         }
-        ]}/>  
+        ]}
+        icone={<FontAwesomeIcon icon={faCalendarDays} color="black" size="xl"/>}
+        />  
         </div>
         <div className="navItemContainer">
-        <FontAwesomeIcon icon={faClipboardList}  color="black" size="xl"/>
         <Dropdown titulo='Gerenciar Cadastros' itens={[
         {
         name: "Cadastro Aluno",
@@ -90,12 +90,12 @@ const BaseGestao = () => {
         name: "Cadastro Servidor",
         link: `${homeUrl}/cadastroServidor`
         }
-        ]}/>  
+        ]}
+        icone={<FontAwesomeIcon icon={faClipboardList}  color='black' size="xl"/>}
+        />  
         </div>
       </nav>
-      <MainContainer>
         <Outlet />  
-      </MainContainer>
     </PageContainer>
   );
 };

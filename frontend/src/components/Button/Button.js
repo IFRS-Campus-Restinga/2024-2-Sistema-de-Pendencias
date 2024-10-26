@@ -1,16 +1,18 @@
 import React from 'react';
 import './Button.css';
 
-const Button = ({ width, color, text, onClick, tipo }) => {
+const Button = ({ color, text, onClick, tipo }) => {
   const buttonStyle = {
-    width: width || '211px',
-    backgroundColor: color || '#218838'
+    width: 'fit-content',
+    backgroundColor: color || '#006b3f'
   };
 
   return (
-    <button className="custom-button" type={tipo ? tipo : 'button'} style={buttonStyle} onClick={onClick}>
-      {text}
-    </button>
+    <div className='containerBotao'>
+      <button className="custom-button" type={tipo ? tipo : 'button'} style={buttonStyle} onClick={onClick}>
+        {text}
+      </button>
+    </div>
   );
 };
 

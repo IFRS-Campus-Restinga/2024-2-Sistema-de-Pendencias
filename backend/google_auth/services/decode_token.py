@@ -18,7 +18,6 @@ def verify_google_token(token, client_id):
         return {
             'email': email,
             'first-name': first_name,
-            'last-name': last_name,
             'picture': picture
         }
     except ValueError as e:  # Valor malformado ou token inválido

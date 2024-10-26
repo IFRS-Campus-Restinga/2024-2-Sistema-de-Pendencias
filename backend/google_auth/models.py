@@ -20,7 +20,6 @@ class CustomUserManager(BaseUserManager):
 
 class UsuarioBase(AbstractUser):
     first_name = models.CharField(max_length=100, help_text="Informe o nome", null=True, blank=True)
-    last_name = models.CharField(max_length=100, help_text="Informe o sobrenome", null=True, blank=True)
     primeiro_login = models.BooleanField(default=True)
     email = models.EmailField(unique=True)
     grupo = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name="usuarios", verbose_name="Grupo")

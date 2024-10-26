@@ -4,6 +4,7 @@ import { faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { validarFormularioCurso } from './validacoes'; // Importa suas funções de validação
 import { cursoService } from "../../../../services/cursoService";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
+import Button from "../../../../components/Button/Button"
 import "./CadastroCurso.css";
 import Switch from "../../../../components/Switch/Switch";
 import { ToastContainer, toast } from "react-toastify";
@@ -127,15 +128,14 @@ const CadastroCurso = () => {
               icon={faPlusCircle}
               style={{ color: "#28A745", cursor: "pointer", fontSize: "24px" }}
             />
-            <span style={{ color: "black" }}> Adicionar Turma</span>
+            <span className="labelCadastroCurso" style={{ color: "black" }}>Adicionar Turma</span>
           </button>
         </div>
   
         {turmas.length > 0 && (
           <div className="turmas-lista">
-            <h4>Turmas a serem adicionadas:</h4>
             <table className="turmas-tabela">
-              <thead>
+              <thead className="cabecalhoTabelaCadastroCurso">
                 <tr>
                   <th>Número da Turma</th>
                   <th>Ação</th>
@@ -167,6 +167,7 @@ const CadastroCurso = () => {
             </table>
           </div>
       )}
+      <Button tipo='submit' text='Cadastrar Curso'/>        
       </FormContainer>
     </>
   );

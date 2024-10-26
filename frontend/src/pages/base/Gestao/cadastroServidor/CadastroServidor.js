@@ -81,47 +81,48 @@ const CadastroServidor = () => {
 
     return (
         <>
-        <ToastContainer/>
-        <FormContainer titulo='Cadastro Servidor' onSubmit={enviarHandler}>
-                <span className='spanCadastroServidor'>Perfil</span>
-                <div className="radio-container">
-                    <label className='labelCadastroServidor' htmlFor='Professor'>
-                        <input className='radioCadastroServidor' id='Professor' type="radio" name='perfil' value="Professor" checked={formData.perfil === 'Professor'}
-                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
-                        />
-                        <span className='spanRadioCadastroServidor'>Professor</span>
-                    </label>
-                    <label className='labelCadastroServidor' htmlFor='RegistroEscolar'>
-                        <input className='radioCadastroServidor' id='RegistroEscolar' type="radio" name='perfil' value="RegistroEscolar" checked={formData.perfil === 'RegistroEscolar'}
-                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
-                        />
-                        <span className='spanRadioCadastroServidor'>Registros Escolares</span>
-                    </label>
-                    <label className='labelCadastroServidor' htmlFor='GestaoEscolar'>
-                        <input className='radioCadastroServidor' id='GestaoEscolar' type="radio" value="GestaoEscolar" name='perfil' checked={formData.perfil === 'GestaoEscolar'}
-                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
-                        />
-                        <span className='spanRadioCadastroServidor'>Gestão Escolar</span>
-                    </label>
-                    <label className='labelCadastroServidor' name='Coordenador' htmlFor='Coordenador'>
-                        <input className='radioCadastroServidor' id='Coordenador' name='perfil' type="radio" value="Coordenador" checked={formData.perfil === 'Coordenador'}
-                            onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
-                        />
-                        <span className='spanRadioCadastroServidor'>Coordenador</span>
-                    </label>
+            <ToastContainer/>
+            <FormContainer titulo='Cadastro Servidor' onSubmit={enviarHandler}>
+                    <span className='spanCadastroServidor'>Perfil</span>
+                    <div className="radio-container">
+                        <label className='labelCadastroServidor' htmlFor='Professor'>
+                            <input className='radioCadastroServidor' id='Professor' type="radio" name='perfil' value="Professor" checked={formData.perfil === 'Professor'}
+                                onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
+                            />
+                            <span className='spanRadioCadastroServidor'>Professor</span>
+                        </label>
+                        <label className='labelCadastroServidor' htmlFor='RegistroEscolar'>
+                            <input className='radioCadastroServidor' id='RegistroEscolar' type="radio" name='perfil' value="RegistroEscolar" checked={formData.perfil === 'RegistroEscolar'}
+                                onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
+                            />
+                            <span className='spanRadioCadastroServidor'>Registros Escolares</span>
+                        </label>
+                        <label className='labelCadastroServidor' htmlFor='GestaoEscolar'>
+                            <input className='radioCadastroServidor' id='GestaoEscolar' type="radio" value="GestaoEscolar" name='perfil' checked={formData.perfil === 'GestaoEscolar'}
+                                onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
+                            />
+                            <span className='spanRadioCadastroServidor'>Gestão Escolar</span>
+                        </label>
+                        <label className='labelCadastroServidor' name='Coordenador' htmlFor='Coordenador'>
+                            <input className='radioCadastroServidor' id='Coordenador' name='perfil' type="radio" value="Coordenador" checked={formData.perfil === 'Coordenador'}
+                                onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
+                            />
+                            <span className='spanRadioCadastroServidor'>Coordenador</span>
+                        </label>
+                    </div>
+                <div className="form-item">
+                    <label>E-mail</label>
+                    <input type="email" value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })} required
+                        onBlur={() => validarHandler('email')}
+                        placeholder="E-mail"
+                        style={{ borderColor: errors.nome ? 'red' : '' }}
+                    />
+                    {errors.email && <p className="erros">{errors.email}</p>}
                 </div>
-            <div className="form-item">
-                <label>E-mail</label>
-                <input type="email" value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })} required
-                    onBlur={() => validarHandler('email')}
-                    placeholder="E-mail"
-                    style={{ borderColor: errors.nome ? 'red' : '' }}
-                />
-                {errors.email && <p className="erros">{errors.email}</p>}
-            </div>
-            {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
-        </FormContainer>
+                {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
+                <Button tipo='submit' text='Cadastrar Servidor'/>
+            </FormContainer>
         </>
     );
 };

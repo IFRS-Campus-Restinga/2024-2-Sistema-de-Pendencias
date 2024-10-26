@@ -114,7 +114,7 @@ return (
   <div className="container-listar-servidor">
     <ToastContainer />
     <h3>Lista de Servidores</h3>
-    <hr />
+    <hr className='linha'/>
     <div className="filtro">
       <label>Filtrar por Nome:</label>
       <input
@@ -145,6 +145,7 @@ return (
       <input
         type="text"
         value={matriculaFiltro}
+        className='inputListarServidor'
         onChange={(e) => setMatriculaFiltro(e.target.value)}
         style={{ width: '200px' }}
       />
@@ -156,12 +157,14 @@ return (
         <label>Início:</label>
         <input
           type="date"
+          className='inputListarServidor'
           value={dataInicio}
           onChange={(e) => setDataInicio(e.target.value)}
         />
         <label>Fim:</label>
         <input
           type="date"
+          className='inputListarServidor'
           value={dataFim}
           onChange={(e) => setDataFim(e.target.value)}
         />
@@ -181,7 +184,7 @@ return (
       />
     </div>
 
-    <table>
+    <table className='tabelaListarServidor'>
       <thead>
         <tr>
           <th onClick={() => ordenarPorColuna('perfil')}>

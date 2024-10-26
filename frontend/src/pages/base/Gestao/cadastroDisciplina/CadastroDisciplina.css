@@ -1,25 +1,10 @@
-
-
-h3 {
-    font-size: 35px;
-    margin-bottom: 20px;
-}
-
-.form-disciplina {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.botaoContainer {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-}
-
 .form-item {
     display: flex;
     flex-direction: column;
+}
+
+.divCadastroDisciplina {
+    margin-top: 15px;
 }
 
 label {

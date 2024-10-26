@@ -22,7 +22,7 @@ import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
 // Filhos de Professor
 
 // Filhos de Aluno
-import DadosAdicionaisAluno from './pages/base/Aluno/dadosAdicionaisAluno/DadosAdicionaisAluno'
+import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
 
 
@@ -93,7 +93,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: ':idUsuario/perfil',
-                element: <DadosAdicionaisAluno />
+                element: <PerfilAluno />
             },
             {
                 path: ':idUsuario/',

@@ -33,6 +33,14 @@
     width: 100%;
 }
 
+.containerCadastroServidor {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+}
+
 .radio-container {
     display: flex;
     flex-wrap: wrap;

@@ -1,6 +1,6 @@
 .login-container {
   display: flex;
-  height: 50%;
+  height: fit-content;
   align-self: center;
   flex-direction: column;
   background-color: white;

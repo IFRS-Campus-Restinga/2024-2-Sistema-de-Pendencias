@@ -10,6 +10,14 @@ select {
   box-sizing: border-box;
 }
 
+.containerCadastroAluno {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
+}
+
 .labelCadastroAluno {
   font-weight: bold;
   margin-bottom: 5px;

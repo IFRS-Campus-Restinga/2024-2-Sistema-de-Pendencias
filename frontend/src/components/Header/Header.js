@@ -32,7 +32,7 @@ const Header = ({homeUrl}) => {
       if (!token) throw new Error('Token inválido')
       
       const decoded = jwtDecode(token)
-      setNome(`${decoded.primeiroNome} ${decoded.ultimoNome}`)
+      setNome(`${decoded.primeiroNome}`)
       
     } catch (error) {
         return error
@@ -49,10 +49,15 @@ const Header = ({homeUrl}) => {
       <div className="menu">
         {typeof nome === 'string' ? (
           <>
-            <h2 className="header-title">Bem vindo <p className="nome">{nome}</p></h2>
+          <span className="header-titulo">
+            <h2 className="header-saudacao">
+              Bem vindo
+            </h2>
+            <p className="header-nome">{nome}</p>
+          </span>
             <Dropdown 
               titulo={
-                <img src={sessionStorage.getItem('fotoPerfil')} className="fotoPerfil"/>
+                <img src={jwtDecode(sessionStorage.getItem('token')).fotoPerfil} className="fotoPerfil"/>
               } 
                 itens={[
                   {

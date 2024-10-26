@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from "../../../../components/Button/Button";
+import FormContainer from '../../../../components/FormContainer/FormContainer'
+import {ToastContainer, toast} from 'react-toastify'
 import { disciplinaService } from "../../../../services/disciplinaService"; // Importa a função para criar disciplina
 import "./CadastroDisciplina.css"; // CSS para a página
 import { cursoService } from '../../../../services/cursoService';
@@ -17,7 +19,6 @@ const CadastroDisciplina = () => {
   const fetchCursos = async () => {
     try {
       const response = await cursoService.list()
-      console.log(response)
 
       setCursos(response.data);
     } catch (error) {
@@ -47,11 +48,10 @@ const CadastroDisciplina = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h3>Cadastro Disciplina</h3>
-        <hr />
-        <div>
+    <>
+      <ToastContainer/>
+      <FormContainer titulo='Cadastro Disciplina'>
+        <div className='divCadastroDisciplina'>
           <label htmlFor="curso">Curso:</label>
           <select
             id="curso"
@@ -67,7 +67,7 @@ const CadastroDisciplina = () => {
             ))}
           </select>
         </div>
-        <div>
+        <div  className='divCadastroDisciplina'>
           <label htmlFor="nomeDisciplina">Nome da Disciplina:</label>
           <input
             type="text"
@@ -78,7 +78,7 @@ const CadastroDisciplina = () => {
             required
           />
         </div>
-        <div>
+        <div  className='divCadastroDisciplina'>
           <label htmlFor="cargaHoraria">Carga Horária:</label>
           <input
             type="number"
@@ -94,15 +94,13 @@ const CadastroDisciplina = () => {
         </div>
         <div className="ajuste-button">
           <Button
-            width="30%"
-            color="#28A745"
-            text="Cadastrar"
+            text="Cadastrar Disciplina"
             type="submit"
           />
         </div>
-      </form>
       {message && <div>{message}</div>} {/* Mensagem de sucesso ou erro */}
-    </div>
+      </FormContainer>
+    </>
   );
 };
 

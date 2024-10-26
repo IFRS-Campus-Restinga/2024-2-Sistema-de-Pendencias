@@ -46,19 +46,19 @@ def infos_adicionais_aluno(request):
     try:
         # Obter o ID do usuário enviado na requisição
         usuario_id = request.data.get('usuario', None)
-        aluno = UsuarioBase.objects.get(pk=usuario_id)  # Busca o aluno pelo ID do usuário
+        usuario = UsuarioBase.objects.get(pk=usuario_id)  # Busca o aluno pelo ID do usuário
 
         # Atualizar os dados do aluno
-        serializer_aluno = AlunoSerializer(aluno, data=request.data, partial=True)
+        serializer_aluno = AlunoSerializer(data=request.data)
 
         if serializer_aluno.is_valid():
             serializer_aluno.save()
-            return Response(serializer_aluno.data, status=status.HTTP_200_OK)
+            return Response(serializer_aluno.data, status=status.HTTP_201_CREATED)
         else:
             print(serializer_aluno.errors)  # Adicione esta linha para depuração
             raise Exception(serializer_aluno.errors)  # Levanta um erro se a validação falhar
 
-    except aluno.DoesNotExist:
+    except usuario.DoesNotExist:
         return Response({'mensagem': 'Aluno não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)

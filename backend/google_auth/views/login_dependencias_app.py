@@ -35,15 +35,15 @@ def login_view(request):
             raise Exception('Você necessita possuir um email institucional cadastrado para acessar!')
 
         user.first_name = user_info.get('first-name', user.first_name)
-        user.last_name = user_info.get('last-name', user.last_name)
         user.save()
 
         login(request, user)
 
-        token = custom_token(user)
+        pictureCode = user_info.get('picture'),
+
+        token = custom_token(user, pictureCode)
 
         response_data = {
-            'fotoPerfil': user_info.get('picture'),
             'primeiroLogin': user.primeiro_login,
             'token': token
         }

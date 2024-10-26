@@ -4,4 +4,4 @@ from dependencias_app.models.aluno import Aluno
 class AlunoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Aluno
-        fields = '__all__'
+        fields = ['id', 'nome_completo', 'cpf', 'data_nascimento', 'matricula', 'telefone', 'usuario']
