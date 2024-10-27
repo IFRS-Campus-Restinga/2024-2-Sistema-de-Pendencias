@@ -19,3 +19,15 @@
 .custom-button:hover {
   opacity: 0.9;
 }
+
+@media (max-width: 740px) {
+  .custom-button {
+    font-size: 10px;
+  }
+}
+
+@media (max-width:390px) {
+  .custom-button {
+    font-size: 7px;
+  }
+}

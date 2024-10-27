@@ -3,7 +3,7 @@ import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { ptBR } from 'date-fns/locale';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
-import FormContainer from "../../components/FormContainer/FormContainer";
+import FormContainer from "../../../../components/FormContainer/FormContainer";
 import './calendario.css';
 
 const locales = {

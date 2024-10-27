@@ -1,8 +1,9 @@
-.input, .inputErro {
-    width: 100%;
-    padding: 10px;
+.input,
+.inputErro {
+    width: 90%;
+    padding: 5px;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .input {
@@ -14,8 +15,16 @@
 }
 
 input:focus {
-    border-color: #007bff;
+    border-color: #797979;
     outline: none;
+}
+
+@media (max-width: 740px) {
+
+    .input,
+    .input[type='date'] {
+        font-size: 10px;
+    }
 }
 
 /* .sem-setas::-webkit-inner-spin-button,

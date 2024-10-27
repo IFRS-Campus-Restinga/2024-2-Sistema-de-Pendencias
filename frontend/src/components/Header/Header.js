@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
+import Cookies from 'js-cookie'
 import "./Header.css";
 import logo from "../../assets/logo-ifrs-branco.png";
 import Dropdown from '../../components/Dropdown/Dropdown'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { jwtDecode } from "jwt-decode";
 import { authService } from '../../../src/services/authService'
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Header = ({homeUrl}) => {
   const [nome, setNome] = useState()
@@ -17,6 +18,9 @@ const Header = ({homeUrl}) => {
 
     if (res.status === 200) {
       sessionStorage.clear()
+      Cookies.remove('csrftoken', { path: '/', domain: '127.0.0.1' });
+      Cookies.remove('sessionid', { path: '/', domain: '127.0.0.1' });
+
       escreveNome()
 
       redirect('/')

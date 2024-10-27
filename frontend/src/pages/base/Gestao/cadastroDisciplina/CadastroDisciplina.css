@@ -12,13 +12,6 @@ label {
     font-size: 20px;
 }
 
-input,
-select {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-
 .radio-container label {
     display: inline-flex;
     align-items: center;

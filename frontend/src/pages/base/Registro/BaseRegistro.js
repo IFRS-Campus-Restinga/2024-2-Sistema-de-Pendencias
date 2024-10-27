@@ -7,7 +7,7 @@ const BaseRegistro = () => {
     const redirect = useNavigate()
 
     const validaRegistro = () => {
-        const res = validaUsuario('Registro')
+        const res = validaUsuario('RegistroEscolar')
 
         if (!res.status) {
             if (res.perfil === undefined) redirect('/')

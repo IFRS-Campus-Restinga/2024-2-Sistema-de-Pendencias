@@ -15,8 +15,8 @@ import CadastroAluno from './pages/base/Gestao/cadastroAluno/CadastroAluno'
 import CadastroDisciplina from "./pages/base/Gestao/cadastroDisciplina/CadastroDisciplina"
 import CadastroEmiPed from "./pages/base/Gestao/cadastroEmiPed/cadastroEmiPed";
 import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
-import EventoCalendarioPage from "./pages/calendario/eventoCalendario";
-import CalendarioPage from "./pages/calendario/calendario"
+import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendario";
+import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 // Filhos de Registro
 
 // Filhos de Coordenador

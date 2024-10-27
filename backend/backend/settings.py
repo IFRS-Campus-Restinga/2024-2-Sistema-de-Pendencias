@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-from datetime import timedelta
 
 load_dotenv()
 
@@ -54,12 +53,12 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -99,21 +98,24 @@ DATABASES = {
 CORS_ALLOWED_HEADERS = [
     'Content-Type',
     'X-CSRFToken',
-    'Authorization',
 ]
 
-# Permita que cookies sejam acessíveis pelo frontend
-CSRF_COOKIE_SAMESITE = 'Lax'  # ou 'Lax' dependendo do caso
-SESSION_COOKIE_SAMESITE = 'Lax'  # ou 'Lax' dependendo do caso
+CSRF_COOKIE_SAMESITE = 'Lax'  
+SESSION_COOKIE_SAMESITE = 'Lax' 
 
-# Se você estiver usando HTTPS
 CSRF_COOKIE_SECURE = False  
 SESSION_COOKIE_SECURE = False 
 
 CSRF_COOKIE_HTTPONLY = False
-SESSION_COOKIE_HTTPONLY = False
+SESSION_COOKIE_HTTPONLY = True
 
 AUTH_USER_MODEL = 'google_auth.UsuarioBase'
+
+SESSION_COOKIE_AGE = 86400 
+CSRF_COOKIE_AGE = 86400
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+CSRF_ESPIRE_AT_BROWSER_CLOSE = True
 
 CORS_ALLOW_CREDENTIALS = True
 

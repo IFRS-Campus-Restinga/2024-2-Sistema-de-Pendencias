@@ -1,4 +1,5 @@
 import { api } from "../config/axiosConfig";
+import ListarServidor from "../pages/base/Gestao/listarServidor/ListarServidor";
 
 const endpoints = [
     {
@@ -41,6 +42,14 @@ const servidorService = {
 
         return res;
     },
+
+    listar: async () => {
+        const res = await api.get('/api/listar-servidores/').catch((erro) => {
+            return erro
+        })
+
+        return res
+    }
 };
 
 export default servidorService;

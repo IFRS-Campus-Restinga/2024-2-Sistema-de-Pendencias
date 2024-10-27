@@ -21,9 +21,10 @@ const LoginPage = () => {
       if (res.status !== 200) throw new Error()
         // adiciona o token jwt contendo os dados do cliente ao session storage
         sessionStorage.setItem('token', res.data.token)
-        sessionStorage.setItem('fotoPerfil', res.data.fotoPerfil)
 
         const decoded = jwtDecode(res.data.token)
+
+        console.log(decoded)
 
         // redireciona os usuários professores e alunos para preenchimento de informações adicionais de perfil no primeiro login
         if (res.data.primeiroLogin === true && (decoded.perfil === 'Aluno' || decoded.perfil === 'Professor')) {

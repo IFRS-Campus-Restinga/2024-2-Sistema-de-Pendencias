@@ -1,21 +1,27 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { validarFormularioCurso } from './validacoes'; // Importa suas funções de validação
+import { validarFormularioCurso, validarCampo } from './validacoes'; // Importa suas funções de validação
 import { cursoService } from "../../../../services/cursoService";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import Button from "../../../../components/Button/Button"
+import Input from '../../../../components/Input/Input'
 import "./CadastroCurso.css";
 import Switch from "../../../../components/Switch/Switch";
 import { ToastContainer, toast } from "react-toastify";
 
 const CadastroCurso = () => {
-  const [nome, setNome] = useState("");
-  const [carga_horaria, setCargaHoraria] = useState("");
   const [modalidade, setModalidade] = useState("Integrado");
   const [turmas, setTurmas] = useState([]);
-  const [mensagem, setMensagem] = useState(null);
-  const [error, setError] = useState(null);
+  const [formData, setFormData] = useState({
+    nome: '',
+    carga_horaria: '',
+    modalidade: modalidade,
+    turmas: turmas
+  })
+  const [errors, setErrors] = useState({})
+  const [showErrorMessage, setShowErrorMessage] = useState(false)
+
 
   const trocaModalidade = (novoValor) => {
     console.log(novoValor)
@@ -24,6 +30,7 @@ const CadastroCurso = () => {
 
   const addTurma = () => {
     setTurmas([...turmas, { numero: "" }]);
+    console.log(turmas)
   };
 
   const handleTurmaChange = (index, value) => {
@@ -40,86 +47,94 @@ const CadastroCurso = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Crie um objeto com os dados do formulário
-    const formData = {
-      nome,
-      carga_horaria,
-      modalidade,
-      turmas,
-    };
+    const erros = validarFormularioCurso(formData);
 
-    try {
-      // Valide os dados do formulário
-      const erros = validarFormularioCurso(formData);
+    if (Object.keys(erros).length > 0) {
+        setShowErrorMessage(true);
+        setErrors(erros);
+    } else {
+        try {
+            const response = await cursoService.create(formData);
 
-      if (Object.keys(erros).length > 0) {
-        setError(erros);
-        throw new Error()
-      }
+            if (response.status !== 201) {
+                const errorMessage = response.data?.message || 'Erro desconhecido';
+                throw new Error(errorMessage);
+            }
 
-      const response = await cursoService.create(formData)
+            toast.success("Curso cadastrado com sucesso!", {
+                position: "bottom-center",
+                autoClose: 3000,
+                style: { backgroundColor: '#28A745', color: '#fff' },
+                progressStyle: { backgroundColor: '#fff' }
+            });
 
-      console.log(response.status)
+            // Limpa os campos do formulário
+            setFormData({
+                nome: '',
+                carga_horaria: '',
+                modalidade: 'Integrado', // Corrigido
+                turmas: [] // Corrigido
+            });
 
-      if (response.status === 400) throw new Error(response.status)
-      
-      toast.success("Curso cadastrado com sucesso!", {
-        position: "bottom-center",
-        autoClose: 3000,
-        style: { backgroundColor: '#28A745', color: '#fff' },
-        progressStyle: { backgroundColor: '#fff' }
+            setErrors({});
+
+        } catch (erro) {
+            toast.error("Falha na operação. Tente novamente.", {
+                position: "bottom-center",
+                autoClose: 3000,
+                style: { backgroundColor: '#d11c28', color: '#fff' },
+                progressStyle: { backgroundColor: '#fff' }
+            });
+            console.log('Erro ao cadastrar curso!', erro);
+        }
+    }
+};
+
+  const handleBlur = (campo) => {
+    const error = validarCampo(campo, formData[campo]);
+    if (error) {
+      setErrors((prevErrors) => ({ ...prevErrors, [campo]: error }));
+    } else {
+      setErrors((prevErrors) => {
+        const { [campo]: removed, ...rest } = prevErrors;
+        return rest;
       });
-
-      // limpa os campos do formulário
-      setNome("");
-      setCargaHoraria("");
-      setModalidade("");
-      setTurmas([]);
-
-      // limpa os erros
-      setError(null);
-
-    } catch (erro) {
-      console.log(`Erro ao cadastrar curso: ${erro}`)
     }
   };
+  
 
   return (
     <>
     <ToastContainer />
     <FormContainer onSubmit={handleSubmit} titulo='Cadastrar Curso'>
-      {mensagem && <p className="mensagem">{mensagem}</p>}
-      {error && <p className="error">{error.global || "Verifique os campos."}</p>} {/* Mensagem de erro global */}
-
+      {showErrorMessage ? <p className="error">* Preencha os campos obrigatórios</p> : <></>}
         <div className="modalidade-container">
         <label className="labelCadastroCurso">Modalidade</label>
           <Switch valor={modalidade} valor1='PROEJA' valor2='Integrado' stateHandler={trocaModalidade}/>
         </div>
-  
         <div className="input-group">
-          <label htmlFor="nome">Nome Do Curso:</label>
-          <input
-            type="text"
-            name="nome"
-            id="nome"
-            value={nome}
-            className={error && error.nome ? 'error-input' : ''}
-            onChange={(e) => setNome(e.target.value)}
+          <label htmlFor="nome">Nome</label>
+          <Input 
+            tipo="text"
+            value={formData.nome}
+            erro={errors.nome} 
+            onChange={(e) => setFormData({...formData, nome: e.target.value})}
+            onBlur={() => {handleBlur('nome')}}
+            textoAjuda='Nome do curso'
           />
-          {error && error.nome && <p className="error">{error.nome}</p>}
+          {errors.nome ? <p className="error">{errors.nome}</p> : <></>}
         </div>
   
         <div className="input-group">
           <label htmlFor="carga_horaria">Carga Horária:</label>
-          <input
-            type="text"
-            name="carga_horaria"
-            id="carga_horaria"
-            value={carga_horaria}
-            className={error && error.carga_horaria ? 'error-input' : ''}
-            onChange={(e) => setCargaHoraria(e.target.value)}
+          <Input 
+            tipo='text'
+            valor={formData.carga_horaria}
+            erro={errors.carga_horaria}
+            onChange={(e) => setFormData({...formData, carga_horaria: e.target.value})}
+            onBlur={() => {handleBlur('carga_horaria')}}
           />
-          {error && error.carga_horaria && <p className="error">{error.carga_horaria}</p>}
+          {errors.carga_horaria ? <p className="error">{errors.carga_horaria}</p> : <></>}
         </div>
   
         <div className="add-turma">
@@ -145,14 +160,15 @@ const CadastroCurso = () => {
                 {turmas.map((turma, index) => (
                   <tr key={index}>
                     <td>
-                      <input
-                        type="text"
-                        className={`turmaInput ${error && error.turmas && error.turmas[index] ? 'error-input' : ''}`}
-                        value={turma.numero}
+                      <Input 
+                        tipo='text'
+                        valor={turma.numero}
                         onChange={(e) => handleTurmaChange(index, e.target.value)}
-                        placeholder="Digite o número da turma"
+                        textoAjuda='Digite o número da turma'
+                        onBlur={() => {handleBlur('turmas')}}
+                        erro={errors.turmas}
                       />
-                      {error && error.turmas && error.turmas[index] && <p className="error">{error.turmas[index]}</p>}
+                      {errors.turmas ? <p className="error">{errors.turmas}</p> : <></>}
                     </td>
                     <td>
                       <FontAwesomeIcon

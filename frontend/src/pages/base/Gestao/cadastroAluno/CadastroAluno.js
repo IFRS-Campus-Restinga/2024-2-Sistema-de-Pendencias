@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { alunoService } from "../../../../services/alunoService";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import Button from "../../../../components/Button/Button";
+import Input from '../../../../components/Input/Input'
 
 const CadastroAluno = () => {
   const [formData, setFormData] = useState({
@@ -74,15 +75,14 @@ const CadastroAluno = () => {
         {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
         <br />
         <div className="divCadastroAluno">
-          <label htmlFor="email" className="labelCadastroAluno">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={formData.email}
+          <label htmlFor="email" className="labelCadastroAluno">Email</label>
+          <Input
+            tipo='email'
+            valor={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             onBlur={() => handleBlur('email')}
-            placeholder="Email"
-            style={{ borderColor: errors.email ? 'red' : '' }}
+            textoAjuda="Email"
+            erro={errors.email}
           />
           {errors.email && <p className="erros">{errors.email}</p>}
         </div>

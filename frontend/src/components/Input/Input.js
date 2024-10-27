@@ -1,15 +1,13 @@
-import React, { useState } from "react";
 import "./Input.css"; // Para o CSS que vamos criar
 
-const Input = ({ tipo, textoAjuda, erro }) => {
-  const [valor, setValor] = useState("");
-
+const Input = ({ tipo, textoAjuda, erro, onChange, onBlur, valor }) => {
   return (
     <input
       type={tipo}
       value={valor}
-      onChange={(e) => setValor(e.target.value)}
+      onChange={onChange}
       placeholder={textoAjuda}
+      onBlur={onBlur}
       className={erro ? "inputErro" : "input"}
     />
   );

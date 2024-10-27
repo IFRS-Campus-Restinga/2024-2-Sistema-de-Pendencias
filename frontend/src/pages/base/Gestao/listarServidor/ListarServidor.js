@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ListarServidor.css';
 import Button from "../../../../components/Button/Button";
+import FormContainer from '../../../../components/FormContainer/FormContainer'
 import Deletar from "../../../../assets/deletar-preto.png";
 import Visualizar from "../../../../assets/visualizar-preto.png";
 import Ordenar from "../../../../assets/ordenar-branco.png";
-import Modal from '../../../../components/Modal/Modal'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import servidorService from '../../../../services/servidorService';
+import Input from '../../../../components/Input/Input';
 
 const ListarServidor = () => {
   const [servidores, setServidores] = useState([]);
@@ -20,31 +22,23 @@ const ListarServidor = () => {
   const [matriculaFiltro, setMatriculaFiltro] = useState('');
 
   const perfilMap = {
-    1: 'Gestão Escolar',
-    2: 'Registros Escolares',
-    4: 'Coordenador',
-    5: 'Professor'
+    'GestaoEscolar': 'Gestão Escolar',
+    'RegistroEscolar': 'Registros Escolares',
+    'Coordenador': 'Coordenador',
+    'Professor': 'Professor'
   };
 
   const fetchServidores = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/listar-servidores/');
-      const todosServidores = [
-        ...response.data.gestao_escolar,
-        ...response.data.registro_escolar,
-        ...response.data.coordenadores,
-        ...response.data.professores,
-      ];
-      setServidores(todosServidores);
-      setServidoresFiltrados(todosServidores);
+      const response = await servidorService.listar()
+      setServidores(response.data);
+      setServidoresFiltrados(response.data)
+      console.log(response.data)
+      console.log(servidoresFiltrados)
     } catch (error) {
       console.error('Erro ao buscar servidores:', error);
     }
   };
-
-  useEffect(() => {
-    fetchServidores();
-  }, []);
 
   const ordenarPorColuna = (coluna) => {
     const novaOrdem = ordenacao.coluna === coluna && ordenacao.ordem === 'asc' ? 'desc' : 'asc';
@@ -70,18 +64,6 @@ const ListarServidor = () => {
     setServidoresFiltrados(servidoresOrdenados);
     setOrdenacao({ coluna, ordem: novaOrdem });
   };
-  
-
-  const filtrarServidores = () => {
-    const servidoresFiltrados = servidores.filter(servidor =>
-      servidor.nome.toLowerCase().includes(nomeFiltro.toLowerCase()) &&
-      (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
-      (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
-      (!perfilFiltro || servidor.perfil === parseInt(perfilFiltro)) &&
-      (!matriculaFiltro || (servidor.matricula && servidor.matricula.includes(matriculaFiltro)))
-    );
-    setServidoresFiltrados(servidoresFiltrados);
-  };
 
   const limparBusca = () => {
     setDataInicio('');
@@ -95,6 +77,25 @@ const ListarServidor = () => {
 
     fetchServidores();
   };
+
+
+  useEffect(() => {
+    fetchServidores();
+  }, []);
+
+  
+
+  const filtrarServidores = () => {
+    const servidoresFiltrados = servidores.filter(servidor => 
+      (!nomeFiltro || servidor.first_name.toLowerCase().includes(nomeFiltro.toLowerCase())) &&
+      (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
+      (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
+      (!perfilFiltro || servidor.perfil === perfilFiltro) &&
+      (!matriculaFiltro || (servidor.matricula && servidor.matricula.includes(matriculaFiltro)))
+    );
+    setServidoresFiltrados(servidoresFiltrados);
+  };
+
 
   const deletarServidor = async (id, nome) => {
     const confirmar = window.confirm(`Você tem certeza que quer remover ${nome}?`);
@@ -111,158 +112,156 @@ const ListarServidor = () => {
 };
 
 return (
-  <div className="container-listar-servidor">
+  <>
     <ToastContainer />
-    <h3>Lista de Servidores</h3>
-    <hr className='linha'/>
-    <div className="filtro">
-      <label>Filtrar por Nome:</label>
-      <input
-        type="text"
-        value={nomeFiltro}
-        onChange={(e) => setNomeFiltro(e.target.value)}
-        style={{ width: '200px' }}
-      />
-    </div>
-
-    <div className="filtro">
-    <label>Filtrar por Perfil:</label>
-    <select
-      value={perfilFiltro}
-      onChange={(e) => setPerfilFiltro(e.target.value)}
-      style={{ width: '200px' }}
-    >
-      <option value="">Todos</option>
-      <option value="1">Gestão Escolar</option>
-      <option value="2">Registros Escolares</option>
-      <option value="4">Coordenador</option>
-      <option value="5">Professor</option>
-    </select>
-    </div>
-
-    <div className="filtro">
-      <label>Filtrar por Matrícula:</label>
-      <input
-        type="text"
-        value={matriculaFiltro}
-        className='inputListarServidor'
-        onChange={(e) => setMatriculaFiltro(e.target.value)}
-        style={{ width: '200px' }}
-      />
-    </div>
-
-    <div className="filtro-periodo">
-      <label>Buscar por período de ingresso:</label>
-      <div>
-        <label>Início:</label>
-        <input
-          type="date"
-          className='inputListarServidor'
-          value={dataInicio}
-          onChange={(e) => setDataInicio(e.target.value)}
-        />
-        <label>Fim:</label>
-        <input
-          type="date"
-          className='inputListarServidor'
-          value={dataFim}
-          onChange={(e) => setDataFim(e.target.value)}
-        />
-      </div>
-    </div>
-
-    <div className="botoes-busca">
+    <FormContainer titulo='Lista de Servidores'>
+      <section className='sectionListarServidor'>
+        <div className='divListarServidor'>
+          <span className="spanListarServidor">
+            <label className='labelListarServidor'>Filtrar por Nome</label>
+            <Input 
+              tipo='text'
+              valor={nomeFiltro}
+              onChange={(e) => setNomeFiltro(e.target.value)}/>
+          </span>
+          <span className="spanListarServidor">
+            <label className='labelListarServidor'>Filtrar por Perfil</label>
+            <select
+              className='selectListarServidor'
+              value={perfilFiltro}
+              onChange={(e) => setPerfilFiltro(e.target.value)}
+            >
+              <option value="">Todos</option>
+              <option value="GestaoEscolar">Gestão Escolar</option>
+              <option value="RegistroEscolar">Registros Escolares</option>
+              <option value="Coordenador">Coordenador</option>
+              <option value="Professor">Professor</option>
+            </select>
+          </span>
+          <span className="spanListarServidor">
+            <label className='labelListarServidor'>Filtrar por Matrícula</label>
+            <Input
+              tipo='text'
+              valor={matriculaFiltro}
+              onChange={(e) => {setMatriculaFiltro(e.target.value)}}
+            />
+          </span>
+        </div>
+        <div className='divListarServidor'>
+          <span className="spanFiltroPeriodo">
+            <label className='labelFiltroPeriodo'>Buscar por período de ingresso</label>
+            <span className='spanData'>
+              <label className='labelData'>Início</label>
+              <Input
+                valor={dataInicio}
+                tipo='date'
+                onChange={(e) => {setDataInicio(e.target.value)}}
+              />
+            </span>
+            <span className='spanData'>
+              <label className='labelData'>Fim</label>
+              <Input
+                valor={dataFim}
+                tipo='date'
+                onChange={(e) => {setDataFim(e.target.value)}}
+              />
+            </span>
+          </span>
+        </div>
+      </section>
+    <span className="spanListarServidor">
       <Button
         text="Buscar"
         onClick={filtrarServidores}
-        color="#4A4A4A"
       />
       <Button
         text="Limpar campos"
         onClick={limparBusca}
         color="#4A4A4A"
       />
-    </div>
-
-    <table className='tabelaListarServidor'>
-      <thead>
-        <tr>
-          <th onClick={() => ordenarPorColuna('perfil')}>
-            <div className="th-conteudo">
-              <img
-                id="icone-ordenar"
-                src={Ordenar}
-                alt="Ordenar"
-                style={{ cursor: 'pointer', marginLeft: '8px' }}
-                title="Ordenar"
-              />
-              Perfil
-              {ordenacao.coluna === 'perfil' && (
-              <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
+    </span>
+    <div className='tabelaContainerListarServidor'>
+      <table className='tabelaListarServidor'>
+        <thead className='cabecalhoListarServidor'>
+          <tr className='linhaListarServidor'>
+            <th onClick={() => ordenarPorColuna('perfil')}>
+              <div className="th-conteudo">
+                <img
+                  className="icone-ordenar"
+                  src={Ordenar}
+                  alt="Ordenar"
+                  style={{ cursor: 'pointer', marginLeft: '8px' }}
+                  title="Ordenar"
+                  />
+                  <p>Perfil</p>
+                {ordenacao.coluna === 'perfil' && (
+                <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
+                )}
+              </div>
+            </th>
+            <th onClick={() => ordenarPorColuna('nome')}>
+              Nome
+              {ordenacao.coluna === 'nome' && (
+                <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
               )}
-            </div>
-          </th>
-          <th onClick={() => ordenarPorColuna('nome')}>
-            Nome
-            {ordenacao.coluna === 'nome' && (
-              <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
-            )}
-          </th>
-          <th onClick={() => ordenarPorColuna('cpf')}>
-            CPF
-            {ordenacao.coluna === 'cpf' && (
-              <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
-            )}
-          </th>
-          <th onClick={() => ordenarPorColuna('matricula')}>
-            Matrícula
-            {ordenacao.coluna === 'matricula' && (
-              <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
-            )}
-          </th>
-          <th onClick={() => ordenarPorColuna('email')}>
-            Email
-            {ordenacao.coluna === 'email' && (
-              <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
-            )}
-          </th>
-          <th onClick={() => ordenarPorColuna('data_ingresso')}>
-            Data de Ingresso
-            {ordenacao.coluna === 'data_ingresso' && (
-              <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
-            )}
-          </th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {servidoresFiltrados.map((servidor) => (
-          <tr key={`${servidor.id}-${servidor.nome}`}>
-            <td>{perfilMap[servidor.perfil] || '-'}</td>
-            <td>{servidor.nome || '-'}</td>
-            <td>{servidor.cpf || '-'}</td>
-            <td>{servidor.matricula || '-'}</td>
-            <td>{servidor.email || '-'}</td>
-            <td>{servidor.data_ingresso || '-'}</td>
-            <td className='icone-container'>
-            <img 
-              src={Visualizar} 
-              alt="Visualizar" 
-              onClick={() => console.log('Visualizar servidor')} 
-              style={{ cursor: 'pointer', marginRight: '8px' }} 
-              title="Visualizar"/>
-            <img 
-              src={Deletar} 
-              alt="Deletar" 
-              onClick={() => deletarServidor(servidor.id, servidor.nome)} 
-              style={{ cursor: 'pointer' }} 
-              title="Deletar"/>
-          </td>
+            </th>
+            <th onClick={() => ordenarPorColuna('cpf')}>
+              CPF
+              {ordenacao.coluna === 'cpf' && (
+                <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
+              )}
+            </th>
+            <th onClick={() => ordenarPorColuna('matricula')}>
+              Matrícula
+              {ordenacao.coluna === 'matricula' && (
+                <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
+              )}
+            </th>
+            <th onClick={() => ordenarPorColuna('email')}>
+              Email
+              {ordenacao.coluna === 'email' && (
+                <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
+              )}
+            </th>
+            <th onClick={() => ordenarPorColuna('data_ingresso')}>
+              Data de Ingresso
+              {ordenacao.coluna === 'data_ingresso' && (
+                <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
+              )}
+            </th>
+            <th></th>
           </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+          {servidoresFiltrados.map((servidor) => (
+            <tr key={`${servidor.id}-${servidor.nome}`}>
+              <td>{perfilMap[servidor.perfil] || '-'}</td>
+              <td>{servidor.first_name || '-'}</td>
+              <td>{servidor.cpf || '-'}</td>
+              <td>{servidor.matricula || '-'}</td>
+              <td>{servidor.email || '-'}</td>
+              <td>{servidor.data_ingresso || '-'}</td>
+              <td className='icone-container'>
+              <img 
+                className='iconeAcoes'
+                src={Visualizar} 
+                alt="Visualizar" 
+                onClick={() => console.log('Visualizar servidor')} 
+                title="Visualizar"/>
+              <img 
+                className='iconeAcoes'
+                src={Deletar} 
+                alt="Deletar" 
+                onClick={() => deletarServidor(servidor.id, servidor.nome)} 
+                title="Deletar"/>
+            </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    </FormContainer>
+  </>
 );
 
 };

@@ -7,12 +7,6 @@ from dependencias_app.models.curso import Curso
 from dependencias_app.serializers.turmaSerializer import TurmaSerializer
 from dependencias_app.utils.error_handler import handle_view_errors
 
-import logging
-
-
-
-logger = logging.getLogger(__name__)
-
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
 def cadastrar_curso(request):
@@ -21,7 +15,6 @@ def cadastrar_curso(request):
     data = request.data
     data.pop('turmas')
 
-    print(data)
     serializer = CursoSerializer(data=data)
 
     if serializer.is_valid():

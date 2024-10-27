@@ -38,16 +38,10 @@ export const validarEmail = (email) => {
 
 // Função geral de validação que retorna os erros
 export const validarFormulario = (formData) => {
-  const erros = {};
-
-  // const erroNome = validarNome(formData.nome);
-  // if (erroNome) erros.nome = erroNome;
+  const erros = {}; 
 
   const erroEmail = validarEmail(formData.email);
   if (erroEmail) erros.email = erroEmail;
-
-  // const erroMatricula = validarMatricula(formData.matricula);
-  // if (erroMatricula) erros.matricula = erroMatricula;
 
   return erros;
 };

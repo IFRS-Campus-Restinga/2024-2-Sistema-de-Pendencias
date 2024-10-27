@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { eventoCalendarioService } from '../../services/eventoCalendarioService'
-import CalendarioContainer from '../../components/CalendarioContainer/CalendarioContainer';
+import { eventoCalendarioService } from '../../../../services/eventoCalendarioService'
+import CalendarioContainer from '../../../../components/CalendarioContainer/CalendarioContainer';
 import './eventoCalendario.css'
 
 const EventoCalendarioPage = () => {

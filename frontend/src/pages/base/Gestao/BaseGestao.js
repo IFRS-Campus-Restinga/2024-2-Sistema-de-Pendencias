@@ -13,7 +13,7 @@ const BaseGestao = () => {
   const [homeUrl] = useState(useLocation().pathname)
 
     const validaGestao = () => {
-      const res = validaUsuario('Gestao')
+      const res = validaUsuario('GestaoEscolar')
 
       if (!res.status) {
           if (res.perfil === undefined) redirect('/')
