@@ -15,6 +15,8 @@ import CadastroAluno from './pages/base/Gestao/cadastroAluno/CadastroAluno'
 import CadastroDisciplina from "./pages/base/Gestao/cadastroDisciplina/CadastroDisciplina"
 import CadastroEmiPed from "./pages/base/Gestao/cadastroEmiPed/cadastroEmiPed";
 import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
+import EventoCalendarioPage from "./pages/calendario/eventoCalendario";
+import CalendarioPage from "./pages/calendario/calendario"
 // Filhos de Registro
 
 // Filhos de Coordenador
@@ -24,6 +26,7 @@ import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
+
 
 
 const router = createBrowserRouter([
@@ -64,6 +67,15 @@ const router = createBrowserRouter([
                 path: ':idUsuario/listaServidor',
                 element: <ListarServidor />
             },
+            {
+                path: ':idUsuario/calendario_EMI',
+                element: <EventoCalendarioPage />
+            },
+            {
+                path: ':idUsuario/calendario_Proeja',
+                element: <CalendarioPage />
+            }
+
             // Adicionar outros caminhos que vão derivar da tela de home após autenticação
         ]
     },

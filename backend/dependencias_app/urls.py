@@ -13,6 +13,7 @@ from dependencias_app.views import registroEscolarViews
 from dependencias_app.views import coordenadorViews
 from dependencias_app.views import professorViews
 from dependencias_app.views import servidorViews
+from dependencias_app.views import eventoCalendarioViews
 
 
 urlpatterns = [
@@ -41,6 +42,8 @@ urlpatterns = [
 
     path('listar-turmas/', turmaViews.listar_turmas, name='listar_turmas'),
     path('listar-cursos/', cursoViews.listar_cursos, name='listar_cursos'),
+
+    path('cadastrar-evento/', eventoCalendarioViews.cadastrar_evento, name='cadastrar_evento'),
 
     ]
 

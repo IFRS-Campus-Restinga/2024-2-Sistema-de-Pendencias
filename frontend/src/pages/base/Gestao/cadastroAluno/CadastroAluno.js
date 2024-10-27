@@ -40,7 +40,15 @@ const CadastroAluno = () => {
         });
       } catch (error) {
         console.error('Erro ao cadastrar aluno!', error);
-      }
+
+          // Toast de erro
+          toast.error("Falha na operação. Tente novamente.", {
+            position: "bottom-center",
+            autoClose: 3000,
+            style: { backgroundColor: '#d11c28', color: '#fff' },
+            progressStyle: { backgroundColor: '#fff' }
+          });
+        }
     } else {
       setErrors(validationErrors);
       setShowErrorMessage(true);
