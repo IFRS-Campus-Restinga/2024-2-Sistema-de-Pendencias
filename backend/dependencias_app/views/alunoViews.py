@@ -10,6 +10,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
 def cadastrar_aluno(request):

@@ -4,7 +4,7 @@ export const cursoService = {
     create: async (data) => {
       try {
         const response = await api.post('/api/cadastrar-curso/', data);
-        return response;
+        return response.data;
       } catch (error) {
         return error
       }
