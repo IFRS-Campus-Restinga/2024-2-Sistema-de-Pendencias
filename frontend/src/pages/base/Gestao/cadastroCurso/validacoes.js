@@ -1,16 +1,13 @@
 // Validação para o campo "carga horária"
 export const validarCargaHoraria = (carga_horaria) => {
-    const carga_horariaRegex = /^\d{1,2}:\d{2}$/; // Aceita formato HH:MM (ex: 40:00)
     if (carga_horaria.length === 0) {
         return 'Campo obrigatório.';
     }
-    if (!carga_horariaRegex.test(carga_horaria)) {
-        return 'Carga horária deve estar no formato "HH:MM".';
+
+    if (Number(carga_horaria) === 0) {
+        return 'A Carga horária de um curso deve ser maior que 0 horas'
     }
-    const [horas, minutos] = carga_horaria.split(':').map(Number);
-    if (horas < 0 || minutos < 0 || minutos >= 60) {
-        return 'Carga horária deve ser um valor válido.';
-    }
+
     return '';
 };
 
@@ -31,8 +28,10 @@ export const validarTurma = (turmas) => {
     
     let erros = turmas.map((turma) => {
         if (!turmaIntegradoRegex.test(turma.numero) && !turmaProejaRegex.test(turma.numero)) {
-            return 'Número da turma deve ser no formato "211" para Integrado ou "2023/2" para ProEja.';
+            return 'Número da turma deve ser no formato "xxx" para Integrado ou "20xx/x" para ProEja.';
         }
+
+        else return ''
     })
 
     return erros
@@ -41,6 +40,8 @@ export const validarTurma = (turmas) => {
 // Função geral de validação que retorna os erros
 export const validarFormularioCurso = (formData) => {
     const erros = {};
+
+    console.log(formData)
 
     const erroCurso = validarCurso(formData.nome);
     if (erroCurso) erros.nome = erroCurso;
@@ -53,6 +54,8 @@ export const validarFormularioCurso = (formData) => {
     if (turmasErros.length > 0) {
         erros.turmas = turmasErros;
     }
+
+    console.log(erros)
 
     return erros;
 };

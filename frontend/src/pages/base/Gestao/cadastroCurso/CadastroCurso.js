@@ -12,12 +12,11 @@ import { ToastContainer, toast } from "react-toastify";
 
 const CadastroCurso = () => {
   const [modalidade, setModalidade] = useState("Integrado");
-  const [turmas, setTurmas] = useState([]);
   const [formData, setFormData] = useState({
     nome: '',
     carga_horaria: '',
     modalidade: modalidade,
-    turmas: turmas
+    turmas: []
   })
   const [errors, setErrors] = useState({})
   const [showErrorMessage, setShowErrorMessage] = useState(false)
@@ -28,19 +27,22 @@ const CadastroCurso = () => {
   };
 
   const addTurma = () => {
-    setTurmas([...turmas, { numero: "" }]);
-    console.log(turmas)
+    setFormData((prevData) => ({
+      ...prevData,
+      turmas: [...prevData.turmas, { numero: '' }],
+    }));
   };
-
+  
   const handleTurmaChange = (index, value) => {
-    const newTurmas = [...turmas];
-    newTurmas[index].numero = value;
-    setTurmas(newTurmas);
+    const updatedTurmas = formData.turmas.map((turma, i) =>
+      i === index ? { ...turma, numero: value } : turma
+    );
+    setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
   };
-
+  
   const removeTurma = (index) => {
-    const newTurmas = turmas.filter((_, i) => i !== index);
-    setTurmas(newTurmas);
+    const updatedTurmas = formData.turmas.filter((_, i) => i !== index);
+    setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
   };
 
   const handleSubmit = async (e) => {
@@ -48,7 +50,7 @@ const CadastroCurso = () => {
 
     const erros = validarFormularioCurso(formData);
 
-    if (Object.keys(erros).length > 0) {
+    if (erros.nome || erros.carga_horaria || erros.turmas.some(turma => turma !== '')) {
         setShowErrorMessage(true);
         setErrors(erros);
     } else {
@@ -78,7 +80,7 @@ const CadastroCurso = () => {
             setErrors({});
 
         } catch (erro) {
-            toast.error("Falha na operação. Tente novamente.", {
+            toast.error(erro, {
                 position: "bottom-center",
                 autoClose: 3000,
                 style: { backgroundColor: '#d11c28', color: '#fff' },
@@ -112,7 +114,7 @@ const CadastroCurso = () => {
           <Switch valor={modalidade} valor1='PROEJA' valor2='Integrado' stateHandler={trocaModalidade} />
         </div>
         <div className="input-group">
-          <label htmlFor="nome">Nome</label>
+          <label htmlFor="nome" className="labelCadastroCurso">Nome</label>
           <Input 
             tipo="text"
             value={formData.nome}
@@ -125,7 +127,7 @@ const CadastroCurso = () => {
         </div>
 
         <div className="input-group">
-          <label htmlFor="carga_horaria">Carga Horária:</label>
+          <label htmlFor="carga_horaria" className="labelCadastroCurso">Carga Horária</label>
           <Input 
             tipo='text'
             valor={formData.carga_horaria}
@@ -145,8 +147,7 @@ const CadastroCurso = () => {
             <span className="labelCadastroCurso" style={{ color: "black" }}>Adicionar Turma</span>
           </button>
         </div>
-
-        {turmas.length > 0 && (
+        {formData.turmas.length > 0 && (
           <div className="turmas-lista">
             <table className="turmas-tabela">
               <thead className="cabecalhoTabelaCadastroCurso">
@@ -156,28 +157,30 @@ const CadastroCurso = () => {
                 </tr>
               </thead>
               <tbody>
-                {turmas.map((turma, index) => (
-                  <tr key={index}>
-                    <td>
-                      <Input 
-                        tipo='text'
-                        valor={turma.numero}
-                        onChange={(e) => handleTurmaChange(index, e.target.value)}
-                        textoAjuda='Digite o número da turma'
-                        onBlur={() => {handleBlur('turmas')}}
-                        erro={errors.turmas}
-                      />
-                      {errors.turmas ? <p className="error">{errors.turmas}</p> : <></>}
-                    </td>
-                    <td>
-                      <FontAwesomeIcon
-                        icon={faTrash}
-                        style={{ cursor: "pointer", color: "red", fontSize: "20px" }}
-                        onClick={() => removeTurma(index)}
-                      />
-                    </td>
-                  </tr>
-                ))}
+              {formData.turmas.map((turma, index) => (
+                <tr key={index}>
+                  <td>
+                    <Input 
+                      tipo='text'
+                      valor={turma.numero}
+                      onChange={(e) => handleTurmaChange(index, e.target.value)}
+                      textoAjuda='Digite o número da turma'
+                      onBlur={() => { handleBlur('turmas') }}
+                      erro={errors.turmas && errors.turmas[index] ? true : false}  // Verifica se existe erro no índice específico
+                    />
+                    {errors.turmas && errors.turmas[index] && (  // Exibe mensagem de erro se existir
+                      <p className="error">{errors.turmas[index]}</p>
+                    )}
+                  </td>
+                  <td>
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      style={{ cursor: "pointer", color: "red", fontSize: "20px" }}
+                      onClick={() => removeTurma(index)}
+                    />
+                  </td>
+                </tr>
+        ))}
               </tbody>
             </table>
           </div>

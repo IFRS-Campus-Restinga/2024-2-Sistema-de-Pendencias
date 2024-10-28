@@ -1,6 +1,6 @@
 .input,
 .inputErro {
-    width: 90%;
+    width: 100%;
     padding: 5px;
     border-radius: 8px;
     font-size: 15px;
@@ -15,7 +15,7 @@
 }
 
 input:focus {
-    border-color: #797979;
+    border: 1px solid #797979;
     outline: none;
 }
 

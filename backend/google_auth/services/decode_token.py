@@ -11,7 +11,6 @@ def verify_google_token(token, client_id):
         # O token é válido e as informações do usuário estão presentes
         email = idinfo.get('email')
         first_name = idinfo.get('given_name')
-        last_name = idinfo.get('family_name')
         picture = idinfo.get('picture')  # Adicionando o campo de foto
 
 

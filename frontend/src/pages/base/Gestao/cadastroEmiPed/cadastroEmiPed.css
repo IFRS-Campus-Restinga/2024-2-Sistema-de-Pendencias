@@ -1,77 +1,11 @@
-.form-em-ped {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.form-em-ped h3 {
-  text-align: center;
-  color: #333;
-}
-
 .form-item {
   margin-bottom: 15px;
-}
-
-.form-item label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #555;
-}
-
-.form-item input,
-.form-item select,
-.form-item textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  transition: border-color 0.3s;
-}
-
-.form-item input:focus,
-.form-item select:focus,
-.form-item textarea:focus {
-  border-color: #28A745; /* Cor do foco */
-  outline: none;
-}
-
-.botaoContainer {
-  text-align: center;
-}
-
-.botaoContainer button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  color: #fff;
-  background-color: #28A745; /* Cor do botão */
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.botaoContainer button:hover {
-  background-color: #218838; /* Cor do botão ao passar o mouse */
-}
-
-.botaoContainer button:disabled {
-  background-color: #ccc; /* Cor do botão desabilitado */
-  cursor: not-allowed;
 }
 
 .message {
   text-align: center;
   margin-top: 15px;
   font-size: 16px;
-  color: #d9534f; /* Cor da mensagem de erro */
-}
-
-.message.success {
-  color: #5cb85c; /* Cor da mensagem de sucesso */
+  color: #d9534f;
+  /* Cor da mensagem de erro */
 }

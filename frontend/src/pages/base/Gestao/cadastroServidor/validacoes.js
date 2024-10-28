@@ -86,9 +86,9 @@ export const validarEmail = (email) => {
 export const validarFormulario = (formData) => {
   const erros = {};
 
-  const perfil = formData.perfil;
   const erroEmail = validarEmail(formData.email);
   if (erroEmail) erros.email = erroEmail;
+  
   return erros;
 };
 

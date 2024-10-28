@@ -3,16 +3,7 @@ from .base import *
 from .curso import Curso
 
 class Disciplina(BaseModel):
-    curso = models.ForeignKey(
-        Curso,
-        on_delete=models.CASCADE,
-        related_name="disciplinas",
-        verbose_name="Curso",
-        help_text="Selecione o Curso",
-        blank=False,
-        null=False
-    )
-
+    cursos = models.ManyToManyField(Curso, related_name='disciplinas')
     name = models.CharField(
         max_length=36,
         verbose_name="Nome da Disciplina",

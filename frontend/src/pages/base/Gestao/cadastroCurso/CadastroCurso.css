@@ -1,6 +1,8 @@
 .input-group {
   margin-bottom: 15px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .modalidade-container {
@@ -19,13 +21,9 @@
 }
 
 .labelCadastroCurso {
-  margin: 10px;
-}
-
-.input-group label {
-  font-size: 14px;
-  display: block;
-  margin-bottom: 5px;
+  margin: 5px;
+  font-size: 15px;
+  font-weight: bold;
 }
 
 .containerOpcoes {
