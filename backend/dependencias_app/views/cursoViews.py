@@ -8,7 +8,7 @@ from dependencias_app.serializers.turmaSerializer import TurmaSerializer
 from dependencias_app.utils.error_handler import handle_view_errors
 
 @api_view(['POST'])
-@permission_classes([GestaoEscolar])
+#@permission_classes([GestaoEscolar])
 def cadastrar_curso(request):
     # Extraia os dados da requisição
     turmas = request.data.get('turmas', [])  # Lista de números das turmas
