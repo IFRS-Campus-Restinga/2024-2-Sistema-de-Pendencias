@@ -19,18 +19,16 @@ from dependencias_app.views import eventoCalendarioViews
 urlpatterns = [
     path('cadastrar-aluno/', alunoViews.cadastrar_aluno),
     path('dados-adicionais-aluno/', alunoViews.infos_adicionais_aluno),
-    path('cadastrar-curso/', cursoViews.cadastrar_curso),
 
+    path('cadastrar-curso/', cursoViews.cadastrar_curso),
+    path('cadastrar-turma/', turmaViews.cadastrar_turma),
     path('listar-cursos/', cursoViews.listar_cursos, name='listar_cursos'),
 
-    path('cadastrar-turma/', turmaViews.cadastrar_turma),
-
-
-
     path('cadastrar-gestao-escolar/', gestaoEscolarViews.cadastrar_gestao_escolar),
-
     path('cadastrar-registro-escolar/', registroEscolarViews.cadastrar_registro_escolar),
+
     path('cadastrar-coordenador/', coordenadorViews.cadastrarCoordenador),
+
     path('cadastrar-professor/', professorViews.cadastrar_professor),
 
     path('cadastrar-disciplina/', disciplinaViews.cadastrar_disciplina, name='cadastrar_disciplina'),
