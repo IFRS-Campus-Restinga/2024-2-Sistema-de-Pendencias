@@ -1,5 +1,81 @@
+
+/* Botão de submit estilizado */
+button[type="submit"] {
+  background-color: #006400;
+  color: #fff;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Alerta de erro */
+.erros {
+  color: red;
+  font-size: 12px;
+
+}
+
+/* Campo de erro com borda vermelha */
+.inputErro {
+  border-color: red !important;
+}
+
+/* Estilização específica para campos de data */
+input[type="date"] {
+  width: 30%;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Estilo para o campo Título */
+#titulo {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+/* Estilo para o campo Descrição */
 #descricao {
-  width: 35%; /* Largura ajustada */
-  height: 100px; /* Altura ajustada */
-  resize: both; /* Permite redimensionamento vertical e horizontal */
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+  min-height: 100px; /* para destacar como área de texto */
+  resize: vertical; /* permite redimensionar verticalmente */
+}
+
+/* Estilo para o campo Tipo de Calendário */
+#tipo_calendario {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #333;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+}
+
+.labelCustomizado{
+  display: block;
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: left;
 }
