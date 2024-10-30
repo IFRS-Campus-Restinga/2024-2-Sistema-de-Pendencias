@@ -39,5 +39,5 @@ class UsuarioBase(AbstractUser):
         verbose_name = 'Usuário Base'
 
     def __str__(self) -> str:
-        return f'{self.first_name} {self.last_name} - {self.email}'
+        return f'{self.first_name} {self.last_name}\nEmail: {self.email}'
 

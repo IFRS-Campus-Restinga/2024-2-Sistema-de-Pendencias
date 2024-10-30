@@ -7,5 +7,13 @@ export const disciplinaService = {
     })
 
     return res
+  },
+
+  list: async () => {
+    const res = await api.get('api/listar-disciplinas/').catch((erro) => {
+      return erro
+    }) 
+
+    return res
   }
 }

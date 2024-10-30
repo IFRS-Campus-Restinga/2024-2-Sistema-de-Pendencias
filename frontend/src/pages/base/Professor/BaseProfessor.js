@@ -2,12 +2,14 @@ import { useNavigate } from 'react-router-dom'
 import './BaseProfessor.css'
 import { validaUsuario } from '../validaUsuario'
 import { useEffect } from 'react'
+import { jwtDecode } from 'jwt-decode'
 
 const BaseProfessor = () => {
     const redirect = useNavigate()
+    const homeUrl = `/sessao/Professor/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`
 
     const validaProfessor = () => {
-        const res = validaUsuario('Registro')
+        const res = validaUsuario('Professor')
 
         if (!res.status) {
             if (res.perfil === undefined) redirect('/')

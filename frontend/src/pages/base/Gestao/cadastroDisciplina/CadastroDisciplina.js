@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import Button from "../../../../components/Button/Button";
 import FormContainer from '../../../../components/FormContainer/FormContainer'
+import Input from '../../../../components/Input/Input';
 import {ToastContainer, toast} from 'react-toastify'
-import { disciplinaService } from "../../../../services/disciplinaService"; // Importa a função para criar disciplina
-import "./CadastroDisciplina.css"; // CSS para a página
+import { disciplinaService } from "../../../../services/disciplinaService";
+import "./CadastroDisciplina.css";
 import { cursoService } from '../../../../services/cursoService';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 
 const CadastroDisciplina = () => {
   const [formData, setFormData] = useState({
     curso: '',
-    nome: '',
-    carga_horaria: ''
+    // disciplinas já cadastradas
+    disciplinas: [],
+    // disciplinas adicionadas
+    novasDisciplinas: [],
   });
   const [cursos, setCursos] = useState([]);
+  const [disciplinas, setDisciplinas] = useState([])
   const [message, setMessage] = useState('');
 
   // Função para buscar cursos disponíveis
@@ -20,15 +26,32 @@ const CadastroDisciplina = () => {
     try {
       const response = await cursoService.list()
 
+      if (response.status !== 200) throw new Error(response.data.mensagem)
+
       setCursos(response.data);
     } catch (error) {
       console.error('Erro ao buscar cursos!', error);
-      setMessage('Erro ao buscar cursos!'); // Adiciona mensagem de erro
     }
   };
 
+  const fecthDisciplinas = async () => {
+    try {
+      const response = await disciplinaService.list()
+
+      if (response.status !== 200) throw new Error(response.data.mensagem)
+
+      setDisciplinas(response.data)
+    } catch (error) {
+      console.error("Erro ao buscar disciplinas", error)
+      
+    }
+  }
+
   useEffect(() => {
-    fetchCursos(); // Chama a função fetchCursos
+    // obtém os cursos cadastrados
+    fetchCursos();
+    // obtém as disciplinas cadastradas, para caso alguma faça parte de mais de um curso
+    fecthDisciplinas(); 
   }, []);
 
   const handleSubmit = async (e) => {
@@ -50,55 +73,121 @@ const CadastroDisciplina = () => {
   return (
     <>
       <ToastContainer/>
-      <FormContainer titulo='Cadastro Disciplina'>
-        <div className='divCadastroDisciplina'>
-          <label htmlFor="curso">Curso:</label>
-          <select
-            id="curso"
-            value={formData.curso}
-            onChange={(e) => setFormData({ ...formData, curso: e.target.value })} // Mantém como string
-            required
-          >
-            <option value="">Selecione um curso</option>
-            {cursos.map((curso) => (
-              <option key={curso.id} value={curso.id}>
-                {curso.nome}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div  className='divCadastroDisciplina'>
-          <label htmlFor="nomeDisciplina">Nome da Disciplina:</label>
-          <input
-            type="text"
-            id="nomeDisciplina"
-            value={formData.nome} // Altera de 'name' para 'nome'
-            onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-            placeholder="Nome da Disciplina"
-            required
-          />
-        </div>
-        <div  className='divCadastroDisciplina'>
-          <label htmlFor="cargaHoraria">Carga Horária:</label>
-          <input
-            type="number"
-            id="cargaHoraria"
-            value={formData.carga_horaria}
-            onChange={(e) => {
-              const value = Math.max(0, Math.min(800, Number(e.target.value))); // Limita a carga horária entre 0 e 800
-              setFormData({ ...formData, carga_horaria: value });
-            }}
-            placeholder="Carga Horária"
-            required
-          />
-        </div>
-        <div className="ajuste-button">
-          <Button
-            text="Cadastrar Disciplina"
-            type="submit"
-          />
-        </div>
-      {message && <div>{message}</div>} {/* Mensagem de sucesso ou erro */}
+      <FormContainer titulo='Cadastro Disciplina' onSubmit={handleSubmit}>
+              <span className='spanCadastroCurso'>
+                <label htmlFor="curso" className='labelCadastroDisciplina'>
+                  Curso
+                </label>
+                <select
+                  className='selectCadastroDisciplina'
+                  value={formData.curso}
+                  onChange={(e) => setFormData({ ...formData, curso: e.target.value })} // Mantém como string
+                  required
+                >
+                  {cursos.map((curso) => (
+                    <option className='optionCadastroDisciplina' key={curso.id} value={curso.id}>
+                      {curso.nome}
+                    </option>
+                  ))}
+                </select>
+              </span>
+        <section className='sectionCadastroDisciplina'>
+            <div className='divCadastroDisciplina'>
+              <h3 className='h3CadastroDisciplina'>
+                Inserir Disciplinas
+                <FontAwesomeIcon icon={faPlusCircle} style={{ color: "#006b3f", cursor: "pointer", fontSize: "24px", marginLeft:"10px" }}
+            />
+              </h3>
+              <table className='tabelaCadastroDisciplina'>
+                <thead className='cabecalhoCadastroDisciplina'>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Carga Horaria</th>
+                  </tr>
+                </thead>
+                <tbody className="corpoCadastroDisciplina">
+                  {formData.novasDisciplinas.map((disciplina, index) => (
+                    <tr key={index}>
+                      {/* Campo para o Nome da Disciplina */}
+                      <td className='celulaCadastroDisciplina'>
+                        <Input
+                          tipo="text"
+                          valor={disciplina.nome}
+                          onChange={(e) => {
+                            const novoNome = e.target.value;
+                            setFormData((prevData) => {
+                              const novasDisciplinas = [...prevData.novasDisciplinas];
+                              novasDisciplinas[index] = {
+                                ...novasDisciplinas[index],
+                                nome: novoNome,
+                              };
+                              return { ...prevData, novasDisciplinas };
+                            });
+                          }}
+                          textoAjuda='nome da disciplina'
+                        />
+                      </td>
+
+                      {/* Campo para a Carga Horária */}
+                      <td className='celulaCadastroDisciplina'>
+                        <Input
+                          tipo="number"
+                          valor={disciplina.carga_horaria || ''}
+                          onChange={(e) => {
+                            const novaCargaHoraria = e.target.value;
+                            setFormData((prevData) => {
+                              const novasDisciplinas = [...prevData.novasDisciplinas];
+                              novasDisciplinas[index] = {
+                                ...novasDisciplinas[index],
+                                carga_horaria: novaCargaHoraria,
+                              };
+                              return { ...prevData, novasDisciplinas };
+                            });
+                          }}
+                          textoAjuda='Insira um valor entre 1 e 800'
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className='divCadastroDisciplina'>
+                <h3 className='h3CadastroDisciplina'>Vincular Disciplinas</h3>
+                <table className='tabelaCadastroDisciplina'>
+                <thead className='cabecalhoCadastroDisciplina'>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Carga Horaria</th>
+                  </tr>
+                </thead>
+                <tbody className='corpoCadastroDisciplina'>
+                  {
+                    formData.disciplinas.map((disciplina, index) => (
+                      <tr>
+                        <label className='labelTabelaCadastroDisciplina' htmlFor='vincularDisciplina'>
+                          <input type='checkbox' name='vincularDisciplina' hidden/>
+                          <td className='celulaCadastroDisciplina'>
+                            {disciplina.nome}
+                          </td>
+                          <td className='celulaCadastroDisciplina'>
+                            {disciplina.carga_horaria}
+                          </td>
+                        </label>
+                      </tr>
+                    ))
+                  }
+                </tbody>
+                </table>
+            </div>
+          {message && <div>{message}</div>} {/* Mensagem de sucesso ou erro */}
+        </section>
+            <div className="ajuste-button">
+              <Button
+                text="Cadastrar"
+                type="submit"
+                />
+            </div>
       </FormContainer>
     </>
   );

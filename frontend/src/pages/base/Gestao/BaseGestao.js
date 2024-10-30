@@ -7,11 +7,12 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faCalendarDays, faClipboardList, faHouse, } from "@fortawesome/free-solid-svg-icons";
 import './BaseGestao.css'
+import { jwtDecode } from "jwt-decode";
 
 const BaseGestao = () => {
   const redirect = useNavigate()
-  const [homeUrl] = useState(useLocation().pathname)
-
+  const homeUrl = `/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`
+  
     const validaGestao = () => {
       const res = validaUsuario('GestaoEscolar')
 
