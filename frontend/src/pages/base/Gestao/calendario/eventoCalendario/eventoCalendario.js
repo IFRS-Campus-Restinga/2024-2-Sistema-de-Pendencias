@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { eventoCalendarioService } from '../../../../services/eventoCalendarioService'
-import CalendarioContainer from '../../../../components/CalendarioContainer/CalendarioContainer';
+import { eventoCalendarioService } from '../../../../../services/eventoCalendarioService'
+import CalendarioContainer from '../../../../../components/CalendarioContainer/CalendarioContainer';
 import './eventoCalendario.css'
 
 const EventoCalendarioPage = () => {
@@ -11,7 +11,8 @@ const EventoCalendarioPage = () => {
     titulo: '',
     descricao: '',
     data_inicio: '',
-    data_fim: ''
+    data_fim: '',
+    tipo_calendario: 'EMI'
   });
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -32,17 +33,17 @@ const EventoCalendarioPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const validationErrors = {}; // Implementar validação de campos
+    const validationErrors = {};
     if (Object.keys(validationErrors).length === 0) {
       setShowErrorMessage(false);
       try {
         const response = await eventoCalendarioService.create(formData);
         if (response.status !== 201) throw new Error(response.error);
 
-        setFormData({ titulo: '', descricao: '', data_inicio: '', data_fim: '' });
+        setFormData({ titulo: '', descricao: '', data_inicio: '', data_fim: '', tipo_calendario: 'EMI'});
         setErrors({});
         toast.success("Evento criado com sucesso!", { position: "bottom-center", autoClose: 3000 });
-        setEventos([...eventos, response.data]); // Adiciona o novo evento à lista de eventos
+        setEventos([...eventos, response.data]);
       } catch (error) {
         console.error('Erro ao criar evento!', error);
         toast.error("Falha ao criar evento. Tente novamente.", { position: "bottom-center", autoClose: 3000 });
@@ -75,6 +76,7 @@ const EventoCalendarioPage = () => {
           />
           {errors.titulo && <p className="erros">{errors.titulo}</p>}
         </div>
+
         <div className="campoEvento">
           <label htmlFor="descricao" className="labelEvento">Descrição:</label>
           <br/>
@@ -88,6 +90,7 @@ const EventoCalendarioPage = () => {
           />
           {errors.descricao && <p className="erros">{errors.descricao}</p>}
         </div>
+
         <div className="campoEvento">
           <label htmlFor="data_inicio" className="labelEvento">Data Início:</label>
           <input
@@ -100,6 +103,7 @@ const EventoCalendarioPage = () => {
           />
           {errors.data_inicio && <p className="erros">{errors.data_inicio}</p>}
         </div>
+
         <div className="campoEvento">
           <label htmlFor="data_fim" className="labelEvento">Data Fim:</label>
           <input
@@ -112,6 +116,22 @@ const EventoCalendarioPage = () => {
           />
           {errors.data_fim && <p className="erros">{errors.data_fim}</p>}
         </div>
+
+        <div className="campoEvento">
+          <label htmlFor="tipo_calendario" className="labelEvento">Tipo de Calendário:</label>
+          <select
+            id="tipo_calendario"
+            name="tipo_calendario"
+            value={formData.tipo_calendario}
+            onChange={handleChange}
+            style={{ borderColor: errors.tipo_calendario ? 'red' : '' }}
+          >
+            <option value="EMI">EMI</option>
+            <option value="PROEJA">PROEJA</option>
+          </select>
+          {errors.tipo_calendario && <p className="erros">{errors.tipo_calendario}</p>}
+        </div>
+
       </CalendarioContainer>
     </>
   );
