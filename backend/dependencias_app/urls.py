@@ -22,7 +22,7 @@ urlpatterns = [
 
     path('cadastrar-curso/', cursoViews.cadastrar_curso),
     path('cadastrar-turma/', turmaViews.cadastrar_turma),
-    path('listar-cursos/', cursoViews.listar_cursos, name='listar_cursos'),
+    #path('listar-cursos/', cursoViews.listar_cursos, name='listar_cursos'),
 
     path('cadastrar-gestao-escolar/', gestaoEscolarViews.cadastrar_gestao_escolar),
     path('cadastrar-registro-escolar/', registroEscolarViews.cadastrar_registro_escolar),

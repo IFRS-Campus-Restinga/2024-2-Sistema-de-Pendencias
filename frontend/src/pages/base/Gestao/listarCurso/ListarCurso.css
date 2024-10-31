@@ -1,144 +1,175 @@
-/* Estilo da barra de filtros e do botão de busca */
-.sectionListarCurso {
-    width: 100%;
-    height: auto;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10px;
-    background-color: #fff;
-    box-shadow: 0 0px 3px rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
-}
-
-.divListarCurso {
+.sectionListarCursos {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
-}
-
-.labelListarCurso {
-    color: #000;
-    font-size: 14px;
-    margin-bottom: 5px;
-}
-
-.spanListarCurso {
+    justify-content: space-around;
+    align-items: center;
+  }
+  
+  .divListarCursos {
     display: flex;
     flex-direction: column;
-    width: 200px;
+    justify-content: center;
+    max-width: 50%;
+    padding: 5px;
+    height: auto; /* Ajuste conforme necessário */
+  }
+  
+  .spanListarCursos {
+    margin-top: 15px;
+    display: flex;
     align-items: center;
-}
-
-.tabelaContainerListarCurso {
+    justify-content: space-evenly;
+    align-self: center;
     width: 100%;
-    overflow-x: auto;
-    background-color: #fff;
-    box-shadow: 0 0px 3px rgba(0, 0, 0, 0.2);
+  }
+  
+  .labelListarCursos {
+    font-size: 15px;
+    text-align: center;
+    padding-right: 5px;
+  }
+  
+  .selectListarCursos {
+    width: 90%;
+    padding: 5px;
+    border-radius: 8px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+  }
+  
+  .tabelaContainerListarCursos {
+    max-width: 100%;
+    width: 100%;
     margin-top: 20px;
-}
-
-.tabelaListarCurso {
-    width: 100%;
+    overflow-y: scroll;
+  }
+  
+  .tabelaListarCursos {
+    max-width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
-}
-
-.cabecalhoListarCurso th {
-    background-color: #f2f2f2;
-    color: #000;
-    padding: 10px;
-    text-align: left;
+    table-layout: fixed;
+  
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  
+    tr:nth-child(odd) {
+      background-color: white;
+    }
+  
+    th {
+      cursor: pointer;
+      background-color: #006b3f;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 0;
+      padding: 5px;
+    }
+  
+    th,
+    td {
+      width: 20%;
+      height: fit-content;
+      min-width: min-content;
+      border: 1px solid #ddd;
+      text-align: center;
+      border-left: none;
+      border-right: none;
+      word-wrap: break-word;
+    }
+  }
+  
+  .icone-container img {
+    width: 24px;
+    height: 24px;
     cursor: pointer;
-}
-
-.cabecalhoListarCurso th:hover {
-    background-color: #e2e2e2;
-}
-
-.tabelaListarCurso td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    color: #000;
-}
-
-.iconeAcoes {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-
-/* Estilos responsivos */
-@media (max-width: 760px) {
-    .sectionListarCurso {
-        flex-direction: column;
-        padding: 5px;
+    margin: 0 10px;
+  }
+  
+  .seta {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+  }
+  
+  .seta-baixo {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #ffffff;
+  }
+  
+  .seta-cima {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #ffffff;
+  }
+  
+  @media (max-width: 1125px) {
+    .tabelaContainerListarCursos {
+      table {
+        th,
+        tr,
+        td {
+          font-size: 15px;
+          width: 20%;
+          max-width: 150px;
+          height: 45px;
+        }
+      }
     }
-
-    .divListarCurso {
-        flex-direction: column;
-        gap: 10px;
+  }
+  
+  @media (max-width: 900px) {
+    .tabelaContainerListarCursos {
+      table {
+        th,
+        tr,
+        td {
+          font-size: 10px;
+          width: 20%;
+          max-width: 120px;
+          max-height: max-content;
+        }
+      }
     }
-
-    .spanListarCurso {
+  }
+  
+  @media (max-width: 740px) {
+    .labelListarCursos {
+      font-size: 10px;
+      font-weight: 600;
+    }
+  
+    .selectListarCursos {
+      font-size: 10px;
+    }
+  
+    .icone-container img {
+      max-width: 15px;
+      max-height: 15px;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .sectionListarCursos {
+      flex-direction: column;
+  
+      .divListarCursos {
         width: 100%;
+        max-width: 100%;
+      }
     }
-
-    .tabelaListarCurso, .tabelaListarCurso th, .tabelaListarCurso td {
-        font-size: 12px;
-        padding: 5px;
+  
+    .spanListarCursos {
+      width: 70%;
     }
-
-    .tabelaContainerListarCurso {
-        overflow-x: scroll;
-    }
-
-    .sectionListarCurso {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .filtroListarCurso {
-        display: flex;
-        gap: 20px;
-        justify-content: space-between;
-    }
-    
-    .filtroListarCurso span {
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .acaoListarCurso {
-        display: flex;
-        gap: 10px;
-    }
-    
-    .tabelaContainerListarCurso {
-        overflow-x: auto;
-    }
-    
-    .tabelaListarCurso {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    .tabelaListarCurso th, .tabelaListarCurso td {
-        padding: 10px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
-    
-    .tabelaListarCurso th {
-        cursor: pointer;
-    }
-    
-    .acoes img {
-        cursor: pointer;
-        width: 20px;
-        height: 20px;
-        margin-right: 8px;
-    }
-    
-}
+  }
+  
+  .Toastify__toast--success .Toastify__toast-icon {
+    background-color: white;
+    color: #006b3f;
+    border-radius: 50%;
+  }
+  
