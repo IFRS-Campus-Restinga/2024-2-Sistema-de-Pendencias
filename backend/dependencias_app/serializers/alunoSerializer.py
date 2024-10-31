@@ -5,7 +5,6 @@ class AlunoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Aluno
         fields = ['id', 'cpf', 'data_nascimento', 'matricula', 'telefone', 'usuario']
-        fields = '__all__'
 
     def save(self, **kwargs):
         formAluno = super().save(**kwargs)

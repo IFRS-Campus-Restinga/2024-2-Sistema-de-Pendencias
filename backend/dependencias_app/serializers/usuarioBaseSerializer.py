@@ -13,3 +13,21 @@ class UsuarioBaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = UsuarioBase
         fields = ['id', 'nome', 'email', 'data_ingresso', 'primeiro_login', 'grupo', 'perfil', 'infos_professor', 'infos_aluno']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        if instance.grupo:
+            if instance.grupo.name == 'Professor':
+                if hasattr(instance, 'professor'):
+                    representation['infos_professor'] = ProfessorSerializer(instance.professor).data
+                else:
+                    representation['infos_professor'] = {}
+
+            elif instance.grupo.name == 'Aluno':
+                if hasattr(instance, 'aluno'):
+                    representation['infos_aluno'] = AlunoSerializer(instance.aluno).data
+                else:
+                    representation['infos_aluno'] = {}
+
+        return representation

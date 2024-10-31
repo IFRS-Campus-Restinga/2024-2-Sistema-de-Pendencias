@@ -49,7 +49,15 @@ const servidorService = {
         })
 
         return res
-    }
+    },
+
+    addInfos: async (params) => {
+        const res = await api.post('api/dados-adicionais-professor/', params).catch((erro) => {
+            return erro
+        })
+
+        return res
+    },
 };
 
 export default servidorService;

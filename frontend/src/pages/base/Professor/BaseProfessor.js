@@ -1,8 +1,9 @@
-import { useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import './BaseProfessor.css'
 import { validaUsuario } from '../validaUsuario'
 import { useEffect } from 'react'
 import { jwtDecode } from 'jwt-decode'
+import PageContainer from '../../../components/PageContainer/PageContainer'
 
 const BaseProfessor = () => {
     const redirect = useNavigate()
@@ -22,8 +23,10 @@ const BaseProfessor = () => {
     }, [])
 
     return (
-        <>
-        </>
+        <PageContainer homeUrl={homeUrl}>
+            <Outlet/>
+        </PageContainer>
+
     )
 }
 
