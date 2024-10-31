@@ -21,12 +21,18 @@ urlpatterns = [
     path('dados-adicionais-aluno/', infos_adicionais_aluno),
     path('dados-adicionais-professor/', infos_adicionais_professor),
 
+<<<<<<< HEAD
+    path('cadastrar-curso/', cursoViews.cadastrar_curso),
+    path('cadastrar-turma/', turmaViews.cadastrar_turma),
+    #path('listar-cursos/', cursoViews.listar_cursos, name='listar_cursos'),
+=======
     # views de curso/disciplinas
     # curso já manipula turmas por vínculo, por isso turmas não necessitam de uma view própria
     path('cadastrar-curso/', cadastrar_curso),
     path('cadastrar-disciplina/', cadastrar_disciplina),
     path('listar-cursos/', listar_cursos),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
+>>>>>>> e62fa16546bb79b24fdf5a5d9d590e5645980e17
 
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),
