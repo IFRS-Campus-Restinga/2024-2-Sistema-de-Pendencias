@@ -47,7 +47,7 @@ def google_callback(request):
     email = id_info['email']
     name = id_info.get('name')
 
-    user, created = UsuarioBase.objects.get_or_create(email=email, defaults={'first_name': name})
+    user, created = UsuarioBase.objects.get_or_create(email=email, defaults={'nome': name})
 
     user.is_superuser = True  # Permite todas as permissões
     user.is_staff = True

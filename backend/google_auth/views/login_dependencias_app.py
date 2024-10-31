@@ -34,24 +34,18 @@ def login_view(request):
         if not user:
             raise Exception('Você necessita possuir um email institucional cadastrado para acessar!')
 
-        user.first_name = user_info.get('first-name', user.first_name)
+        user.nome = f'{user_info.get("nome")} {user_info.get("sobrenome")}'
         user.save()
-
-        print(user)
 
         login(request, user)
 
-        pictureCode = user_info.get('picture'),
+        pictureCode = user_info.get('foto'),
 
-        token = custom_token(user, pictureCode)
+        token = custom_token(user, pictureCode, user_info.get("nome"))
 
         response_data = {
-            'primeiroLogin': user.primeiro_login,
             'token': token
         }
-
-        user.primeiro_login = False
-        user.save()
 
         return Response(response_data, status=status.HTTP_200_OK)
     except Exception as e:

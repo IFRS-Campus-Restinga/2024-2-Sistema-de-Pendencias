@@ -36,7 +36,7 @@ const Header = ({homeUrl}) => {
       if (!token) throw new Error('Token inválido')
       
       const decoded = jwtDecode(token)
-      setNome(`${decoded.primeiroNome}`)
+      setNome(`${decoded.nome}`)
       
     } catch (error) {
         return error

@@ -31,10 +31,10 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','localhost:8000']
-CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:3000", "https://017e-177-4-48-163.ngrok-free.app"]
-CSRF_ALLOWED_ORIGINS = ["http://127.0.0.1:3000", "https://017e-177-4-48-163.ngrok-free.app"]
-CORS_ORIGINS_WHITELIST = ["http://127.0.0.1:3000", "https://017e-177-4-48-163.ngrok-free.app"]
+ALLOWED_HOSTS = ['127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:3000"]
+CSRF_ALLOWED_ORIGINS = ["http://127.0.0.1:3000"]
+CORS_ORIGINS_WHITELIST = ["http://127.0.0.1:3000"]
 CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:3000"]
 
 # Application definition

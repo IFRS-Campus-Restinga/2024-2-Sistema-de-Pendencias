@@ -25,9 +25,7 @@ const BaseAluno = () => {
 
     return (
         <PageContainer homeUrl={homeUrl}>
-            <MainContainer>
-                <Outlet homeUrl={homeUrl}/>
-            </MainContainer>
+            <Outlet/>
         </PageContainer>
     )
 }
