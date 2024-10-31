@@ -4,7 +4,6 @@ from django.core.validators import MinLengthValidator
 
 
 class Aluno(BaseModel):
-    nome_completo = models.CharField(max_length=150, validators=[MinLengthValidator(3)], blank=False, null=False)
     cpf = models.CharField(max_length=11, validators=[MinLengthValidator(11)], verbose_name="CPF", help_text="Digite o CPF", null=False, blank=False)
     data_nascimento = models.DateField(verbose_name="DataNascimento", help_text="Informe a data de nascimento do Aluno", null=False, blank=False)
     matricula = models.CharField(verbose_name="Matricula", help_text="Informe a matrícula do Aluno", max_length=10, null=False, blank=False)

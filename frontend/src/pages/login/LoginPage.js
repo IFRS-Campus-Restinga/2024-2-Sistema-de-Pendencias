@@ -26,7 +26,7 @@ const LoginPage = () => {
         const decoded = jwtDecode(res.data.token)
 
         // redireciona os usuários professores e alunos para preenchimento de informações adicionais de perfil no primeiro login
-        if (res.data.primeiroLogin === true && (decoded.perfil === 'Aluno' || decoded.perfil === 'Professor')) {
+        if (decoded.primeiroLogin === true && (decoded.perfil === 'Aluno' || decoded.perfil === 'Professor')) {
           redirect(`sessao/${decoded.perfil}/${decoded.idUsuario}/perfil`)
         } else {
           // redireciona os usuários para sua respectiva página home após o primeiro login

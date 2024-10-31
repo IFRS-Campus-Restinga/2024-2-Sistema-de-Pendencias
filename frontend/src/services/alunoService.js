@@ -17,5 +17,15 @@ export const alunoService = {
         })
 
         return res
+    },
+
+    getInfos: async (params, idAluno) => {
+        const res = await api.get(`api/dados-aluno/${idAluno}/`, {
+            data: params
+        }).catch((erro) => {
+            return erro
+        })
+
+        return res
     }
 };

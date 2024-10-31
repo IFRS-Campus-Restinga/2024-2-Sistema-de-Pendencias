@@ -19,7 +19,7 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password=None, **extra_fields)
 
 class UsuarioBase(AbstractUser):
-    first_name = models.CharField(max_length=100, help_text="Informe o nome", null=True, blank=True)
+    nome = models.CharField(max_length=100, help_text="Informe o nome", null=True, blank=True)
     primeiro_login = models.BooleanField(default=True)
     email = models.EmailField(unique=True)
     grupo = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name="usuarios", verbose_name="Grupo")
@@ -29,6 +29,8 @@ class UsuarioBase(AbstractUser):
     password = None
     username = None
     groups = None
+    last_name = None
+    first_name = None
 
     objects = CustomUserManager()
 
@@ -39,5 +41,5 @@ class UsuarioBase(AbstractUser):
         verbose_name = 'Usuário Base'
 
     def __str__(self) -> str:
-        return f'{self.first_name} {self.last_name}\nEmail: {self.email}'
+        return f'{self.nome}\nEmail: {self.email}'
 
