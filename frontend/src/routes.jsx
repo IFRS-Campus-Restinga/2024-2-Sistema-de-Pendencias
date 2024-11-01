@@ -17,10 +17,6 @@ import CadastroEmiPed from "./pages/base/Gestao/cadastroEmiPed/cadastroEmiPed";
 import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
 import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendario/eventoCalendario"
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
-<<<<<<< HEAD
-//import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendario/eventoCalendario";
-=======
->>>>>>> e62fa16546bb79b24fdf5a5d9d590e5645980e17
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 // Filhos de Registro
 
