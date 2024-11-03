@@ -1,63 +1,98 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { disciplinaService } from "../../../../services/disciplinaService";
+import { cursoService } from "../../../../services/cursoService";
+import FormContainer from "../../../../components/FormContainer/FormContainer";
 import Button from "../../../../components/Button/Button";
-import FormContainer from '../../../../components/FormContainer/FormContainer'
-import {ToastContainer, toast} from 'react-toastify'
-import { disciplinaService } from "../../../../services/disciplinaService"; // Importa a função para criar disciplina
-import "./CadastroDisciplina.css"; // CSS para a página
-import { cursoService } from '../../../../services/cursoService';
+import { ToastContainer, toast } from "react-toastify";
+import { validarFormularioDisciplina, validarCampo } from "./validacoes";
+import "./CadastroDisciplina.css";
 
 const CadastroDisciplina = () => {
-  const [formData, setFormData] = useState({
-    curso: '',
-    nome: '',
-    carga_horaria: ''
-  });
+  const [name, setName] = useState("");
+  const [carga_horaria, setCargaHoraria] = useState("");
+  const [cursoId, setCursoId] = useState("");
   const [cursos, setCursos] = useState([]);
-  const [message, setMessage] = useState('');
+  const [error, setError] = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
 
-  // Função para buscar cursos disponíveis
   const fetchCursos = async () => {
     try {
-      const response = await cursoService.list()
-
+      const response = await cursoService.list();
       setCursos(response.data);
     } catch (error) {
-      console.error('Erro ao buscar cursos!', error);
-      setMessage('Erro ao buscar cursos!'); // Adiciona mensagem de erro
+      console.error("Erro ao buscar cursos!", error);
+      toast.error("Erro ao buscar cursos!");
     }
   };
 
   useEffect(() => {
-    fetchCursos(); // Chama a função fetchCursos
+    fetchCursos();
   }, []);
+
+  const handleBlur = (campo, valor) => {
+    const erro = validarCampo(campo, valor);
+    setValidationErrors((prevErrors) => ({
+      ...prevErrors,
+      [campo]: erro,
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Dados do formulário:', formData); // Log dos dados do formulário
+
+    const formData = {
+      name,
+      carga_horaria,
+      curso: cursoId,
+    };
+
+    const validationErrors = validarFormularioDisciplina(formData);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setValidationErrors(validationErrors);
+      return;
+    }
+
     try {
-      const response = await disciplinaService.create(formData); // Envia os dados do formulário
-      if (response) {
-        setMessage('Disciplina cadastrada com sucesso!');
-        setFormData({ curso: '', nome: '', carga_horaria: 0 }); // Reseta o formulário após o sucesso
+      console.log("Dados enviados:", formData);
+
+      const response = await disciplinaService.create(formData);
+
+      if (response.status !== 201) {
+        throw new Error("Erro ao cadastrar disciplina");
       }
 
-      if (response.status == 400) throw new Error(response.message)
-    } catch (error) {
-      console.error('Erro ao cadastrar disciplina!', error.message);
+      toast.success("Disciplina cadastrada com sucesso!", {
+        position: "bottom-center",
+        autoClose: 3000,
+        style: { backgroundColor: "#28A745", color: "#fff" },
+        progressStyle: { backgroundColor: "#fff" },
+      });
+
+      setName("");
+      setCargaHoraria("");
+      setCursoId("");
+      setValidationErrors({});
+      setError(null);
+    } catch (erro) {
+      console.error("Erro ao cadastrar disciplina:", erro);
+      setError("Erro ao cadastrar disciplina. Verifique os dados.");
     }
   };
 
   return (
     <>
-      <ToastContainer/>
-      <FormContainer titulo='Cadastro Disciplina'>
-        <div className='divCadastroDisciplina'>
-          <label htmlFor="curso">Curso:</label>
+      <ToastContainer />
+      <FormContainer onSubmit={handleSubmit} titulo="Cadastrar Disciplina">
+        {error && <p className="error">{error}</p>}
+
+        <div className="input-group">
+          <label htmlFor="curso">Selecionar Curso:</label>
           <select
             id="curso"
-            value={formData.curso}
-            onChange={(e) => setFormData({ ...formData, curso: e.target.value })} // Mantém como string
-            required
+            value={cursoId}
+            onChange={(e) => setCursoId(e.target.value)}
+            onBlur={() => handleBlur("curso", cursoId)}
           >
             <option value="">Selecione um curso</option>
             {cursos.map((curso) => (
@@ -66,39 +101,34 @@ const CadastroDisciplina = () => {
               </option>
             ))}
           </select>
+          {validationErrors.curso && <p className="error">{validationErrors.curso}</p>}
         </div>
-        <div  className='divCadastroDisciplina'>
-          <label htmlFor="nomeDisciplina">Nome da Disciplina:</label>
+
+        <div className="input-group">
+          <label htmlFor="name">Nome da Disciplina:</label>
           <input
             type="text"
-            id="nomeDisciplina"
-            value={formData.nome} // Altera de 'name' para 'nome'
-            onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-            placeholder="Nome da Disciplina"
-            required
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onBlur={() => handleBlur("name", name)}
           />
+          {validationErrors.name && <p className="error">{validationErrors.name}</p>}
         </div>
-        <div  className='divCadastroDisciplina'>
-          <label htmlFor="cargaHoraria">Carga Horária:</label>
+
+        <div className="input-group">
+          <label htmlFor="carga_horaria">Carga Horária:</label>
           <input
             type="number"
-            id="cargaHoraria"
-            value={formData.carga_horaria}
-            onChange={(e) => {
-              const value = Math.max(0, Math.min(800, Number(e.target.value))); // Limita a carga horária entre 0 e 800
-              setFormData({ ...formData, carga_horaria: value });
-            }}
-            placeholder="Carga Horária"
-            required
+            id="carga_horaria"
+            value={carga_horaria}
+            onChange={(e) => setCargaHoraria(e.target.value)}
+            onBlur={() => handleBlur("carga_horaria", carga_horaria)}
           />
+          {validationErrors.carga_horaria && <p className="error">{validationErrors.carga_horaria}</p>}
         </div>
-        <div className="ajuste-button">
-          <Button
-            text="Cadastrar Disciplina"
-            type="submit"
-          />
-        </div>
-      {message && <div>{message}</div>} {/* Mensagem de sucesso ou erro */}
+
+        <Button tipo="submit" text="Cadastrar Disciplina" />
       </FormContainer>
     </>
   );

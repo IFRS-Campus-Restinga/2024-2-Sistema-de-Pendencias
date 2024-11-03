@@ -13,7 +13,28 @@ export const validarCargaHoraria = (carga_horaria) => {
     if (carga_horariaNum <= 0 || carga_horariaNum >= 800) {
         return 'Carga horária deve ser maior que 0 e menor que 800.'; // Verifica o intervalo
     }
+
+    if (!/^\d+$/.test(carga_horaria)) {
+        return 'Carga horária não pode conter espaços ou caracteres especiais.';
+    }
     
+    return '';
+};
+
+// Validação para o campo "name"
+export const validarName = (name) => {
+    if (!name) {
+        return 'Campo obrigatório.'; // Verifica se está vazio
+    }
+
+    if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(name)) { // Verifica se contem caracteres especiais
+        return 'Nome deve conter apenas letras e espaços.';
+    }
+
+    if (/([a-zA-Z])\1{2,}/.test(name)) { // verifica se a qualquer letra que se rapita mais de 3 vezes
+        return 'Nome não pode conter letras repetidas em sequência.';
+    }
+
     return '';
 };
 
@@ -32,8 +53,8 @@ export const validarFormularioDisciplina = (formData) => {
     const erroCurso = validarCurso(formData.curso);
     if (erroCurso) erros.curso = erroCurso;
 
-    const erroNome = validarCurso(formData.nome);
-    if (erroNome) erros.nome = erroNome;
+    const erroName = validarName(formData.name);
+    if (erroName) erros.name = erroName;
 
     const erroCargaHoraria = validarCargaHoraria(formData.carga_horaria);
     if (erroCargaHoraria) erros.carga_horaria = erroCargaHoraria;
@@ -46,8 +67,8 @@ export const validarCampo = (campo, valor) => {
     switch (campo) {
         case 'curso':
             return validarCurso(valor);
-        case 'nome':
-            return validarCurso(valor);
+        case 'name':
+            return validarName(valor);
         case 'carga_horaria':
             return validarCargaHoraria(valor);
         default:
