@@ -74,11 +74,11 @@ const router = createBrowserRouter([
                 element: <ListarCurso />
             },
             {
-                path: ':idUsuario/calendario_EMI',
+                path: ':idUsuario/eventoCalendario',
                 element: <EventoCalendarioPage />
             },
             {
-                path: ':idUsuario/calendario_Proeja',
+                path: ':idUsuario/calendario',
                 element: <CalendarioPage />
             },
             {

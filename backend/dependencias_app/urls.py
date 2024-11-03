@@ -31,6 +31,8 @@ urlpatterns = [
 
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),
+    path('listar-eventos/', listar_eventos, name='listar_eventos'),
+    
 
     # views de lista de usuários
     path('usuario/<int:idUsuario>/', get_infos_usuario),
