@@ -69,7 +69,6 @@ const EventoCalendarioPage = () => {
 
   return (
     <div className='perfilContainer'>
-      <div className='containerForm'>
         <ToastContainer />
         <FormContainer onSubmit={handleSubmit} titulo="Cadastro de Evento">
           {showErrorMessage && <p style={{ color: 'red' }}>* Preencha todos os campos obrigatórios</p>}
@@ -109,7 +108,7 @@ const EventoCalendarioPage = () => {
           </label>
 
           {!formData.dia_todo && (
-            <label className='labelCustomizado'>Hora Início:
+            <label className='labelCustomizado'>Horário:
               <input id='hora'
                 type="time"
                 name="hora_inicio"
@@ -134,7 +133,7 @@ const EventoCalendarioPage = () => {
           </label>
 
           {!formData.dia_todo && (
-            <label className='labelCustomizado'>Hora Fim:
+            <label className='labelCustomizado'>Horário:
               <input
                 id='hora'
                 type="time"
@@ -171,7 +170,6 @@ const EventoCalendarioPage = () => {
           <Button tipo='submit' text='Salvar Evento' />
         </FormContainer>
       </div>
-    </div>
   );
 };
 
