@@ -15,11 +15,18 @@ const ListarServidor = () => {
   const [servidores, setServidores] = useState([]);
   const [servidoresFiltrados, setServidoresFiltrados] = useState([]);
   const [ordenacao, setOrdenacao] = useState({ coluna: '', ordem: 'asc' });
+  const [perfilFiltro, setPerfilFiltro] = useState('');
+  const [nomeFiltro, setNomeFiltro] = useState('');
+  const [matriculaFiltro, setMatriculaFiltro] = useState('');
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
-  const [nomeFiltro, setNomeFiltro] = useState('');
-  const [perfilFiltro, setPerfilFiltro] = useState('');
-  const [matriculaFiltro, setMatriculaFiltro] = useState('');
+  const [filtros, setFiltros] = useState({
+    perfil: perfilMap,
+    nome: '',
+    matricula: '',
+    dataInicio: '',
+    dataFim: '',
+  })
 
   const perfilMap = {
     'GestaoEscolar': 'Gestão Escolar',
@@ -39,7 +46,7 @@ const ListarServidor = () => {
       console.error('Erro ao buscar servidores:', error);
     }
   };
-
+ 
   const ordenarPorColuna = (coluna) => {
     const novaOrdem = ordenacao.coluna === coluna && ordenacao.ordem === 'asc' ? 'desc' : 'asc';
   

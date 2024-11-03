@@ -76,21 +76,21 @@ const BaseGestao = () => {
         <div className="navItemContainer">
         <Dropdown titulo='Gerenciar Cadastros' itens={[
         {
-        name: "Cadastro Aluno",
+        name: "Alunos",
         link: `${homeUrl}/cadastroAluno`
         },
         {
-        name: "Cadastro Curso",
-        link: `${homeUrl}/cadastroCurso`
+        name: "Servidores",
+        link: `${homeUrl}/listaServidor`
         },
         {
-        name: "Cadastro Disciplina",
+        name: "Cursos",
+        link: `${homeUrl}/listaCurso`
+        },
+        {
+        name: "Disciplinas",
         link: `${homeUrl}/cadastroDisciplina`
         },
-        {
-        name: "Cadastro Servidor",
-        link: `${homeUrl}/cadastroServidor`
-        }
         ]}
         icone={<FontAwesomeIcon icon={faClipboardList}  color='black' size="xl"/>}
         />  
