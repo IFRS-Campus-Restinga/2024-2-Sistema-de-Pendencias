@@ -1,14 +1,11 @@
-// EventoCalendarioPage.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { eventoCalendarioService } from '../../../../../services/eventoCalendarioService';
-import CalendarioContainer from '../../../../../components/CalendarioContainer/CalendarioContainer';
 import './eventoCalendario.css';
 import validarEvento from "./validacoes";
 import Button from "../../../../../components/Button/Button";
 import FormContainer from "../../../../../components/FormContainer/FormContainer";
-import Input from "../../../../../components/Input/Input";
 
 const EventoCalendarioPage = () => {
   const [formData, setFormData] = useState({
@@ -16,7 +13,10 @@ const EventoCalendarioPage = () => {
     descricao: '',
     data_inicio: '',
     data_fim: '',
-    tipo_calendario: 'EMI'
+    tipo_calendario: 'EMI',
+    dia_todo: true,
+    hora_inicio: '00:00',
+    hora_fim: '00:00'
   });
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -29,7 +29,11 @@ const EventoCalendarioPage = () => {
     if (Object.keys(validationErrors).length === 0) {
       setShowErrorMessage(false);
       try {
-        const response = await eventoCalendarioService.create(formData);
+        const { dia_todo, hora_inicio, hora_fim, ...rest } = formData;
+        const dataInicio = dia_todo ? `${rest.data_inicio}T00:00` : `${rest.data_inicio}T${hora_inicio}`;
+        const dataFim = dia_todo ? `${rest.data_fim}T00:00` : `${rest.data_fim}T${hora_fim}`;
+        
+        const response = await eventoCalendarioService.create({ ...rest, data_inicio: dataInicio, data_fim: dataFim });
         if (response.status !== 201) throw new Error(response.error);
 
         toast.success("Evento criado com sucesso!", {
@@ -39,7 +43,7 @@ const EventoCalendarioPage = () => {
           progressStyle: { backgroundColor: '#fff' }
         });
 
-        setFormData({ titulo: '', descricao: '', data_inicio: '', data_fim: '', tipo_calendario: 'EMI' });
+        setFormData({ titulo: '', descricao: '', data_inicio: '', data_fim: '', tipo_calendario: 'EMI', dia_todo: true, hora_inicio: '00:00', hora_fim: '00:00' });
       } catch (error) {
         console.error('Erro ao criar evento!', error);
         toast.error("Falha ao criar evento. Tente novamente.", {
@@ -59,6 +63,10 @@ const EventoCalendarioPage = () => {
     if (name === 'data_inicio') setDataFimMin(value);
   };
 
+  const toggleDiaTodo = () => {
+    setFormData({ ...formData, dia_todo: !formData.dia_todo });
+  };
+
   return (
     <div className='perfilContainer'>
       <div className='containerForm'>
@@ -66,7 +74,7 @@ const EventoCalendarioPage = () => {
         <FormContainer onSubmit={handleSubmit} titulo="Cadastro de Evento">
           {showErrorMessage && <p style={{ color: 'red' }}>* Preencha todos os campos obrigatórios</p>}
 
-          <br/>
+          <br />
           <label className='labelCustomizado'>Título
             <input id="titulo"
               type='text'
@@ -89,7 +97,7 @@ const EventoCalendarioPage = () => {
           </label>
 
           <label className='labelCustomizado'>Data Início
-            <br/>
+            <br />
             <input
               type="date"
               name="data_inicio"
@@ -100,8 +108,20 @@ const EventoCalendarioPage = () => {
             {errors.data_inicio && <p className="erros">{errors.data_inicio}</p>}
           </label>
 
+          {!formData.dia_todo && (
+            <label className='labelCustomizado'>Hora Início:
+              <input id='hora'
+                type="time"
+                name="hora_inicio"
+                value={formData.hora_inicio}
+                onChange={handleChange}
+                style={{ borderColor: errors.hora_inicio ? 'red' : '' }}
+              />
+            </label>
+          )}
+
           <label className='labelCustomizado'>Data Fim
-            <br/>
+            <br />
             <input
               type="date"
               name="data_fim"
@@ -112,7 +132,28 @@ const EventoCalendarioPage = () => {
             />
             {errors.data_fim && <p className="erros">{errors.data_fim}</p>}
           </label>
-          <br/>
+
+          {!formData.dia_todo && (
+            <label className='labelCustomizado'>Hora Fim:
+              <input
+                id='hora'
+                type="time"
+                name="hora_fim"
+                value={formData.hora_fim}
+                onChange={handleChange}
+                style={{ borderColor: errors.hora_fim ? 'red' : '' }}
+              />
+            </label>
+          )}
+
+          <label className='labelCustomizado'>
+            <input id='dia_todo'
+              type="checkbox"
+              checked={formData.dia_todo}
+              onChange={toggleDiaTodo}
+            />
+            Dia Todo
+          </label>
 
           <label className='labelCustomizado'>Tipo de Calendário
             <select id="tipo_calendario"

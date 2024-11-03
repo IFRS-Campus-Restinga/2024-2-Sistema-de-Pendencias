@@ -12,7 +12,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
-@permission_classes([GestaoEscolar])
 def cadastrar_evento(request):
     logger.info('Dados do evento recebidos: %s', request.data)
     try:
@@ -33,3 +32,15 @@ def cadastrar_evento(request):
     except Exception as e:
         logger.error('Erro ao criar evento: %s', str(e))
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['GET'])
+def listar_eventos(request):
+    try:
+        eventos = Evento.objects.all()
+        serializer = EventoSerializer(eventos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        logger.error('Erro ao listar eventos: %s', str(e))
+        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    

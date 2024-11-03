@@ -57,6 +57,19 @@ input[type="date"] {
   resize: vertical; /* permite redimensionar verticalmente */
 }
 
+#hora {
+  margin: 5px;
+  margin-top: 5px;
+  margin-bottom: 15px;	
+}
+
+#dia_todo {
+  accent-color: #006400;
+  margin: 5px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
 /* Estilo para o campo Tipo de Calendário */
 #tipo_calendario {
   width: 100%;

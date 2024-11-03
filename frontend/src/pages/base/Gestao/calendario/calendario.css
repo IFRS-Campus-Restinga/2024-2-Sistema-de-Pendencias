@@ -1,0 +1,49 @@
+.calendario-container {
+    padding-top: 50px;
+}
+
+.rbc-calendar {
+ z-index: 1 !important;
+}
+
+.rbc-toolbar-label{
+    text-align: center;
+    color: #000000;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.rbc-event {
+    background-color: #006b3f !important;
+    color: white !important;
+}
+
+.rbc-agenda-table {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .rbc-agenda-table th,
+  .rbc-agenda-table td {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    text-align:left;
+    padding: 5px;
+    width: 33.33%;
+  }
+  
+  .rbc-agenda-table th {
+    background-color: #006b3f;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    text-align: center;
+  }
+  
+
+  .rbc-agenda-table tr {
+    background-color: white;
+  }
+
+
