@@ -9,6 +9,7 @@ from dependencias_app.views.alunoViews import *
 from dependencias_app.views.disciplinaViews import *
 from dependencias_app.views.cursoViews import *
 from dependencias_app.views.eventoCalendarioViews import *
+from dependencias_app.views.pptViews import *
 
 
 urlpatterns = [
@@ -39,6 +40,8 @@ urlpatterns = [
     # views de exclusão de usuários
     path('deletar-servidor/<int:idusuario>/', deletar_servidor, name='deletar_servidor'),
 
+    # view para cadastro de ppt
+    path('cadastrar-ppt/', cadastrar_ppt),
 
     ]
 
