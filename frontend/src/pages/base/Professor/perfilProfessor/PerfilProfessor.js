@@ -2,28 +2,26 @@ import {ToastContainer, toast} from 'react-toastify'
 import FormContainer from '../../../../components/FormContainer/FormContainer'
 import Button from '../../../../components/Button/Button'
 import { useEffect, useState } from 'react'
-import './PerfilAluno.css'
-import { alunoService } from '../../../../services/alunoService'
+import './PerfilProfessor.css'
 import { useNavigate, useParams } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Input from '../../../../components/Input/Input'
 import { validarFormulario } from './validacoes'
 import { usuarioBaseService } from '../../../../services/usuarioBaseService'
+import servidorService from '../../../../services/servidorService'
 
 
-const PerfilAluno = () => {
+const PerfilProfessor = () => {
     const {idUsuario} = useParams()
     const redirect = useNavigate()
-    const [desabilitado, setDesabilitado] = useState(false)
     const [erros, setErros] = useState({})
     const [formData, setFormData] = useState({
         cpf: '',
         matricula: '',
-        data_nascimento: '',
         usuario: jwtDecode(sessionStorage.getItem('token')).idUsuario
     })
     const [dadosUsuario, setDadosUsuario] = useState({
-        nome: '',
+        nome_completo: '',
         email: ''
     })
 
@@ -36,7 +34,7 @@ const PerfilAluno = () => {
             setErros(erros)
         } else {
             try {
-                const res = await alunoService.addInfos(formData)
+                const res = await servidorService.addInfos(formData)
     
                 if (res.status === 201) {
                     toast.success("Seus dados foram cadastrados com sucesso!, você será redirecionado", {
@@ -72,26 +70,22 @@ const PerfilAluno = () => {
         }
     }
 
-    const fetchAluno = async () => {
+    const fetchProfessor = async () => {
         try {
             const res = await usuarioBaseService.get(idUsuario)
 
             if (res.status !== 200) throw new Error(res.response.data.mensagem)
 
             setDadosUsuario({
-                nome: res.data.nome,
+                nome_completo: res.data.nome,
                 email: res.data.email
             })
 
             setFormData({
-                cpf: res.data.infos_aluno.cpf,
-                data_nascimento: res.data.infos_aluno.data_nascimento,
-                matricula: res.data.infos_aluno.matricula || res[0].data.email.substring(0, 10),
-                telefone: res.data.infos_aluno.telefone,
+                cpf: res.data.infos_professor.cpf || '',
+                matricula: res.data.infos_professor.matricula || '',
                 usuario: jwtDecode(sessionStorage.getItem('token')).idUsuario
             })
-
-            setDesabilitado(res.data.primeiro_login)
 
         } catch (erro) {
             console.error('Erro ao obter dados do usuário: ', erro)
@@ -99,59 +93,38 @@ const PerfilAluno = () => {
     }
 
     useEffect(() => {
-        fetchAluno()
+        fetchProfessor()
     },[])
 
     return (
         <div className='perfilContainer'>
             <div className='containerDados'>
                 <img src={jwtDecode(sessionStorage.getItem('token')).fotoPerfil } className='foto'/>
-                <span className='nomeContainer'>{dadosUsuario.nome}</span>
+                <span className='nomeContainer'>{dadosUsuario.nome_completo}</span>
                 <span className='emailContainer'>{dadosUsuario.email}</span>
             </div>
             <ToastContainer/>
             <FormContainer onSubmit={handlerSubmit} titulo='Dados Adicionais' >
-                <label className='labelPerfilAluno'> CPF
+                <label className='labelPerfilProfessor'> CPF
                     <Input
                         tipo='text'
                         onChange={(e) => setFormData(prevData => ({ ...prevData, cpf: e.target.value }))}
-                        valor={formData.cpf || ''}
+                        valor={formData.cpf}
                         erro={erros.cpf}
                         alinharCentro={true}
                     />
                     {erros.cpf ? <p className='erro'>{erros.cpf}</p> : <></>}
                 </label>
-                <label className='labelPerfilAluno'> Matrícula
+                <label className='labelPerfilProfessor'> Matrícula
                     <Input
                         tipo='text'
                         onChange={(e) => setFormData(prevData => ({ ...prevData, matricula: e.target.value }))}
-                        valor={formData.matricula || ''}
+                        valor={formData.matricula}
                         erro={erros.matricula}
                         alinharCentro={true}
+                        textoAjuda="Insira sua matrícula SIAPE"
                     />
                     {erros.matricula ? <p className='erro'>{erros.matricula}</p> : <></>}
-                </label>
-                <label className='labelPerfilAluno'> Data de Nascimento
-                    <Input
-                        tipo='date'
-                        onChange={(e) => setFormData(prevData => ({ ...prevData, data_nascimento: e.target.value }))}
-                        valor={formData.data_nascimento || ''}
-                        erro={erros.data_nascimento}
-                        alinharCentro={true}
-                        desabilitado={desabilitado}
-                    />
-                    {erros.data_nascimento ? <p className='erro'>{erros.data_nascimento}</p> : <></>}
-                </label>
-                <label className='labelPerfilAluno'> Telefone
-                    <Input
-                        tipo='telephone'
-                        onChange={(e) => setFormData(prevData => ({ ...prevData, telefone: e.target.value }))}
-                        valor={formData.telefone || ''}
-                        erro={erros.telefone}
-                        alinharCentro={true}
-                        desabilitado={false}
-                    />
-                    {erros.telefone ? <p className='erro'>{erros.telefone}</p> : <></>}
                 </label>
                 <Button tipo='submit' text='Salvar Dados'/>        
             </FormContainer>
@@ -159,4 +132,4 @@ const PerfilAluno = () => {
     )
 }
 
-export default PerfilAluno
+export default PerfilProfessor

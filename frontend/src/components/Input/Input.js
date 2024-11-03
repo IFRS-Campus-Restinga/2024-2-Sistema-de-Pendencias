@@ -9,7 +9,7 @@ const Input = ({ tipo, textoAjuda, erro, onChange, onBlur, valor, desabilitado, 
       placeholder={textoAjuda}
       onBlur={onBlur}
       className={erro ? "inputErro" : "input"}
-      disabled={desabilitado ? false : true}
+      disabled={desabilitado}
       style={{textAlign: alinharCentro ? 'center' : 'left'}}
     />
   );

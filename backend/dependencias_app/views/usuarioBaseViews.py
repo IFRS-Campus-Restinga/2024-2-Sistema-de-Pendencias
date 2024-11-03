@@ -6,14 +6,11 @@ from dependencias_app.permissoes import *
 from google_auth.models import UsuarioBase
 from django.shortcuts import get_object_or_404
 
-
 @api_view(['GET'])
 @permission_classes([GestaoEscolar | RegistroEscolar | Coordenador | Professor | Aluno])
 def get_infos_usuario (request, idUsuario):
     try:        
         usuario = get_object_or_404(UsuarioBase, pk=int(idUsuario))
-
-        print(usuario)
 
         serializer = UsuarioBaseSerializer(usuario)
 

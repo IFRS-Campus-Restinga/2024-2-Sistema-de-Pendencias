@@ -23,6 +23,8 @@ import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 // Filhos de Coordenador
 
 // Filhos de Professor
+import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
+import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfessor'
 
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
@@ -101,6 +103,17 @@ const router = createBrowserRouter([
         path: '/sessao/Professor/',
         element: <BaseProfessor />,
         // adicionar abaixo, as children de professor
+        children: [
+            {
+                path: ':idUsuario/',
+                element: <HomeProfessor />
+
+            },
+            {
+                path: ':idUsuario/perfil/',
+                element: <PerfilProfessor />
+            }
+        ]
     },
     // Rotas de Aluno
     {
@@ -109,13 +122,13 @@ const router = createBrowserRouter([
         // adicionar abaixo, as children de aluno
         children: [
             {
+                path: ':idUsuario/',
+                element: <HomeAluno />
+            },
+            {
                 path: ':idUsuario/perfil',
                 element: <PerfilAluno />
             },
-            {
-                path: ':idUsuario/',
-                element: <HomeAluno />
-            }
         ]
     },
 ])

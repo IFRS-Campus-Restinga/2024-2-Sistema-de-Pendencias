@@ -5,4 +5,4 @@ class ProfessorSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Professor
-        fields = '__all__'
+        fields = ['id', 'cpf', 'matricula', 'usuario']
