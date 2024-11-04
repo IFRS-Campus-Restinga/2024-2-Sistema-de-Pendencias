@@ -21,7 +21,6 @@ urlpatterns = [
     path('cadastrar-aluno/', cadastrar_aluno),
     path('dados-adicionais-aluno/', infos_adicionais_aluno),
     path('dados-adicionais-professor/', infos_adicionais_professor),
-
     # views de curso/disciplinas
     # curso já manipula turmas por vínculo, por isso turmas não necessitam de uma view própria
     path('cadastrar-curso/', cadastrar_curso),
@@ -39,6 +38,11 @@ urlpatterns = [
     path('dados-aluno/<int:idAluno>/', get_aluno_infos),
     path('listar-servidores/', listar_servidores, name='listar_servidores'),
 
+    # views de exclusão de usuários
+    path('deletar-servidor/<int:idusuario>/', deletar_servidor, name='deletar_servidor'),
+
+    #views de visualizar cadastro
+    path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
     # view para cadastro de ppt
     path('cadastrar-ppt/', cadastrar_ppt),
 
