@@ -29,8 +29,7 @@ import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfes
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
-
-
+import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
 
 const router = createBrowserRouter([
     {
@@ -75,12 +74,16 @@ const router = createBrowserRouter([
                 element: <ListarCurso />
             },
             {
-                path: ':idUsuario/calendario_EMI',
+                path: ':idUsuario/eventoCalendario',
                 element: <EventoCalendarioPage />
             },
             {
-                path: ':idUsuario/calendario_Proeja',
+                path: ':idUsuario/calendario',
                 element: <CalendarioPage />
+            },
+            {
+                path: ':idUsuario/cadastroPPT',
+                element: <CadastroPPT />
             }
 
             // Adicionar outros caminhos que vão derivar da tela de home após autenticação

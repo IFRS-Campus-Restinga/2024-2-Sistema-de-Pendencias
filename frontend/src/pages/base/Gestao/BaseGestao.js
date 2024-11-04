@@ -62,12 +62,12 @@ const BaseGestao = () => {
         <div className="navItemContainer">
         <Dropdown titulo='Calendário' itens={[
         {
-        name: "Calendário EMI",
-        link: `${homeUrl}/calendario_EMI`
+        name: "Cadastrar Eventos",
+        link: `${homeUrl}/eventoCalendario`
         },
         {
-        name: "Calendário PROEJA",
-        link: `${homeUrl}/calendario_Proeja`
+        name: "Calendário",
+        link: `${homeUrl}/calendario`
         }
         ]}
         icone={<FontAwesomeIcon icon={faCalendarDays} color="black" size="xl"/>}
