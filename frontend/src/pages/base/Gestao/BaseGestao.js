@@ -46,7 +46,7 @@ const BaseGestao = () => {
         },
         {
         name: "Cadastro PED - EMI",
-        link: `${homeUrl}/cadastroPED_EMI`
+        link: `${homeUrl}/CadastroEmiPed`
         },
         {
         name: "Cadastro PED - PROEJA",
