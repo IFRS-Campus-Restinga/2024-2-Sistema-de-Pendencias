@@ -18,6 +18,7 @@ import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
 import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendario/eventoCalendario"
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
+import VisualizarServidor from './pages/base/Gestao/cadastroServidor/VisualizarServidor'
 // Filhos de Registro
 
 // Filhos de Coordenador
@@ -82,12 +83,16 @@ const router = createBrowserRouter([
                 element: <CalendarioPage />
             },
             {
+                path: ':idUsuario/listaServidor/:idServidor/visualizarServidor',
+                element: <VisualizarServidor/>
+            },
+            {
                 path: ':idUsuario/cadastroPPT',
                 element: <CadastroPPT />
             }
-
-            // Adicionar outros caminhos que vão derivar da tela de home após autenticação
         ]
+            // Adicionar outros caminhos que vão derivar da tela de home após autenticação
+        
     },
     // Rotas de Registro Escolar
     {

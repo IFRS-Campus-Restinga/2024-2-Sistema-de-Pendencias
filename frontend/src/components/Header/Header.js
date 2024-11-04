@@ -55,7 +55,7 @@ const Header = ({homeUrl}) => {
           <>
           <span className="header-titulo">
             <h2 className="header-saudacao">
-              Bem vindo
+              Bem vindo,
             </h2>
             <p className="header-nome">{nome}</p>
           </span>

@@ -3,13 +3,13 @@ import axios from 'axios';
 import './ListarServidor.css';
 import Button from "../../../../components/Button/Button";
 import FormContainer from '../../../../components/FormContainer/FormContainer'
-import Deletar from "../../../../assets/deletar-preto.png";
-import Visualizar from "../../../../assets/visualizar-preto.png";
+import Lupa from "../../../../assets/lupa.png";
 import Ordenar from "../../../../assets/ordenar-branco.png";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import servidorService from '../../../../services/servidorService';
 import Input from '../../../../components/Input/Input';
+import { useNavigate } from 'react-router-dom';
 
 const ListarServidor = () => {
   const [servidores, setServidores] = useState([]);
@@ -20,6 +20,12 @@ const ListarServidor = () => {
   const [nomeFiltro, setNomeFiltro] = useState('');
   const [perfilFiltro, setPerfilFiltro] = useState('');
   const [matriculaFiltro, setMatriculaFiltro] = useState('');
+
+  const navigate = useNavigate();
+
+  const handleClick = (servidor) => {
+    navigate(`/sessao/GestaoEscolar/2/listaServidor/${servidor.id}/visualizarServidor`, { state: { servidor }});
+  };
 
   const perfilMap = {
     'GestaoEscolar': 'Gestão Escolar',
@@ -87,7 +93,7 @@ const ListarServidor = () => {
 
   const filtrarServidores = () => {
     const servidoresFiltrados = servidores.filter(servidor => 
-      (!nomeFiltro || servidor.first_name.toLowerCase().includes(nomeFiltro.toLowerCase())) &&
+      (!nomeFiltro || (servidor.first_name && servidor.first_name.toLowerCase().includes(nomeFiltro.toLowerCase()))) &&
       (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
       (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
       (!perfilFiltro || servidor.perfil === perfilFiltro) &&
@@ -95,21 +101,6 @@ const ListarServidor = () => {
     );
     setServidoresFiltrados(servidoresFiltrados);
   };
-
-
-  const deletarServidor = async (id, nome) => {
-    const confirmar = window.confirm(`Você tem certeza que quer remover ${nome}?`);
-    if (!confirmar) return;
-
-    try {
-        await axios.delete(`http://127.0.0.1:8000/api/deletar-servidor/${id}/`);
-        toast.success('Servidor removido do sistema.', { className:"toast-success"});
-        fetchServidores();
-    } catch (error) {
-        console.error('Erro ao deletar servidor:', error);
-        toast.error('Erro ao remover servidor.');
-    }
-};
 
 return (
   <>
@@ -244,16 +235,10 @@ return (
               <td className='icone-container'>
               <img 
                 className='iconeAcoes'
-                src={Visualizar} 
+                src={Lupa} 
                 alt="Visualizar" 
-                onClick={() => console.log('Visualizar servidor')} 
+                onClick={() => handleClick(servidor)}
                 title="Visualizar"/>
-              <img 
-                className='iconeAcoes'
-                src={Deletar} 
-                alt="Deletar" 
-                onClick={() => deletarServidor(servidor.id, servidor.nome)} 
-                title="Deletar"/>
             </td>
             </tr>
           ))}
