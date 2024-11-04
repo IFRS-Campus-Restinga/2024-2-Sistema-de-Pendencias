@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './ListarCurso.css';
 import Button from "../../../../components/Button/Button";
 import FormContainer from '../../../../components/FormContainer/FormContainer';
 import Lupa from "../../../../assets/lupa.png"; // Ajuste o caminho conforme necessário
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 import cursoService from '../../../../services/cursoService';
 import Input from '../../../../components/Input/Input';
 
@@ -15,7 +13,6 @@ const ListarCursos = () => {
     const [ordenacao, setOrdenacao] = useState({ coluna: '', ordem: 'asc' });
     const [nomeFiltro, setNomeFiltro] = useState('');
     const [modalidadeFiltro, setModalidadeFiltro] = useState('');
-    const [coordenadorFiltro, setCoordenadorFiltro] = useState('');
     const [turmaFiltro, setTurmaFiltro] = useState('');
 
     const fetchCursos = async () => {
@@ -37,8 +34,7 @@ const ListarCursos = () => {
         const cursosFiltrados = cursos.filter(curso => 
             (!nomeFiltro || curso.nome.toLowerCase().includes(nomeFiltro.toLowerCase())) &&
             (!modalidadeFiltro || curso.modalidade === modalidadeFiltro) &&
-            (!coordenadorFiltro || curso.coordenador.toLowerCase().includes(coordenadorFiltro.toLowerCase())) &&
-            (!turmaFiltro || curso.turma.toLowerCase().includes(turmaFiltro.toLowerCase()))
+            (!turmaFiltro || (curso.turmas && curso.turmas.some(turma => turma.numero.toLowerCase().includes(turmaFiltro.toLowerCase()))))
         );
         setCursosFiltrados(cursosFiltrados);
     };
@@ -46,7 +42,6 @@ const ListarCursos = () => {
     const limparBusca = () => {
         setNomeFiltro('');
         setModalidadeFiltro('');
-        setCoordenadorFiltro('');
         setTurmaFiltro('');
         fetchCursos();
     };
@@ -70,41 +65,35 @@ const ListarCursos = () => {
             <FormContainer titulo='Lista de Cursos'>
                 <section className='sectionListarCursos'>
                     <div className='divListarCursos'>
-                        <span className="spanListarCursos">
-                            <label className='labelListarCursos'>Filtrar por Nome do Curso</label>
-                            <Input 
-                                tipo='text'
-                                valor={nomeFiltro}
-                                onChange={(e) => setNomeFiltro(e.target.value)} />
-                        </span>
-                        <span className="spanListarCursos">
-                            <label className='labelListarCursos'>Filtrar por Modalidade</label>
-                            <select
-                                className='selectListarCursos'
-                                value={modalidadeFiltro}
-                                onChange={(e) => setModalidadeFiltro(e.target.value)}
-                            >
-                                <option value="">Todos</option>
-                                <option value="Integrado">Integrado</option>
-                                <option value="Proeja">Proeja</option>
-                            </select>
-                        </span>
-                        <span className="spanListarCursos">
-                            <label className='labelListarCursos'>Filtrar por Coordenador</label>
-                            <Input
-                                tipo='text'
-                                valor={coordenadorFiltro}
-                                onChange={(e) => setCoordenadorFiltro(e.target.value)}
-                            />
-                        </span>
-                        <span className="spanListarCursos">
-                            <label className='labelListarCursos'>Filtrar por Turma</label>
-                            <Input
-                                tipo='text'
-                                valor={turmaFiltro}
-                                onChange={(e) => setTurmaFiltro(e.target.value)}
-                            />
-                        </span>
+                        <div className="filtrosContainer">
+                            <span className="spanListarCursos">
+                                <label className='labelListarCursos'>Filtrar por Nome do Curso</label>
+                                <Input 
+                                    tipo='text'
+                                    valor={nomeFiltro}
+                                    onChange={(e) => setNomeFiltro(e.target.value)} />
+                            </span>
+                            <span className="spanListarCursos">
+                                <label className='labelListarCursos'>Filtrar por Modalidade</label>
+                                <select
+                                    className='selectListarCursos'
+                                    value={modalidadeFiltro}
+                                    onChange={(e) => setModalidadeFiltro(e.target.value)}
+                                >
+                                    <option value="">Todos</option>
+                                    <option value="Integrado">Integrado</option>
+                                    <option value="ProEJA">ProEJA</option>
+                                </select>
+                            </span>
+                            <span className="spanListarCursos">
+                                <label className='labelListarCursos'>Filtrar por Turma</label>
+                                <Input
+                                    tipo='text'
+                                    valor={turmaFiltro}
+                                    onChange={(e) => setTurmaFiltro(e.target.value)}
+                                />
+                            </span>
+                        </div>
                     </div>
                 </section>
                 <span className="spanListarCursos">
@@ -140,23 +129,8 @@ const ListarCursos = () => {
                                         <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
                                     )}
                                 </th>
-                                <th onClick={() => ordenarPorColuna('coordenador')}>
-                                    Coordenador
-                                    {ordenacao.coluna === 'coordenador' && (
-                                        <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
-                                    )}
-                                </th>
-                                <th onClick={() => ordenarPorColuna('data_inicio')}>
-                                    Data de Início
-                                    {ordenacao.coluna === 'data_inicio' && (
-                                        <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
-                                    )}
-                                </th>
-                                <th onClick={() => ordenarPorColuna('turma')}>
+                                <th>
                                     Turma
-                                    {ordenacao.coluna === 'turma' && (
-                                        <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
-                                    )}
                                 </th>
                                 <th>Ações</th>
                             </tr>
@@ -167,9 +141,15 @@ const ListarCursos = () => {
                                     <td>{curso.modalidade}</td>
                                     <td>{curso.nome}</td>
                                     <td>{curso.carga_horaria}</td>
-                                    <td>{curso.coordenador}</td>
-                                    <td>{curso.data_inicio}</td>
-                                    <td>{curso.turma}</td>
+                                    <td>
+                                        {curso.turmas && curso.turmas.length > 0 ? (
+                                            curso.turmas.map((turma, index) => (
+                                                <div key={index}>{turma.numero}</div>
+                                            ))
+                                        ) : (
+                                            <div>Nenhuma turma disponível</div>
+                                        )}
+                                    </td>
                                     <td className='icone-container'>
                                         <img 
                                             className='iconeAcoes'
@@ -177,7 +157,7 @@ const ListarCursos = () => {
                                             alt="Buscar" 
                                             onClick={() => console.log('Buscar curso')} 
                                             title="Buscar"
-                                            style={{ width: '16px', height: '16px' }} // Tamanho ajustado da lupa
+                                            style={{ width: '16px', height: '16px' }}
                                         />
                                     </td>
                                 </tr>

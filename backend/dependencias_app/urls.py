@@ -9,6 +9,7 @@ from dependencias_app.views.alunoViews import *
 from dependencias_app.views.disciplinaViews import *
 from dependencias_app.views.cursoViews import *
 from dependencias_app.views.eventoCalendarioViews import *
+from dependencias_app.views.pptViews import *
 
 
 urlpatterns = [
@@ -20,7 +21,6 @@ urlpatterns = [
     path('cadastrar-aluno/', cadastrar_aluno),
     path('dados-adicionais-aluno/', infos_adicionais_aluno),
     path('dados-adicionais-professor/', infos_adicionais_professor),
-    
     # views de curso/disciplinas
     # curso já manipula turmas por vínculo, por isso turmas não necessitam de uma view própria
     path('cadastrar-curso/', cadastrar_curso),
@@ -30,6 +30,8 @@ urlpatterns = [
 
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),
+    path('listar-eventos/', listar_eventos, name='listar_eventos'),
+    
 
     # views de lista de usuários
     path('usuario/<int:idUsuario>/', get_infos_usuario),
@@ -41,6 +43,8 @@ urlpatterns = [
 
     #views de visualizar cadastro
     path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
+    # view para cadastro de ppt
+    path('cadastrar-ppt/', cadastrar_ppt),
 
     ]
 

@@ -14,6 +14,7 @@ import { usuarioBaseService } from '../../../../services/usuarioBaseService'
 const PerfilAluno = () => {
     const {idUsuario} = useParams()
     const redirect = useNavigate()
+    const [desabilitado, setDesabilitado] = useState(false)
     const [erros, setErros] = useState({})
     const [formData, setFormData] = useState({
         cpf: '',
@@ -22,7 +23,7 @@ const PerfilAluno = () => {
         usuario: jwtDecode(sessionStorage.getItem('token')).idUsuario
     })
     const [dadosUsuario, setDadosUsuario] = useState({
-        nome_completo: '',
+        nome: '',
         email: ''
     })
 
@@ -78,17 +79,19 @@ const PerfilAluno = () => {
             if (res.status !== 200) throw new Error(res.response.data.mensagem)
 
             setDadosUsuario({
-                nome_completo: res.data.nome,
+                nome: res.data.nome,
                 email: res.data.email
             })
 
             setFormData({
-                cpf: res.data.infos_aluno.cpf || '',
-                data_nascimento: res.data.infos_aluno.data_nascimento || '',
+                cpf: res.data.infos_aluno.cpf,
+                data_nascimento: res.data.infos_aluno.data_nascimento,
                 matricula: res.data.infos_aluno.matricula || res[0].data.email.substring(0, 10),
-                telefone: res.data.infos_aluno.telefone || '',
+                telefone: res.data.infos_aluno.telefone,
                 usuario: jwtDecode(sessionStorage.getItem('token')).idUsuario
             })
+
+            setDesabilitado(res.data.primeiro_login)
 
         } catch (erro) {
             console.error('Erro ao obter dados do usuário: ', erro)
@@ -103,7 +106,7 @@ const PerfilAluno = () => {
         <div className='perfilContainer'>
             <div className='containerDados'>
                 <img src={jwtDecode(sessionStorage.getItem('token')).fotoPerfil } className='foto'/>
-                <span className='nomeContainer'>{dadosUsuario.nome_completo}</span>
+                <span className='nomeContainer'>{dadosUsuario.nome}</span>
                 <span className='emailContainer'>{dadosUsuario.email}</span>
             </div>
             <ToastContainer/>
@@ -112,7 +115,7 @@ const PerfilAluno = () => {
                     <Input
                         tipo='text'
                         onChange={(e) => setFormData(prevData => ({ ...prevData, cpf: e.target.value }))}
-                        valor={formData.cpf}
+                        valor={formData.cpf || ''}
                         erro={erros.cpf}
                         alinharCentro={true}
                     />
@@ -122,7 +125,7 @@ const PerfilAluno = () => {
                     <Input
                         tipo='text'
                         onChange={(e) => setFormData(prevData => ({ ...prevData, matricula: e.target.value }))}
-                        valor={formData.matricula}
+                        valor={formData.matricula || ''}
                         erro={erros.matricula}
                         alinharCentro={true}
                     />
@@ -132,9 +135,10 @@ const PerfilAluno = () => {
                     <Input
                         tipo='date'
                         onChange={(e) => setFormData(prevData => ({ ...prevData, data_nascimento: e.target.value }))}
-                        valor={formData.data_nascimento}
+                        valor={formData.data_nascimento || ''}
                         erro={erros.data_nascimento}
                         alinharCentro={true}
+                        desabilitado={desabilitado}
                     />
                     {erros.data_nascimento ? <p className='erro'>{erros.data_nascimento}</p> : <></>}
                 </label>
@@ -142,10 +146,10 @@ const PerfilAluno = () => {
                     <Input
                         tipo='telephone'
                         onChange={(e) => setFormData(prevData => ({ ...prevData, telefone: e.target.value }))}
-                        valor={formData.telefone}
+                        valor={formData.telefone || ''}
                         erro={erros.telefone}
                         alinharCentro={true}
-                        desabilitado={true}
+                        desabilitado={false}
                     />
                     {erros.telefone ? <p className='erro'>{erros.telefone}</p> : <></>}
                 </label>
