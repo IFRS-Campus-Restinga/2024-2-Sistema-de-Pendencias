@@ -86,7 +86,7 @@ const ListarServidor = () => {
 
   const filtrarServidores = () => {
     const servidoresFiltrados = servidores.filter(servidor => 
-      (!nomeFiltro || servidor.first_name.toLowerCase().includes(nomeFiltro.toLowerCase())) &&
+      (!nomeFiltro || (servidor.first_name && servidor.first_name.toLowerCase().includes(nomeFiltro.toLowerCase()))) &&
       (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
       (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
       (!perfilFiltro || servidor.perfil === perfilFiltro) &&
