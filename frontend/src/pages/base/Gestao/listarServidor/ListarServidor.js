@@ -10,6 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import servidorService from '../../../../services/servidorService';
 import Input from '../../../../components/Input/Input';
+import { useNavigate } from 'react-router-dom';
 
 const ListarServidor = () => {
   const [servidores, setServidores] = useState([]);
@@ -20,6 +21,12 @@ const ListarServidor = () => {
   const [nomeFiltro, setNomeFiltro] = useState('');
   const [perfilFiltro, setPerfilFiltro] = useState('');
   const [matriculaFiltro, setMatriculaFiltro] = useState('');
+
+  const navigate = useNavigate();
+
+  const handleClick = (servidor) => {
+    navigate(`/sessao/GestaoEscolar/2/listaServidor/${servidor.id}/visualizarServidor`, { state: { servidor }});
+  };
 
   const perfilMap = {
     'GestaoEscolar': 'Gestão Escolar',
@@ -246,7 +253,7 @@ return (
                 className='iconeAcoes'
                 src={Visualizar} 
                 alt="Visualizar" 
-                onClick={() => console.log('Visualizar servidor')} 
+                onClick={() => handleClick(servidor)}
                 title="Visualizar"/>
               <img 
                 className='iconeAcoes'
