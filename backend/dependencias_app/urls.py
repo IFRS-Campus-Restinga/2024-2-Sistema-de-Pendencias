@@ -39,9 +39,6 @@ urlpatterns = [
     path('dados-aluno/<int:idAluno>/', get_aluno_infos),
     path('listar-servidores/', listar_servidores, name='listar_servidores'),
 
-    # views de exclusão de usuários
-    path('deletar-servidor/<int:idusuario>/', deletar_servidor, name='deletar_servidor'),
-
     # view para cadastro de ppt
     path('cadastrar-ppt/', cadastrar_ppt),
 

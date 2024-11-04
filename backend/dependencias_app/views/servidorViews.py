@@ -30,15 +30,3 @@ def listar_servidores(request):
         return Response(servidores_serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['DELETE'])
-def deletar_servidor(request, id):
-    try:
-        servidor = UsuarioBase.objects.get(pk=id)
-
-        servidor.delete()
-        return Response({'mensagem': 'Servidor removido com sucesso.'}, status=status.HTTP_204_NO_CONTENT)
-    except servidor.DoesNotExist:
-        return Response({'mensagem': 'Servidor não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
