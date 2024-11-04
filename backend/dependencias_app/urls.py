@@ -10,6 +10,8 @@ from dependencias_app.views.disciplinaViews import *
 from dependencias_app.views.cursoViews import *
 from dependencias_app.views.eventoCalendarioViews import *
 from dependencias_app.views.pptViews import *
+from dependencias_app.views.emipedViews import *
+
 
 
 urlpatterns = [
@@ -27,6 +29,10 @@ urlpatterns = [
     path('cadastrar-disciplina/', cadastrar_disciplina),
     path('listar-cursos/', listar_cursos),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
+
+    # views para cadastrar DependenciaEMIPED
+    path('cadastrar-emiped/', cadastrar_emiped),  # Nova URL para cadastrar DependenciaEMIPED
+
 
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),

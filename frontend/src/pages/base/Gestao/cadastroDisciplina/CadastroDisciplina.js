@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Importando Link
 import { disciplinaService } from "../../../../services/disciplinaService";
 import { cursoService } from "../../../../services/cursoService";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
@@ -13,6 +14,7 @@ const CadastroDisciplina = () => {
   const [cursoId, setCursoId] = useState("");
   const [cursos, setCursos] = useState([]);
   const [error, setError] = useState(null);
+  const [disciplinas, setDisciplinas] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
 
 
@@ -147,6 +149,10 @@ const CadastroDisciplina = () => {
 
         <Button tipo="submit" text="Cadastrar Disciplina" />
       </FormContainer>
+      <div className="link-listar">
+        <Link to="/listar-disciplinas" style={{ color: 'black' }}>Listar Disciplinas</Link>
+      </div>
+      
     </>
   );
 };

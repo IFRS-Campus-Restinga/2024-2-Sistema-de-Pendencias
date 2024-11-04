@@ -1,10 +1,12 @@
+/* Estilos Gerais */
 .sectionCadastroDisciplina {
     display: flex;
-    flex-direction: row;
+    flex-direction: column; /* Alterado para coluna para melhor consistência */
     align-items: center;
+    margin: 20px 0; /* Espaçamento vertical */
 }
 
-.spanCadastroCurso {
+.spanCadastroDisciplina {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -14,22 +16,17 @@
 }
 
 .h3CadastroDisciplina {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-size: 24px; /* Aumentando o tamanho da fonte do título */
+    margin-bottom: 20px; /* Espaço abaixo do título */
     text-align: center;
 }
 
-.selectCadastroDisciplina {
-    width: 50%;
-    align-self: center;
-    padding: 5px;
-    border-radius: 8px;
-    font-size: 15px;
-}
-
-.selectCadastroDisciplina:focus {
-    border: 1px solid #797979;
+/* Grupos de Entrada */
+.input-group {
+    margin-bottom: 15px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .labelCadastroDisciplina {
@@ -38,9 +35,22 @@
     margin: 5px;
 }
 
+.selectCadastroDisciplina {
+    width: 100%; /* Preenche a largura disponível */
+    padding: 10px; /* Espaçamento interno */
+    border-radius: 8px;
+    font-size: 15px;
+    border: 1px solid #ddd; /* Borda padrão */
+}
+
+.selectCadastroDisciplina:focus {
+    border: 1px solid #797979; /* Borda ao focar no campo */
+}
+
+/* Contêiner de Cadastro */
 .divCadastroDisciplina {
     margin-top: 15px;
-    width: 50%;
+    width: 100%; /* Largura total */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -48,38 +58,51 @@
     padding: 10px;
 }
 
-.radio-container label {
-    display: inline-flex;
-    align-items: center;
-    white-space: nowrap;
+/* Mensagens de Erro */
+.error {
+    color: red;
+    font-size: 12px;
 }
 
+/* Botões e Ajustes */
 .ajuste-button {
     margin-top: 15px;
 }
 
+/* Tabela de Disciplinas */
 .tabelaCadastroDisciplina {
     max-width: 100%;
     width: 100%;
     margin-top: 15px;
     border-collapse: collapse;
-
-    .cabecalhoCadastroDisciplina {
-        background-color: #006b3f;
-        color: white;
-
-        th {
-            padding: 7px;
-            background-color: #006b3f;
-        }
-    }
-
-
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    tr:nth-child(odd) {
-        background-color: white;
-    }
 }
+
+.cabecalhoCadastroDisciplina {
+    background-color: #006b3f; /* Cor de fundo para o cabeçalho */
+    color: white; /* Texto branco para o cabeçalho */
+}
+
+.cabecalhoCadastroDisciplina th {
+    padding: 7px; /* Padding nos cabeçalhos */
+}
+
+/* Linhas da Tabela */
+.tabelaCadastroDisciplina tr:nth-child(even) {
+    background-color: #f9f9f9; /* Linhas pares com fundo cinza claro */
+}
+
+.tabelaCadastroDisciplina tr:nth-child(odd) {
+    background-color: white; /* Linhas ímpares com fundo branco */
+}
+/* Estilo do botão de envio */
+.button-submit {
+    background-color: #28A745; /* Cor de fundo verde */
+    color: white; /* Cor do texto branco */
+    border: none; /* Remove a borda padrão */
+    padding: 12px 24px; /* Espaçamento interno */
+    border-radius: 8px; /* Bordas arredondadas */
+    font-size: 16px; /* Tamanho da fonte */
+    cursor: pointer; /* Cursor de ponteiro */
+    transition: background-color 0.3s, transform 0.2s; /* Transição suave para hover */
+  }
+  
