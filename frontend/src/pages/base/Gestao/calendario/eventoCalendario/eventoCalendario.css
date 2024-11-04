@@ -55,7 +55,7 @@ button[type="submit"] {
 #hora {
   margin: 8px;
   margin-top: 0;
-  margin-bottom: 15px;	
+  margin-bottom: 15px;
 }
 
 /* Estilo para o checkbox */
@@ -64,14 +64,6 @@ button[type="submit"] {
   margin: 5px;
   margin-top: 5px;
   margin-bottom: 15px;
-}
-
-/* Estilização específica para campos de data */
-input[type="date"] {
-  margin: 5px;
-  margin-top: 5px;
-  margin-bottom: 0;
-  padding: 5px;
 }
 
 /* Estilo para o campo Tipo de Calendário */

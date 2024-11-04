@@ -53,8 +53,8 @@ const BaseGestao = () => {
         link: `${homeUrl}/cadastroPED_Proeja`
         },
         {
-        name: "Cadastro PPT",
-        link: `${homeUrl}/cadastroPPT`
+        name: "Gerenciar PPT",
+        link: `${homeUrl}/listaPPT`
         }
         ]} icone={<FontAwesomeIcon icon={faBook}  color="black" size="xl"/>}
         />

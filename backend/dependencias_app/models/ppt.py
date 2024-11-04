@@ -1,9 +1,10 @@
 from django.db import models
-from dependencias_app.models.base import *
 from dependencias_app.models.dependencia import *
 from dependencias_app.models.turma import *
 
 class PPT(Dependencia):
-    # Precisa relacionar com a tabela turma quando o cadastro for implementado
-    turma = models.CharField(max_length=3)
-    turmaProgressao = models.CharField(max_length=50)
+    turmaOrigem = models.ForeignKey(Turma, on_delete=models.DO_NOTHING, related_name='Origem')
+    turmaProgressao = models.ForeignKey(Turma, on_delete=models.DO_NOTHING, related_name='Progressão')
+
+    class Meta:
+        abstract = False

@@ -30,6 +30,7 @@ import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfes
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
 import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
+import ListarPPT from './pages/base/Gestao/listarPPT/ListarPPT'
 
 const router = createBrowserRouter([
     {
@@ -84,6 +85,10 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/cadastroPPT',
                 element: <CadastroPPT />
+            },
+            {
+                path: ':idUsuario/listaPPT',
+                element: <ListarPPT />
             }
 
             // Adicionar outros caminhos que vão derivar da tela de home após autenticação

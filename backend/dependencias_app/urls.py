@@ -8,7 +8,7 @@ from dependencias_app.views.servidorViews import *
 from dependencias_app.views.alunoViews import *
 from dependencias_app.views.disciplinaViews import *
 from dependencias_app.views.cursoViews import *
-from dependencias_app.views.eventoCalendarioViews import *
+from dependencias_app.views.eventoViews import *
 from dependencias_app.views.pptViews import *
 
 
@@ -44,6 +44,7 @@ urlpatterns = [
 
     # view para cadastro de ppt
     path('cadastrar-ppt/', cadastrar_ppt),
+    path('listar-ppt/', listar_ppt)
 
     ]
 

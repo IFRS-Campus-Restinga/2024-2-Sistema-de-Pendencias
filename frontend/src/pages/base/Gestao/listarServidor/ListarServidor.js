@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ListarServidor.css';
-import Button from "../../../../components/Button/Button";
 import FormContainer from '../../../../components/FormContainer/FormContainer'
+import Button from "../../../../components/Button/Button";
+import Input from '../../../../components/Input/Input';
 import Deletar from "../../../../assets/deletar-preto.png";
 import Visualizar from "../../../../assets/visualizar-preto.png";
 import Ordenar from "../../../../assets/ordenar-branco.png";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import servidorService from '../../../../services/servidorService';
-import Input from '../../../../components/Input/Input';
+import { Link } from 'react-router-dom'
+import { jwtDecode } from 'jwt-decode'
 
 const ListarServidor = () => {
   const [servidores, setServidores] = useState([]);
@@ -20,13 +22,6 @@ const ListarServidor = () => {
   const [matriculaFiltro, setMatriculaFiltro] = useState('');
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
-  const [filtros, setFiltros] = useState({
-    perfil: perfilMap,
-    nome: '',
-    matricula: '',
-    dataInicio: '',
-    dataFim: '',
-  })
 
   const perfilMap = {
     'GestaoEscolar': 'Gestão Escolar',
@@ -186,6 +181,11 @@ return (
         onClick={limparBusca}
         color="#4A4A4A"
       />
+      <Link to={`/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroServidor`}>
+        <Button 
+          text='Adicionar novo'
+        />
+      </Link>
     </span>
     <div className='tabelaContainerListarServidor'>
       <table className='tabelaListarServidor'>
