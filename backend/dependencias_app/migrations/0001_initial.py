@@ -34,20 +34,6 @@ class Migration(migrations.Migration):
                 ('nome', models.CharField(help_text='Informe o nome do curso', max_length=100, unique=True, validators=[django.core.validators.MinLengthValidator(3)], verbose_name='Nome do Curso')),
                 ('carga_horaria', models.CharField(help_text='Informe a carga horária do curso', max_length=5, verbose_name='Carga Horária')),
                 ('modalidade', models.CharField(choices=[('Integrado', 'Educação de Jovens e Adultos (EMI)'), ('ProEJA', 'Educação de Jovens e Adultos com Ensino Profissionalizante')], help_text='Selecione a modalidade do curso', max_length=20, verbose_name='Modalidade')),
-<<<<<<< HEAD
-=======
-            ],
-            options={
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='Disciplina',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(help_text='Nome disciplina', max_length=36, verbose_name='Nome da Disciplina')),
-                ('carga_horaria', models.PositiveIntegerField(help_text='Carga horaria', validators=[django.core.validators.MaxValueValidator(800)], verbose_name='Carga Horaria')),
->>>>>>> 2ac63e38a5188c77d2ba3ab6947db7c2f5b8d3d6
             ],
             options={
                 'abstract': False,
@@ -89,7 +75,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-<<<<<<< HEAD
             name='Turma',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -126,29 +111,13 @@ class Migration(migrations.Migration):
         ),
         migrations.CreateModel(
             name='Aluno',
-=======
-            name='Professor',
->>>>>>> 2ac63e38a5188c77d2ba3ab6947db7c2f5b8d3d6
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('cpf', models.CharField(help_text='Digite o CPF', max_length=11, validators=[django.core.validators.MinLengthValidator(11)], verbose_name='CPF')),
                 ('data_nascimento', models.DateField(help_text='Informe a data de nascimento do Aluno', verbose_name='DataNascimento')),
                 ('matricula', models.CharField(help_text='Informe a matrícula do Aluno', max_length=10, verbose_name='Matricula')),
-<<<<<<< HEAD
                 ('telefone', models.CharField(help_text='Informe o número de telefone do aluno', max_length=11, verbose_name='Telefone')),
                 ('usuario', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='aluno', to=settings.AUTH_USER_MODEL)),
-=======
-            ],
-            options={
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='Turma',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('numero', models.CharField(help_text='Informe o número da turma', max_length=10, validators=[django.core.validators.MinLengthValidator(1)], verbose_name='Número da Turma')),
->>>>>>> 2ac63e38a5188c77d2ba3ab6947db7c2f5b8d3d6
             ],
             options={
                 'abstract': False,
