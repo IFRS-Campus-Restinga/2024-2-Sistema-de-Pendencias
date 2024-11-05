@@ -6,7 +6,7 @@ from dependencias_app.models.evento import Evento
 from dependencias_app.models.ppt import PPT
 from dependencias_app.models.professor import Professor
 from dependencias_app.models.turma import Turma
-from dependencias_app.models.dependenciaemiped import DependenciaEMIPED
+from dependencias_app.models.pedEMI import PED_EMI
 from google_auth.models import UsuarioBase
 
 
@@ -18,5 +18,4 @@ admin.site.register(PPT)
 admin.site.register(Professor)
 admin.site.register(Turma)
 admin.site.register(UsuarioBase)
-admin.site.register(Evento)
-admin.site.register(DependenciaEMIPED)
+admin.site.register(PED_EMI)

@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Importando Link
 import { disciplinaService } from "../../../../services/disciplinaService";
 import { cursoService } from "../../../../services/cursoService";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import Button from "../../../../components/Button/Button";
 import { ToastContainer, toast } from "react-toastify";
-import { validarFormularioDisciplina, validarCampo } from "./validacoes";
-import "./CadastroDisciplina.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import Input from "../../../../components/Input/Input";
+import './CadastroDisciplina.css'
 
 const CadastroDisciplina = () => {
-  const [name, setName] = useState("");
-  const [carga_horaria, setCargaHoraria] = useState("");
-  const [cursoId, setCursoId] = useState("");
   const [cursos, setCursos] = useState([]);
   const [error, setError] = useState(null);
-  const [disciplinas, setDisciplinas] = useState(null);
-  const [validationErrors, setValidationErrors] = useState({});
+  const [disciplinas, setDisciplinas] = useState([]);
+  const [formData, setFormData] = useState({
+    curso: '',
+    novasDisciplinas: [],
+    disciplinas: [],
+  })
 
 
   const fetchCursos = async () => {
@@ -31,7 +33,7 @@ const CadastroDisciplina = () => {
     }
   };
 
-  const fecthDisciplinas = async () => {
+  const fetchDisciplinas = async () => {
     try {
       const response = await disciplinaService.list()
 
@@ -109,17 +111,8 @@ const CadastroDisciplina = () => {
 
   useEffect(() => {
     fetchCursos();
-    // obtém as disciplinas cadastradas, para caso alguma faça parte de mais de um curso
-    fecthDisciplinas();
+    fetchDisciplinas()
   }, []);
-
-  const handleBlur = (campo, valor) => {
-    const erro = validarCampo(campo, valor);
-    setValidationErrors((prevErrors) => ({
-      ...prevErrors,
-      [campo]: erro,
-    }));
-  };
 
   return (
     <>
@@ -133,8 +126,8 @@ const CadastroDisciplina = () => {
                   className='selectCadastroDisciplina'
                   value={formData.curso}
                   onChange={(e) => {
-                    console.log(e.target.value)
-                    setFormData({ ...formData, curso: e.target.value })}}
+                    setFormData({ ...formData, curso: e.target.value })
+                  }}
                   required
                 >
                   <option className='optionCadastroDisciplina' value={''}>Selecione um curso</option>
@@ -149,7 +142,7 @@ const CadastroDisciplina = () => {
             <div className='divCadastroDisciplina'>
               <h3 className='h3CadastroDisciplina'>
                 Inserir Disciplinas
-                <button type='button' className='add-button' onClick={addDisciplina}>
+                <button type='button' className='buttonCadastroDisciplina' onClick={addDisciplina}>
                   <FontAwesomeIcon icon={faPlusCircle} style={{ color: "#006b3f", cursor: "pointer", fontSize: "24px", marginLeft:"10px" }}/>
                 </button>
               </h3>
@@ -164,7 +157,6 @@ const CadastroDisciplina = () => {
                   <tbody className="corpoCadastroDisciplina">
                     {formData.novasDisciplinas.map((disciplina, index) => (
                       <tr key={index}>
-                        {/* Campo para o Nome da Disciplina */}
                         <td className='celulaCadastroDisciplina'>
                           <Input
                             tipo="text"
@@ -182,8 +174,6 @@ const CadastroDisciplina = () => {
                             }}
                           />
                         </td>
-
-                        {/* Campo para a Carga Horária */}
                         <td className='celulaCadastroDisciplina'>
                           <Input
                             tipo="number"
@@ -241,17 +231,12 @@ const CadastroDisciplina = () => {
                 )
               }
             </div>
-          {message && <div>{message}</div>} {/* Mensagem de sucesso ou erro */}
         </section>
               <Button
                 text="Cadastrar"
                 tipo="submit"
-                />
+              />
       </FormContainer>
-      <div className="link-listar">
-        <Link to="/listar-disciplinas" style={{ color: 'black' }}>Listar Disciplinas</Link>
-      </div>
-      
     </>
   );
 };

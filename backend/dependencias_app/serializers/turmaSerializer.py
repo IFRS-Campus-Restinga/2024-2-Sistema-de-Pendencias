@@ -5,5 +5,12 @@ class TurmaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Turma
         fields = '__all__'
+    
+    def save(self, **kwargs):
+        formTurma = super().save(**kwargs)
+
+        formTurma.full_clean()
+        formTurma.save()
+        return formTurma
 
 

@@ -2,7 +2,7 @@
 export const validarAluno = (aluno) => {
     if (aluno.length === 0) return 'Campo obrigatório.';
 
-    if (Number(aluno) === NaN) return 'Matrícula inválida'
+    if (Number(aluno) === NaN) return 'Aluno Inválido'
 
     return ''
 };
@@ -11,28 +11,28 @@ export const validarAluno = (aluno) => {
 export const validarProfessor = (professor) => {
     if (professor.length === 0) return 'Campo obrigatório.';
 
-    if (!professor.includes('@')) return 'Email inválido'
+    if (Number(professor) === NaN) return 'Professor inválido'
 
     return '';
 };
 
 // Validação para o campo "turmaOrigem"
 export const validarCurso = (curso) => {
-    if (!curso || curso === '') return 'Campo obrigatório.';
+    if (!curso || Number(curso) === NaN) return 'Campo obrigatório.';
 
     return ''
 };
 
 // Validação para o campo "turmaOrigem"
 export const validarDisciplina = (disciplina) => {
-    if (!disciplina || disciplina === '') return 'Campo obrigatório.';
+    if (!disciplina || Number(disciplina) === NaN) return 'Campo obrigatório.';
 
     return ''
 };
 
 // Validação para o campo "turmaOrigem"
 export const validarTurmaOrigem = (turmaOrigem) => {
-    if (!turmaOrigem || turmaOrigem === '') return 'Campo obrigatório.';
+    if (!turmaOrigem || Number(turmaOrigem) === NaN) return 'Campo obrigatório.';
 
     return ''
 };
@@ -44,13 +44,18 @@ export const validarTurmaProgressao = (turmaProgressao) => {
     return ''
 };
 
-export const validarDataInicio = (dataInicio) => {
-    if (!dataInicio || dataInicio === '') return 'Campo obrigatório.';
+export const validarTurmas = (turmaOrigem, turmaProgressao) => {
+    if(turmaOrigem && turmaProgressao) {
+        if (Number(turmaOrigem.numero) < Number(turmaProgressao.numero)) return 'A turma de progressão não pode ser superior a de origem!'
+    }
 
-    return ''
-};
-export const validarDataFim = (dataFim) => {
+    return
+}
+
+export const validarDatas = (dataInicio, dataFim) => {
+    if (!dataInicio || dataInicio === '') return 'Campo obrigatório.';
     if (!dataFim || dataFim === '') return 'Campo obrigatório.';
+    if (dataFim < dataInicio) return 'Data de início não pode ser menor que a data de término da dependência'
 
     return ''
 };
@@ -80,11 +85,9 @@ export const validarFormularioPPT = (formData) => {
     const erroTurmaProgressao = validarTurmaProgressao(formData.turmaProgressao);
     if (erroTurmaProgressao) erros.turmaProgressao = erroTurmaProgressao
 
-    const erroDataInicio = validarDataInicio(formData.dataInicio);
-    if (erroDataInicio) erros.dataInicio = erroDataInicio
+    const erroDatas = validarDatas(formData.dataInicio, formData.dataFim);
+    if (erroDatas) erros.datas = erroDatas
 
-    const erroDataFIm = validarDataFim(formData.dataFim);
-    if (erroDataFIm) erros.dataFim = erroDataFIm
 
     console.log(erros);
 

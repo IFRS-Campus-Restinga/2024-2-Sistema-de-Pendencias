@@ -10,6 +10,13 @@ class CursoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Curso
         fields = '__all__'
+    
+    def save(self, **kwargs):
+        formCurso = super().save(**kwargs)
+
+        formCurso.full_clean()
+        formCurso.save()
+        return formCurso
 
 
       

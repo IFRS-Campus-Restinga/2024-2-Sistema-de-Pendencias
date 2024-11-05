@@ -1,11 +1,9 @@
 /* Estilos Gerais */
 .sectionCadastroDisciplina {
     display: flex;
-    flex-direction: column;
-    /* Alterado para coluna para melhor consistência */
     align-items: center;
     margin: 20px 0;
-    /* Espaçamento vertical */
+    width: 100%;
 }
 
 .spanCadastroDisciplina {
@@ -18,11 +16,10 @@
 }
 
 .h3CadastroDisciplina {
-    font-size: 24px;
-    /* Aumentando o tamanho da fonte do título */
-    margin-bottom: 20px;
-    /* Espaço abaixo do título */
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    max-height: fit-content;
 }
 
 /* Grupos de Entrada */
@@ -75,6 +72,13 @@
 /* Botões e Ajustes */
 .ajuste-button {
     margin-top: 15px;
+}
+
+.buttonCadastroDisciplina {
+    background-color: transparent;
+    width: fit-content;
+    height: fit-content;
+    border: none;
 }
 
 .containerTabelaCadastroDisciplina {

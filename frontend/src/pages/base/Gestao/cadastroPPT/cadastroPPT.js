@@ -6,11 +6,14 @@ import { ToastContainer, toast } from 'react-toastify'
 import "./cadastroPPT.css";
 import { PPTService } from "../../../../services/emiPptService"
 import cursoService from "../../../../services/cursoService";
-import { validarFormularioPPT } from "./validacoes";
+import { validarFormularioPPT, validarTurmas } from "./validacoes";
+import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 
 const CadastroPPT = () => {
   const [cursos, setCursos] = useState([])
   const [disciplinas, setDisciplinas] = useState([])
+  const [opcoesAlunos, setOpcoesAlunos] = useState([])
+  const [opcoesProfessores, setOpcoesProfessores] = useState([])
   const [turmas, setTurmas] = useState([])
   const [formData, setFormData] = useState({
     aluno: "",
@@ -27,12 +30,15 @@ const CadastroPPT = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const validationErrors = validateForm();
-    // setErrors(validationErrors);
 
     const erros = validarFormularioPPT(formData)
+    const erroTurmas = validarTurmas(
+      turmas.find((turma) => formData.turmaOrigem === turma.id),
+      turmas.find((turma) => formData.turmaProgressao === turma.id),
+    )
 
-    if (Object.keys(erros).length !== 0) {
+    if (Object.keys(erros).length !== 0 || erroTurmas) {
+      erros.turmas = erroTurmas
       setErrors(erros)
     } else {
       try {
@@ -67,15 +73,35 @@ const CadastroPPT = () => {
     }
   };
 
-    const fetchCursos = async () => {
-      try {
-        const res = await cursoService.list()
-        
-        setCursos(res.data)
-      } catch (error) {
-        console.log(error)
-      }
+  const fetchCursos = async () => {
+    try {
+      const res = await cursoService.list()
+      
+      setCursos(res.data)
+    } catch (error) {
+      console.log(error)
     }
+  }
+
+  const fetchAlunos = async (e) => {
+    try {
+      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Aluno')
+
+      setOpcoesAlunos(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const fetchProfessores = async (e) => {
+    try {
+      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Professor')
+
+      setOpcoesProfessores(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     fetchCursos()
@@ -85,45 +111,86 @@ const CadastroPPT = () => {
     <>
       <ToastContainer/>
       <FormContainer onSubmit={handleSubmit} titulo="Cadastro PPT">
-        {errors == {} ? (<></>) : (<p style={{color: 'red'}}>*Preencha os campos obrigatórios</p>)}
+        {Object.keys(errors).length === 0 ? (<></>) : (<p style={{color: 'red'}}>*Preencha os campos obrigatórios</p>)}
         <label className="labelCadastroPPT">
           Aluno
-          <span className="spanCadastroPPT">
             <Input
               tipo='text'
               nome='aluno'
-              onChange={(e) => setFormData({...formData, aluno: `${e.target.value}@aluno.restinga.ifrs.edu.br`})}
+              onChange={(e) => {
+                fetchAlunos(e)
+                
+                if (opcoesAlunos) {
+                  const param = e.target.value
+                  console.log(e.target.value)
+
+                  const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || aluno.infos_aluno.matricula || aluno.email)
+
+                  if (aluno) setFormData({...formData, aluno: aluno.id})
+                }
+
+              }}
               erro={errors.aluno}
-              textoAjuda='Insira a matrícula do aluno'
+              textoAjuda='Insira nome ou matrícula do aluno'
+              lista={'opcoesAlunos'}
             />
-            <p className="pCadastroPPT">
-              @aluno.restinga.ifrs.edu.br
-            </p>
-          </span>
-        </label>
+          </label>
+          <datalist className="datalistCadastroPPT" id="opcoesAlunos">
+            {
+              opcoesAlunos ? (opcoesAlunos.map((aluno) => (
+                <option className="optionCadastroPPT" 
+                  value={aluno.nome || aluno.infos_aluno.matricula || aluno.email}>
+                    {aluno.nome || aluno.infos_aluno.matricula || aluno.email}
+                </option>
+              ))) : (<option>Nenhum aluno encontrado</option>)
+            }
+          </datalist>
         <label className="labelCadastroPPT">
           Professor 
           <Input
-            tipo='email'
+            tipo='text'
             nome='professor'
-            onChange={(e) => setFormData({...formData, professor: e.target.value})}
+            onChange={(e) => {
+              fetchProfessores(e)
+              
+              if (opcoesProfessores) {
+                const param = e.target.value
+                console.log(e.target.value)
+
+                const professor = opcoesProfessores.find((professor) => param === professor.nome || professor.email)
+
+                if (professor) setFormData({...formData, professor: professor.id})
+              }
+            }}
             erro={errors.professor}
-            textoAjuda='Insira o email do professor'
+            textoAjuda='Insira o email ou nome do professor'
+            lista={'opcoesProfessores'}
           />
         </label>
+        <datalist className="datalistCadastroPPT" id="opcoesProfessores">
+          {
+            opcoesProfessores ? (opcoesProfessores.map((professor) => (
+              <option className="optionCadastroPPT"
+                value={professor.nome || professor.email}>
+                  {professor.nome || professor.email}
+              </option>
+            ))) : (<></>)
+          }
+        </datalist>
         <section className="sectionCadastroPPT">
           <div className="divCadastroPPT">
             <label className="labelCadastroPPT">
               Curso 
               <select className={errors.curso ? 'errorSelectCadastroPPT' : 'selectCadastroPPT'} name="curso" onChange={(e) => {        
-                  setFormData({...formData, curso: e.target.value})
-                  const selectedCursoId = e.target.value; // Obtém o ID do curso selecionado
+                  setFormData({...formData, curso: Number(e.target.value)})
+
+                  const cursoId = e.target.value;
               
-                  const selectedCurso = cursos.find(curso => curso.id === Number(selectedCursoId)); // Encontra o curso correspondente
+                  const curso = cursos.find(curso => curso.id === Number(cursoId)); // Encontra o curso correspondente
               
-                  if (selectedCurso) {
-                    setDisciplinas(selectedCurso.disciplinas); // Define as disciplinas do curso selecionado
-                    setTurmas(selectedCurso.turmas); // Define as turmas do curso selecionado
+                  if (curso) {
+                    setDisciplinas(curso.disciplinas);
+                    setTurmas(curso.turmas);
                   }
                 }
               }>
@@ -138,7 +205,7 @@ const CadastroPPT = () => {
             <label className="labelCadastroPPT">
               Disciplina 
               <select className={errors.disciplina ? 'errorSelectCadastroPPT' : 'selectCadastroPPT'}
-                onChange={(e) => setFormData({...formData, disciplina: e.target.value})}
+                onChange={(e) => setFormData({...formData, disciplina: Number(e.target.value)})}
               >
                 <option className="optionCadastroPPT" value=''>Selecione uma disciplina</option>
                 {
@@ -153,7 +220,7 @@ const CadastroPPT = () => {
             <label className="labelCadastroPPT">
               Turma de Origem
               <select className={errors.turmaOrigem ? 'errorSelectCadastroPPT' : 'selectCadastroPPT'}
-                onChange={(e) => setFormData({...formData, turmaOrigem: e.target.value})}
+                onChange={(e) => setFormData({...formData, turmaOrigem: Number(e.target.value)})}
               >
                 <option className="optionCadastroPPT" value=''>Selecione uma turma</option>
                 {
@@ -162,11 +229,12 @@ const CadastroPPT = () => {
                   ))
                 }
               </select>
+              {errors.turmas ? <p style={{color: 'red', fontSize: '10px'}}>{errors.turmas}</p> : (<></>)}
             </label>
             <label className="labelCadastroPPT">
               Turma de Progressão
               <select className={errors.turmaProgressao ? 'errorSelectCadastroPPT' : 'selectCadastroPPT'}
-                onChange={(e) => setFormData({...formData, turmaProgressao: e.target.value})}
+                onChange={(e) => setFormData({...formData, turmaProgressao: Number(e.target.value)})}
               >
                 <option className="optionCadastroPPT" value=''>Selecione uma turma</option>
                 {
@@ -175,6 +243,7 @@ const CadastroPPT = () => {
                   ))
                 }
               </select>
+              {errors.turmas ? <p style={{color: 'red', fontSize: '10px'}}>{errors.turmas}</p> : (<></>)}
             </label>
           </div>
         </section>
@@ -189,6 +258,7 @@ const CadastroPPT = () => {
                 erro={errors.dataInicio}
                 dataMinima={new Date().toISOString().split('T')[0]}
               />
+              {errors.datas ? <p style={{color: 'red', fontSize: '10px'}}>{errors.datas}</p> : (<></>)}
             </label>
           </div>
           <div className="divCadastroPPT">
@@ -201,6 +271,7 @@ const CadastroPPT = () => {
                 erro={errors.dataFim}
                 dataMinima={new Date().toISOString().split('T')[0]}
               />
+              {errors.datas ? <p style={{color: 'red', fontSize: '10px'}}>{errors.datas}</p> : (<></>)}
             </label>
           </div>
         </section>
