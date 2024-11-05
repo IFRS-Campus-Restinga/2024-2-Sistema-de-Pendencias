@@ -1,27 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import Button from "../../../../components/Button/Button";
-import FormContainer from '../../../../components/FormContainer/FormContainer'
-import Input from '../../../../components/Input/Input';
-import {ToastContainer, toast} from 'react-toastify'
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Importando Link
 import { disciplinaService } from "../../../../services/disciplinaService";
+import { cursoService } from "../../../../services/cursoService";
+import FormContainer from "../../../../components/FormContainer/FormContainer";
+import Button from "../../../../components/Button/Button";
+import { ToastContainer, toast } from "react-toastify";
+import { validarFormularioDisciplina, validarCampo } from "./validacoes";
 import "./CadastroDisciplina.css";
-import { cursoService } from '../../../../services/cursoService';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 
 const CadastroDisciplina = () => {
-  const [formData, setFormData] = useState({
-    curso: '',
-    // disciplinas já cadastradas
-    disciplinas: [],
-    // disciplinas adicionadas
-    novasDisciplinas: [],
-  });
+  const [name, setName] = useState("");
+  const [carga_horaria, setCargaHoraria] = useState("");
+  const [cursoId, setCursoId] = useState("");
   const [cursos, setCursos] = useState([]);
-  const [disciplinas, setDisciplinas] = useState([])
-  const [message, setMessage] = useState('');
+  const [error, setError] = useState(null);
+  const [disciplinas, setDisciplinas] = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
 
-  // Função para buscar cursos disponíveis
+
   const fetchCursos = async () => {
     try {
       const response = await cursoService.list()
@@ -31,6 +27,7 @@ const CadastroDisciplina = () => {
       setCursos(response.data);
     } catch (error) {
       console.error('Erro ao buscar cursos!', error);
+
     }
   };
 
@@ -111,12 +108,18 @@ const CadastroDisciplina = () => {
   }
 
   useEffect(() => {
-    // obtém os cursos cadastrados
     fetchCursos();
     // obtém as disciplinas cadastradas, para caso alguma faça parte de mais de um curso
     fecthDisciplinas();
   }, []);
 
+  const handleBlur = (campo, valor) => {
+    const erro = validarCampo(campo, valor);
+    setValidationErrors((prevErrors) => ({
+      ...prevErrors,
+      [campo]: erro,
+    }));
+  };
 
   return (
     <>
@@ -245,6 +248,10 @@ const CadastroDisciplina = () => {
                 tipo="submit"
                 />
       </FormContainer>
+      <div className="link-listar">
+        <Link to="/listar-disciplinas" style={{ color: 'black' }}>Listar Disciplinas</Link>
+      </div>
+      
     </>
   );
 };
