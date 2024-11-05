@@ -19,6 +19,7 @@ import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendari
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 import VisualizarServidor from './pages/base/Gestao/cadastroServidor/VisualizarServidor'
+import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
 // Filhos de Registro
 
 // Filhos de Coordenador
@@ -26,6 +27,7 @@ import VisualizarServidor from './pages/base/Gestao/cadastroServidor/VisualizarS
 // Filhos de Professor
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
 import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfessor'
+
 
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
@@ -89,7 +91,13 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/cadastroPPT',
                 element: <CadastroPPT />
+            },
+            ,
+            {
+                path: ':idUsuario/detalhesPPT/',
+                element: <DetalhesPPT />
             }
+
         ]
             // Adicionar outros caminhos que vão derivar da tela de home após autenticação
         
