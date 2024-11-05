@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import './ListarCurso.css';
 import Button from "../../../../components/Button/Button";
 import FormContainer from '../../../../components/FormContainer/FormContainer';
+import Input from '../../../../components/Input/Input';
 import Lupa from "../../../../assets/lupa.png"; // Ajuste o caminho conforme necessário
 import { ToastContainer } from 'react-toastify';
 import cursoService from '../../../../services/cursoService';
-import Input from '../../../../components/Input/Input';
+import { Link } from 'react-router-dom'
+import { jwtDecode } from 'jwt-decode' 
 
 const ListarCursos = () => {
     const [cursos, setCursos] = useState([]);
@@ -95,18 +97,23 @@ const ListarCursos = () => {
                             </span>
                         </div>
                     </div>
+                    <div className='divListarCursos'>
+                        <Button
+                            text="Buscar"
+                            onClick={filtrarCursos}
+                        />
+                        <Button
+                            text="Limpar campos"
+                            onClick={limparBusca}
+                            color="#4A4A4A"
+                        />
+                        <Link to={`/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroCurso`}>
+                            <Button
+                                text='Adicionar Novo'
+                            />
+                        </Link>
+                    </div>
                 </section>
-                <span className="spanListarCursos">
-                    <Button
-                        text="Buscar"
-                        onClick={filtrarCursos}
-                    />
-                    <Button
-                        text="Limpar campos"
-                        onClick={limparBusca}
-                        color="#4A4A4A"
-                    />
-                </span>
                 <div className='tabelaContainerListarCursos'>
                     <table className='tabelaListarCursos'>
                         <thead className='cabecalhoListarCursos'>

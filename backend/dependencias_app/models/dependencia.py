@@ -1,24 +1,22 @@
 from dependencias_app.models.base import *
 from django.db import models
 from dependencias_app.models.disciplina import Disciplina
-from dependencias_app.models.aluno import Aluno
-from dependencias_app.models.professor import Professor
-from dependencias_app.enums.DependenciaStatus import STATUS_DEPENDENCIA
+from dependencias_app.models.curso import Curso
+from dependencias_app.enums.statusDependencia import *
+from dependencias_app.enums.situacaoDependencia import *
+from google_auth.models import UsuarioBase
 
 class Dependencia(BaseModel):
-    # Precisa relacionar com as respectivas tabelas quando implementado.
-    alunoEmail= models.EmailField(max_length=255)
-    disciplinaId = models.CharField(max_length=2)
-    professorId = models.CharField(max_length=2)
-
-    status = models.CharField(max_length=50, choices=STATUS_DEPENDENCIA, default='criada')
+    aluno = models.ForeignKey(UsuarioBase, on_delete=models.DO_NOTHING)
+    professor = models.ForeignKey(UsuarioBase, on_delete=models.DO_NOTHING)
+    disciplina = models.ForeignKey(Disciplina, on_delete=models.DO_NOTHING)
+    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
+    status = models.CharField(max_length=50, choices=StatusDependencia.choices, default='Criada')
     dataInicio = models.DateField()
     dataFim = models.DateField()
-    notaFinal = models.FloatField(null=True, blank=True)
-    situacao = models.CharField(max_length=255)
-    observacao = models.TextField(blank=True)
-
-    curso = models.CharField(max_length=255)
+    notaFinal = models.FloatField(default=0)
+    situacao = models.CharField(max_length=255, choices=SituacaoDependencia.choices, default='Em avaliação')
+    observacao = models.TextField(null=True, blank=True)
 
     class Meta:
         abstract = True

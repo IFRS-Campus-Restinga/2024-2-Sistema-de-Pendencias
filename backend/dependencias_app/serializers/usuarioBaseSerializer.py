@@ -14,6 +14,13 @@ class UsuarioBaseSerializer(serializers.ModelSerializer):
         model = UsuarioBase
         fields = ['id', 'nome', 'email', 'data_ingresso', 'primeiro_login', 'grupo', 'perfil', 'status', 'infos_professor', 'infos_aluno']
 
+    def save(self, **kwargs):
+        formUsuarioBase = super().save(**kwargs)
+
+        formUsuarioBase.full_clean()
+        formUsuarioBase.save()
+        return formUsuarioBase
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 

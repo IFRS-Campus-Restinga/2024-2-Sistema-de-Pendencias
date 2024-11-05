@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.utils import timezone
-from dependencias_app.models.eventoCalendario import Evento
+from dependencias_app.models.evento import Evento
 
 class EventoSerializer(serializers.ModelSerializer):
 

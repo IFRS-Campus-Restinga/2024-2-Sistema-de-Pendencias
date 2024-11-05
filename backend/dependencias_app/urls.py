@@ -8,9 +8,9 @@ from dependencias_app.views.servidorViews import *
 from dependencias_app.views.alunoViews import *
 from dependencias_app.views.disciplinaViews import *
 from dependencias_app.views.cursoViews import *
-from dependencias_app.views.eventoCalendarioViews import *
+from dependencias_app.views.eventoViews import *
 from dependencias_app.views.pptViews import *
-from dependencias_app.views.emipedViews import *
+from dependencias_app.views.pedEMIViews import *
 
 
 
@@ -23,6 +23,7 @@ urlpatterns = [
     path('cadastrar-aluno/', cadastrar_aluno),
     path('dados-adicionais-aluno/', infos_adicionais_aluno),
     path('dados-adicionais-professor/', infos_adicionais_professor),
+
     # views de curso/disciplinas
     # curso já manipula turmas por vínculo, por isso turmas não necessitam de uma view própria
     path('cadastrar-curso/', cadastrar_curso),
@@ -43,6 +44,7 @@ urlpatterns = [
     path('usuario/<int:idUsuario>/', get_infos_usuario),
     path('dados-aluno/<int:idAluno>/', get_aluno_infos),
     path('listar-servidores/', listar_servidores, name='listar_servidores'),
+    path('usuarios/<str:param>/<str:grupo>', listar_por_parametro),
 
     # views de exclusão de usuários
     path('deletar-servidor/<int:idusuario>/', deletar_servidor, name='deletar_servidor'),
@@ -51,6 +53,7 @@ urlpatterns = [
     path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
     # view para cadastro de ppt
     path('cadastrar-ppt/', cadastrar_ppt),
+    path('listar-ppt/', listar_ppt)
 
     ]
 

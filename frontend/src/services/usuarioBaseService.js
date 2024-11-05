@@ -8,5 +8,13 @@ export const usuarioBaseService = {
         })
 
         return res
-    }
+    },
+
+    buscarPorParametro: async (param, grupo) => {
+        const res = await api.get(`api/usuarios/${param}/${grupo}`).catch((erro) => {
+            return erro
+        })
+
+        return res
+    },
 }

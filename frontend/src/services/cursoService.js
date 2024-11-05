@@ -11,11 +11,9 @@ export const cursoService = {
         }
     },
 
-    list: async (filters) => {
+    list: async () => {
         try {
-            // Converte os filtros em parâmetros de consulta
-            const params = new URLSearchParams(filters).toString();
-            const response = await api.get(`/api/listar-cursos/?${params}`);
+            const response = await api.get(`/api/listar-cursos/`);
             return response;
         } catch (error) {
             console.error('Erro ao listar cursos:', error);

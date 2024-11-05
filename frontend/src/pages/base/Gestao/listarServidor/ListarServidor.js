@@ -1,25 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ListarServidor.css';
-import Button from "../../../../components/Button/Button";
 import FormContainer from '../../../../components/FormContainer/FormContainer'
+import Button from "../../../../components/Button/Button";
+import Input from '../../../../components/Input/Input';
 import Lupa from "../../../../assets/lupa.png";
 import Ordenar from "../../../../assets/ordenar-branco.png";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import servidorService from '../../../../services/servidorService';
-import Input from '../../../../components/Input/Input';
+import { Link } from 'react-router-dom'
+import { jwtDecode } from 'jwt-decode'
 import { useNavigate } from 'react-router-dom';
 
 const ListarServidor = () => {
   const [servidores, setServidores] = useState([]);
   const [servidoresFiltrados, setServidoresFiltrados] = useState([]);
   const [ordenacao, setOrdenacao] = useState({ coluna: '', ordem: 'asc' });
+  const [perfilFiltro, setPerfilFiltro] = useState('');
+  const [nomeFiltro, setNomeFiltro] = useState('');
+  const [matriculaFiltro, setMatriculaFiltro] = useState('');
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
-  const [nomeFiltro, setNomeFiltro] = useState('');
-  const [perfilFiltro, setPerfilFiltro] = useState('');
-  const [matriculaFiltro, setMatriculaFiltro] = useState('');
   const [statusFiltro, setStatusFiltro] = useState('');
 
   const navigate = useNavigate();
@@ -46,7 +48,7 @@ const ListarServidor = () => {
       console.error('Erro ao buscar servidores:', error);
     }
   };
-
+ 
   const ordenarPorColuna = (coluna) => {
     const novaOrdem = ordenacao.coluna === coluna && ordenacao.ordem === 'asc' ? 'desc' : 'asc';
   
@@ -173,6 +175,11 @@ return (
         onClick={limparBusca}
         color="#4A4A4A"
       />
+      <Link to={`/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroServidor`}>
+        <Button 
+          text='Adicionar novo'
+        />
+      </Link>
     </span>
     <div className='tabelaContainerListarServidor'>
       <table className='tabelaListarServidor'>

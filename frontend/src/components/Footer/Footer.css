@@ -5,6 +5,7 @@ footer {
     background-color: #D9D9D9;
     color: white;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     align-self: baseline;
     position: relative;

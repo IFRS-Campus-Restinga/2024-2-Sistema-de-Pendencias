@@ -58,7 +58,7 @@
 .dropdown-usuario-conteudo {
   background-color: #006b3f;
   border: 2px solid #003c23;
-  z-index: 1;
+  z-index: 3;
   margin-top: 60px;
 
   .link,

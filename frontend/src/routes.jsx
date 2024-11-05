@@ -19,6 +19,7 @@ import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendari
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 import VisualizarServidor from './pages/base/Gestao/cadastroServidor/VisualizarServidor'
+import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
 // Filhos de Registro
 
 // Filhos de Coordenador
@@ -27,10 +28,12 @@ import VisualizarServidor from './pages/base/Gestao/cadastroServidor/VisualizarS
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
 import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfessor'
 
+
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
 import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
+import ListarPPT from './pages/base/Gestao/listarPPT/ListarPPT'
 
 const router = createBrowserRouter([
     {
@@ -84,15 +87,25 @@ const router = createBrowserRouter([
             },
             {
                 path: ':idUsuario/listaServidor/:idServidor/visualizarServidor',
-                element: <VisualizarServidor/>
+                element: <VisualizarServidor />
             },
             {
                 path: ':idUsuario/cadastroPPT',
                 element: <CadastroPPT />
+            },
+            {
+                path: ':idUsuario/listaPPT',
+                element: <ListarPPT />
+            },
+            ,
+            {
+                path: ':idUsuario/detalhesPPT/',
+                element: <DetalhesPPT />
             }
+
         ]
-            // Adicionar outros caminhos que vão derivar da tela de home após autenticação
-        
+        // Adicionar outros caminhos que vão derivar da tela de home após autenticação
+
     },
     // Rotas de Registro Escolar
     {
