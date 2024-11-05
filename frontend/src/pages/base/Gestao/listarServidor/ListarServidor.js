@@ -20,6 +20,7 @@ const ListarServidor = () => {
   const [nomeFiltro, setNomeFiltro] = useState('');
   const [perfilFiltro, setPerfilFiltro] = useState('');
   const [matriculaFiltro, setMatriculaFiltro] = useState('');
+  const [statusFiltro, setStatusFiltro] = useState('');
 
   const navigate = useNavigate();
 
@@ -77,6 +78,7 @@ const ListarServidor = () => {
     setNomeFiltro('');
     setPerfilFiltro('');
     setMatriculaFiltro('');
+    setStatusFiltro('');
     fetchServidores();
 
     setOrdenacao({ coluna: '', ordem: 'asc' });
@@ -98,6 +100,7 @@ const ListarServidor = () => {
       (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
       (!perfilFiltro || servidor.perfil === perfilFiltro) &&
       (!matriculaFiltro || (servidor.matricula && servidor.matricula.includes(matriculaFiltro)))
+      (!statusFiltro || (servidor.status && servidor.status.includes(statusFiltro)))
     );
     setServidoresFiltrados(servidoresFiltrados);
   };
@@ -220,6 +223,13 @@ return (
                 <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
               )}
             </th>
+            <th onClick={() => ordenarPorColuna('status')}>
+              Status
+              {ordenacao.coluna === 'status' && (
+                <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
+              )}
+            </th>
+
             <th></th>
           </tr>
         </thead>
@@ -232,6 +242,7 @@ return (
               <td>{servidor.matricula || '-'}</td>
               <td>{servidor.email || '-'}</td>
               <td>{servidor.data_ingresso || '-'}</td>
+              <td>{servidor.status || '-'}</td>
               <td className='icone-container'>
               <img 
                 className='iconeAcoes'

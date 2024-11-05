@@ -2,6 +2,8 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Button from '../../../../components/Button/Button';
 import "./VisualizarServidor.css";
+import FormContainer from '../../../../components/FormContainer/FormContainer';
+
 
 const VisualizarServidor = () => {
     const location = useLocation();
@@ -12,13 +14,20 @@ const VisualizarServidor = () => {
         return <div>Nenhum servidor foi selecionado.</div>;
     }
 
+    // Função para editar servidor
+    const handleEditar = () => {
+        navigate(`/sessao/GestaoEscolar/2/listaServidor/${servidor.id}/visualizarServidor/editarServidor`, { state: { servidor }});
+    };
+
     return (
-        <div className="visualizar-servidor-container">
-            <h1>Detalhes do Servidor</h1>
+        <FormContainer titulo={"Detalhes do Servidor"}>
+            <p className="detalhe-servidor"><strong>Status:</strong> {servidor.status}</p>
             <p className="detalhe-servidor"><strong>Nome:</strong> {servidor.nome}</p>
             <p className="detalhe-servidor"><strong>Email:</strong> {servidor.email}</p>
             <p className="detalhe-servidor"><strong>Perfil:</strong> {servidor.perfil}</p>
-        </div>
+            <p className="detalhe-servidor"><strong>Matricula:</strong> {servidor.matricula}</p>           
+            <Button tipo='submit' text='Editar Servidor' onClick={handleEditar}/>
+        </FormContainer>
     );
 };
 

@@ -19,11 +19,17 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password=None, **extra_fields)
 
 class UsuarioBase(AbstractUser):
+    STATUS_CHOICES = [
+        ('Ativo', 'Ativo'),
+        ('Inativo', 'Inativo'),
+    ]
+
     nome = models.CharField(max_length=100, help_text="Informe o nome", null=True, blank=True)
     primeiro_login = models.BooleanField(default=True)
     email = models.EmailField(unique=True)
     grupo = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name="usuarios", verbose_name="Grupo")
     data_ingresso = models.DateField(verbose_name="data de Ingresso", null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Ativo')  # valor padrão como 'Ativo'
     
     last_login = None
     password = None
