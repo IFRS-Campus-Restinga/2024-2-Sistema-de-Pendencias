@@ -17,3 +17,6 @@ class Dependencia(BaseModel):
     notaFinal = models.FloatField(default=0)
     situacao = models.CharField(max_length=255, choices=SituacaoDependencia.choices, default='Em avaliação')
     observacao = models.TextField(null=True, blank=True)
+
+    class Meta:
+        abstract = True

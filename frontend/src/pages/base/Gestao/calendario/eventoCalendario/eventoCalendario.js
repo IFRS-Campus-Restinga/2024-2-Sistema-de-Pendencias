@@ -13,7 +13,7 @@ const EventoCalendarioPage = () => {
     descricao: '',
     data_inicio: '',
     data_fim: '',
-    tipo_calendario: 'EMI',
+    tipo_calendario: 'Integrado',
     dia_todo: true,
     hora_inicio: '00:00',
     hora_fim: '00:00'
@@ -161,7 +161,7 @@ const EventoCalendarioPage = () => {
               onChange={handleChange}
               style={{ borderColor: errors.tipo_calendario ? 'red' : '' }}
             >
-              <option value="EMI">EMI</option>
+              <option value="Integrado">Integrado</option>
               <option value="PROEJA">PROEJA</option>
             </select>
             {errors.tipo_calendario && <p className="erros">{errors.tipo_calendario}</p>}

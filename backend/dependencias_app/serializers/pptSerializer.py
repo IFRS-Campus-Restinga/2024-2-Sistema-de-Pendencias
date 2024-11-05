@@ -6,13 +6,36 @@ from dependencias_app.serializers.disciplinaSerializer import DisciplinaSerializ
 from dependencias_app.serializers.turmaSerializer import TurmaSerializer
 
 class PPTSerializer(serializers.ModelSerializer):
-    aluno = UsuarioBaseSerializer(read_only=True)
-    professor = UsuarioBaseSerializer(read_only=True)
-    curso = CursoSerializer(read_only=True)
-    disciplina = DisciplinaSerializer(read_only=True)
-    turmaOrigem = TurmaSerializer(read_only=True)
-    turmaProgressao = TurmaSerializer(read_only=True)
-
     class Meta:
         model = PPT
         fields = '__all__'
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        # consultar dados do aluno
+        if hasattr(instance, 'aluno'):
+            representation['aluno'] = UsuarioBaseSerializer(instance.aluno).data
+        
+        # consulta dados do professore
+        if hasattr(instance, 'professor'):
+            representation['professor'] = UsuarioBaseSerializer(instance.professor).data
+        
+        # consulta dados do curso
+        if hasattr(instance, 'curso'):
+            representation['curso'] = CursoSerializer(instance.curso).data
+        
+        # consulta dados da disciplina
+        if hasattr(instance, 'disciplina'):
+            representation['disciplina'] = DisciplinaSerializer(instance.disciplina).data
+        
+        # consulta dados da turma de origem
+        if hasattr(instance, 'turmaOrigem'):
+            representation['turmaOrigem'] = TurmaSerializer(instance.turmaOrigem).data
+        
+        # consulta dados da turma de progressão
+        if hasattr(instance, 'turmaProgressao'):
+            representation['turmaProgressao'] = TurmaSerializer(instance.turmaProgressao).data
+
+        # retorna os dados em vez de apenas os id's que fazem o vinculo entre cada instância da PPT
+        return representation

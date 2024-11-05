@@ -5,6 +5,9 @@ from dependencias_app.serializers.pptSerializer import PPTSerializer
 from dependencias_app.models.ppt import PPT
 from dependencias_app.permissoes import GestaoEscolar
 from google_auth.models import UsuarioBase
+from dependencias_app.models.curso import Curso
+from dependencias_app.models.disciplina import Disciplina
+from dependencias_app.models.turma import Turma
 from django.shortcuts import *
 import logging
 
@@ -16,13 +19,22 @@ def cadastrar_ppt(request):
     logger.info('Dados recebidos: %s', request.data)
     try:
         data = request.data
-        print(data)
 
         aluno = get_object_or_404(UsuarioBase, email=request.data.get('aluno', None), grupo__name='Aluno')
         professor = get_object_or_404(UsuarioBase, email=request.data.get('professor', None), grupo__name='Professor')
+        curso = get_object_or_404(Curso, pk=request.data.get('curso'))
+        disciplina = get_object_or_404(Disciplina, pk=request.data.get('disciplina'))
+        turmaOrigem = get_object_or_404(Turma, pk=request.data.get('turmaOrigem'))
+        turmaProgressao = get_object_or_404(Turma, pk=request.data.get('turmaProgressao'))
 
         data['aluno'] = aluno.id
         data['professor'] = professor.id
+        data['curso'] = curso.id
+        data['disciplina'] = disciplina.id
+        data['turmaOrigem'] = turmaOrigem.id
+        data['turmaProgressao'] = turmaProgressao.id
+
+        print(data)
 
         serializer = PPTSerializer(data=data)
         
