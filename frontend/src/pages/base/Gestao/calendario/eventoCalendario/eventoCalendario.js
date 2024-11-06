@@ -22,6 +22,23 @@ const EventoCalendarioPage = () => {
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [dataFimMin, setDataFimMin] = useState('');
 
+const handleBlur = (e) => {
+  const { name } = e.target;
+  const validationErrors = validarEvento(formData, name);
+
+  // Remove erro específico ao corrigir o campo
+  if (!validationErrors[name]) {
+    setErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      delete newErrors[name];
+      return newErrors;
+    });
+  } else {
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: validationErrors[name] }));
+  }
+};
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validarEvento(formData);
@@ -40,6 +57,7 @@ const EventoCalendarioPage = () => {
         });
 
         setFormData({ titulo: '', descricao: '', data_inicio: '', data_fim: '', tipo_calendario: 'EMI' });
+        setErrors({});
       } catch (error) {
         console.error('Erro ao criar evento!', error);
         toast.error("Falha ao criar evento. Tente novamente.", {
@@ -73,6 +91,7 @@ const EventoCalendarioPage = () => {
               name="titulo"
               value={formData.titulo}
               onChange={handleChange}
+              onBlur={handleBlur}
               style={{ borderColor: errors.titulo ? 'red' : '' }}
             />
             {errors.titulo && <p className="erros">{errors.titulo}</p>}
@@ -83,6 +102,7 @@ const EventoCalendarioPage = () => {
               name="descricao"
               value={formData.descricao}
               onChange={handleChange}
+              onBlur={handleBlur}
               style={{ borderColor: errors.descricao ? 'red' : '' }}
             />
             {errors.descricao && <p className="erros">{errors.descricao}</p>}
@@ -95,6 +115,7 @@ const EventoCalendarioPage = () => {
               name="data_inicio"
               value={formData.data_inicio}
               onChange={handleChange}
+              onBlur={handleBlur}
               style={{ borderColor: errors.data_inicio ? 'red' : '' }}
             />
             {errors.data_inicio && <p className="erros">{errors.data_inicio}</p>}
@@ -107,6 +128,7 @@ const EventoCalendarioPage = () => {
               name="data_fim"
               value={formData.data_fim}
               onChange={handleChange}
+              onBlur={handleBlur}
               min={dataFimMin}
               style={{ borderColor: errors.data_fim ? 'red' : '' }}
             />
