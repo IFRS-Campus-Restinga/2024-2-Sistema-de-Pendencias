@@ -1,0 +1,78 @@
+/* Estilo para a seção que contém os campos do formulário */
+.sectionCadastroPlanoEstudos {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  /* Estilo para cada div dentro da seção */
+  .divCadastroPlanoEstudos {
+    width: 48%; /* Menor que 50% para permitir o espaço entre as colunas */
+    padding: 7px;
+  }
+  
+  /* Estilo para os rótulos dos campos */
+  .labelCadastroPlanoEstudos {
+    display: flex;
+    flex-direction: column;
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 7px;
+  }
+  
+  /* Estilo para os campos de input (texto, data, etc.) */
+  .selectCadastroPlanoEstudos,
+  .inputCadastroPlanoEstudos {
+    font-size: 15px;
+    border: 1px solid #ccc;
+    padding: 7px;
+    border-radius: 8px;
+    margin-top: 5px;
+    width: 100%; /* Garante que o campo ocupe toda a largura disponível */
+  }
+  
+  /* Estilo para os campos de texto */
+  .textAreaCadastroPlanoEstudos {
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 5px;
+    margin-top: 7px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 100%; /* Garante que o campo ocupe toda a largura disponível */
+    height: 100px; /* Altura para a área de texto */
+  }
+  
+  /* Estilo para os campos de select (dropdown) */
+  .selectCadastroPlanoEstudos:focus,
+  .inputCadastroPlanoEstudos:focus,
+  .textAreaCadastroPlanoEstudos:focus {
+    border: 1px solid #797979; /* Muda a cor da borda quando o campo está em foco */
+  }
+  
+  /* Estilo para o botão */
+  .buttonCadastroPlanoEstudos {
+    background-color: #006b3f;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+  }
+  
+  /* Efeito de hover no botão */
+  .buttonCadastroPlanoEstudos:hover {
+    background-color: #004d2f;
+  }
+  
+  /* Estilo para a mensagem de erro */
+  .errorMessageCadastroPlanoEstudos {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
