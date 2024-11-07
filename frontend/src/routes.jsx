@@ -27,7 +27,7 @@ import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
 // Filhos de Professor
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
 import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfessor'
-
+import PlanoEstudos from './pages/base/Professor/planoEstudos/planoEstudos'
 
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
@@ -133,6 +133,10 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/perfil/',
                 element: <PerfilProfessor />
+            },
+            {
+                path: ':idUsuario/planoEstudos',
+                element: <PlanoEstudos />
             }
         ]
     },
