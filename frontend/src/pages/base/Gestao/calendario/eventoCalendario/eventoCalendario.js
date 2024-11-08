@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { eventoCalendarioService } from '../../../../../services/eventoCalendarioService';
@@ -8,6 +9,7 @@ import Button from "../../../../../components/Button/Button";
 import FormContainer from "../../../../../components/FormContainer/FormContainer";
 
 const EventoCalendarioPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     titulo: '',
     descricao: '',
@@ -35,15 +37,7 @@ const EventoCalendarioPage = () => {
         
         const response = await eventoCalendarioService.create({ ...rest, data_inicio: dataInicio, data_fim: dataFim });
         if (response.status !== 201) throw new Error(response.error);
-
-        toast.success("Evento criado com sucesso!", {
-          position: "bottom-center",
-          autoClose: 3000,
-          style: { backgroundColor: '#28A745', color: '#fff' },
-          progressStyle: { backgroundColor: '#fff' }
-        });
-
-        setFormData({ titulo: '', descricao: '', data_inicio: '', data_fim: '', tipo_calendario: 'EMI', dia_todo: true, hora_inicio: '00:00', hora_fim: '00:00' });
+        navigate("/sessao/GestaoEscolar/1/calendario", { state: { eventoCriado: true } });
       } catch (error) {
         console.error('Erro ao criar evento!', error);
         toast.error("Falha ao criar evento. Tente novamente.", {
@@ -162,7 +156,7 @@ const EventoCalendarioPage = () => {
               style={{ borderColor: errors.tipo_calendario ? 'red' : '' }}
             >
               <option value="Integrado">Integrado</option>
-              <option value="PROEJA">PROEJA</option>
+              <option value="ProEJA">ProEJA</option>
             </select>
             {errors.tipo_calendario && <p className="erros">{errors.tipo_calendario}</p>}
           </label>
