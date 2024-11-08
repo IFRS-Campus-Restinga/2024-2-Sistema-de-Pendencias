@@ -116,6 +116,7 @@
     border-left: none;
     border-right: none;
     word-wrap: break-word;
+    padding: 5px;
   }
 }
 

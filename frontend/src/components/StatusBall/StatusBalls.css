@@ -23,8 +23,8 @@
 }
 
 .status-ball.active {
-    background-color: green;
-    border: 2px solid green;
+    background-color: #006b3f;
+    border: 2px solid #006b3f;
     color: white;
 }
 

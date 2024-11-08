@@ -20,8 +20,6 @@ def cadastrar_ppt(request):
     try:
         data = request.data
 
-        print(data)
-
         serializer = PPTSerializer(data=data)
         
         if serializer.is_valid():
@@ -37,7 +35,7 @@ def cadastrar_ppt(request):
 @permission_classes([GestaoEscolar])
 def listar_ppt(request):
     try:
-        lista_ppt = get_list_or_404(PPT)
+        lista_ppt = PPT.objects.all()
 
         serializer = PPTSerializer(lista_ppt, many=True)
 

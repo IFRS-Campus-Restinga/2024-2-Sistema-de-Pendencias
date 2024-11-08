@@ -19,7 +19,6 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password=None, **extra_fields)
 
 class UsuarioBase(AbstractUser):
-
     nome = models.CharField(max_length=100, help_text="Informe o nome", null=True, blank=True)
     primeiro_login = models.BooleanField(default=True)
     email = models.EmailField(unique=True)

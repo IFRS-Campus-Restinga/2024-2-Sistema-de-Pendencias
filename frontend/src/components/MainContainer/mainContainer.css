@@ -6,10 +6,3 @@
     background-color: #f1f1f1;
     padding-bottom: 20px;
 }
-
-@media (max-width: 760px) {
-    .container {
-        flex-direction: row;
-        padding: 0;
-    }
-}

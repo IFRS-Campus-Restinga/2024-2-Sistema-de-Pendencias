@@ -97,11 +97,11 @@ const ListarServidor = () => {
 
   const filtrarServidores = () => {
     const servidoresFiltrados = servidores.filter(servidor => 
-      (!nomeFiltro || (servidor.first_name && servidor.first_name.toLowerCase().includes(nomeFiltro.toLowerCase()))) &&
+      (!nomeFiltro || (servidor.nome && servidor.nome.toLowerCase().includes(nomeFiltro.toLowerCase()))) &&
       (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
       (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
       (!perfilFiltro || servidor.perfil === perfilFiltro) &&
-      (!matriculaFiltro || (servidor.matricula && servidor.matricula.includes(matriculaFiltro)))
+      (!matriculaFiltro || (servidor.infos_professor.matricula && servidor.infos_professor.matricula.includes(matriculaFiltro))) &&
       (!statusFiltro || (servidor.status && servidor.status.includes(statusFiltro)))
     );
     setServidoresFiltrados(servidoresFiltrados);
@@ -244,12 +244,12 @@ return (
           {servidoresFiltrados.map((servidor) => (
             <tr key={`${servidor.id}-${servidor.nome}`}>
               <td>{perfilMap[servidor.perfil] || '-'}</td>
-              <td>{servidor.first_name || '-'}</td>
-              <td>{servidor.cpf || '-'}</td>
-              <td>{servidor.matricula || '-'}</td>
+              <td>{servidor.nome || '-'}</td>
+              <td>{servidor.infos_professor?.cpf ?? '-'}</td>
+              <td>{servidor.infos_professor?.matricula ?? '-'}</td>
               <td>{servidor.email || '-'}</td>
               <td>{servidor.data_ingresso || '-'}</td>
-              <td>{servidor.status || '-'}</td>
+              <td>{servidor.is_active ? 'Ativo' : 'Inativo'}</td>
               <td className='icone-container'>
               <img 
                 className='iconeAcoes'

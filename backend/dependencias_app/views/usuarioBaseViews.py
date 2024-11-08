@@ -24,7 +24,7 @@ def get_infos_usuario (request, idUsuario):
 def listar_por_parametro(request, param, grupo):
     try:
         usuarios = UsuarioBase.objects.filter(
-            Q(email__icontains=param, grupo__name=grupo) | Q(email__icontains=param, grupo__name=grupo)
+            Q(email__icontains=param, grupo__name=grupo) | Q(nome__icontains=param, grupo__name=grupo)
         )
 
         serializer = UsuarioBaseSerializer(usuarios, many=True)
