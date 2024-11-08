@@ -53,7 +53,8 @@ urlpatterns = [
     path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
     # view para cadastro de ppt
     path('cadastrar-ppt/', cadastrar_ppt),
-    path('listar-ppt/', listar_ppt)
+    path('listar-ppt/', listar_ppt),
+    path('listar-ppt/<int:idPpt>/', listar_ppt_id)
 
     ]
 
