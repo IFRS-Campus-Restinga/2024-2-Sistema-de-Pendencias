@@ -42,3 +42,14 @@ def listar_ppt(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem: ', str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([GestaoEscolar])
+def listar_ppt_id(request, idPpt):
+    try:
+        ppt = PPT.objects.get(id=idPpt)
+        serializer = PPTSerializer(ppt)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem: ', str(e)}, status=status.HTTP_400_BAD_REQUEST)

@@ -98,7 +98,7 @@ const router = createBrowserRouter([
                 element: <ListarPPT />
             },
             {
-                path: ':idUsuario/detalhesPPT/',
+                path: ':idUsuario/detalhesPPT/:idPpt',
                 element: <DetalhesPPT />
             }
         ]
