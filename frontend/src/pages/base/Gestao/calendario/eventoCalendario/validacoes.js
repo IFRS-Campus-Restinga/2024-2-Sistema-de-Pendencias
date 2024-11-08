@@ -1,14 +1,14 @@
 const validarEvento = (formData) => {
   const errors = {};
 
-  // VALIDAÇÃO DO TÍTULO
-  if (!formData.titulo) {
-    errors.titulo = "Campo obrigatório.";
-  } else if (!/^[A-Za-z0-9\s]+$/.test(formData.titulo)) {
-    errors.titulo = "Título deve conter apenas letras e números.";
-  } else if (!/^(?=.*\b\w{3,}\b\s+\b\w{3,}\b).*$/.test(formData.titulo)) {
-    errors.titulo = "O título deve ter no mínimo duas palavras com três letras cada.";
-  }
+// VALIDAÇÃO DO TÍTULO
+if (!formData.titulo) {
+  errors.titulo = "Campo obrigatório.";
+} else if (formData.titulo.length < 5 || formData.titulo.length > 50) {
+  errors.titulo = "Título deve ter entre 5 e 50 caracteres.";
+} else if (!/^[A-Za-zÀ-ÿ0-9]+( [A-Za-zÀ-ÿ0-9]+)*$/.test(formData.titulo)) {
+  errors.titulo = "Título deve conter apenas letras, números e espaços únicos.";
+}
 
   // VALIDAÇÃO DA DESCRIÇÃO
   if (!formData.descricao) {
