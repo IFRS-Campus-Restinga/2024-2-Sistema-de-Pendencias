@@ -20,7 +20,7 @@ def get_infos_usuario (request, idUsuario):
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([GestaoEscolar | RegistroEscolar])
+@permission_classes([GestaoEscolar | RegistroEscolar | Professor])
 def listar_por_parametro(request, param, grupo):
     try:
         usuarios = UsuarioBase.objects.filter(
