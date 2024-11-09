@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation  } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { eventoCalendarioService } from '../../../../../services/eventoCalendarioService';
@@ -10,6 +10,8 @@ import FormContainer from "../../../../../components/FormContainer/FormContainer
 
 const EventoCalendarioPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const eventoExistente = location.state?.evento || {};
   const [formData, setFormData] = useState({
     titulo: '',
     descricao: '',
@@ -24,6 +26,22 @@ const EventoCalendarioPage = () => {
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [dataFimMin, setDataFimMin] = useState('');
 
+  useEffect(() => {
+      // Verifica se estamos editando um evento existente
+      if (eventoExistente) {
+          setFormData({
+              titulo: eventoExistente.title || '',
+              descricao: eventoExistente.descricao || '',
+              data_inicio: eventoExistente.start ? eventoExistente.start.toISOString().split('T')[0] : '',
+              data_fim: eventoExistente.end ? eventoExistente.end.toISOString().split('T')[0] : '',
+              tipo_calendario: eventoExistente.tipo_calendario || 'Integrado',
+              dia_todo: eventoExistente.allDay || true,
+              hora_inicio: eventoExistente.start ? eventoExistente.start.toISOString().split('T')[1].slice(0, 5) : '00:00',
+              hora_fim: eventoExistente.end ? eventoExistente.end.toISOString().split('T')[1].slice(0, 5) : '00:00'
+          });
+      }
+  }, [eventoExistente]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validarEvento(formData);
@@ -35,9 +53,12 @@ const EventoCalendarioPage = () => {
         const dataInicio = dia_todo ? `${rest.data_inicio}T00:00` : `${rest.data_inicio}T${hora_inicio}`;
         const dataFim = dia_todo ? `${rest.data_fim}T00:00` : `${rest.data_fim}T${hora_fim}`;
 
-        const response = await eventoCalendarioService.create({ ...rest, data_inicio: dataInicio, data_fim: dataFim });
-        if (response.status !== 201) throw new Error(response.error);
-        navigate("/sessao/GestaoEscolar/1/calendario", { state: { eventoCriado: true } });
+        const response = eventoExistente.id
+            ? await eventoCalendarioService.update(eventoExistente.id, { ...rest, data_inicio: dataInicio, data_fim: dataFim })
+            : await eventoCalendarioService.create({ ...rest, data_inicio: dataInicio, data_fim: dataFim });
+
+        if (response.status !== (eventoExistente.id ? 200 : 201)) throw new Error(response.error);
+        navigate("/sessao/GestaoEscolar/1/calendario", { state: { eventoCriado: !eventoExistente.id, eventoAtualizado: !!eventoExistente.id } });
       } catch (error) {
         console.error('Erro ao criar evento!', error);
         toast.error("Falha ao criar evento. Tente novamente.", {
