@@ -1,11 +1,18 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from dependencias_app.permissoes import *
+# importa permissão com outro nome para não conflitar com o model Aluno
+from dependencias_app.permissoes import Aluno as AlunoPermissao
+#  importa as outras permissões
+from dependencias_app.permissoes import GestaoEscolar, RegistroEscolar, Coordenador, Professor
+# importa a classe que permite mais de uma perfil acessar a mesma view
+from dependencias_app.permissoes import Or
 from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
-from django.contrib.auth.models import Group
 from dependencias_app.serializers.alunoSerializer import AlunoSerializer
+from dependencias_app.models.aluno import Aluno
 from google_auth.models import UsuarioBase
+from django.contrib.auth.models import Group
+from django.shortcuts import get_object_or_404
 import logging
 
 logger = logging.getLogger(__name__)
@@ -41,27 +48,40 @@ def cadastrar_aluno(request):
         return Response({'mensagem': str(e)}, status=400)
 
 @api_view(['POST'])
-@permission_classes([Aluno])  # Ajuste para a permissão adequada
+@permission_classes([GestaoEscolar | AlunoPermissao])  # Ajuste para a permissão adequada
 def infos_adicionais_aluno(request):
+    usuario_id = request.data.get('usuario', None)
+
     try:
-        # Obter o ID do usuário enviado na requisição
-        usuario_id = request.data.get('usuario', None)
-        usuario = UsuarioBase.objects.get(pk=usuario_id)  # Busca o aluno pelo ID do usuário
-
-        # Atualizar os dados do aluno
+        # Tenta buscar o aluno pelo ID do usuário
+        aluno = Aluno.objects.get(usuario_id=usuario_id)
+        # Se encontrado, inicializa o serializer para atualização
+        serializer_aluno = AlunoSerializer(aluno, data=request.data, partial=True)
+        if serializer_aluno.is_valid():
+            serializer_aluno.save()
+            return Response(serializer_aluno.data, status=status.HTTP_200_OK)
+    except Aluno.DoesNotExist:
+        # Se não existir, cria um novo aluno
         serializer_aluno = AlunoSerializer(data=request.data)
-
         if serializer_aluno.is_valid():
             serializer_aluno.save()
             return Response(serializer_aluno.data, status=status.HTTP_201_CREATED)
         else:
-            print(serializer_aluno.errors)  # Adicione esta linha para depuração
-            raise Exception(serializer_aluno.errors)  # Levanta um erro se a validação falhar
+            return Response(serializer_aluno.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'mensagem': 'Erro inesperado.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    except usuario.DoesNotExist:
-        return Response({'mensagem': 'Aluno não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+@permission_classes([GestaoEscolar | AlunoPermissao])
+def get_aluno_infos (request, idAluno):
+    try:
+        aluno = Aluno.objects.get(usuario_id=idAluno)
+        serializer_aluno = AlunoSerializer(aluno)
+
+        return Response(data=serializer_aluno.data, status=status.HTTP_200_OK)
+    except Aluno.DoesNotExist: return Response(data={}, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)   
 
 # @api_view(['GET'])
 # def visualizar_alunos(request):

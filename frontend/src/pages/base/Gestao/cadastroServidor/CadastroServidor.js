@@ -11,7 +11,8 @@ import Input from '../../../../components/Input/Input';
 const CadastroServidor = () => {
     const [formData, setFormData] = useState({
         perfil: 'Professor',
-        email: ''
+        email: '',
+        status: 'Ativo' // status ativo como padrão
     });
     const [errors, setErrors] = useState({});
     const [showErrorMessage, setShowErrorMessage] = useState(false);

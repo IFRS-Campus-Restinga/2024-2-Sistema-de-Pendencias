@@ -17,5 +17,5 @@ export const alunoService = {
         })
 
         return res
-    }
+    },
 };

@@ -1,47 +1,59 @@
 from django.urls import path
-# from dependencias_app.views import servidorViews
-from dependencias_app.views import alunoViews
-from dependencias_app.views import cursoViews
+from dependencias_app.views.usuarioBaseViews import *
+from dependencias_app.views.gestaoEscolarViews import *
+from dependencias_app.views.registroEscolarViews import *
+from dependencias_app.views.coordenadorViews import *
+from dependencias_app.views.professorViews import *
+from dependencias_app.views.servidorViews import *
+from dependencias_app.views.alunoViews import *
+from dependencias_app.views.disciplinaViews import *
+from dependencias_app.views.cursoViews import *
+from dependencias_app.views.eventoViews import *
+from dependencias_app.views.pptViews import *
+from dependencias_app.views.pedEMIViews import *
 
-
-from dependencias_app.views import disciplinaViews
-from dependencias_app.views.servidorViews import deletar_servidor
-from dependencias_app.views import gestaoEscolarViews
-from dependencias_app.views import turmaViews
-#from dependencias_app.views import listarTurmasViews
-from dependencias_app.views import registroEscolarViews
-from dependencias_app.views import coordenadorViews
-from dependencias_app.views import professorViews
-from dependencias_app.views import servidorViews
-from dependencias_app.views import eventoCalendarioViews
 
 
 urlpatterns = [
-    path('cadastrar-aluno/', alunoViews.cadastrar_aluno),
-    path('dados-adicionais-aluno/', alunoViews.infos_adicionais_aluno),
+    # views cadastro de usuários
+    path('cadastrar-gestao-escolar/', cadastrar_gestao_escolar),
+    path('cadastrar-registro-escolar/', cadastrar_registro_escolar),
+    path('cadastrar-coordenador/', cadastrarCoordenador),
+    path('cadastrar-professor/', cadastrar_professor),
+    path('cadastrar-aluno/', cadastrar_aluno),
+    path('dados-adicionais-aluno/', infos_adicionais_aluno),
+    path('dados-adicionais-professor/', infos_adicionais_professor),
 
-    path('cadastrar-curso/', cursoViews.cadastrar_curso),
-    path('cadastrar-turma/', turmaViews.cadastrar_turma),
-    path('listar-cursos/', cursoViews.listar_cursos, name='listar_cursos'),
+    # views de curso/disciplinas
+    # curso já manipula turmas por vínculo, por isso turmas não necessitam de uma view própria
+    path('cadastrar-curso/', cadastrar_curso),
+    path('cadastrar-disciplina/', cadastrar_disciplina),
+    path('listar-cursos/', listar_cursos),
+    path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
 
-    path('cadastrar-gestao-escolar/', gestaoEscolarViews.cadastrar_gestao_escolar),
-    path('cadastrar-registro-escolar/', registroEscolarViews.cadastrar_registro_escolar),
+    # views para cadastrar DependenciaEMIPED
+    path('cadastrar-emiped/', cadastrar_emiped),  # Nova URL para cadastrar DependenciaEMIPED
 
-    path('cadastrar-coordenador/', coordenadorViews.cadastrarCoordenador),
 
-    path('cadastrar-professor/', professorViews.cadastrar_professor),
+    # views de evento/calendario
+    path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),
+    path('listar-eventos/', listar_eventos, name='listar_eventos'),
+    
 
-    path('cadastrar-disciplina/', disciplinaViews.cadastrar_disciplina, name='cadastrar_disciplina'),
-    path('buscar_disciplinas/', disciplinaViews.listar_disciplinas, name='listar_disciplinas'),
-    path('buscar_disciplina/<int:id>/', disciplinaViews.buscar_disciplina, name='buscar_disciplina'),
+    # views de lista de usuários
+    path('usuario/<int:idUsuario>/', get_infos_usuario),
+    path('dados-aluno/<int:idAluno>/', get_aluno_infos),
+    path('listar-servidores/', listar_servidores, name='listar_servidores'),
+    path('usuarios/<str:param>/<str:grupo>', listar_por_parametro),
 
-    path('listar-servidores/', servidorViews.listar_servidores, name='listar_servidores'),
-    path('deletar-servidor/<int:id>/', deletar_servidor, name='deletar_servidor'),
+    # views de exclusão de usuários
+    path('deletar-servidor/<int:idusuario>/', deletar_servidor, name='deletar_servidor'),
 
-    path('listar-turmas/', turmaViews.listar_turmas, name='listar_turmas'),
-    path('listar-cursos/', cursoViews.listar_cursos, name='listar_cursos'),
-
-    path('cadastrar-evento/', eventoCalendarioViews.cadastrar_evento, name='cadastrar_evento'),
+    #views de visualizar cadastro
+    path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
+    # view para cadastro de ppt
+    path('cadastrar-ppt/', cadastrar_ppt),
+    path('listar-ppt/', listar_ppt)
 
     ]
 

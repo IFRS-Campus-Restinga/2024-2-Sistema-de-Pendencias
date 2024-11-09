@@ -1,5 +1,3 @@
-// validacoesEvento.js
-
 const validarEvento = (formData) => {
   const errors = {};
 
@@ -29,9 +27,29 @@ const validarEvento = (formData) => {
     errors.data_fim = "Campo obrigatório.";
   }
 
+  // VALIDAÇÃO DAS HORAS SE NÃO FOR DIA TODO
+  if (!formData.dia_todo) {
+    if (!formData.hora_inicio) {
+      errors.hora_inicio = "Campo obrigatório.";
+    }
+    if (!formData.hora_fim) {
+      errors.hora_fim = "Campo obrigatório.";
+    }
+  }
+
   // VALIDAÇÃO DO TIPO DE CALENDÁRIO
   if (!formData.tipo_calendario) {
     errors.tipo_calendario = "O tipo de calendário é obrigatório.";
+  }
+
+  // VALIDAÇÃO DE DATA E HORAS
+  if (!formData.dia_todo) {
+    const dataInicio = new Date(`${formData.data_inicio}T${formData.hora_inicio}`);
+    const dataFim = new Date(`${formData.data_fim}T${formData.hora_fim}`);
+    
+    if (dataFim <= dataInicio) {
+      errors.data_fim = "A data de fim deve ser posterior à data de início.";
+    }
   }
 
   return errors;

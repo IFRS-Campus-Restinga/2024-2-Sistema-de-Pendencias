@@ -46,28 +46,33 @@ const BaseGestao = () => {
         },
         {
         name: "Cadastro PED - EMI",
-        link: `${homeUrl}/cadastroPED_EMI`
+        link: `${homeUrl}/CadastroEmiPed`
         },
         {
         name: "Cadastro PED - PROEJA",
         link: `${homeUrl}/cadastroPED_Proeja`
         },
         {
-        name: "Cadastro PPT",
-        link: `${homeUrl}/cadastroPPT`
-        }
+        name: "Gerenciar PPT",
+        link: `${homeUrl}/listaPPT`
+        },
+        {
+          name: "Detalhes PPT",
+          link: `${homeUrl}/detalhesPPT`
+          },
+        
         ]} icone={<FontAwesomeIcon icon={faBook}  color="black" size="xl"/>}
         />
         </div>
         <div className="navItemContainer">
         <Dropdown titulo='Calendário' itens={[
         {
-        name: "Calendário EMI",
-        link: `${homeUrl}/calendario_EMI`
+        name: "Cadastrar Eventos",
+        link: `${homeUrl}/eventoCalendario`
         },
         {
-        name: "Calendário PROEJA",
-        link: `${homeUrl}/calendario_Proeja`
+        name: "Calendário",
+        link: `${homeUrl}/calendario`
         }
         ]}
         icone={<FontAwesomeIcon icon={faCalendarDays} color="black" size="xl"/>}
@@ -76,21 +81,21 @@ const BaseGestao = () => {
         <div className="navItemContainer">
         <Dropdown titulo='Gerenciar Cadastros' itens={[
         {
-        name: "Cadastro Aluno",
+        name: "Alunos",
         link: `${homeUrl}/cadastroAluno`
         },
         {
-        name: "Cadastro Curso",
-        link: `${homeUrl}/cadastroCurso`
+        name: "Servidores",
+        link: `${homeUrl}/listaServidor`
         },
         {
-        name: "Cadastro Disciplina",
+        name: "Cursos",
+        link: `${homeUrl}/listaCurso`
+        },
+        {
+        name: "Disciplinas",
         link: `${homeUrl}/cadastroDisciplina`
         },
-        {
-        name: "Cadastro Servidor",
-        link: `${homeUrl}/cadastroServidor`
-        }
         ]}
         icone={<FontAwesomeIcon icon={faClipboardList}  color='black' size="xl"/>}
         />  

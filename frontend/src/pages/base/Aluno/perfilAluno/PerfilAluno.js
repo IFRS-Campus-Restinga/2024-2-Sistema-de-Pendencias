@@ -4,94 +4,157 @@ import Button from '../../../../components/Button/Button'
 import { useEffect, useState } from 'react'
 import './PerfilAluno.css'
 import { alunoService } from '../../../../services/alunoService'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
+import Input from '../../../../components/Input/Input'
+import { validarFormulario } from './validacoes'
+import { usuarioBaseService } from '../../../../services/usuarioBaseService'
 
 
 const PerfilAluno = () => {
+    const {idUsuario} = useParams()
     const redirect = useNavigate()
+    const [desabilitado, setDesabilitado] = useState(false)
+    const [erros, setErros] = useState({})
     const [formData, setFormData] = useState({
-        nome_completo: '',
         cpf: '',
         matricula: '',
         data_nascimento: '',
-        telefone: '',
         usuario: jwtDecode(sessionStorage.getItem('token')).idUsuario
+    })
+    const [dadosUsuario, setDadosUsuario] = useState({
+        nome: '',
+        email: ''
     })
 
     const handlerSubmit = async (e) => {
         e.preventDefault()
 
+        const erros = validarFormulario(formData)
+
+        if (Object.keys(erros).length > 0) {
+            setErros(erros)
+        } else {
+            try {
+                const res = await alunoService.addInfos(formData)
+    
+                if (res.status === 201) {
+                    toast.success("Seus dados foram cadastrados com sucesso!, você será redirecionado", {
+                        position: "bottom-center",
+                        autoClose: 3000,
+                        style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
+                        progressStyle: { backgroundColor: '#fff' }
+                    });
+        
+                    setTimeout(() => {
+                        redirect(`/sessao/${jwtDecode(sessionStorage.getItem('token')).perfil}/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`)
+                    }, 2000)
+                } else if (res.status === 200) {
+                    toast.success("Informações atualizadas com sucesso!", {
+                        position: "bottom-center",
+                        autoClose: 3000,
+                        style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center'},
+                        progressStyle: { backgroundColor: '#fff' }
+                    });
+                }
+    
+
+                setErros({})
+            } catch (erro) {
+                console.error('Erro ao cadastrar informações: ', erro)
+                toast.error("Falha na operação. Tente novamente.", {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    style: { backgroundColor: '#d11c28', color: '#fff', textAlign: 'center' },
+                    progressStyle: { backgroundColor: '#fff' }
+                });
+            }
+        }
+    }
+
+    const fetchAluno = async () => {
         try {
-            const res = await alunoService.addInfos(formData)
+            const res = await usuarioBaseService.get(idUsuario)
 
-            if (res.status !== 201) throw new Error(res.mensagem)
+            if (res.status !== 200) throw new Error(res.response.data.mensagem)
 
-            toast.success("Seus dados foram cadastrados com sucesso!, você será redirecionado", {
-                position: "bottom-center",
-                autoClose: 3000,
-                style: { backgroundColor: '#28A745', color: '#fff' },
-                progressStyle: { backgroundColor: '#fff' }
-            });
-
-            setTimeout(() => {
-                redirect(`/sessao/${jwtDecode(sessionStorage.getItem('token')).perfil}/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`)
-            }, 1000);
+            setDadosUsuario({
+                nome: res.data.nome,
+                email: res.data.email
+            })
 
             setFormData({
-                cpf: '',
-                data_nascimento: '',
-                matricula: '',
-                nome_completo: '',
-                telefone: ''
+                cpf: res.data.infos_aluno.cpf,
+                data_nascimento: res.data.infos_aluno.data_nascimento,
+                matricula: res.data.infos_aluno.matricula || res[0].data.email.substring(0, 10),
+                telefone: res.data.infos_aluno.telefone,
+                usuario: jwtDecode(sessionStorage.getItem('token')).idUsuario
             })
-        } catch (erro) {
-            console.log(erro)
-        }
 
+            setDesabilitado(res.data.primeiro_login)
+
+        } catch (erro) {
+            console.error('Erro ao obter dados do usuário: ', erro)
+        }
     }
 
     useEffect(() => {
-
-    }, )
+        fetchAluno()
+    },[])
 
     return (
         <div className='perfilContainer'>
             <div className='containerDados'>
                 <img src={jwtDecode(sessionStorage.getItem('token')).fotoPerfil } className='foto'/>
-                <span className='nomeContainer'>{`${jwtDecode(sessionStorage.getItem('token')).primeiroNome}`}</span>
-                <span className='emailContainer'>2023017100@aluno.restinga.ifrs.edu.br</span>
+                <span className='nomeContainer'>{dadosUsuario.nome}</span>
+                <span className='emailContainer'>{dadosUsuario.email}</span>
             </div>
-            <div className='containerForm'>
-                <ToastContainer/>
-                <FormContainer onSubmit={handlerSubmit} titulo='Dados Adicionais' >
-                    <label className='labelPerfilAluno'> Nome Completo
-                        <input className='inputPerfilAluno' type='text' 
-                        onChange={(e) => setFormData(prevData => ({ ...prevData, nome_completo: e.target.value }))}/>
-                    </label>
-                    <label className='labelPerfilAluno'> CPF
-                        <input className='inputPerfilAluno' type='text'            
+            <ToastContainer/>
+            <FormContainer onSubmit={handlerSubmit} titulo='Dados Adicionais' >
+                <label className='labelPerfilAluno'> CPF
+                    <Input
+                        tipo='text'
                         onChange={(e) => setFormData(prevData => ({ ...prevData, cpf: e.target.value }))}
-                        />
-                    </label>
-                    <label className='labelPerfilAluno'> Matrícula
-                        <input className='inputPerfilAluno' type='text'            
+                        valor={formData.cpf || ''}
+                        erro={erros.cpf}
+                        alinharCentro={true}
+                    />
+                    {erros.cpf ? <p className='erro'>{erros.cpf}</p> : <></>}
+                </label>
+                <label className='labelPerfilAluno'> Matrícula
+                    <Input
+                        tipo='text'
                         onChange={(e) => setFormData(prevData => ({ ...prevData, matricula: e.target.value }))}
-                        />
-                    </label>
-                    <label className='labelPerfilAluno'> Data de Nascimento
-                        <input className='inputPerfilAluno' type='date'
+                        valor={formData.matricula || ''}
+                        erro={erros.matricula}
+                        alinharCentro={true}
+                    />
+                    {erros.matricula ? <p className='erro'>{erros.matricula}</p> : <></>}
+                </label>
+                <label className='labelPerfilAluno'> Data de Nascimento
+                    <Input
+                        tipo='date'
                         onChange={(e) => setFormData(prevData => ({ ...prevData, data_nascimento: e.target.value }))}
-                        />
-                    </label>
-                    <label className='labelPerfilAluno'> Telefone
-                        <input className='inputPerfilAluno' type='tel' 
+                        valor={formData.data_nascimento || ''}
+                        erro={erros.data_nascimento}
+                        alinharCentro={true}
+                        desabilitado={desabilitado}
+                    />
+                    {erros.data_nascimento ? <p className='erro'>{erros.data_nascimento}</p> : <></>}
+                </label>
+                <label className='labelPerfilAluno'> Telefone
+                    <Input
+                        tipo='telephone'
                         onChange={(e) => setFormData(prevData => ({ ...prevData, telefone: e.target.value }))}
-                        />
-                    </label>
-                    <Button tipo='submit' text='Salvar Dados'/>        
-                </FormContainer>
-            </div>
+                        valor={formData.telefone || ''}
+                        erro={erros.telefone}
+                        alinharCentro={true}
+                        desabilitado={false}
+                    />
+                    {erros.telefone ? <p className='erro'>{erros.telefone}</p> : <></>}
+                </label>
+                <Button tipo='submit' text='Salvar Dados'/>        
+            </FormContainer>
         </div>
     )
 }

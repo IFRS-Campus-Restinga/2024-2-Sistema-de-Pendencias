@@ -1,25 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ListarServidor.css';
-import Button from "../../../../components/Button/Button";
 import FormContainer from '../../../../components/FormContainer/FormContainer'
-import Deletar from "../../../../assets/deletar-preto.png";
-import Visualizar from "../../../../assets/visualizar-preto.png";
+import Button from "../../../../components/Button/Button";
+import Input from '../../../../components/Input/Input';
+import Lupa from "../../../../assets/lupa.png";
 import Ordenar from "../../../../assets/ordenar-branco.png";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import servidorService from '../../../../services/servidorService';
-import Input from '../../../../components/Input/Input';
+import { Link } from 'react-router-dom'
+import { jwtDecode } from 'jwt-decode'
+import { useNavigate } from 'react-router-dom';
 
 const ListarServidor = () => {
   const [servidores, setServidores] = useState([]);
   const [servidoresFiltrados, setServidoresFiltrados] = useState([]);
   const [ordenacao, setOrdenacao] = useState({ coluna: '', ordem: 'asc' });
+  const [perfilFiltro, setPerfilFiltro] = useState('');
+  const [nomeFiltro, setNomeFiltro] = useState('');
+  const [matriculaFiltro, setMatriculaFiltro] = useState('');
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
-  const [nomeFiltro, setNomeFiltro] = useState('');
-  const [perfilFiltro, setPerfilFiltro] = useState('');
-  const [matriculaFiltro, setMatriculaFiltro] = useState('');
+  const [statusFiltro, setStatusFiltro] = useState('');
+
+  const navigate = useNavigate();
+
+  const handleClick = (servidor) => {
+    navigate(`/sessao/GestaoEscolar/2/listaServidor/${servidor.id}/visualizarServidor`, { state: { servidor }});
+  };
 
   const perfilMap = {
     'GestaoEscolar': 'Gestão Escolar',
@@ -39,7 +48,7 @@ const ListarServidor = () => {
       console.error('Erro ao buscar servidores:', error);
     }
   };
-
+ 
   const ordenarPorColuna = (coluna) => {
     const novaOrdem = ordenacao.coluna === coluna && ordenacao.ordem === 'asc' ? 'desc' : 'asc';
   
@@ -71,6 +80,7 @@ const ListarServidor = () => {
     setNomeFiltro('');
     setPerfilFiltro('');
     setMatriculaFiltro('');
+    setStatusFiltro('');
     fetchServidores();
 
     setOrdenacao({ coluna: '', ordem: 'asc' });
@@ -87,29 +97,15 @@ const ListarServidor = () => {
 
   const filtrarServidores = () => {
     const servidoresFiltrados = servidores.filter(servidor => 
-      (!nomeFiltro || servidor.first_name.toLowerCase().includes(nomeFiltro.toLowerCase())) &&
+      (!nomeFiltro || (servidor.first_name && servidor.first_name.toLowerCase().includes(nomeFiltro.toLowerCase()))) &&
       (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
       (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
       (!perfilFiltro || servidor.perfil === perfilFiltro) &&
       (!matriculaFiltro || (servidor.matricula && servidor.matricula.includes(matriculaFiltro)))
+      (!statusFiltro || (servidor.status && servidor.status.includes(statusFiltro)))
     );
     setServidoresFiltrados(servidoresFiltrados);
   };
-
-
-  const deletarServidor = async (id, nome) => {
-    const confirmar = window.confirm(`Você tem certeza que quer remover ${nome}?`);
-    if (!confirmar) return;
-
-    try {
-        await axios.delete(`http://127.0.0.1:8000/api/deletar-servidor/${id}/`);
-        toast.success('Servidor removido do sistema.', { className:"toast-success"});
-        fetchServidores();
-    } catch (error) {
-        console.error('Erro ao deletar servidor:', error);
-        toast.error('Erro ao remover servidor.');
-    }
-};
 
 return (
   <>
@@ -179,6 +175,11 @@ return (
         onClick={limparBusca}
         color="#4A4A4A"
       />
+      <Link to={`/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroServidor`}>
+        <Button 
+          text='Adicionar novo'
+        />
+      </Link>
     </span>
     <div className='tabelaContainerListarServidor'>
       <table className='tabelaListarServidor'>
@@ -229,6 +230,13 @@ return (
                 <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
               )}
             </th>
+            <th onClick={() => ordenarPorColuna('status')}>
+              Status
+              {ordenacao.coluna === 'status' && (
+                <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
+              )}
+            </th>
+
             <th></th>
           </tr>
         </thead>
@@ -241,19 +249,14 @@ return (
               <td>{servidor.matricula || '-'}</td>
               <td>{servidor.email || '-'}</td>
               <td>{servidor.data_ingresso || '-'}</td>
+              <td>{servidor.status || '-'}</td>
               <td className='icone-container'>
               <img 
                 className='iconeAcoes'
-                src={Visualizar} 
+                src={Lupa} 
                 alt="Visualizar" 
-                onClick={() => console.log('Visualizar servidor')} 
+                onClick={() => handleClick(servidor)}
                 title="Visualizar"/>
-              <img 
-                className='iconeAcoes'
-                src={Deletar} 
-                alt="Deletar" 
-                onClick={() => deletarServidor(servidor.id, servidor.nome)} 
-                title="Deletar"/>
             </td>
             </tr>
           ))}

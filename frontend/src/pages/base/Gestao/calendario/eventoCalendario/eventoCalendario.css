@@ -1,4 +1,3 @@
-
 /* Botão de submit estilizado */
 button[type="submit"] {
   background-color: #006400;
@@ -23,17 +22,10 @@ button[type="submit"] {
   border-color: red !important;
 }
 
-/* Estilização específica para campos de data */
-input[type="date"] {
-  width: 30%;
-  padding: 8px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
 /* Estilo para o campo Título */
 #titulo {
   width: 100%;
+  min-width: 200px;
   padding: 12px;
   margin-top: 5px;
   margin-bottom: 15px;
@@ -53,8 +45,25 @@ input[type="date"] {
   border-radius: 8px;
   font-size: 15px;
   box-sizing: border-box;
-  min-height: 100px; /* para destacar como área de texto */
-  resize: vertical; /* permite redimensionar verticalmente */
+  min-height: 100px;
+  /* para destacar como área de texto */
+  resize: vertical;
+  /* permite redimensionar verticalmente */
+}
+
+/* Estilo para o campo Hora */
+#hora {
+  margin: 8px;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+/* Estilo para o checkbox */
+#dia_todo {
+  accent-color: #006400;
+  margin: 5px;
+  margin-top: 5px;
+  margin-bottom: 15px;
 }
 
 /* Estilo para o campo Tipo de Calendário */
@@ -71,7 +80,7 @@ input[type="date"] {
   box-sizing: border-box;
 }
 
-.labelCustomizado{
+.labelCustomizado {
   display: block;
   font-weight: bold;
   font-size: 18px;

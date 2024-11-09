@@ -15,5 +15,5 @@ export const disciplinaService = {
     }) 
 
     return res
-  }
+  },
 }

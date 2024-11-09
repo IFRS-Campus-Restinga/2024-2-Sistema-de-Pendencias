@@ -49,7 +49,32 @@ const servidorService = {
         })
 
         return res
-    }
+    },
+
+    addInfos: async (params) => {
+        const res = await api.post('api/dados-adicionais-professor/', params).catch((erro) => {
+            return erro
+        })
+
+        return res
+    },
+
+    visualizar: async (idServidor) => {
+        try {
+            const res = await api.get(`/api/visualizar-servidor/${idServidor}/`);
+            return res.data;  // Retorna os dados da resposta caso a requisição seja bem-sucedida
+        } catch (erro) {
+            // Trata o erro e retorna uma resposta clara de falha
+            console.error(`Erro ao visualizar servidor com ID ${idServidor}:`, erro);
+            return {
+                sucesso: false,
+                mensagem: erro.response?.data?.mensagem || 'Erro ao tentar visualizar o servidor.',
+                status: erro.response?.status || 500
+            };
+        }
+    },
+    
+
 };
 
 export default servidorService;

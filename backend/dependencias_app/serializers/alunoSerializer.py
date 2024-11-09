@@ -4,8 +4,7 @@ from dependencias_app.models.aluno import Aluno
 class AlunoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Aluno
-        fields = ['id', 'nome_completo', 'cpf', 'data_nascimento', 'matricula', 'telefone', 'usuario']
-        fields = '__all__'
+        fields = ['id', 'cpf', 'data_nascimento', 'matricula', 'telefone', 'usuario']
 
     def save(self, **kwargs):
         formAluno = super().save(**kwargs)

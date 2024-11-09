@@ -10,36 +10,37 @@ from dependencias_app.utils.error_handler import handle_view_errors
 
 @api_view(['POST'])
 def cadastrar_disciplina(request):
-    """
-    Função que realiza o cadastro de uma nova Disciplina a partir do JSON recebido.
-    Espera receber um JSON com os campos da Disciplina; caso contrário, retorna um erro.
-    """
     curso_id = request.data.get('curso', None)
+    disciplinas = request.data.get('disciplinas', None)
+    novas_disciplinas = request.data.get('novasDisciplinas', None)
 
-    # Verifica se o curso existe
     try:
-        curso = Curso.objects.get(pk=curso_id)
-    except Curso.DoesNotExist:
-        return Response({"error": "Curso não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        print(request.data)
+        curso = get_object_or_404(Curso, pk=curso_id)
 
-    # Cria um dicionário de dados para o serializer
-    data = request.data.copy()  # Faz uma cópia para evitar problemas
-    data['curso'] = curso.id  # Adiciona o ID do curso
+        # Cria novas disciplinas e vincula ao curso
+        for disciplina in novas_disciplinas:
+            serializer = DisciplinaSerializer(data={
+                'nome': disciplina.get('nome'),
+                'carga_horaria': disciplina.get('carga_horaria'),
+                'cursos': [curso.id]
+            })
 
-    print(data)
-    # Cria e valida o serializer
-    serializer = DisciplinaSerializer(data=data)
+            if not serializer.is_valid(): raise Exception(serializer.errors)
 
-    if not serializer.is_valid():
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Retorna os erros de validação
+            serializer.save()
 
-    # Salva a nova disciplina
-    serializer.save()
+        # busca disciplinas já existentes para vincular
+        for id in disciplinas:
+            disciplina = get_object_or_404(Disciplina, pk=id)
+            disciplina.cursos.add(curso)
 
-    return Response({
-        "message": "Disciplina criada com sucesso.",
-        "data": serializer.data
-    }, status=status.HTTP_201_CREATED)
+        return Response({'mensagem': 'Disciplinas cadastradas com sucesso!'}, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 @api_view(['GET'])
 @handle_view_errors

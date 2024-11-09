@@ -18,22 +18,13 @@
     border-radius: 50%;
 }
 
-.containerForm {
-    width: 90%;
-    display: flex;
-    justify-content: center;
-}
-
 .containerDados {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    justify-self: center;
     width: 50%;
     height: fit-content;
-    justify-content: center;
-    align-items: center;
     margin: 10px;
     padding: 20px;
     background-color: #fff;
@@ -50,16 +41,26 @@
 }
 
 .labelPerfilAluno {
-    width: 100%;
+    width: 60%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    align-self: center;
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 15px;
 }
 
 .inputPerfilAluno {
     margin: 10px;
     width: 80%;
+}
+
+.erro {
+    font-weight: 500;
+    color: red;
+    font-size: 12px;
 }
 
 @media (max-width: 760px) {
@@ -68,5 +69,17 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .nomeContainer {
+        font-size: 20px;
+    }
+
+    .emailContainer {
+        word-break: break-all;
+        text-align: center;
+        font-size: 10px;
     }
 }
