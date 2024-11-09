@@ -38,8 +38,9 @@ urlpatterns = [
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),
     path('listar-eventos/', listar_eventos, name='listar_eventos'),
-    path('atualizar-eventos/', atualizar_evento, name='atualizar_eventos'),
-    path('deletar-eventos/', deletar_evento, name='deletar_eventos'),
+    path('editar-evento/<int:evento_id>/', atualizar_evento, name='atualizar_evento'),
+    path('deletar-evento/<int:evento_id>/', deletar_evento, name='deletar_evento'),
+    path('eventos/<int:evento_id>/', obter_evento, name='obter_evento'),
     
 
     # views de lista de usuários

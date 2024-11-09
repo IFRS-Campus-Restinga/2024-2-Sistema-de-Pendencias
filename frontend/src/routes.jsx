@@ -82,6 +82,10 @@ const router = createBrowserRouter([
                 element: <EventoCalendarioPage />
             },
             {
+                path: ':idUsuario/calendario/evento/:idEvento',
+                element: <EventoCalendarioPage />
+            },
+            {
                 path: ':idUsuario/calendario',
                 element: <CalendarioPage />
             },

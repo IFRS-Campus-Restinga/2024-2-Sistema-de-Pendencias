@@ -21,16 +21,15 @@ export const eventoCalendarioService = {
         }
     },
 
-
     update: async (id, params) => {
         try {
-            const res = await api.put(`api/editar-evento/${id}/`, params); // Altere o endpoint conforme necessário
+            const res = await api.put(`api/editar-evento/${id}/`, params);
             return res;
         } catch (erro) {
             console.error("Erro ao atualizar evento:", erro);
             throw erro;
         }
-    },
+},
 
     delete: async (id) => {
         try {
@@ -38,6 +37,16 @@ export const eventoCalendarioService = {
             return res;
         } catch (erro) {
             console.error("Erro ao deletar evento:", erro);
+            throw erro;
+        }
+    },
+
+    getEventoById: async (id) => {
+        try {
+            const res = await api.get(`api/eventos/${id}/`);
+            return res;
+        } catch (erro) {
+            console.error("Erro ao buscar evento:", erro);
             throw erro;
         }
     }

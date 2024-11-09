@@ -76,3 +76,17 @@ def deletar_evento(request, evento_id):
     except Exception as e:
         logger.error('Erro ao deletar evento: %s', str(e))
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def obter_evento(request, evento_id):
+    try:
+        evento = Evento.objects.get(id=evento_id)
+        serializer = EventoSerializer(evento)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Evento.DoesNotExist:
+        logger.error('Evento não encontrado: ID %s', evento_id)
+        return Response({'mensagem': 'Evento não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error('Erro ao obter evento: %s', str(e))
+        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
