@@ -27,7 +27,6 @@ def cadastrar_aluno(request):
 
         # valida o grupo 
         grupo = Group.objects.get(name='Aluno')
-        print(grupo)
         
         #  adiciona o id do grupo a data e envia para o serializador
         data['grupo'] = grupo.id

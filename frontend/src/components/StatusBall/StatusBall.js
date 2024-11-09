@@ -13,13 +13,13 @@ const StatusBalls = ({ status }) => {
 
     // Função que retorna a classe 'active' dependendo do índice da bola
     const getStatusClass = (index) => {
-        if (activeStatus === 'finalizada') {
+        if (activeStatus === 'Finalizada') {
             return 'active'; // Se a tarefa está finalizada, todas as bolas ficam ativas
         }
-        if (activeStatus === 'em andamento' && index < 2) {
+        if (activeStatus === 'Em andamento' && index < 2) {
             return 'active'; // Se a tarefa está em andamento, bolas 1 e 2 ficam ativas
         }
-        if (activeStatus === 'criada' && index === 0) {
+        if (activeStatus === 'Criada' && index === 0) {
             return 'active'; // Se a tarefa foi criada, só a bola 1 fica ativa
         }
         return ''; // Caso contrário, nenhuma bola fica ativa

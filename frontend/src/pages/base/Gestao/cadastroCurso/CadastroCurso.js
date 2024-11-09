@@ -9,13 +9,16 @@ import Input from '../../../../components/Input/Input';
 import "./CadastroCurso.css";
 import Switch from "../../../../components/Switch/Switch";
 import { ToastContainer, toast } from "react-toastify";
+import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 
 const CadastroCurso = () => {
   const [modalidade, setModalidade] = useState("Integrado");
+  const [opcoesCoordenadores, setOpcoesCoordenadores] = useState([])
   const [formData, setFormData] = useState({
     nome: '',
     carga_horaria: '',
     modalidade: modalidade,
+    coordenador: '',
     turmas: []
   });
   const [errors, setErrors] = useState({});
@@ -75,6 +78,7 @@ const CadastroCurso = () => {
           nome: '',
           carga_horaria: '',
           modalidade: 'Integrado',
+          coordenador: '',
           turmas: []
         });
         setErrors({});
@@ -90,6 +94,16 @@ const CadastroCurso = () => {
       }
     }
   };
+
+  const fetchCoordenadores = async (e) => {
+    try {
+      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Coordenador')
+
+      setOpcoesCoordenadores(res.data)
+    } catch (error) {
+      console.error('Erro ao buscar coordenadores: ', error)
+    }
+  }
 
   const handleBlur = (campo) => {
     const error = validarCampo(campo, formData[campo]);
@@ -139,6 +153,41 @@ const CadastroCurso = () => {
           {errors.carga_horaria && <p className="error">{errors.carga_horaria}</p>}
         </div>
 
+        <label className="labelCadastroCurso">
+          Coordenador
+            <Input
+              tipo='text'
+              nome='coordenador'
+              onChange={(e) => {
+                fetchCoordenadores(e)
+                
+                if (opcoesCoordenadores) {
+                  const param = e.target.value
+                  console.log(e.target.value)
+
+                  const coordenador = opcoesCoordenadores.find((coordenador) => param === coordenador.nome || param === coordenador.email)
+
+                  if (coordenador) setFormData({...formData, coordenador: coordenador.id})
+                }
+
+              }}
+              onBlur={() => handleBlur('coordenador')}
+              erro={errors.coordenador}
+              textoAjuda='Insira nome ou email do coordenador'
+              lista={'opcoesCoordenadores'}
+            />
+          </label>
+          <datalist className="datalistCadastroCurso" id="opcoesCoordenadores">
+            {
+              opcoesCoordenadores ? (opcoesCoordenadores.map((coordenador) => (
+                <option className="optionCadastroCurso" 
+                  value={coordenador.nome || coordenador.email}>
+                    {coordenador.nome || coordenador.email}
+                </option>
+              ))) : (<option>Nenhum coordenador encontrado</option>)
+            }
+          </datalist>
+          <br/>
         <div className="add-turma">
           <button type="button" onClick={addTurma} className="add-button">
             <FontAwesomeIcon
@@ -151,7 +200,7 @@ const CadastroCurso = () => {
         
         {formData.turmas.length > 0 && (
           <div className="turmas-lista">
-            <table className="turmas-tabela">
+            <table className="tabelaCadastroCurso">
               <thead className="cabecalhoTabelaCadastroCurso">
                 <tr>
                   <th>Número da Turma</th>

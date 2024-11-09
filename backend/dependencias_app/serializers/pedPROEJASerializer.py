@@ -2,7 +2,7 @@ from rest_framework import serializers
 from google_auth.models import UsuarioBase
 from dependencias_app.models.curso import Curso
 from dependencias_app.models.disciplina import Disciplina
-from dependencias_app.models.pedEMI import PED_EMI
+from dependencias_app.models.pedPROEJA import PED_PROEJA
 from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
 from dependencias_app.serializers.cursoSerializer import CursoSerializer
 from dependencias_app.serializers.disciplinaSerializer import DisciplinaSerializer
@@ -12,11 +12,11 @@ from dependencias_app.serializers.formEncerramentoSerializer import FormEncerram
 class PED_EMISerializer(serializers.ModelSerializer):
     aluno = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Aluno'))
     professor = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
-    curso = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.filter(modalidade='Integrado'))
+    curso = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.filter(modalidade='PROEJA'))
     disciplina = serializers.PrimaryKeyRelatedField(queryset=Disciplina.objects.all())
 
     class Meta:
-        model = PED_EMI
+        model = PED_PROEJA
         fields = '__all__'
     
     def save(self, **kwargs):
@@ -64,5 +64,3 @@ class PED_EMISerializer(serializers.ModelSerializer):
 
         # retorna os dados em vez de apenas os id's que fazem o vinculo entre cada instância da PED
         return representation
-
-

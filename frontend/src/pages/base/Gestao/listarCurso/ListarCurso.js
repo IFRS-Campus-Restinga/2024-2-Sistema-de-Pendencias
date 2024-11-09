@@ -87,14 +87,6 @@ const ListarCursos = () => {
                                     <option value="ProEJA">ProEJA</option>
                                 </select>
                             </span>
-                            <span className="spanListarCursos">
-                                <label className='labelListarCursos'>Filtrar por Turma</label>
-                                <Input
-                                    tipo='text'
-                                    valor={turmaFiltro}
-                                    onChange={(e) => setTurmaFiltro(e.target.value)}
-                                />
-                            </span>
                         </div>
                     </div>
                     <div className='divListarCursos'>
@@ -136,9 +128,6 @@ const ListarCursos = () => {
                                         <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
                                     )}
                                 </th>
-                                <th>
-                                    Turma
-                                </th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
@@ -148,15 +137,6 @@ const ListarCursos = () => {
                                     <td>{curso.modalidade}</td>
                                     <td>{curso.nome}</td>
                                     <td>{curso.carga_horaria}</td>
-                                    <td>
-                                        {curso.turmas && curso.turmas.length > 0 ? (
-                                            curso.turmas.map((turma, index) => (
-                                                <div key={index}>{turma.numero}</div>
-                                            ))
-                                        ) : (
-                                            <div>Nenhuma turma disponível</div>
-                                        )}
-                                    </td>
                                     <td className='icone-container'>
                                         <img 
                                             className='iconeAcoes'

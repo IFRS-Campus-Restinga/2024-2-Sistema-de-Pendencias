@@ -1,19 +1,4 @@
-.formContainer {
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 600px;
-    width: 100%;
-  }
-
-.main-title {
-    display: flex;
-    justify-content: center;
-    align-self: center;
-}
-
-.green-bar-container{
+.green-bar-container {
     display: flex;
     justify-content: center;
     width: 100%;
@@ -27,7 +12,7 @@
     background-color: #006b3f;
     width: 100%;
     margin-top: 40px;
-    padding: 10px 20px;  
+    padding: 10px 20px;
     border-radius: 8px;
     color: white;
 }
@@ -40,10 +25,10 @@
 .info-item {
     display: flex;
     justify-content: flex-start;
-    margin-bottom: 12px; 
+    margin-bottom: 12px;
 }
 
-.info-textarea{
+.info-textarea {
     display: flex;
     justify-content: flex-start;
     flex-direction: column;
@@ -53,31 +38,31 @@
 .h3-info {
     font-size: 18px;
     font-weight: bold;
-    margin-right: 10px; 
+    margin-right: 10px;
 }
 
 .info-value {
     font-size: 18px;
-    color: #333; 
+    color: #333;
 }
 
 #textarea {
-    width: 70%; 
+    width: 70%;
     height: 120px;
     padding: 12px;
-    border: 2px solid #ccc; 
-    border-radius: 8px; 
-    resize: vertical; 
-    font-size: 16px; 
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    resize: vertical;
+    font-size: 16px;
     font-family: Arial, sans-serif;
-    color: #333; 
+    color: #333;
     background-color: #f9f9f9;
-    transition: border-color 0.3s, box-shadow 0.3s; 
+    transition: border-color 0.3s, box-shadow 0.3s;
     margin-top: 10px;
 }
 
 #textarea:focus {
-    border-color: #28A745; 
+    border-color: #28A745;
     box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
-    outline: none; 
+    outline: none;
 }

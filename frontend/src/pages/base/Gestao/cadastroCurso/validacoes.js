@@ -16,6 +16,14 @@ export const validarCargaHoraria = (carga_horaria) => {
     return '';
 };
 
+export const validarCoordenador = (coordenador) => {
+    if (!coordenador) return 'Campo obrigatório'
+
+    if (isNaN(coordenador)) return 'Coordenador inválido'
+
+    return ''
+}
+
 // Validação para o campo "curso"
 export const validarCurso = (curso) => {
     if (curso.length === 0) {
@@ -56,6 +64,9 @@ export const validarFormularioCurso = (formData) => {
     const erroCurso = validarCurso(formData.nome);
     if (erroCurso) erros.nome = erroCurso;
 
+    const erroCoordenador = validarCoordenador(formData.coordenador);
+    if (erroCoordenador) erros.coordenador = erroCoordenador;
+
     const erroCargaHoraria = validarCargaHoraria(formData.carga_horaria);
     if (erroCargaHoraria) erros.carga_horaria = erroCargaHoraria;
 
@@ -79,6 +90,8 @@ export const validarCampo = (campo, valor) => {
             return validarCargaHoraria(valor);
         case 'turma':
             return validarTurma(valor);
+        case 'coordenador':
+            return validarCoordenador(valor);
         default:
             return '';
     }

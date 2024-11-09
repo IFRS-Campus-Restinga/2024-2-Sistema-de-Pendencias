@@ -4,11 +4,12 @@ import { PPTService } from '../../../../services/emiPptService'
 import FormContainer from '../../../../components/FormContainer/FormContainer'
 import Input from '../../../../components/Input/Input'
 import Button from '../../../../components/Button/Button'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 
 
 const ListarPPT = () => {
+    const navegar = useNavigate();
     const [listaPPT, setListaPPT] = useState([])
     const [dependenciasFiltradas, setDependenciasFiltradas] = useState([])
     const [formData, setFormData] = useState({
@@ -40,11 +41,20 @@ const ListarPPT = () => {
         setDependenciasFiltradas(dependenciasFiltradas);
       };
 
+    const detalhesPpt = async (id) => {
+        try {
+            console.log("id:", id);
+            navegar(`/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/detalhesPPT/${id}`)
+        } catch (error) {
+            console.error('Erro ao abrir detalhes: ', error)
+        }
+    }
+
     const fetchPPT = async () => {
         try {
             const res = await PPTService.list()
 
-            if (res.status != 200) throw new Error(res.response.data.mensagem)
+            if (res.status !== 200) throw new Error(res.response.data.mensagem)
             
             setListaPPT(res.data)
             console.log(res.data)
@@ -91,7 +101,6 @@ const ListarPPT = () => {
                 <table className='tabelaListarPPT'>
                     <thead className='cabecalhoListarPPT'>
                         <th>Aluno</th>
-                        <th>Professor</th>
                         <th>Curso</th>
                         <th>Disciplina</th>
                         <th>Turma de Origem</th>
@@ -100,13 +109,13 @@ const ListarPPT = () => {
                         <th>Situação</th>
                         <th>Data Início</th>
                         <th>Data Final</th>
+                        <th>Ações</th>
                     </thead>
                     <tbody className='corpoListarPPT'>
                         {
                             listaPPT.map((ppt) => (
                                 <tr>
                                     <td>{ppt.aluno.nome || '-'}</td>
-                                    <td>{ppt.professor.nome || '-'}</td>
                                     <td>{ppt.curso.nome}</td>
                                     <td>{ppt.disciplina.nome}</td>
                                     <td>{ppt.turmaOrigem.numero}</td>
@@ -115,6 +124,7 @@ const ListarPPT = () => {
                                     <td>{ppt.situacao}</td>
                                     <td>{new Date(ppt.dataInicio).toLocaleDateString('pt-BR')}</td>
                                     <td>{new Date(ppt.dataFim).toLocaleDateString('pt-BR')}</td>
+                                    <td><Button text="cu" onClick={() => detalhesPpt(ppt.id)}>cu</Button></td>
                                 </tr>
                                 
                             ))

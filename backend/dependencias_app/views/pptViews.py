@@ -20,8 +20,6 @@ def cadastrar_ppt(request):
     try:
         data = request.data
 
-        print(data)
-
         serializer = PPTSerializer(data=data)
         
         if serializer.is_valid():
@@ -37,9 +35,20 @@ def cadastrar_ppt(request):
 @permission_classes([GestaoEscolar])
 def listar_ppt(request):
     try:
-        lista_ppt = get_list_or_404(PPT)
+        lista_ppt = PPT.objects.all()
 
         serializer = PPTSerializer(lista_ppt, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem: ', str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([GestaoEscolar])
+def listar_ppt_id(request, idPpt):
+    try:
+        ppt = PPT.objects.get(id=idPpt)
+        serializer = PPTSerializer(ppt)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:

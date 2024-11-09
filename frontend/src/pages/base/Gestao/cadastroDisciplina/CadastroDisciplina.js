@@ -8,10 +8,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import Input from "../../../../components/Input/Input";
 import './CadastroDisciplina.css'
+import { validarCampo, validarFormularioDisciplina } from "./validacoes";
+import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 
 const CadastroDisciplina = () => {
+  const [opcoesProfessores, setOpcoesProfessores] = useState([])
   const [cursos, setCursos] = useState([]);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
   const [disciplinas, setDisciplinas] = useState([]);
   const [formData, setFormData] = useState({
     curso: '',
@@ -40,52 +43,80 @@ const CadastroDisciplina = () => {
       if (response.status !== 200) throw new Error(response.data.mensagem)
 
       setDisciplinas(response.data)
-
-      console.log(response.data)
     } catch (error) {
       console.error("Erro ao buscar disciplinas", error)
       
     }
   }
+
+  const fetchProfessores = async (e) => {
+    try {
+      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Professor')
+
+      setOpcoesProfessores(res.data)
+    } catch (error) {
+      console.error('Erro ao buscar professores: ', error)
+    }
+  }
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Dados do formulário:', formData); // Log dos dados do formulário
 
-    try {
-      const response = await disciplinaService.create(formData); // Envia os dados do formulário
-      
-      if (response.status !== 201) throw new Error(response.response.data.mensagem)
+    const erros = validarFormularioDisciplina(formData)
 
-      toast.success("Curso cadastrado com sucesso!", {
-        position: "bottom-center",
-        autoClose: 3000,
-        style: { backgroundColor: '#28A745', color: '#fff' },
-        progressStyle: { backgroundColor: '#fff' }
+
+    
+    if(erros.curso === '' && erros.novasDisciplinas.some((erro) => Object.keys(erro).length !== 0)) {
+      setErrors(erros)
+    } else {
+      try {
+        const response = await disciplinaService.create(formData); // Envia os dados do formulário
+        
+        if (response.status !== 201) throw new Error(response.response.data.mensagem)
+  
+        toast.success("Curso cadastrado com sucesso!", {
+          position: "bottom-center",
+          autoClose: 3000,
+          style: { backgroundColor: '#28A745', color: '#fff' },
+          progressStyle: { backgroundColor: '#fff' }
+        });
+  
+        setFormData({
+          curso: '',
+          disciplinas: [],
+          novasDisciplinas: []
+        })
+
+        setErrors({})
+      } catch (erro) {
+        console.error('Erro ao cadastrar disciplina!', erro);
+  
+        toast.error('Erro ao cadastrar curso, tente novamente', {
+          position: "bottom-center",
+          autoClose: 3000,
+          style: { backgroundColor: '#d11c28', color: '#fff', textAlign: 'center' },
+          progressStyle: { backgroundColor: '#fff' }
+        });
+      }
+    };
+  }
+
+  const handleBlur = (campo) => {
+    const error = validarCampo(campo, formData[campo]);
+    if (error) {
+      setErrors((prevErrors) => ({ ...prevErrors, [campo]: error }));
+    } else {
+      setErrors((prevErrors) => {
+        const { [campo]: removed, ...rest } = prevErrors;
+        return rest;
       });
-
-      setFormData({
-        curso: '',
-        disciplinas: [],
-        novasDisciplinas: []
-      })
-    } catch (erro) {
-      console.error('Erro ao cadastrar disciplina!', erro);
-
-      toast.error('Erro ao cadastrar curso, tente novamente', {
-        position: "bottom-center",
-        autoClose: 3000,
-        style: { backgroundColor: '#d11c28', color: '#fff', textAlign: 'center' },
-        progressStyle: { backgroundColor: '#fff' }
-      });
-      console.log('Erro ao cadastrar curso!', erro);
     }
   };
 
   const addDisciplina = () => {
     setFormData((prevData) => ({
       ...prevData,
-      novasDisciplinas: [...prevData.novasDisciplinas, { nome: '', carga_horaria: ''}],
+      novasDisciplinas: [...prevData.novasDisciplinas, { nome: '', carga_horaria: '', professor: ''}],
     }));
   }
 
@@ -128,6 +159,7 @@ const CadastroDisciplina = () => {
                   onChange={(e) => {
                     setFormData({ ...formData, curso: e.target.value })
                   }}
+                  onBlur={() => handleBlur('curso')}
                   required
                 >
                   <option className='optionCadastroDisciplina' value={''}>Selecione um curso</option>
@@ -152,6 +184,7 @@ const CadastroDisciplina = () => {
                     <tr>
                       <th>Nome</th>
                       <th>Carga Horaria</th>
+                      <th>Professor</th>
                     </tr>
                   </thead>
                   <tbody className="corpoCadastroDisciplina">
@@ -161,6 +194,7 @@ const CadastroDisciplina = () => {
                           <Input
                             tipo="text"
                             valor={disciplina.nome}
+                            onBlur={() => handleBlur('novaDisciplina')}
                             onChange={(e) => {
                               const novoNome = e.target.value;
                               setFormData((prevData) => {
@@ -172,12 +206,14 @@ const CadastroDisciplina = () => {
                                 return { ...prevData, novasDisciplinas };
                               });
                             }}
+                            erro={errors?.novasDisciplinas?.[index]?.nome}
                           />
                         </td>
                         <td className='celulaCadastroDisciplina'>
                           <Input
                             tipo="number"
-                            valor={disciplina.carga_horaria || ''}
+                            valor={disciplina.carga_horaria}
+                            onBlur={() => {handleBlur('novaDisciplina')}}
                             onChange={(e) => {
                               const novaCargaHoraria = e.target.value;
                               setFormData((prevData) => {
@@ -189,7 +225,46 @@ const CadastroDisciplina = () => {
                                 return { ...prevData, novasDisciplinas };
                               });
                             }}
+                            erro={errors?.novasDisciplinas?.[index]?.carga_horaria}
                           />
+                        </td>
+                        <td>
+                          <Input
+                            tipo='text'
+                            nome='professor'
+                            onChange={(e) => {
+                              fetchProfessores(e)
+                              
+                              if (opcoesProfessores) {
+                                const param = e.target.value
+
+                                const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
+
+                                if (professor) setFormData((prevData) => {
+                                  const novasDisciplinas = [...prevData.novasDisciplinas];
+                                  novasDisciplinas[index] = {
+                                    ...novasDisciplinas[index],
+                                    professor: professor.id,
+                                  };
+                                  return { ...prevData, novasDisciplinas };
+                                })
+                              }
+                            }}
+                            onBlur={() => handleBlur('professor')}
+                            erro={errors?.novasDisciplinas?.[index]?.nome}
+                            textoAjuda='Insira nome ou email do professor'
+                            lista={'opcoesProfessores'}
+                          />
+                          <datalist className="datalistCadastroCurso" id="opcoesProfessores">
+                            {
+                              opcoesProfessores ? (opcoesProfessores.map((professor) => (
+                                <option className="optionCadastroCurso" 
+                                  value={professor.nome || professor.email}>
+                                    {professor.nome || professor.email}
+                                </option>
+                              ))) : (<option>Nenhum professor encontrado</option>)
+                            }
+                          </datalist>
                         </td>
                       </tr>
                     ))}
@@ -197,7 +272,7 @@ const CadastroDisciplina = () => {
                 </table>
               </div>
             </div>
-            <div className='divCadastroDisciplina'>
+            <div className='divVincularDisciplina'>
               {
                 disciplinas.length !== 0 ? (
                   <>

@@ -1,3 +1,7 @@
+.formContainer {
+    max-width: 90%;
+}
+
 .sectionListarPPT {
     display: flex;
     width: 100%;
