@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { ptBR } from 'date-fns/locale';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { eventoCalendarioService } from '../../../../services/eventoCalendarioService';
@@ -20,7 +23,10 @@ const localizer = dateFnsLocalizer({
 });
 
 const CalendarioPage = () => {
+    const location = useLocation();
     const [eventos, setEventos] = useState([]);
+    const { eventoCriado } = location.state || {};
+
 
     useEffect(() => {
         const fetchEventos = async () => {
@@ -39,14 +45,24 @@ const CalendarioPage = () => {
         };
 
         fetchEventos();
-    }, []);
+
+        if (eventoCriado) {
+            toast.success("Evento criado com sucesso!", {
+              position: "bottom-center",
+              autoClose: 3000,
+              style: { backgroundColor: '#28A745', color: '#fff' },
+              progressStyle: { backgroundColor: '#fff' }
+            });
+          }
+        }, [eventoCriado])
 
     return (
         <FormContainer titulo="Calendário de Eventos">
+            <ToastContainer />
             <div className="calendario-container">
                 <Calendar
                     localizer={localizer}
-                    events={eventos}  // Exibindo os eventos
+                    events={eventos}
                     startAccessor="start"
                     endAccessor="end"
                     style={{ height: 500 }}

@@ -71,7 +71,7 @@
 }
 
 .icone-ordenar {
-  max-width: 20%;
+  max-width: 14%;
   max-height: 5%;
 }
 
@@ -116,6 +116,7 @@
     border-left: none;
     border-right: none;
     word-wrap: break-word;
+    padding: 5px;
   }
 }
 

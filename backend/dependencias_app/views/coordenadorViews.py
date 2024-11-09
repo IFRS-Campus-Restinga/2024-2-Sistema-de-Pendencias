@@ -20,7 +20,6 @@ def cadastrarCoordenador(request):
         data['grupo'] = grupo.id
         data.pop('perfil', None)
 
-        print(data)
         # passa o dicionario para o serializador
         serializer = UsuarioBaseSerializer(data=data)
 

@@ -2,37 +2,31 @@
 export const validarAluno = (aluno) => {
     if (aluno.length === 0) return 'Campo obrigatório.';
 
-    if (Number(aluno) === NaN) return 'Aluno Inválido'
+    if (isNaN(aluno)) return 'Aluno Inválido'
 
     return ''
 };
 
-// Validação para o campo "professor"
-export const validarProfessor = (professor) => {
-    if (professor.length === 0) return 'Campo obrigatório.';
-
-    if (Number(professor) === NaN) return 'Professor inválido'
-
-    return '';
-};
-
 // Validação para o campo "turmaOrigem"
 export const validarCurso = (curso) => {
-    if (!curso || Number(curso) === NaN) return 'Campo obrigatório.';
+    if (!curso) return 'Campo obrigatório.';
+    if (isNaN(curso)) return 'Campo inválido'
 
     return ''
 };
 
 // Validação para o campo "turmaOrigem"
 export const validarDisciplina = (disciplina) => {
-    if (!disciplina || Number(disciplina) === NaN) return 'Campo obrigatório.';
+    if (!disciplina) return 'Campo obrigatório.';
+    if (isNaN(disciplina)) return 'Campo inválido'
 
     return ''
 };
 
 // Validação para o campo "turmaOrigem"
 export const validarTurmaOrigem = (turmaOrigem) => {
-    if (!turmaOrigem || Number(turmaOrigem) === NaN) return 'Campo obrigatório.';
+    if (!turmaOrigem || turmaOrigem === '') return 'Campo obrigatório.';
+    if (isNaN(turmaOrigem)) return 'Campo inválido'
 
     return ''
 };
@@ -40,6 +34,7 @@ export const validarTurmaOrigem = (turmaOrigem) => {
 // Validação para o campo "turmaProgressao"
 export const validarTurmaProgressao = (turmaProgressao) => {
     if (!turmaProgressao || turmaProgressao === '') return 'Campo obrigatório.';
+    if (isNaN(turmaProgressao)) return 'Campo inválido'
 
     return ''
 };
@@ -70,9 +65,6 @@ export const validarFormularioPPT = (formData) => {
     const erroAluno = validarAluno(formData.aluno);
     if (erroAluno) erros.aluno = erroAluno;
 
-    const erroProfessor = validarProfessor(formData.professor);
-    if (erroProfessor) erros.professor = erroProfessor;
-
     const erroCurso = validarCurso(formData.curso);
     if (erroCurso) erros.curso = erroCurso;
 
@@ -87,9 +79,6 @@ export const validarFormularioPPT = (formData) => {
 
     const erroDatas = validarDatas(formData.dataInicio, formData.dataFim);
     if (erroDatas) erros.datas = erroDatas
-
-
-    console.log(erros);
 
     return erros;
 };

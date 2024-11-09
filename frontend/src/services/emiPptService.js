@@ -15,5 +15,13 @@ export const PPTService = {
     })
 
     return res
-}
+  },
+
+  getById: async (id) => {
+    const res = await api.get('api/listar-ppt/'+id+'/').catch((erro) => {
+      return erro
+    })
+
+    return res
+  }
 }

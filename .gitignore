@@ -130,6 +130,8 @@ ENV/
 env.bak/
 venv.bak/
 client_secret.json
+migrations/
+
 
 # Spyder project settings
 .spyderproject

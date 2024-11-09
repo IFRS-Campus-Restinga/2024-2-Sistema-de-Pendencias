@@ -13,7 +13,7 @@ import CadastroCurso from './pages/base/Gestao/cadastroCurso/CadastroCurso'
 import CadastroServidor from './pages/base/Gestao/cadastroServidor/CadastroServidor'
 import CadastroAluno from './pages/base/Gestao/cadastroAluno/CadastroAluno'
 import CadastroDisciplina from "./pages/base/Gestao/cadastroDisciplina/CadastroDisciplina"
-import CadastroEmiPed from "./pages/base/Gestao/cadastroEmiPed/cadastroEmiPed";
+import CadastroPED_EMI from './pages/base/Gestao/cadastroEmiPed/cadastroPED_EMI'
 import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
 import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendario/eventoCalendario"
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
@@ -27,7 +27,7 @@ import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
 // Filhos de Professor
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
 import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfessor'
-
+import PlanoEstudos from './pages/base/Professor/planoEstudos/planoEstudos'
 
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
@@ -67,7 +67,7 @@ const router = createBrowserRouter([
             },
             {
                 path: ':idUsuario/cadastroEmiPed',
-                element: <CadastroEmiPed />
+                element: <CadastroPED_EMI />
             },
             {
                 path: ':idUsuario/listaServidor',
@@ -97,12 +97,10 @@ const router = createBrowserRouter([
                 path: ':idUsuario/listaPPT',
                 element: <ListarPPT />
             },
-            ,
             {
-                path: ':idUsuario/detalhesPPT/',
+                path: ':idUsuario/detalhesPPT/:idPpt',
                 element: <DetalhesPPT />
             }
-
         ]
         // Adicionar outros caminhos que vão derivar da tela de home após autenticação
 
@@ -133,6 +131,10 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/perfil/',
                 element: <PerfilProfessor />
+            },
+            {
+                path: ':idUsuario/planoEstudos',
+                element: <PlanoEstudos />
             }
         ]
     },
