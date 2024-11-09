@@ -18,8 +18,7 @@ const ListarServidor = () => {
   const [servidoresFiltrados, setServidoresFiltrados] = useState([]);
   const [ordenacao, setOrdenacao] = useState({ coluna: '', ordem: 'asc' });
   const [perfilFiltro, setPerfilFiltro] = useState('');
-  const [nomeFiltro, setNomeFiltro] = useState('');
-  const [matriculaFiltro, setMatriculaFiltro] = useState('');
+  const [filtroGeral, setFiltroGeral] = useState('');
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
   const [statusFiltro, setStatusFiltro] = useState('');
@@ -77,11 +76,9 @@ const ListarServidor = () => {
   const limparBusca = () => {
     setDataInicio('');
     setDataFim('');
-    setNomeFiltro('');
+    setFiltroGeral('');
     setPerfilFiltro('');
-    setMatriculaFiltro('');
     setStatusFiltro('');
-    fetchServidores();
 
     setOrdenacao({ coluna: '', ordem: 'asc' });
 
@@ -97,11 +94,15 @@ const ListarServidor = () => {
 
   const filtrarServidores = () => {
     const servidoresFiltrados = servidores.filter(servidor => 
-      (!nomeFiltro || (servidor.nome && servidor.nome.toLowerCase().includes(nomeFiltro.toLowerCase()))) &&
+      (!filtroGeral || 
+        (servidor.nome && servidor.nome.toLowerCase().includes(filtroGeral.toLowerCase())) ||
+        (servidor.infos_professor && servidor.infos_professor.matricula && servidor.infos_professor.matricula.includes(filtroGeral)) ||
+        (servidor.infos_professor && servidor.infos_professor.cpf && servidor.infos_professor.cpf.includes(filtroGeral)) ||
+        (servidor.email && servidor.email.includes(filtroGeral))
+      ) &&
       (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
       (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
       (!perfilFiltro || servidor.perfil === perfilFiltro) &&
-      (!matriculaFiltro || (servidor.infos_professor.matricula && servidor.infos_professor.matricula.includes(matriculaFiltro))) &&
       (!statusFiltro || (servidor.status && servidor.status.includes(statusFiltro)))
     );
     setServidoresFiltrados(servidoresFiltrados);
@@ -114,11 +115,11 @@ return (
       <section className='sectionListarServidor'>
         <div className='divListarServidor'>
           <span className="spanListarServidor">
-            <label className='labelListarServidor'>Filtrar por Nome</label>
+            <label className='labelListarServidor'>Filtrar por Dados Pessoais</label>
             <Input 
               tipo='text'
-              valor={nomeFiltro}
-              onChange={(e) => setNomeFiltro(e.target.value)}/>
+              valor={filtroGeral}
+              onChange={(e) => setFiltroGeral(e.target.value)}/>
           </span>
           <span className="spanListarServidor">
             <label className='labelListarServidor'>Filtrar por Perfil</label>
@@ -133,14 +134,6 @@ return (
               <option value="Coordenador">Coordenador</option>
               <option value="Professor">Professor</option>
             </select>
-          </span>
-          <span className="spanListarServidor">
-            <label className='labelListarServidor'>Filtrar por Matrícula</label>
-            <Input
-              tipo='text'
-              valor={matriculaFiltro}
-              onChange={(e) => {setMatriculaFiltro(e.target.value)}}
-            />
           </span>
         </div>
         <div className='divListarServidor'>

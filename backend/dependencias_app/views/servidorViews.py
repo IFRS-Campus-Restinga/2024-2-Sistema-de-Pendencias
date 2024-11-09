@@ -8,19 +8,27 @@ from google_auth.models import UsuarioBase
 @api_view(['GET'])
 def listar_servidores(request):
     try:
-        # Filtro por data de ingresso
+        # Filtros adicionais
+        filtro_geral = request.GET.get('filtroGeral', None)  # Novo filtro para nome e matrícula
         data_inicio = request.GET.get('data_inicio', None)
         data_fim = request.GET.get('data_fim', None)
-        
+
         # Listando e filtrando os dados
         servidores = UsuarioBase.objects.exclude(grupo__name="Aluno")
 
+        if filtro_geral:
+            servidores = servidores.filter(
+                Q(nome__icontains=filtro_geral) | 
+                Q(infos_professor__matricula__icontains=filtro_geral) |
+                Q(infos_professor__cpf__icontains=filtro_geral) |
+                Q(email__icontains=filtro_geral)
+            )
+        
         if data_inicio and data_fim:
             servidores = servidores.filter(data_ingresso__range=(data_inicio, data_fim))
 
         # Ordenação
         ordenar_por = request.GET.get('ordenar_por', None)
-
         if ordenar_por in ['perfil', 'first_name', 'last_name']:
             servidores = servidores.order_by(ordenar_por)
 
@@ -30,7 +38,6 @@ def listar_servidores(request):
         return Response(servidores_serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['GET'])
 def visualizar_servidor(request, id):
