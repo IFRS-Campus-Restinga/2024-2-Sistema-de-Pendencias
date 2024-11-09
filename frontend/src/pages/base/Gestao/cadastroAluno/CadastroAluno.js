@@ -71,7 +71,7 @@ const CadastroAluno = () => {
   return (
     <>
       <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo='Cadastro Aluno'>
+      <FormContainer onSubmit={handleSubmit} titulo='Cadastro Aluno' comprimento='60%'>
         {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
         <br />
         <div className="divCadastroAluno">

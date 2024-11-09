@@ -39,20 +39,21 @@ const CadastroServidor = () => {
     
                 if (response.status !== 201) throw new Error(response.erro)
     
-                toast.success(`Novo ${perfil} cadastrado com sucesso!`, {
-                    position: "bottom-center",
-                    autoClose: 3000,
-                    style: { backgroundColor: '#28A745', color: '#fff' },
-                    progressStyle: { backgroundColor: '#fff' }
-                });
-    
+                    
                 // Limpar o formulário após o sucesso
                 setFormData({
                     perfil: 'Professor',
                     email: '',
                 });
-
                 setErrors({}); // Limpar os erros também
+                
+                toast.success(`Novo ${perfil} cadastrado com sucesso!`, {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
+                    progressStyle: { backgroundColor: '#fff' }
+                });
+
             } catch (erro) {
                 setErrors(erro);
                 setShowErrorMessage(true);
@@ -118,6 +119,7 @@ const CadastroServidor = () => {
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         onBlur={() => validarHandler('email')}
                         erro={errors.email}
+                        valor={formData.email}
                     />
                     {errors.email && <p className="erros">{errors.email}</p>}
                 </div>

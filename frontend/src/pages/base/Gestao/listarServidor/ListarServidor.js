@@ -111,7 +111,7 @@ const ListarServidor = () => {
 return (
   <>
     <ToastContainer />
-    <FormContainer titulo='Lista de Servidores'>
+    <FormContainer titulo='Lista de Servidores' comprimento='90%'>
       <section className='sectionListarServidor'>
         <div className='divListarServidor'>
           <span className="spanListarServidor">

@@ -31,12 +31,21 @@
     margin-top: 7px;
 }
 
-.selectCadastroPED {
+.selectCadastroPED,
+.errorSelectCadastroPED {
     font-size: 15px;
     border: 1px solid #ccc;
     padding: 7px;
     border-radius: 8px;
     margin-top: 5px;
+}
+
+.selectCadastroPED {
+    border: 1px solid #ccc;
+}
+
+.errorSelectCadastroPED {
+    border: 2px solid #f00;
 }
 
 .textAreaCadastroPED {
@@ -50,4 +59,33 @@
 .selectCadastroPED:focus,
 .textAreaCadastroPED:focus {
     border: 1px solid #797979;
+}
+
+.labelSemestreRec {
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid #006b3f;
+    padding: 5px;
+    border-radius: 5px;
+    color: #006b3f;
+}
+
+.labelSemestreRec:hover {
+    scale: calc(1.01);
+    background-color: #006b3f;
+    color: white;
+    transition: ease-in-out .2s;
+    cursor: pointer;
+
+}
+
+.divSemestreRec {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 10px;
+}
+
+.checkboxSemestre:checked+.labelSemestreRec {
+    background-color: #006b3f;
+    color: white;
 }

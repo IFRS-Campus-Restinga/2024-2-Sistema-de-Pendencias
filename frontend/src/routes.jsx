@@ -13,7 +13,7 @@ import CadastroCurso from './pages/base/Gestao/cadastroCurso/CadastroCurso'
 import CadastroServidor from './pages/base/Gestao/cadastroServidor/CadastroServidor'
 import CadastroAluno from './pages/base/Gestao/cadastroAluno/CadastroAluno'
 import CadastroDisciplina from "./pages/base/Gestao/cadastroDisciplina/CadastroDisciplina"
-import CadastroPED_EMI from './pages/base/Gestao/cadastroEmiPed/cadastroPED_EMI'
+import CadastroPED from './pages/base/Gestao/cadastroPED/cadastroPED'
 import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
 import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendario/eventoCalendario"
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
@@ -66,8 +66,8 @@ const router = createBrowserRouter([
                 element: <CadastroDisciplina />
             },
             {
-                path: ':idUsuario/cadastroEmiPed',
-                element: <CadastroPED_EMI />
+                path: ':idUsuario/cadastroPED',
+                element: <CadastroPED />
             },
             {
                 path: ':idUsuario/listaServidor',

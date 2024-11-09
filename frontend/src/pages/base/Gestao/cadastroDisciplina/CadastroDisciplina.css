@@ -1,4 +1,7 @@
-/* Estilos Gerais */
+.formContainer {
+    width: 80%;
+}
+
 .sectionCadastroDisciplina {
     display: flex;
     align-items: center;
@@ -66,6 +69,11 @@
 
 .divVincularDisciplina {
     width: 40%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Mensagens de Erro */
