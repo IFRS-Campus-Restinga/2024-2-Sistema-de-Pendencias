@@ -26,7 +26,7 @@ const CalendarioPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [eventos, setEventos] = useState([]);
-    const { eventoCriado } = location.state || {};
+    const { eventoCriado, eventoAtualizado, eventoExcluido } = location.state || {};
 
 
     useEffect(() => {
@@ -56,7 +56,25 @@ const CalendarioPage = () => {
               progressStyle: { backgroundColor: '#fff' }
             });
           }
-        }, [eventoCriado])
+
+        if (eventoAtualizado) {
+            toast.success("Evento atualizado com sucesso!", {
+              position: "bottom-center",
+              autoClose: 3000,
+              style: { backgroundColor: '#28A745', color: '#fff' },
+              progressStyle: { backgroundColor: '#fff' }
+            });
+        }
+
+        if (eventoExcluido) {
+            toast.success("Evento excluído com sucesso!", {
+              position: "bottom-center",
+              autoClose: 3000,
+              style: { backgroundColor: '#28A745', color: '#fff' },
+              progressStyle: { backgroundColor: '#fff' }
+            });
+        }
+    }, [eventoCriado, eventoAtualizado, eventoExcluido])
 
         const handleEventClick = (event) => {
             navigate(`/sessao/GestaoEscolar/1/calendario/evento/${event.id}`, { state: { evento: event } });  // Navegar para a página de edição do evento
