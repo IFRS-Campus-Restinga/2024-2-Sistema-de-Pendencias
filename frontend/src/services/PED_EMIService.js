@@ -1,8 +1,8 @@
 import { api } from "../config/axiosConfig";
 
-export const emiPedService = {
+export const PED_EMIService = {
   create: async (params) => {
-    const res = await api.post('/api/cadastrar/em-ped', params).catch((erro) => {
+    const res = await api.post('/api/cadastrarPED/EMI/', params).catch((erro) => {
       return erro
     })
 

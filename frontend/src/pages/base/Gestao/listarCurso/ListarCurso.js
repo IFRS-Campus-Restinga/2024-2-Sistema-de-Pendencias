@@ -64,7 +64,7 @@ const ListarCursos = () => {
     return (
         <>
             <ToastContainer />
-            <FormContainer titulo='Lista de Cursos'>
+            <FormContainer titulo='Lista de Cursos' comprimento='90%'>
                 <section className='sectionListarCursos'>
                     <div className='divListarCursos'>
                         <div className="filtrosContainer">

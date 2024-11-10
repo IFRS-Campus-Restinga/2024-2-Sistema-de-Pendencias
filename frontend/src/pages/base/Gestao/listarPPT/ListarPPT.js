@@ -69,7 +69,7 @@ const ListarPPT = () => {
 
     return (
         <>
-        <FormContainer titulo='Lista de PPT'>
+        <FormContainer titulo='Lista de PPT' comprimento='90%'>
             <section className='sectionListarPPT'>
                 <div className='divListarPPT'>
                     <label className='labelListarPPT'>

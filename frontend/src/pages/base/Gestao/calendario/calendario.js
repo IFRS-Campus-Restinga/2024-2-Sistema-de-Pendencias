@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { ToastContainer, toast } from 'react-toastify';
@@ -24,6 +24,7 @@ const localizer = dateFnsLocalizer({
 
 const CalendarioPage = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [eventos, setEventos] = useState([]);
     const { eventoCriado } = location.state || {};
 
@@ -33,6 +34,7 @@ const CalendarioPage = () => {
             try {
                 const response = await eventoCalendarioService.listar();
                 const eventosData = response.data.map(evento => ({
+                    id: evento.id,
                     title: evento.titulo,
                     start: new Date(evento.data_inicio),
                     end: new Date(evento.data_fim),
@@ -56,6 +58,10 @@ const CalendarioPage = () => {
           }
         }, [eventoCriado])
 
+        const handleEventClick = (event) => {
+            navigate(`/sessao/GestaoEscolar/1/calendario/evento/${event.id}`, { state: { evento: event } });  // Navegar para a página de edição do evento
+        };
+
     return (
         <FormContainer titulo="Calendário de Eventos">
             <ToastContainer />
@@ -67,6 +73,7 @@ const CalendarioPage = () => {
                     endAccessor="end"
                     style={{ height: 500 }}
                     culture="pt-BR"
+                    onSelectEvent={handleEventClick}
                     messages={{
                         next: "Próximo",
                         previous: "Anterior",

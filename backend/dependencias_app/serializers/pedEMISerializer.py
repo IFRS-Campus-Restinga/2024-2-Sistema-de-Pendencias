@@ -30,7 +30,7 @@ class PED_EMISerializer(serializers.ModelSerializer):
         curso = data.get('curso')
         disciplina = data.get('disciplina')
 
-        if not disciplina.cursos.filter(curso_id=curso).exists():
+        if not disciplina.cursos.filter(id=curso.id).exists():
             raise serializers.ValidationError('A disciplina informada não pertence ao curso informado')
         
         return data

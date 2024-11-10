@@ -5,7 +5,7 @@ import FormContainer from "../../../../components/FormContainer/FormContainer";
 import Button from "../../../../components/Button/Button";
 import { ToastContainer, toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import { faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Input from "../../../../components/Input/Input";
 import './CadastroDisciplina.css'
 import { validarCampo, validarFormularioDisciplina } from "./validacoes";
@@ -120,6 +120,11 @@ const CadastroDisciplina = () => {
     }));
   }
 
+  const removeDisciplina = (index) => {
+    const disciplinas = formData.novasDisciplinas.filter((_, i) => i !== index);
+    setFormData((prevData) => ({ ...prevData, novasDisciplinas: disciplinas }));
+  };
+
   const vinculaDisciplina = (e) => {
     const disciplinaId = e.target.value;
 
@@ -143,12 +148,12 @@ const CadastroDisciplina = () => {
   useEffect(() => {
     fetchCursos();
     fetchDisciplinas()
-  }, []);
+  }, [formData]);
 
   return (
     <>
       <ToastContainer/>
-      <FormContainer titulo='Cadastro Disciplina' onSubmit={handleSubmit}>
+      <FormContainer titulo='Cadastro Disciplina' onSubmit={handleSubmit} comprimento='80%'>
               <span className='spanCadastroCurso'>
                 <label htmlFor="curso" className='labelCadastroDisciplina'>
                   Curso
@@ -185,6 +190,7 @@ const CadastroDisciplina = () => {
                       <th>Nome</th>
                       <th>Carga Horaria</th>
                       <th>Professor</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody className="corpoCadastroDisciplina">
@@ -266,6 +272,13 @@ const CadastroDisciplina = () => {
                             }
                           </datalist>
                         </td>
+                        <td>
+                      <FontAwesomeIcon
+                        icon={faTrash}
+                        style={{ cursor: "pointer", color: "red", fontSize: "20px" }}
+                        onClick={() => removeDisciplina(index)}
+                      />
+                    </td>
                       </tr>
                     ))}
                   </tbody>

@@ -45,12 +45,8 @@ const BaseGestao = () => {
         link: `${homeUrl}/dependencias`
         },
         {
-        name: "Cadastro PED - EMI",
-        link: `${homeUrl}/CadastroEmiPed`
-        },
-        {
-        name: "Cadastro PED - PROEJA",
-        link: `${homeUrl}/cadastroPED_Proeja`
+        name: "Cadastro PED",
+        link: `${homeUrl}/cadastroPED`
         },
         {
         name: "Gerenciar PPT",
