@@ -37,13 +37,6 @@ export const validarTurmaOrigem = (turmaOrigem) => {
     return ''
 };
 
-// Validação para o campo "turmaProgressao"
-export const validarTurmaProgressao = (turmaProgressao) => {
-    if (!turmaProgressao || turmaProgressao === '') return 'Campo obrigatório.';
-
-    return ''
-};
-
 export const validarTurmas = (turmaOrigem, turmaProgressao) => {
     if(turmaOrigem && turmaProgressao) {
         if (Number(turmaOrigem.numero) < Number(turmaProgressao.numero)) return 'A turma de progressão não pode ser superior a de origem!'
@@ -52,20 +45,44 @@ export const validarTurmas = (turmaOrigem, turmaProgressao) => {
     return
 }
 
-export const validarDatas = (dataInicio, dataFim) => {
-    if (!dataInicio || dataInicio === '') return 'Campo obrigatório.';
-    if (!dataFim || dataFim === '') return 'Campo obrigatório.';
-    if (dataFim < dataInicio) return 'Data de início não pode ser menor que a data de término da dependência'
+export const validarSerieAnoProgressao = (serieAno) => {
+    const serieAnoProgressao = ['1º Ano', '2º Ano','3º Ano','4º Ano']
+
+    if (serieAno === '' || !serieAno) return 'Campo obrigatório'
+
+    if (!serieAnoProgressao.includes(serieAno)) return 'Campo inválido'
 
     return ''
-};
+}
 
+export const validarAnoSemestreReprov = (anoSemestreReprov) => {
+    const turmaProejaRegex = /^\d{4}\/\d{1}$/; // Aceita o formato 2023/2
+
+    if (!turmaProejaRegex.test(anoSemestreReprov)) return 'Número da turma deve ser no formato "20xx/x" para ProEja.';
+
+}
+
+export const validarTrimestreRec = (trimestresRec) => {
+    if (!trimestresRec) return 'Campo obrigatório'
+
+    const trimestres = ['1º', '2º', '3º']
+
+    trimestresRec = trimestresRec.split(', ')
+
+    console.log(trimestresRec)
+
+    const hasInvalidTrimestre = trimestresRec.some((trimestre) => !trimestres.includes(trimestre));
+
+    if (hasInvalidTrimestre) {
+        return 'Valor inválido. Trimestres não reconhecidos.';
+    }
+}
 
 // Função geral de validação que retorna os erros
-export const validarFormularioPPT = (formData) => {
+export const validarFormularioPED = (formData, modalidade) => {
     const erros = {};
 
-    console.log(formData);
+    console.log(formData)
 
     const erroAluno = validarAluno(formData.aluno);
     if (erroAluno) erros.aluno = erroAluno;
@@ -79,15 +96,22 @@ export const validarFormularioPPT = (formData) => {
     const erroDisciplina = validarDisciplina(formData.disciplina);
     if (erroDisciplina) erros.disciplina = erroDisciplina;
 
-    const erroTurma = validarTurmaOrigem(formData.turmaOrigem);
-    if (erroTurma) erros.turmaOrigem = erroTurma
+    if (modalidade === 'Integrado') {
+        const erroTurma = validarTurmaOrigem(formData.turmaOrigem, modalidade);
+        if (erroTurma) erros.turmaOrigem = erroTurma
 
-    const erroSerieAnoProgressao = validarTurmaProgressao(formData.serieAnoProgressao);
-    if (erroSerieAnoProgressao) erros.serieAnoProgressao = erroSerieAnoProgressao
+        const erroSerieAnoProgressao = validarSerieAnoProgressao(formData.serieAnoProgressao);
+        if (erroSerieAnoProgressao) erros.serieAnoProgressao = erroSerieAnoProgressao
 
-    const erroDatas = validarDatas(formData.dataInicio, formData.dataFim);
-    if (erroDatas) erros.datas = erroDatas
+        const erroTrimestreRec = validarTrimestreRec(formData.trimestreRec);
+        if (erroTrimestreRec) erros.trimestreRec = erroTrimestreRec
 
+    } else if (modalidade === 'ProEJA') {
+        const erroAnoSemestreReprov = validarAnoSemestreReprov(formData.anoSemestreReprov);
+        if (erroAnoSemestreReprov) erros.anoSemestreReprov = erroAnoSemestreReprov
+    } else {
+        erros.modalidade = 'Modalidade inválida'
+    }
 
     console.log(erros);
 

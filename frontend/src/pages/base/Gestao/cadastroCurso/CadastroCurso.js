@@ -52,9 +52,8 @@ const CadastroCurso = () => {
     e.preventDefault();
 
     const erros = validarFormularioCurso(formData);
-    const turmasErros = erros.turmas ? erros.turmas.some(turma => turma !== '') : false;
 
-    if (erros.nome || erros.carga_horaria || turmasErros) {
+    if (Object.keys(erros).length !== 0) {
       setShowErrorMessage(true);
       setErrors(erros);
     } else {
@@ -62,17 +61,12 @@ const CadastroCurso = () => {
         const response = await cursoService.create(formData);
 
         if (response.status !== 201) {
+          console.log(response)
           const errorMessage = response.data?.message || 'Erro desconhecido';
           throw new Error(errorMessage);
         }
 
-        toast.success("Curso cadastrado com sucesso!", {
-          position: "bottom-center",
-          autoClose: 3000,
-          style: { backgroundColor: '#28A745', color: '#fff' },
-          progressStyle: { backgroundColor: '#fff' }
-        });
-
+      
         // Limpa os campos do formulário e estados de erro
         setFormData({
           nome: '',
@@ -81,16 +75,24 @@ const CadastroCurso = () => {
           coordenador: '',
           turmas: []
         });
+
         setErrors({});
         setShowErrorMessage(false);
+
+        toast.success("Curso cadastrado com sucesso!", {
+          position: "bottom-center",
+          autoClose: 3000,
+          style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
+          progressStyle: { backgroundColor: '#fff' }
+        });
       } catch (erro) {
         toast.error(erro.message, {
           position: "bottom-center",
           autoClose: 3000,
-          style: { backgroundColor: '#d11c28', color: '#fff' },
+          style: { backgroundColor: '#d11c28', color: '#fff', textAlign: 'center' },
           progressStyle: { backgroundColor: '#fff' }
         });
-        console.log('Erro ao cadastrar curso!', erro);
+        console.error('Erro ao cadastrar curso!', erro);
       }
     }
   };
@@ -120,7 +122,7 @@ const CadastroCurso = () => {
   return (
     <>
       <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo='Cadastrar Curso'>
+      <FormContainer onSubmit={handleSubmit} titulo='Cadastrar Curso' comprimento='70%'>
         {showErrorMessage && <p className="error">* Preencha os campos obrigatórios</p>}
         
         <div className="modalidade-container">
@@ -220,7 +222,7 @@ const CadastroCurso = () => {
                         erro={errors.turmas && errors.turmas[index] ? true : false}
                       />
                       {errors.turmas && errors.turmas[index] && (
-                        <p className="error">{errors.turmas[index]}</p>
+                        <p className="error">{errors.turmas}</p>
                       )}
                     </td>
                     <td>

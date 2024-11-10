@@ -6,7 +6,7 @@ from django.db import models
 from .planoEstudos import PlanoEstudos
 from .formEncerramento import FormEncerramento
 
-class PED_PROEJA(Dependencia):
+class PED_ProEJA(Dependencia):
     anoSemestreReprov = models.CharField(null=False, blank=False, max_length=6)
     plano_estudos = models.ForeignKey(PlanoEstudos, blank=True, null=True, on_delete=models.DO_NOTHING, related_name='plano_estudos_PROEJA')
     form_encerramento = models.ForeignKey(PlanoEstudos, blank=True, null=True, on_delete=models.DO_NOTHING, related_name='form_encerramento_PROEJA')

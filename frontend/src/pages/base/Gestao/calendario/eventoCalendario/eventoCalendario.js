@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation  } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { eventoCalendarioService } from '../../../../../services/eventoCalendarioService';
@@ -10,8 +10,7 @@ import FormContainer from "../../../../../components/FormContainer/FormContainer
 
 const EventoCalendarioPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const eventoExistente = location.state?.evento || {};
+  const { idEvento } = useParams(); // Identifica o ID do evento pela URL
   const [formData, setFormData] = useState({
     titulo: '',
     descricao: '',
@@ -24,23 +23,33 @@ const EventoCalendarioPage = () => {
   });
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [dataFimMin, setDataFimMin] = useState('');
 
   useEffect(() => {
-      // Verifica se estamos editando um evento existente
-      if (eventoExistente) {
+    // Carrega os dados do evento se estivermos em modo de edição
+    if (idEvento) {
+      eventoCalendarioService.getEventoById(idEvento)
+        .then(response => {
+          const evento = response.data;
           setFormData({
-              titulo: eventoExistente.title || '',
-              descricao: eventoExistente.descricao || '',
-              data_inicio: eventoExistente.start ? eventoExistente.start.toISOString().split('T')[0] : '',
-              data_fim: eventoExistente.end ? eventoExistente.end.toISOString().split('T')[0] : '',
-              tipo_calendario: eventoExistente.tipo_calendario || 'Integrado',
-              dia_todo: eventoExistente.allDay || true,
-              hora_inicio: eventoExistente.start ? eventoExistente.start.toISOString().split('T')[1].slice(0, 5) : '00:00',
-              hora_fim: eventoExistente.end ? eventoExistente.end.toISOString().split('T')[1].slice(0, 5) : '00:00'
+            titulo: evento.titulo || '',
+            descricao: evento.descricao || '',
+            data_inicio: evento.data_inicio ? evento.data_inicio.split('T')[0] : '',
+            data_fim: evento.data_fim ? evento.data_fim.split('T')[0] : '',
+            tipo_calendario: evento.tipo_calendario || 'Integrado',
+            dia_todo: evento.dia_todo || true,
+            hora_inicio: evento.hora_inicio || '00:00',
+            hora_fim: evento.hora_fim || '00:00'
           });
-      }
-  }, [eventoExistente]);
+        })
+        .catch(error => {
+          console.error('Erro ao carregar os dados do evento:', error);
+          toast.error("Falha ao carregar os dados do evento", {
+            position: "bottom-center",
+            autoClose: 3000
+          });
+        });
+    }
+  }, [idEvento]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,15 +62,18 @@ const EventoCalendarioPage = () => {
         const dataInicio = dia_todo ? `${rest.data_inicio}T00:00` : `${rest.data_inicio}T${hora_inicio}`;
         const dataFim = dia_todo ? `${rest.data_fim}T00:00` : `${rest.data_fim}T${hora_fim}`;
 
-        const response = eventoExistente.id
-            ? await eventoCalendarioService.update(eventoExistente.id, { ...rest, data_inicio: dataInicio, data_fim: dataFim })
-            : await eventoCalendarioService.create({ ...rest, data_inicio: dataInicio, data_fim: dataFim });
+        const response = idEvento
+          ? await eventoCalendarioService.update(idEvento, { ...rest, data_inicio: dataInicio, data_fim: dataFim })
+          : await eventoCalendarioService.create({ ...rest, data_inicio: dataInicio, data_fim: dataFim });
 
-        if (response.status !== (eventoExistente.id ? 200 : 201)) throw new Error(response.error);
-        navigate("/sessao/GestaoEscolar/1/calendario", { state: { eventoCriado: !eventoExistente.id, eventoAtualizado: !!eventoExistente.id } });
+        if (response && (response.status === 200 || response.status === 201)) {
+          navigate("/sessao/GestaoEscolar/1/calendario", { state: { eventoAtualizado: !!idEvento } });
+        } else {
+          throw new Error("Falha ao obter ID do evento criado.");
+        }
       } catch (error) {
-        console.error('Erro ao criar evento!', error);
-        toast.error("Falha ao criar evento. Tente novamente.", {
+        console.error('Erro ao salvar evento:', error);
+        toast.error("Falha ao salvar evento. Tente novamente.", {
           position: "bottom-center",
           autoClose: 3000
         });
@@ -72,10 +84,28 @@ const EventoCalendarioPage = () => {
     }
   };
 
+  const handleDelete = async () => {
+    if (window.confirm("Tem certeza que deseja excluir este evento?")) {
+      try {
+        await eventoCalendarioService.delete(idEvento);
+        toast.success("Evento excluído com sucesso!", {
+          position: "bottom-center",
+          autoClose: 3000
+        });
+        navigate("/sessao/GestaoEscolar/1/calendario");
+      } catch (error) {
+        console.error('Erro ao excluir evento:', error);
+        toast.error("Falha ao excluir evento. Tente novamente.", {
+          position: "bottom-center",
+          autoClose: 3000
+        });
+      }
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    if (name === 'data_inicio') setDataFimMin(value);
   };
 
   const toggleDiaTodo = () => {
@@ -84,107 +114,113 @@ const EventoCalendarioPage = () => {
 
   return (
     <div className='perfilContainer'>
-        <ToastContainer />
-        <FormContainer onSubmit={handleSubmit} titulo="Cadastro de Evento">
-          {showErrorMessage && <p style={{ color: 'red' }}>* Preencha todos os campos obrigatórios</p>}
+      <ToastContainer />
+      <FormContainer onSubmit={handleSubmit} titulo="Cadastro de Evento">
+        {showErrorMessage && <p style={{ color: 'red' }}>* Preencha todos os campos obrigatórios</p>}
 
-          <br />
-          <label className='labelCustomizado'>Título
-            <input id="titulo"
-              type='text'
-              name="titulo"
-              value={formData.titulo}
-              onChange={handleChange}
-              style={{ borderColor: errors.titulo ? 'red' : '' }}
-            />
-            {errors.titulo && <p className="erros">{errors.titulo}</p>}
-          </label>
+        <label className='labelCustomizado'>Título
+          <input
+            id="titulo"
+            type='text'
+            name="titulo"
+            value={formData.titulo}
+            onChange={handleChange}
+            style={{ borderColor: errors.titulo ? 'red' : '' }}
+          />
+          {errors.titulo && <p className="erros">{errors.titulo}</p>}
+        </label>
 
-          <label className='labelCustomizado'>Descrição
-            <textarea id="descricao"
-              name="descricao"
-              value={formData.descricao}
-              onChange={handleChange}
-              style={{ borderColor: errors.descricao ? 'red' : '' }}
-            />
-            {errors.descricao && <p className="erros">{errors.descricao}</p>}
-          </label>
+        <label className='labelCustomizado'>Descrição
+          <textarea
+            id="descricao"
+            name="descricao"
+            value={formData.descricao}
+            onChange={handleChange}
+            style={{ borderColor: errors.descricao ? 'red' : '' }}
+          />
+          {errors.descricao && <p className="erros">{errors.descricao}</p>}
+        </label>
 
-          <label className='labelCustomizado'>Data Início
-            <br />
+        <label className='labelCustomizado'>Data Início
+          <input
+            type="date"
+            name="data_inicio"
+            value={formData.data_inicio}
+            onChange={handleChange}
+            style={{ borderColor: errors.data_inicio ? 'red' : '' }}
+          />
+          {errors.data_inicio && <p className="erros">{errors.data_inicio}</p>}
+        </label>
+
+        {!formData.dia_todo && (
+          <label className='labelCustomizado'>Horário Início:
             <input
-              type="date"
-              name="data_inicio"
-              value={formData.data_inicio}
+              id='hora_inicio'
+              type="time"
+              name="hora_inicio"
+              value={formData.hora_inicio}
               onChange={handleChange}
-              style={{ borderColor: errors.data_inicio ? 'red' : '' }}
+              style={{ borderColor: errors.hora_inicio ? 'red' : '' }}
             />
-            {errors.data_inicio && <p className="erros">{errors.data_inicio}</p>}
           </label>
+        )}
 
-          {!formData.dia_todo && (
-            <label className='labelCustomizado'>Horário:
-              <input id='hora'
-                type="time"
-                name="hora_inicio"
-                value={formData.hora_inicio}
-                onChange={handleChange}
-                style={{ borderColor: errors.hora_inicio ? 'red' : '' }}
-              />
-            </label>
-          )}
+        <label className='labelCustomizado'>Data Fim
+          <input
+            type="date"
+            name="data_fim"
+            value={formData.data_fim}
+            onChange={handleChange}
+            style={{ borderColor: errors.data_fim ? 'red' : '' }}
+          />
+          {errors.data_fim && <p className="erros">{errors.data_fim}</p>}
+        </label>
 
-          <label className='labelCustomizado'>Data Fim
-            <br />
+        {!formData.dia_todo && (
+          <label className='labelCustomizado'>Horário Fim:
             <input
-              type="date"
-              name="data_fim"
-              value={formData.data_fim}
+              id='hora_fim'
+              type="time"
+              name="hora_fim"
+              value={formData.hora_fim}
               onChange={handleChange}
-              min={dataFimMin}
-              style={{ borderColor: errors.data_fim ? 'red' : '' }}
+              style={{ borderColor: errors.hora_fim ? 'red' : '' }}
             />
-            {errors.data_fim && <p className="erros">{errors.data_fim}</p>}
           </label>
+        )}
 
-          {!formData.dia_todo && (
-            <label className='labelCustomizado'>Horário:
-              <input
-                id='hora'
-                type="time"
-                name="hora_fim"
-                value={formData.hora_fim}
-                onChange={handleChange}
-                style={{ borderColor: errors.hora_fim ? 'red' : '' }}
-              />
-            </label>
-          )}
+        <label className='labelCustomizado'>
+          <input
+            id='dia_todo'
+            type="checkbox"
+            checked={formData.dia_todo}
+            onChange={toggleDiaTodo}
+          />
+          Dia Todo
+        </label>
 
-          <label className='labelCustomizado'>
-            <input id='dia_todo'
-              type="checkbox"
-              checked={formData.dia_todo}
-              onChange={toggleDiaTodo}
-            />
-            Dia Todo
-          </label>
+        <label className='labelCustomizado'>Tipo de Calendário
+          <select
+            id="tipo_calendario"
+            name="tipo_calendario"
+            value={formData.tipo_calendario}
+            onChange={handleChange}
+            style={{ borderColor: errors.tipo_calendario ? 'red' : '' }}
+          >
+            <option value="Integrado">Integrado</option>
+            <option value="ProEJA">ProEJA</option>
+          </select>
+          {errors.tipo_calendario && <p className="erros">{errors.tipo_calendario}</p>}
+        </label>
 
-          <label className='labelCustomizado'>Tipo de Calendário
-            <select id="tipo_calendario"
-              name="tipo_calendario"
-              value={formData.tipo_calendario}
-              onChange={handleChange}
-              style={{ borderColor: errors.tipo_calendario ? 'red' : '' }}
-            >
-              <option value="Integrado">Integrado</option>
-              <option value="ProEJA">ProEJA</option>
-            </select>
-            {errors.tipo_calendario && <p className="erros">{errors.tipo_calendario}</p>}
-          </label>
+        <Button tipo='submit' text='Salvar Evento' />
 
-          <Button tipo='submit' text='Salvar Evento' />
-        </FormContainer>
-      </div>
+        {/* Botão de exclusão aparece somente no modo de edição */}
+        {idEvento && (
+          <Button tipo='button' text='Excluir Evento' onClick={handleDelete} />
+        )}
+      </FormContainer>
+    </div>
   );
 };
 
