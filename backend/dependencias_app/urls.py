@@ -68,7 +68,6 @@ urlpatterns = [
     path('cadastrar-plano-estudos/', cadastrar_plano_estudos_EMI),
 
     #views para atividades da ped
-    path('ped/criar-atividade/', criar_atividade),
     # path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),
     path('listar-atividades/<int:ped_id>/', listar_atividades, name='listar_atividades'),
     ]
