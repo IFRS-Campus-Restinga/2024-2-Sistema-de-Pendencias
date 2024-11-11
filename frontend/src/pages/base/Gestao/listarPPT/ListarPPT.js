@@ -124,7 +124,7 @@ const ListarPPT = () => {
                                     <td>{ppt.situacao}</td>
                                     <td>{new Date(ppt.dataInicio).toLocaleDateString('pt-BR')}</td>
                                     <td>{new Date(ppt.dataFim).toLocaleDateString('pt-BR')}</td>
-                                    <td><Button text="ver" onClick={() => detalhesPpt(ppt.id)}>cu</Button></td>
+                                    <td><Button text="ver" onClick={() => detalhesPpt(ppt.id)}>ver</Button></td>
                                 </tr>
                                 
                             ))
