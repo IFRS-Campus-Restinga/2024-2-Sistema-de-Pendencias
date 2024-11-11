@@ -34,14 +34,13 @@ const DetalhesPPT = () => {
   }, [idPpt])
 
   return (
-    <div className="formContainer">
+    <div className="formContainerDetails">
       <div className="main-title">
         <h1 id="title"></h1>
       </div>
 
       <div className="green-bar-container">
         <div class="green-bar">
-          <h2 id="aluno">Estudante: {detalhesPPT.aluno?.nome || '-'}</h2>
           <h2>Andamento da PPT</h2>
         </div>
 
