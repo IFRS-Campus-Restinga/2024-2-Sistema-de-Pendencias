@@ -2,7 +2,7 @@ from rest_framework import serializers
 from google_auth.models import UsuarioBase
 from dependencias_app.models.curso import Curso
 from dependencias_app.models.disciplina import Disciplina
-from dependencias_app.models.pedPROEJA import PED_ProEJA
+from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
 from dependencias_app.serializers.cursoSerializer import CursoSerializer
 from dependencias_app.serializers.disciplinaSerializer import DisciplinaSerializer

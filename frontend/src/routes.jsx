@@ -29,6 +29,7 @@ import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
 import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfessor'
 import PlanoEstudos from './pages/base/Professor/planoEstudos/planoEstudos'
+import AtividadesDesenvolvidas from './pages/base/Professor/atividadesDesenvolvidas/atividadesDesenvolvidas'
 
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
@@ -148,6 +149,10 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/planoEstudos',
                 element: <PlanoEstudos />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId',
+                element: <AtividadesDesenvolvidas />,
             }
         ]
     },
