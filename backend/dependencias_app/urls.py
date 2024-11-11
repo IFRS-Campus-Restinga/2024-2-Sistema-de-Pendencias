@@ -63,7 +63,7 @@ urlpatterns = [
     path('cadastrarPED/', cadastrar_PED),
 
     #views para atividades da ped
-    path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),
+    path('listar-atividades/<int:ped_id>/', listar_atividades, name='listar_atividades'),
     ]
 
 
