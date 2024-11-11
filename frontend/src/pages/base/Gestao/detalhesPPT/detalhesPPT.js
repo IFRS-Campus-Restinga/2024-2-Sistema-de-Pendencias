@@ -3,12 +3,15 @@ import "./detalhesPPT.css";
 import StatusBalls from "../../../../components/StatusBall/StatusBall";
 import { PPTService } from '../../../../services/emiPptService'
 import { useParams } from "react-router-dom";
+import Button from "../../../../components/Button/Button";
+import { useNavigate } from "react-router-dom";
 
 const DetalhesPPT = () => {
   // Estado do status da PPT (pode ser 'criada', 'em andamento', ou 'finalizada')
   const [status, setStatus] = useState("em andamento");
   const [detalhesPPT, setDetalhesPPT] = useState([])
   const { idPpt } = useParams()
+  const navigate = useNavigate();
 
   const fetchDetalhes = async () => {
     const res = await PPTService.getById(idPpt)
@@ -18,6 +21,13 @@ const DetalhesPPT = () => {
     setDetalhesPPT(res.data);
     console.log(res.data);
   }
+
+  const handleEditarClick = () => {
+    console.log(detalhesPPT);
+    navigate(`/sessao/GestaoEscolar/2/detalhesPPT/${idPpt}/editarPPT`, {
+      state: { ppt: detalhesPPT } // Passando os dados da PPT via state
+    });
+  };
 
   useEffect(() => {
     fetchDetalhes();
@@ -68,6 +78,7 @@ const DetalhesPPT = () => {
           </div>
         </div>
       </div>
+      <Button tipo={'submit'} text="Editar PPT" onClick={handleEditarClick} />
     </div>
   );
 };

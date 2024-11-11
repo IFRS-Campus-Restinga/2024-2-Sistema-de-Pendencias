@@ -53,3 +53,27 @@ def listar_ppt_id(request, idPpt):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem: ', str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@permission_classes([GestaoEscolar])
+def editar_ppt(request, idPpt):
+    logger.info('Dados recebidos para edição: %s', request.data)
+    try:
+        # Buscar o objeto PPT pelo ID
+        ppt = PPT.objects.get(id=idPpt)
+        
+        # Criar o serializer com os dados recebidos para atualização
+        serializer = PPTSerializer(ppt, data=request.data)
+
+        # Verificar se os dados são válidos
+        if serializer.is_valid():
+            # Salvar as alterações no banco de dados
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        # Caso o serializer não seja válido
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except PPT.DoesNotExist:
+        return Response({'mensagem': 'PPT não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)

@@ -21,6 +21,8 @@ import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 import VisualizarServidor from './pages/base/Gestao/cadastroServidor/VisualizarServidor'
 import EditarServidor from './pages/base/Gestao/cadastroServidor/EditarServidor'
 import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
+import EditarPPT from './pages/base/Gestao/editarPPT/editarPPT'
+
 // Filhos de Registro
 
 // Filhos de Coordenador
@@ -107,12 +109,12 @@ const router = createBrowserRouter([
                 element: <DetalhesPPT />
             },
             {
-                path: ':idUsuario/detalhesPPT/:idPpt',
-                element: <DetalhesPPT />
-            },
-            {
                 path: ':idUsuario/listaServidor/:idServidor/visualizarServidor/editarServidor',
                 element: <EditarServidor />
+            },
+            {
+                path: ':idUsuario/detalhesPPT/:idPpt/editarPPT',
+                element: <EditarPPT />
             },
         ]
         // Adicionar outros caminhos que vão derivar da tela de home após autenticação
