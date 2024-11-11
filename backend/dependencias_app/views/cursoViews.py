@@ -47,3 +47,14 @@ def listar_cursos(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@permission_classes([GestaoEscolar])
+def listar_por_modalidade(request, modalidade):
+    try:
+        cursos = Curso.objects.filter(modalidade=modalidade)  # Obtém todos os cursos pela modalidade ProEJA/Integrado
+        serializer = CursoSerializer(cursos, many=True)  # Serializa os cursos
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+

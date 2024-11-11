@@ -86,7 +86,7 @@ const PerfilAluno = () => {
             setFormData({
                 cpf: res.data.infos_aluno.cpf,
                 data_nascimento: res.data.infos_aluno.data_nascimento,
-                matricula: res.data.infos_aluno.matricula || res[0].data.email.substring(0, 10),
+                matricula: res.data.infos_aluno.matricula || res.data.email.substring(0, 10),
                 telefone: res.data.infos_aluno.telefone,
                 usuario: jwtDecode(sessionStorage.getItem('token')).idUsuario
             })
@@ -118,6 +118,7 @@ const PerfilAluno = () => {
                         valor={formData.cpf || ''}
                         erro={erros.cpf}
                         alinharCentro={true}
+                        desabilitado={desabilitado}
                     />
                     {erros.cpf ? <p className='erro'>{erros.cpf}</p> : <></>}
                 </label>
@@ -128,6 +129,7 @@ const PerfilAluno = () => {
                         valor={formData.matricula || ''}
                         erro={erros.matricula}
                         alinharCentro={true}
+                        desabilitado={desabilitado}
                     />
                     {erros.matricula ? <p className='erro'>{erros.matricula}</p> : <></>}
                 </label>

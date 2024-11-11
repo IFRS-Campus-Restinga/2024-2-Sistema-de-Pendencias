@@ -61,7 +61,7 @@
     border: 1px solid #797979;
 }
 
-.labelSemestreRec {
+.labelTrimestreRec {
     font-size: 12px;
     font-weight: 600;
     border: 1px solid #006b3f;
@@ -70,7 +70,7 @@
     color: #006b3f;
 }
 
-.labelSemestreRec:hover {
+.labelTrimestreRec:hover {
     scale: calc(1.01);
     background-color: #006b3f;
     color: white;
@@ -79,13 +79,13 @@
 
 }
 
-.divSemestreRec {
+.divTrimestreRec {
     display: flex;
     justify-content: space-evenly;
     margin-top: 10px;
 }
 
-.checkboxSemestre:checked+.labelSemestreRec {
+.checkboxTrimestre:checked+.labelTrimestreRec {
     background-color: #006b3f;
     color: white;
 }

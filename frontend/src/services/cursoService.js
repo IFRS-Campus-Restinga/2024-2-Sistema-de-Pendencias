@@ -21,6 +21,14 @@ export const cursoService = {
         }
     },
 
+    porModalidade: async (modalidade) => {
+        const res = await api.get(`api/listar-cursos/${modalidade}`).catch((erro) => {
+            return erro
+        })
+
+        return res
+    },
+
     delete: async (id) => {
         try {
             const response = await api.delete(`/api/deletar-curso/${id}/`);

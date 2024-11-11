@@ -30,6 +30,7 @@ urlpatterns = [
     path('cadastrar-curso/', cadastrar_curso),
     path('cadastrar-disciplina/', cadastrar_disciplina),
     path('listar-cursos/', listar_cursos),
+    path('listar-cursos/<str:modalidade>/', listar_por_modalidade),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
 
     # views de evento/calendario
@@ -59,11 +60,7 @@ urlpatterns = [
     #path('editar-ppt/<int:idPpt>/', editar_ppt),
     
     # views de PED
-    path('cadastrarPED/EMI/', cadastrar_PED_EMI),
-    path('cadastrarPED/ProEJA/', cadastrar_PED_ProEJA),
-
-    # views de editar cadastro
-    path('visualizar-servidor/<id>/editar/', editar_servidor, name='editar_servidor'),
+    path('cadastrarPED/', cadastrar_PED),
 
     #views para atividades da ped
     path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),
