@@ -55,11 +55,14 @@ urlpatterns = [
     path('cadastrar-ppt/', cadastrar_ppt),
     path('listar-ppt/', listar_ppt),
     path('listar-ppt/<int:idPpt>/', listar_ppt_id),
-
+    path('editar-ppt/<int:idPpt>/', editar_ppt),
+    
     # views de PED
     path('cadastrarPED/EMI/', cadastrar_PED_EMI),
-    path('cadastrarPED/ProEJA/', cadastrar_PED_ProEJA)
+    path('cadastrarPED/ProEJA/', cadastrar_PED_ProEJA),
 
+    # views de editar cadastro
+    path('visualizar-servidor/<id>/editar/', editar_servidor, name='editar_servidor'),
     ]
 
 

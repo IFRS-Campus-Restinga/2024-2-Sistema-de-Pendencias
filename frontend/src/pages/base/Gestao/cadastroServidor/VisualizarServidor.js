@@ -33,7 +33,7 @@ const VisualizarServidor = () => {
             <p className="detalhe-servidor"><strong>Email:</strong> {servidor.email}</p>
             <p className="detalhe-servidor"><strong>Perfil:</strong> {perfilMap[servidor.perfil]}</p>
             <p className="detalhe-servidor"><strong>Matricula:</strong> {servidor.matricula}</p>           
-            <Button color={'#FF9800'} tipo='submit' text='Editar Servidor' onClick={handleEditar}/>
+            <Button tipo='submit' text='Editar Servidor' onClick={handleEditar}/>
         </FormContainer>
     );
 };

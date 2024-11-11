@@ -73,6 +73,32 @@ const servidorService = {
             };
         }
     },
+
+    editar: async (idServidor, dadosAtualizados) => {
+        try {
+            console.log("ID do servidor:", idServidor);
+            console.log("Dados para editar:", dadosAtualizados);
+    
+            if (!idServidor) {
+                console.error("Nenhum servidor selecionado.");
+                return;
+            }
+    
+            const response = await api.put(`/api/visualizar-servidor/${idServidor}/editar/`, dadosAtualizados);
+            
+            if (response.status === 200) {
+                console.log("Servidor editado com sucesso:", response.data);
+                return response.data;
+            } else {
+                console.error("Falha ao editar servidor:", response.status);
+            }
+        } catch (error) {
+            console.error('Erro ao editar o servidor:', error);
+            if (error.response) {
+                console.error('Resposta do erro:', error.response);
+            }
+        }
+    },
     
 
 };
