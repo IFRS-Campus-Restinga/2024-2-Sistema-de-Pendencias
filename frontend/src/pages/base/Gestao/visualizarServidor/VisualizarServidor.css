@@ -1,0 +1,13 @@
+.detalhe-servidor {
+    margin: 10px 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.detalhe-servidor strong {
+    color: #006b3f;
+}
+
+.botao-editar:hover {
+    background-color: #004f2e;
+}

@@ -18,8 +18,11 @@ import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
 import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendario/eventoCalendario"
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
-import VisualizarServidor from './pages/base/Gestao/cadastroServidor/VisualizarServidor'
+import VisualizarServidor from './pages/base/Gestao/visualizarServidor/VisualizarServidor'
+import EditarServidor from './pages/base/Gestao/editarServidor/EditarServidor'
 import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
+import EditarPPT from './pages/base/Gestao/editarPPT/editarPPT'
+
 // Filhos de Registro
 
 // Filhos de Coordenador
@@ -28,6 +31,7 @@ import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
 import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfessor'
 import PlanoEstudos from './pages/base/Professor/planoEstudos/planoEstudos'
+import AtividadesDesenvolvidas from './pages/base/Professor/atividadesDesenvolvidas/atividadesDesenvolvidas'
 
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
@@ -104,7 +108,15 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/detalhesPPT/:idPpt',
                 element: <DetalhesPPT />
-            }
+            },
+            {
+                path: ':idUsuario/listaServidor/:idServidor/visualizarServidor/editarServidor',
+                element: <EditarServidor />
+            },
+            {
+                path: ':idUsuario/detalhesPPT/:idPpt/editarPPT',
+                element: <EditarPPT />
+            },
         ]
         // Adicionar outros caminhos que vão derivar da tela de home após autenticação
 
@@ -139,6 +151,10 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/planoEstudos',
                 element: <PlanoEstudos />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId',
+                element: <AtividadesDesenvolvidas />,
             }
         ]
     },

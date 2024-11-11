@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Input from "../../../../components/Input/Input";
 import Button from "../../../../components/Button/Button";
-import FormContainer from "../../../../components/FormContainer/FormContainer"; // Importe o FormContainer
+import FormContainer from "../../../../components/FormContainer/FormContainer";
 import { ToastContainer, toast } from 'react-toastify';
 import "./planoEstudos.css";
 import { PlanoEstudosService } from "../../../../services/planoEstudosService";
@@ -9,12 +9,23 @@ import cursoService from "../../../../services/cursoService";
 import { validarFormularioPlanoEstudos } from "./validacoes";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 
+// Definindo as opções fixas (valores das classes)
+const TrimestreRec = [
+  '1º', '2º', '3º', '1º e 2º', '1º e 3º', '2º e 3º', 'Todos'
+];
+
+const Turnos = [
+  'Manhã', 'Tarde', 'Noite', 'Integral'
+];
+
+const FormaOferta = [
+  'Presencial', 'EAD', 'Híbrido'
+];
+
 const PlanoEstudos = () => {
   const [cursos, setCursos] = useState([]);
   const [disciplinas, setDisciplinas] = useState([]);
   const [opcoesAlunos, setOpcoesAlunos] = useState([]);
-  const [formasOferta, setFormasOferta] = useState(["Presencial", "EAD", "Semipresencial"]); // Exemplos de opções
-  const [turnos, setTurnos] = useState(["Manhã", "Tarde", "Noite"]); // Exemplos de turnos
   const [formData, setFormData] = useState({
     aluno: "",
     curso: "",
@@ -69,6 +80,7 @@ const PlanoEstudos = () => {
     }
   };
 
+  // Função para buscar cursos
   const fetchCursos = async () => {
     try {
       const res = await cursoService.list();
@@ -78,18 +90,21 @@ const PlanoEstudos = () => {
     }
   };
 
+  // Função para buscar alunos
   const fetchAlunos = async (e) => {
     try {
       const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Aluno');
       setOpcoesAlunos(res.data);
+      console.log(res.data)
     } catch (error) {
       console.log(error);
     }
   };
 
+  // Carregar as opções ao montar o componente
   useEffect(() => {
     fetchCursos();
-  }, []);
+  }, []); 
 
   return (
     <>
@@ -104,9 +119,9 @@ const PlanoEstudos = () => {
             nome="aluno"
             onChange={(e) => {
               fetchAlunos(e);
-              if (opcoesAlunos) {
+              if (opcoesAlunos && e.target.value) {
                 const param = e.target.value;
-                const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || aluno.matricula || aluno.email);
+                const aluno = opcoesAlunos.find((aluno) => aluno.nome === param || aluno.matricula === param || aluno.email === param);
                 if (aluno) setFormData({ ...formData, aluno: aluno.id });
               }
             }}
@@ -118,7 +133,7 @@ const PlanoEstudos = () => {
         <datalist id="opcoesAlunos">
           {opcoesAlunos ? (
             opcoesAlunos.map((aluno) => (
-              <option key={aluno.id} value={aluno.nome || aluno.matricula || aluno.email}>
+              <option key={aluno.id} value={aluno.nome || aluno.infos_aluno.matricula || aluno.email}>
                 {aluno.nome || aluno.matricula || aluno.email}
               </option>
             ))
@@ -134,9 +149,9 @@ const PlanoEstudos = () => {
               <select
                 className={errors.curso ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
                 name="curso"
+                onFocus={fetchCursos}  // Carregar cursos ao clicar na seta
                 onChange={(e) => {
                   setFormData({ ...formData, curso: Number(e.target.value) });
-
                   const cursoId = e.target.value;
                   const curso = cursos.find((curso) => curso.id === Number(cursoId));
                   if (curso) {
@@ -157,6 +172,12 @@ const PlanoEstudos = () => {
               Disciplina
               <select
                 className={errors.disciplina ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
+                onFocus={() => { 
+                  if (formData.curso) {
+                    const curso = cursos.find((curso) => curso.id === formData.curso);
+                    if (curso) setDisciplinas(curso.disciplinas); 
+                  }
+                }}  // Carregar disciplinas ao clicar na seta
                 onChange={(e) => setFormData({ ...formData, disciplina: Number(e.target.value) })}
               >
                 <option value="">Selecione uma disciplina</option>
@@ -206,12 +227,17 @@ const PlanoEstudos = () => {
 
             <label className="labelCadastroPlanoEstudos">
               Trimestre de Recuperação
-              <Input
-                tipo="text"
-                nome="trimestreRecuperacao"
+              <select
+                className={errors.trimestreRecuperacao ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
                 onChange={(e) => setFormData({ ...formData, trimestreRecuperacao: e.target.value })}
-                erro={errors.trimestreRecuperacao}
-              />
+              >
+                <option value="">Selecione o trimestre de recuperação</option>
+                {TrimestreRec.map((trimestre, index) => (
+                  <option key={index} value={trimestre}>
+                    {trimestre}
+                  </option>
+                ))}
+              </select>
             </label>
           </div>
 
@@ -223,7 +249,7 @@ const PlanoEstudos = () => {
                 onChange={(e) => setFormData({ ...formData, formaOferta: e.target.value })}
               >
                 <option value="">Selecione a forma de oferta</option>
-                {formasOferta.map((forma, index) => (
+                {FormaOferta.map((forma, index) => (
                   <option key={index} value={forma}>
                     {forma}
                   </option>
@@ -238,7 +264,7 @@ const PlanoEstudos = () => {
                 onChange={(e) => setFormData({ ...formData, turno: e.target.value })}
               >
                 <option value="">Selecione o turno</option>
-                {turnos.map((turno, index) => (
+                {Turnos.map((turno, index) => (
                   <option key={index} value={turno}>
                     {turno}
                   </option>

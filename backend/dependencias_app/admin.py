@@ -11,6 +11,7 @@ from dependencias_app.models.planoEstudosEMI import PlanoEstudos_EMI
 from dependencias_app.models.planoEstudosProEJA import PlanoEstudos_ProEJA
 from dependencias_app.models.formEncerramento import FormEncerramento
 from google_auth.models import UsuarioBase
+from dependencias_app.models.atividade import AtividadePED_EMI, AtividadePED_ProEJA
 
 
 admin.site.register(Aluno)
@@ -25,3 +26,5 @@ admin.site.register(PED)
 admin.site.register(PlanoEstudos_EMI)
 admin.site.register(PlanoEstudos_ProEJA)
 admin.site.register(FormEncerramento)
+admin.site.register(AtividadePED_EMI)
+admin.site.register(AtividadePED_ProEJA)

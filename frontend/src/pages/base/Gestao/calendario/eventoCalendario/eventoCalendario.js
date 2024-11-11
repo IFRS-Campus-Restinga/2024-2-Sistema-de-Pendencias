@@ -92,7 +92,8 @@ const EventoCalendarioPage = () => {
           position: "bottom-center",
           autoClose: 3000
         });
-        navigate("/sessao/GestaoEscolar/1/calendario");
+
+        navigate("/sessao/GestaoEscolar/1/calendario", { state: { eventoExcluido: true } });
       } catch (error) {
         console.error('Erro ao excluir evento:', error);
         toast.error("Falha ao excluir evento. Tente novamente.", {
