@@ -1,3 +1,7 @@
+.formContainer {
+  width: 70%;
+}
+
 .input-group {
   margin-bottom: 15px;
   width: 100%;
@@ -63,16 +67,26 @@
   position: relative;
 }
 
-.cabecalhoTabelaCadastroCurso {
-  position: sticky;
-  top: 0;
-  background-color: #006b3f;
-  color: #fff;
-}
-
-.turmas-tabela {
+.tabelaCadastroCurso {
   width: 100%;
   border-collapse: collapse;
+
+  .cabecalhoTabelaCadastroCurso {
+    position: sticky;
+    top: 0;
+    background-color: #006b3f;
+    height: 40px;
+
+    tr {
+      color: #fff;
+      background-color: #006b3f;
+    }
+  }
+
+  td {
+    text-align: center;
+  }
+
 }
 
 .turmas-tabela th,

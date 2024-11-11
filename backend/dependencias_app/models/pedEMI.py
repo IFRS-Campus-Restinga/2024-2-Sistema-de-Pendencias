@@ -4,11 +4,13 @@ from google_auth.models import UsuarioBase
 from .disciplina import Disciplina
 from .curso import Curso
 from dependencias_app.enums.trimestreRec import TrimestreRec
+from dependencias_app.enums.serieAnoProgressao import SerieAnoProgressao
 from .planoEstudos import PlanoEstudos
 from .formEncerramento import FormEncerramento
 
 class PED_EMI(Dependencia):
-    trimestreRec = models.ManyToManyField(TrimestreRec)
+    trimestreRec = models.CharField(null=False, blank=False, choices=TrimestreRec.choices, max_length=10)
+    serieAnoProgressao = models.CharField(null=False, blank=False, choices=SerieAnoProgressao.choices, max_length=7)
     plano_estudos = models.ForeignKey(PlanoEstudos, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='plano_estudos_EMI')
     form_encerramento = models.ForeignKey(FormEncerramento, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='form_encerramento_EMI')
 
@@ -20,3 +22,4 @@ class PED_EMI(Dependencia):
 
     class Meta:
         abstract = False
+        verbose_name_plural = 'PEDs EMI'

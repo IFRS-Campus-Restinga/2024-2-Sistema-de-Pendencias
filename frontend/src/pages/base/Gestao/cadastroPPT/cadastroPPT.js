@@ -13,11 +13,9 @@ const CadastroPPT = () => {
   const [cursos, setCursos] = useState([])
   const [disciplinas, setDisciplinas] = useState([])
   const [opcoesAlunos, setOpcoesAlunos] = useState([])
-  const [opcoesProfessores, setOpcoesProfessores] = useState([])
   const [turmas, setTurmas] = useState([])
   const [formData, setFormData] = useState({
     aluno: "",
-    professor: "",
     curso: "",
     disciplina: "",
     turmaOrigem: "",
@@ -46,7 +44,7 @@ const CadastroPPT = () => {
 
         if (res.status !== 201) throw new Error(res.response.data.mensagem)
         
-        toast.success("Dependência cadastrada com sucesso!", {
+        toast.success("Progressão em Turma cadastrada com sucesso!", {
           position: "bottom-center",
           autoClose: 3000,
           style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
@@ -60,7 +58,6 @@ const CadastroPPT = () => {
           dataInicio: '',
           disciplina: '',
           observacoes: '',
-          professor: '',
           turmaOrigem: '',
           turmaProgressao: ''
         })
@@ -93,16 +90,6 @@ const CadastroPPT = () => {
     }
   }
 
-  const fetchProfessores = async (e) => {
-    try {
-      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Professor')
-
-      setOpcoesProfessores(res.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   useEffect(() => {
     fetchCursos()
   }, [])
@@ -124,7 +111,7 @@ const CadastroPPT = () => {
                   const param = e.target.value
                   console.log(e.target.value)
 
-                  const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || aluno.infos_aluno.matricula || aluno.email)
+                  const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || param === aluno.infos_aluno.matricula || param === aluno.email)
 
                   if (aluno) setFormData({...formData, aluno: aluno.id})
                 }
@@ -145,38 +132,6 @@ const CadastroPPT = () => {
               ))) : (<option>Nenhum aluno encontrado</option>)
             }
           </datalist>
-        <label className="labelCadastroPPT">
-          Professor 
-          <Input
-            tipo='text'
-            nome='professor'
-            onChange={(e) => {
-              fetchProfessores(e)
-              
-              if (opcoesProfessores) {
-                const param = e.target.value
-                console.log(e.target.value)
-
-                const professor = opcoesProfessores.find((professor) => param === professor.nome || professor.email)
-
-                if (professor) setFormData({...formData, professor: professor.id})
-              }
-            }}
-            erro={errors.professor}
-            textoAjuda='Insira o email ou nome do professor'
-            lista={'opcoesProfessores'}
-          />
-        </label>
-        <datalist className="datalistCadastroPPT" id="opcoesProfessores">
-          {
-            opcoesProfessores ? (opcoesProfessores.map((professor) => (
-              <option className="optionCadastroPPT"
-                value={professor.nome || professor.email}>
-                  {professor.nome || professor.email}
-              </option>
-            ))) : (<></>)
-          }
-        </datalist>
         <section className="sectionCadastroPPT">
           <div className="divCadastroPPT">
             <label className="labelCadastroPPT">

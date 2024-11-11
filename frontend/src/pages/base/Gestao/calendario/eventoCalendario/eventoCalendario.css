@@ -88,3 +88,7 @@ button[type="submit"] {
   margin-bottom: 10px;
   text-align: left;
 }
+
+#botaoDelete {
+  background-color: #cd0000;
+}

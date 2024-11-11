@@ -1,4 +1,7 @@
-/* Estilos Gerais */
+.formContainer {
+    width: 80%;
+}
+
 .sectionCadastroDisciplina {
     display: flex;
     align-items: center;
@@ -18,7 +21,7 @@
 .h3CadastroDisciplina {
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
     max-height: fit-content;
 }
 
@@ -54,13 +57,23 @@
 
 /* Contêiner de Cadastro */
 .divCadastroDisciplina {
-    margin-top: 15px;
-    width: 50%;
+    width: 60%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 10px;
+    padding-right: 10px;
+    text-align: center;
+    align-items: center;
+}
+
+.divVincularDisciplina {
+    width: 40%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Mensagens de Erro */
@@ -146,15 +159,17 @@
     max-height: 100%;
     height: 100%;
     border-collapse: collapse;
+
+    td {
+        padding: 5px;
+    }
 }
 
 .cabecalhoCadastroDisciplina {
-    background-color: #006b3f;
-    color: white;
-
     th {
         padding: 7px;
         background-color: #006b3f;
+        color: white;
     }
 }
 

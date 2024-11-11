@@ -1,3 +1,7 @@
+.formContainer {
+  width: 60%;
+}
+
 .containerCadastroAluno {
   display: flex;
   flex-direction: column;

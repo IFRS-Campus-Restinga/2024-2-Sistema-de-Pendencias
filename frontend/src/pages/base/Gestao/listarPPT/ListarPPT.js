@@ -54,7 +54,7 @@ const ListarPPT = () => {
         try {
             const res = await PPTService.list()
 
-            if (res.status != 200) throw new Error(res.response.data.mensagem)
+            if (res.status !== 200) throw new Error(res.response.data.mensagem)
             
             setListaPPT(res.data)
             console.log(res.data)
@@ -69,7 +69,7 @@ const ListarPPT = () => {
 
     return (
         <>
-        <FormContainer titulo='Lista de PPT'>
+        <FormContainer titulo='Lista de PPT' comprimento='90%'>
             <section className='sectionListarPPT'>
                 <div className='divListarPPT'>
                     <label className='labelListarPPT'>
@@ -101,7 +101,6 @@ const ListarPPT = () => {
                 <table className='tabelaListarPPT'>
                     <thead className='cabecalhoListarPPT'>
                         <th>Aluno</th>
-                        <th>Professor</th>
                         <th>Curso</th>
                         <th>Disciplina</th>
                         <th>Turma de Origem</th>
@@ -117,7 +116,6 @@ const ListarPPT = () => {
                             listaPPT.map((ppt) => (
                                 <tr>
                                     <td>{ppt.aluno.nome || '-'}</td>
-                                    <td>{ppt.professor.nome || '-'}</td>
                                     <td>{ppt.curso.nome}</td>
                                     <td>{ppt.disciplina.nome}</td>
                                     <td>{ppt.turmaOrigem.numero}</td>

@@ -13,13 +13,16 @@ import CadastroCurso from './pages/base/Gestao/cadastroCurso/CadastroCurso'
 import CadastroServidor from './pages/base/Gestao/cadastroServidor/CadastroServidor'
 import CadastroAluno from './pages/base/Gestao/cadastroAluno/CadastroAluno'
 import CadastroDisciplina from "./pages/base/Gestao/cadastroDisciplina/CadastroDisciplina"
-import CadastroEmiPed from "./pages/base/Gestao/cadastroEmiPed/cadastroEmiPed";
+import CadastroPED from './pages/base/Gestao/cadastroPED/cadastroPED'
 import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
 import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendario/eventoCalendario"
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 import VisualizarServidor from './pages/base/Gestao/cadastroServidor/VisualizarServidor'
+import EditarServidor from './pages/base/Gestao/cadastroServidor/EditarServidor'
 import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
+import EditarPPT from './pages/base/Gestao/editarPPT/editarPPT'
+
 // Filhos de Registro
 
 // Filhos de Coordenador
@@ -28,6 +31,7 @@ import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
 import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfessor'
 import PlanoEstudos from './pages/base/Professor/planoEstudos/planoEstudos'
+import AtividadesDesenvolvidas from './pages/base/Professor/atividadesDesenvolvidas/atividadesDesenvolvidas'
 
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
@@ -66,8 +70,8 @@ const router = createBrowserRouter([
                 element: <CadastroDisciplina />
             },
             {
-                path: ':idUsuario/cadastroEmiPed',
-                element: <CadastroEmiPed />
+                path: ':idUsuario/cadastroPED',
+                element: <CadastroPED />
             },
             {
                 path: ':idUsuario/listaServidor',
@@ -79,6 +83,10 @@ const router = createBrowserRouter([
             },
             {
                 path: ':idUsuario/eventoCalendario',
+                element: <EventoCalendarioPage />
+            },
+            {
+                path: ':idUsuario/calendario/evento/:idEvento',
                 element: <EventoCalendarioPage />
             },
             {
@@ -97,12 +105,18 @@ const router = createBrowserRouter([
                 path: ':idUsuario/listaPPT',
                 element: <ListarPPT />
             },
-            ,
             {
                 path: ':idUsuario/detalhesPPT/:idPpt',
                 element: <DetalhesPPT />
-            }
-
+            },
+            {
+                path: ':idUsuario/listaServidor/:idServidor/visualizarServidor/editarServidor',
+                element: <EditarServidor />
+            },
+            {
+                path: ':idUsuario/detalhesPPT/:idPpt/editarPPT',
+                element: <EditarPPT />
+            },
         ]
         // Adicionar outros caminhos que vão derivar da tela de home após autenticação
 
@@ -137,6 +151,10 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/planoEstudos',
                 element: <PlanoEstudos />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId',
+                element: <AtividadesDesenvolvidas />,
             }
         ]
     },

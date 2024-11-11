@@ -14,17 +14,24 @@ const VisualizarServidor = () => {
         return <div>Nenhum servidor foi selecionado.</div>;
     }
 
+    const perfilMap = {
+        'GestaoEscolar': 'Gestão Escolar',
+        'RegistroEscolar': 'Registros Escolares',
+        'Coordenador': 'Coordenador',
+        'Professor': 'Professor'
+      };
+
     // Função para editar servidor
     const handleEditar = () => {
         navigate(`/sessao/GestaoEscolar/2/listaServidor/${servidor.id}/visualizarServidor/editarServidor`, { state: { servidor }});
     };
 
     return (
-        <FormContainer titulo={"Detalhes do Servidor"}>
-            <p className="detalhe-servidor"><strong>Status:</strong> {servidor.status}</p>
+        <FormContainer comprimento="50%" titulo={"Detalhes do Servidor"}>
+            <p className="detalhe-servidor"><strong>Status:</strong> {servidor.is_active === true ? 'Ativo' : 'Inativo'}</p>
             <p className="detalhe-servidor"><strong>Nome:</strong> {servidor.nome}</p>
             <p className="detalhe-servidor"><strong>Email:</strong> {servidor.email}</p>
-            <p className="detalhe-servidor"><strong>Perfil:</strong> {servidor.perfil}</p>
+            <p className="detalhe-servidor"><strong>Perfil:</strong> {perfilMap[servidor.perfil]}</p>
             <p className="detalhe-servidor"><strong>Matricula:</strong> {servidor.matricula}</p>           
             <Button tipo='submit' text='Editar Servidor' onClick={handleEditar}/>
         </FormContainer>

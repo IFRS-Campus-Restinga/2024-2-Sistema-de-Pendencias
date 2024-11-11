@@ -1,13 +1,10 @@
 from django.db import models
 
-class TrimestreRec(models.Model):
-    TRIMESTRE_CHOICES = [
-        ('1º', 'Primeiro'),
-        ('2º', 'Segundo'),
-        ('3º', 'Terceiro'),
-        ('Todos', 'Todos')
-    ]
-    trimestre = models.CharField(max_length=5, choices=TRIMESTRE_CHOICES)
-
-    def __str__(self):
-        return self.trimestre
+class TrimestreRec(models.TextChoices):
+    PRIMEIRO = '1º'
+    SEGUNDO = '2º'
+    TERCEIRO = '3º'
+    PRIMEIRO_SEGUNDO = '1º, 2º'
+    PRIMEIRO_TERCEIRO = '1º, 3º'
+    SEGUNDO_TERCEIRO = '2º, 3º'
+    TODOS = '1º, 2º, 3º'

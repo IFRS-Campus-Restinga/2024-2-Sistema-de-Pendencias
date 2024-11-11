@@ -10,7 +10,8 @@ from dependencias_app.views.disciplinaViews import *
 from dependencias_app.views.cursoViews import *
 from dependencias_app.views.eventoViews import *
 from dependencias_app.views.pptViews import *
-from dependencias_app.views.pedEMIViews import *
+from dependencias_app.views.pedViews import *
+from dependencias_app.views.atividadeViews import *
 
 
 
@@ -31,13 +32,12 @@ urlpatterns = [
     path('listar-cursos/', listar_cursos),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
 
-    # views para cadastrar DependenciaEMIPED
-    path('cadastrar-emiped/', cadastrar_emiped),  # Nova URL para cadastrar DependenciaEMIPED
-
-
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),
     path('listar-eventos/', listar_eventos, name='listar_eventos'),
+    path('editar-evento/<int:evento_id>/', atualizar_evento, name='atualizar_evento'),
+    path('deletar-evento/<int:evento_id>/', deletar_evento, name='deletar_evento'),
+    path('eventos/<int:evento_id>/', obter_evento, name='obter_evento'),
     
 
     # views de lista de usuários
@@ -51,11 +51,22 @@ urlpatterns = [
 
     #views de visualizar cadastro
     path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
-    # view para cadastro de ppt
+
+    # view de PPT
     path('cadastrar-ppt/', cadastrar_ppt),
     path('listar-ppt/', listar_ppt),
-    path('listar-ppt/<int:idPpt>/', listar_ppt_id)
+    path('listar-ppt/<int:idPpt>/', listar_ppt_id),
+    #path('editar-ppt/<int:idPpt>/', editar_ppt),
+    
+    # views de PED
+    path('cadastrarPED/EMI/', cadastrar_PED_EMI),
+    path('cadastrarPED/ProEJA/', cadastrar_PED_ProEJA),
 
+    # views de editar cadastro
+    path('visualizar-servidor/<id>/editar/', editar_servidor, name='editar_servidor'),
+
+    #views para atividades da ped
+    path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),
     ]
 
 
