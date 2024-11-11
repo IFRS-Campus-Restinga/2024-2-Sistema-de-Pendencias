@@ -11,30 +11,30 @@ import atividadeService from '../../../../services/atividadeService';
 
 const AtividadesDesenvolvidas = () => {
   const [atividades, setAtividades] = useState([]);
-  const [aluno, setAluno] = useState(null); // Pode ser removido se você não precisar mais dessa variável
+  const [aluno, setAluno] = useState(null);
   const [notaFinal, setNotaFinal] = useState(null);
   const [situacao, setSituacao] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const { pedTipo, pedId } = useParams(); // idUsuario não está sendo usado no código, então removi
+  const { pedId } = useParams();  // Removemos `pedTipo` pois não é mais necessário
 
   const navigate = useNavigate();
 
   // Função para buscar as atividades
   const fetchAtividades = async () => {
     try {
-      if (!pedTipo || !pedId) {
-        console.error('pedTipo ou pedId não encontrado');
+      if (!pedId) {
+        console.error('pedId não encontrado');
         toast.error('Erro ao carregar atividades');
         return;
       }
-      const response = await atividadeService.listarAtividades(pedTipo, pedId);
+      const response = await atividadeService.listarAtividades(pedId);  // Remove `pedTipo` do serviço
       setAtividades(response.data);
       calcularNotaFinal(response.data);
 
-      // Se o aluno não estiver presente nas atividades, você pode usar o primeiro aluno da resposta
+      // Definindo aluno a partir da primeira atividade
       if (response.data.length > 0 && response.data[0].aluno) {
-        setAluno(response.data[0].aluno); // Definindo aluno a partir da primeira atividade
+        setAluno(response.data[0].aluno);
       }
     } catch (error) {
       console.error('Erro ao carregar atividades:', error.response || error);
@@ -52,14 +52,13 @@ const AtividadesDesenvolvidas = () => {
     setSituacao(notaMedia >= 7 ? 'Aprovado' : 'Reprovado');
   };
 
-  // Carregar atividades e dados do aluno ao montar o componente
   useEffect(() => {
     fetchAtividades();
-  }, [pedTipo, pedId]); 
+  }, [pedId]);
 
   // Função para navegação para adicionar nova atividade
   const handleAdicionarAtividade = () => {
-    navigate(`/professor/atividades/${pedTipo}/${pedId}/adicionar`);
+    navigate(`/professor/atividades/${pedId}/adicionar`);  // Remove `pedTipo` da URL
   };
 
   // Função para navegar para a visualização da atividade
@@ -71,12 +70,12 @@ const AtividadesDesenvolvidas = () => {
     <>
       <ToastContainer />
       <FormContainer titulo="Atividades Desenvolvidas" comprimento="90%">
-      <div className="info-e-botao">
-        <div className="info-aluno">
-          {aluno && <p><strong>Aluno:</strong> {aluno.nome}</p>}
+        <div className="info-e-botao">
+          <div className="info-aluno">
+            {aluno && <p><strong>Aluno:</strong> {aluno.nome}</p>}
+          </div>
+          <Button text="Adicionar Atividade" onClick={handleAdicionarAtividade} />
         </div>
-        <Button text="Adicionar Atividade" onClick={handleAdicionarAtividade} />
-      </div>
         <div className="tabela-atividades">
           <table>
             <thead>

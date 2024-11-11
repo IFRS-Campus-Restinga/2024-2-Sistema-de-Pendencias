@@ -1,10 +1,12 @@
+from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from dependencias_app.serializers.atividadeSerializer import Atividade_Serializer
-from dependencias_app.serializers.pedSerializer import PED_Serializer
+from dependencias_app.models.atividade import Atividade
+from dependencias_app.models.ped import PED
+from dependencias_app.serializers.atividadeSerializer import AtividadeSerializer
+from rest_framework.permissions import IsAuthenticated
 from dependencias_app.permissoes import Professor
-
 
 @api_view(['POST'])
 @permission_classes([Professor])
