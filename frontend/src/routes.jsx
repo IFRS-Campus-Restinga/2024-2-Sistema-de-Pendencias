@@ -18,8 +18,8 @@ import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
 import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendario/eventoCalendario"
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
-import VisualizarServidor from './pages/base/Gestao/cadastroServidor/VisualizarServidor'
-import EditarServidor from './pages/base/Gestao/cadastroServidor/EditarServidor'
+import VisualizarServidor from './pages/base/Gestao/visualizarServidor/VisualizarServidor'
+import EditarServidor from './pages/base/Gestao/editarServidor/EditarServidor'
 import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
 import EditarPPT from './pages/base/Gestao/editarPPT/editarPPT'
 
