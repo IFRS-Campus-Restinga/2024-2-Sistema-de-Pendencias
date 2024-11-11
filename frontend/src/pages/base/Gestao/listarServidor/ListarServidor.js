@@ -22,6 +22,7 @@ const ListarServidor = () => {
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
   const [isActiveFiltro, setIsActiveFiltro] = useState('');
+  const [matriculaFiltro, setMatriculaFiltro] = useState('');
 
   const navigate = useNavigate();
 

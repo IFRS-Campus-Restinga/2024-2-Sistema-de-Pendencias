@@ -1,6 +1,6 @@
 import { api } from "../config/axiosConfig";
 
-const turmaService = {
+export const turmaService = {
   create: async (params, csrfToken) => {
     const res = await api
       .post("/cadastrar_turma", params, {
@@ -18,8 +18,8 @@ const turmaService = {
     return res;
   },
 
-  list: async () => {
-    const res = await api.get("/listar_turmas").catch((erro) => {
+  list: async (curso) => {
+    const res = await api.get(`api/listar_turmas/${curso}`).catch((erro) => {
       console.error("Erro ao listar turmas:", erro);
     });
     return res;
@@ -27,4 +27,3 @@ const turmaService = {
 
 };
 
-export default turmaService;

@@ -12,6 +12,7 @@ from dependencias_app.views.eventoViews import *
 from dependencias_app.views.pptViews import *
 from dependencias_app.views.pedViews import *
 from dependencias_app.views.atividadeViews import *
+from dependencias_app.views.planoEstudosViews import *
 
 
 
@@ -32,6 +33,7 @@ urlpatterns = [
     path('listar-cursos/', listar_cursos),
     path('listar-cursos/<str:modalidade>/', listar_por_modalidade),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
+    path('listar-turmas/<int:curso>/', listar_turmas_por_curso),
 
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),
@@ -61,9 +63,13 @@ urlpatterns = [
     
     # views de PED
     path('cadastrarPED/', cadastrar_PED),
+    path('listar-ped/<int:professor>/', listar_por_professor),
+    path('ped/<int:pedId>/', por_id),
+    path('cadastrar-plano-estudos/', cadastrar_plano_estudos_EMI),
 
     #views para atividades da ped
-    path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),
+    path('ped/criar-atividade/', criar_atividade),
+    # path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),
     ]
 
 

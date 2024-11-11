@@ -70,11 +70,14 @@ export const validarFormularioCurso = (formData) => {
     const erroCargaHoraria = validarCargaHoraria(formData.carga_horaria);
     if (erroCargaHoraria) erros.carga_horaria = erroCargaHoraria;
 
-    const turmasErros = validarTurma(formData.turmas);
-    
-    if (turmasErros.length > 0) {
-        erros.turmas = turmasErros;
+    if (formData.modalidade === 'Integrado') {
+        const turmasErros = validarTurma(formData.turmas);
+        
+        if (turmasErros.length > 0) {
+            erros.turmas = turmasErros;
+        }
     }
+
 
     console.log(erros);
 

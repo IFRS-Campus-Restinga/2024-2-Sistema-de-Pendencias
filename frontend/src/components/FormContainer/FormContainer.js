@@ -1,14 +1,14 @@
-import './FormContainer.css'
+import React, { useEffect, forwardRef } from 'react';
+import './FormContainer.css';
 
-const FormContainer = ({children, onSubmit, titulo, comprimento}) => {
+const FormContainer = forwardRef(({ children, onSubmit, titulo, comprimento }, formRef) => {
     return (
-        <form className="formContainer" onSubmit={onSubmit} style={{width: comprimento}}>
-            <span className='tituloForm'>{titulo}</span>
-            <hr className='linha'/>
-            {/* aqui os inputs são renderizados */}
+        <form className="formContainer" onSubmit={onSubmit} style={{ width: comprimento }} ref={formRef}>
+            <span className="tituloForm">{titulo}</span>
+            <hr className="linha" />
             {children}
         </form>
-    )
-}
+    );
+});
 
-export default FormContainer
+export default FormContainer;

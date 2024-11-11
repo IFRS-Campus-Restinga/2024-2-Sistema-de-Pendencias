@@ -14,12 +14,15 @@ from dependencias_app.serializers.formEncerramentoSerializer import FormEncerram
 class PED_Serializer(serializers.ModelSerializer):
     aluno = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Aluno'))
     professor = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
-    curso = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.filter(modalidade='Integrado'))
+    curso = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.all())
     disciplina = serializers.PrimaryKeyRelatedField(queryset=Disciplina.objects.all())
+    plano_estudos_EMI = PlanoEstudos_EMISerializer(read_only=True)
+    plano_estudos_ProEJA = PlanoEstudos_ProEJASerializer(read_only=True)
+    form_encerramento = FormEncerramentoSerializer(read_only=True)
 
     class Meta:
         model = PED
-        fields = ['id', 'aluno', 'professor', 'curso', 'disciplina', 'plano_estudos', 'form_encerramento']
+        fields = ['id', 'aluno', 'professor', 'curso', 'modalidade', 'dataInicio', 'situacao',  'status', 'disciplina', 'plano_estudos_EMI', 'plano_estudos_ProEJA', 'form_encerramento']
     
     def save(self, **kwargs):
         formPED_EMI = super().save(**kwargs)
@@ -61,13 +64,20 @@ class PED_Serializer(serializers.ModelSerializer):
 
         if hasattr(instance, 'modalidade'):
             if representation['modalidade'] == 'Integrado':
-                representation['plano_estudos'] = PlanoEstudos_EMISerializer(instance.plano_estudos).data
+                if hasattr(instance, 'plano_estudos_EMI'):
+                    representation['plano_estudos_EMI'] = PlanoEstudos_EMISerializer(instance.plano_estudos_EMI).data
+
+                else: representation['plano_estudos_EMI'] = {}
             
             if representation['modalidade'] == 'ProEJA':
-                representation['plano_estudos'] = PlanoEstudos_ProEJASerializer(instance.plano_estudos).data
+                if hasattr(instance, 'plano_estudos_ProEJA'):
+                    representation['plano_estudos_ProEJA'] = PlanoEstudos_ProEJASerializer(instance.plano_estudos_ProEJA).data
+                else: representation['plano_estudos_ProEJA'] = {}   
         
         if hasattr(instance, 'form_encerramento'):
             representation['form_encerramento'] = FormEncerramentoSerializer(instance.form_encerramento).data
+        else:
+            representation['form_encerramento'] = {}
 
         
         # retorna os dados em vez de apenas os id's que fazem o vinculo entre cada instância da PED

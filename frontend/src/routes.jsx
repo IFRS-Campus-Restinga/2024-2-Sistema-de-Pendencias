@@ -30,6 +30,7 @@ import EditarPPT from './pages/base/Gestao/editarPPT/editarPPT'
 // Filhos de Professor
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
 import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfessor'
+import ListarPEDProfessor from './pages/base/Professor/perfilProfessor/listarPED/ListarPEDProfessor'
 import PlanoEstudos from './pages/base/Professor/planoEstudos/planoEstudos'
 import AtividadesDesenvolvidas from './pages/base/Professor/atividadesDesenvolvidas/atividadesDesenvolvidas'
 
@@ -149,7 +150,11 @@ const router = createBrowserRouter([
                 element: <PerfilProfessor />
             },
             {
-                path: ':idUsuario/planoEstudos',
+                path: ':idUsuario/minhasPEDs/',
+                element: <ListarPEDProfessor />
+            },
+            {
+                path: ':idUsuario/ped/:pedId/planoEstudos',
                 element: <PlanoEstudos />
             },
             {
