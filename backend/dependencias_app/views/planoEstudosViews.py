@@ -1,8 +1,8 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from dependencias_app.serializers.planoEstudosSerializer import PlanoEstudos
-from dependencias_app.models.planoEstudos import PlanoEstudos
+from backend.dependencias_app.serializers.planoEstudosEMISerializer import PlanoEstudos
+from backend.dependencias_app.models.planoEstudosEMI import PlanoEstudos
 from dependencias_app.permissoes import GestaoEscolar
 import logging
 

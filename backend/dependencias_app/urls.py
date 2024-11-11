@@ -29,6 +29,7 @@ urlpatterns = [
     path('cadastrar-curso/', cadastrar_curso),
     path('cadastrar-disciplina/', cadastrar_disciplina),
     path('listar-cursos/', listar_cursos),
+    path('listar-cursos/<str:modalidade>/', listar_por_modalidade),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
 
     # views de evento/calendario
@@ -57,8 +58,7 @@ urlpatterns = [
     path('listar-ppt/<int:idPpt>/', listar_ppt_id),
 
     # views de PED
-    path('cadastrarPED/EMI/', cadastrar_PED_EMI),
-    path('cadastrarPED/ProEJA/', cadastrar_PED_ProEJA)
+    path('cadastrarPED/', cadastrar_PED),
 
     ]
 

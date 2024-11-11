@@ -258,13 +258,13 @@ const CadastroPED = () => {
                       <label className="labelCadastroPED">
                         Trimestres a Recuperar
                         {errors.trimestreRec ? <p style={{color: 'red', fontSize: '10px'}}>{errors.trimestreRec}</p> : (<></>)}
-                        <div className="divSemestreRec">
-                          <input className="checkboxSemestre" onChange={handleTrimestreRec} type="checkbox" value='1º' id="1" hidden/>
-                          <label className="labelSemestreRec" htmlFor="1">1º Semestre</label>
-                          <input className="checkboxSemestre" onChange={handleTrimestreRec} type="checkbox" value='2º' id="2" hidden/>
-                          <label className="labelSemestreRec" htmlFor="2">2º Semestre</label>
-                          <input className="checkboxSemestre" onChange={handleTrimestreRec} type="checkbox" value='3º' id='3' hidden/>
-                          <label className="labelSemestreRec" htmlFor="3">3º Semestre</label>
+                        <div className="divTrimestreRec">
+                          <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" value='1º' id="1" hidden/>
+                          <label className="labelTrimestreRec" htmlFor="1">1º Trimestre</label>
+                          <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" value='2º' id="2" hidden/>
+                          <label className="labelTrimestreRec" htmlFor="2">2º Trimestre</label>
+                          <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" value='3º' id='3' hidden/>
+                          <label className="labelTrimestreRec" htmlFor="3">3º Trimestre</label>
                         </div>
                       </label>
                     </div>

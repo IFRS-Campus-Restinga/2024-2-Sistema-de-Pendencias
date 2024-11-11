@@ -22,7 +22,7 @@ const CadastroPPT = () => {
     turmaProgressao: "",
     dataInicio: "",
     dataFim: "",
-    observacoes: "",
+    observacao: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -57,7 +57,7 @@ const CadastroPPT = () => {
           dataFim: '',
           dataInicio: '',
           disciplina: '',
-          observacoes: '',
+          observacao: '',
           turmaOrigem: '',
           turmaProgressao: ''
         })
@@ -72,7 +72,7 @@ const CadastroPPT = () => {
 
   const fetchCursos = async () => {
     try {
-      const res = await cursoService.list()
+      const res = await cursoService.porModalidade('Integrado')
       
       setCursos(res.data)
     } catch (error) {
