@@ -6,12 +6,17 @@ from dependencias_app.models.pedEMI import PED_EMI
 from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.serializers.planoEstudosSerializer import PlanoEstudos_Serializer
 from dependencias_app.permissoes import *
+>>>>>>> 1be5a72945abc07c14a67d966770c1bbb2b1ec82
 import logging
 
 logger = logging.getLogger(__name__)
 
 
 @api_view(['POST'])
+<<<<<<< HEAD
+@permission_classes([GestaoEscolar | Professor])
+def cadastrar_plano_estudo(request):
+=======
 @permission_classes([Professor])
 def cadastrar_plano_estudos(request, pedId):
     logger.info('Dados recebidos: %s', request.data)
@@ -44,4 +49,8 @@ def cadastrar_plano_estudos(request, pedId):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
+<<<<<<< HEAD
+        logger.error("Erro ao cadastrar Plano de Estudo Dirigido: %s", str(e))
+=======
+>>>>>>> 1be5a72945abc07c14a67d966770c1bbb2b1ec82
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
