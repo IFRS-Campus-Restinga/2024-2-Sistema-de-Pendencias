@@ -59,8 +59,6 @@ export const validarTurma = (turmas) => {
 export const validarFormularioCurso = (formData) => {
     const erros = {};
 
-    console.log(formData);
-
     const erroCurso = validarCurso(formData.nome);
     if (erroCurso) erros.nome = erroCurso;
 
@@ -77,9 +75,6 @@ export const validarFormularioCurso = (formData) => {
             erros.turmas = turmasErros;
         }
     }
-
-
-    console.log(erros);
 
     return erros;
 };

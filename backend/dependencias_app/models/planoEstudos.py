@@ -3,7 +3,6 @@ from .base import BaseModel
 from dependencias_app.models.dependencia import *
 from dependencias_app.enums.formaOferta import FormaOferta
 from dependencias_app.enums.turnos import Turnos
-from dependencias_app.enums.trimestreRec import TrimestreRec
 
 class PlanoEstudos(BaseModel):
     campus = models.CharField(default='Restinga', help_text="Informe o campus", max_length=20, null=False, blank=False)
@@ -14,4 +13,5 @@ class PlanoEstudos(BaseModel):
 
 
     class Meta:
-        abstract = True
+        abstract = False
+        verbose_name_plural = 'Planos de Estudos'

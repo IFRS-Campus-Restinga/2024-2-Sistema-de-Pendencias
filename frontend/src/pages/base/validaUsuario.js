@@ -1,16 +1,16 @@
 import {jwtDecode} from 'jwt-decode'
 
-export const validaUsuario = (perfilPagina) => {
+export const validaUsuario = (grupoPagina) => {
     const token = sessionStorage.getItem('token')
 
     if (token === null || token === undefined) return {status: false}
     
     const decoded = jwtDecode(token)
 
-    if (decoded.perfil !== perfilPagina) {
+    if (decoded.grupo !== grupoPagina) {
          return {
             status: false,
-            perfil: decoded.perfil,
+            grupo: decoded.grupo,
             idUsuario: decoded.idUsuario
         }
     } else {

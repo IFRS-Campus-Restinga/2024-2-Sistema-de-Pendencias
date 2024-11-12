@@ -5,14 +5,13 @@ from dependencias_app.serializers.alunoSerializer import AlunoSerializer
 from dependencias_app.serializers.professorSerializer import ProfessorSerializer
 
 class UsuarioBaseSerializer(serializers.ModelSerializer):
-    perfil = serializers.CharField(source='grupo.name', read_only=True)
-    grupo = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all(), write_only=True)  # Incluir o campo de grupo
+    grupo = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all())
     infos_professor = ProfessorSerializer(read_only=True)
     infos_aluno = AlunoSerializer(read_only=True)
 
     class Meta:
         model = UsuarioBase
-        fields = ['id', 'nome', 'email', 'data_ingresso', 'primeiro_login', 'grupo', 'perfil', 'is_active', 'infos_professor', 'infos_aluno']
+        fields = ['id', 'nome', 'email', 'data_ingresso', 'primeiro_login', 'grupo', 'is_active', 'infos_professor', 'infos_aluno']
 
     def save(self, **kwargs):
         formUsuarioBase = super().save(**kwargs)
@@ -36,5 +35,7 @@ class UsuarioBaseSerializer(serializers.ModelSerializer):
                     representation['infos_aluno'] = AlunoSerializer(instance.aluno).data
                 else:
                     representation['infos_aluno'] = {}
+            
+            representation['grupo'] = instance.grupo.name
 
         return representation

@@ -10,7 +10,7 @@ from dependencias_app.serializers.turmaSerializer import TurmaSerializer
 from dependencias_app.utils.error_handler import handle_view_errors
 
 @api_view(['POST'])
-#@permission_classes([GestaoEscolar])
+@permission_classes([GestaoEscolar])
 def cadastrar_curso(request):
     # Extraia os dados da requisição
     turmas = request.data.get('turmas', [])  # Lista de números das turmas
@@ -43,10 +43,6 @@ def cadastrar_curso(request):
 @api_view(['GET'])
 @handle_view_errors
 def listar_cursos(request):
-    """
-    Função que lista todos os cursos cadastrados.
-    Retorna uma lista de cursos em formato JSON ou um erro.
-    """
     cursos = Curso.objects.all()  # Obtém todos os cursos
     serializer = CursoSerializer(cursos, many=True)  # Serializa os cursos
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -62,9 +58,9 @@ def listar_por_modalidade(request, modalidade):
 
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
 @permission_classes([Professor])
-@api_view(['GET'])
 def listar_turmas_por_curso(request, curso_id):
     try:
         curso = Curso.objects.get(id=curso_id)

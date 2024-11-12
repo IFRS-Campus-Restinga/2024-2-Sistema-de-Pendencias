@@ -17,8 +17,8 @@ const BaseGestao = () => {
       const res = validaUsuario('GestaoEscolar')
 
       if (!res.status) {
-          if (res.perfil === undefined) redirect('/')
-          else redirect(`/sessao/${res.perfil}/${res.idUsuario}`)
+          if (res.grupo === undefined) redirect('/')
+          else redirect(`/sessao/${res.grupo}/${res.idUsuario}`)
       }
     }
 

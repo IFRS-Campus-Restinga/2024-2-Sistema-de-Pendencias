@@ -70,7 +70,6 @@ const CadastroCurso = () => {
         const response = await cursoService.create(formData);
 
         if (response.status !== 201) {
-          console.log(response)
           const errorMessage = response.data?.message || 'Erro desconhecido';
           throw new Error(errorMessage);
         }
@@ -176,7 +175,6 @@ const CadastroCurso = () => {
                 
                 if (opcoesCoordenadores) {
                   const param = e.target.value
-                  console.log(e.target.value)
 
                   const coordenador = opcoesCoordenadores.find((coordenador) => param === coordenador.nome || param === coordenador.email)
 

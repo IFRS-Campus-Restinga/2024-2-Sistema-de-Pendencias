@@ -33,7 +33,6 @@ urlpatterns = [
     path('listar-cursos/', listar_cursos),
     path('listar-cursos/<str:modalidade>/', listar_por_modalidade),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
-    path('listar-turmas/<int:curso>/', listar_turmas_por_curso),
 
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),
@@ -42,7 +41,6 @@ urlpatterns = [
     path('deletar-evento/<int:evento_id>/', deletar_evento, name='deletar_evento'),
     path('eventos/<int:evento_id>/', obter_evento, name='obter_evento'),
     
-
     # views de lista de usuários
     path('usuario/<int:idUsuario>/', get_infos_usuario),
     path('dados-aluno/<int:idAluno>/', get_aluno_infos),
@@ -62,10 +60,11 @@ urlpatterns = [
     #path('editar-ppt/<int:idPpt>/', editar_ppt),
     
     # views de PED
-    path('cadastrarPED/', cadastrar_PED),
+    path('cadastrarPED-EMI/', cadastrar_PED_EMI),
+    path('cadastrarPED-ProEJA/', cadastrar_PED_ProEJA),
     path('listar-ped/<int:professor>/', listar_por_professor),
     path('ped/<int:pedId>/', por_id),
-    path('cadastrar-plano-estudos/', cadastrar_plano_estudos_EMI),
+    path('cadastrar-plano-estudos/', cadastrar_plano_estudos),
 
     #views para atividades da ped
     # path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),

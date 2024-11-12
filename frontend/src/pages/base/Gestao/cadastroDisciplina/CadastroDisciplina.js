@@ -48,16 +48,6 @@ const CadastroDisciplina = () => {
       
     }
   }
-
-  const fetchProfessores = async (e) => {
-    try {
-      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Professor')
-
-      setOpcoesProfessores(res.data)
-    } catch (error) {
-      console.error('Erro ao buscar professores: ', error)
-    }
-  }
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -116,7 +106,7 @@ const CadastroDisciplina = () => {
   const addDisciplina = () => {
     setFormData((prevData) => ({
       ...prevData,
-      novasDisciplinas: [...prevData.novasDisciplinas, { nome: '', carga_horaria: '', professor: ''}],
+      novasDisciplinas: [...prevData.novasDisciplinas, { nome: '', carga_horaria: ''}],
     }));
   }
 
@@ -189,7 +179,6 @@ const CadastroDisciplina = () => {
                     <tr>
                       <th>Nome</th>
                       <th>Carga Horaria</th>
-                      <th>Professor</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -233,44 +222,6 @@ const CadastroDisciplina = () => {
                             }}
                             erro={errors?.novasDisciplinas?.[index]?.carga_horaria}
                           />
-                        </td>
-                        <td>
-                          <Input
-                            tipo='text'
-                            nome='professor'
-                            onChange={(e) => {
-                              fetchProfessores(e)
-                              
-                              if (opcoesProfessores) {
-                                const param = e.target.value
-
-                                const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
-
-                                if (professor) setFormData((prevData) => {
-                                  const novasDisciplinas = [...prevData.novasDisciplinas];
-                                  novasDisciplinas[index] = {
-                                    ...novasDisciplinas[index],
-                                    professor: professor.id,
-                                  };
-                                  return { ...prevData, novasDisciplinas };
-                                })
-                              }
-                            }}
-                            onBlur={() => handleBlur('professor')}
-                            erro={errors?.novasDisciplinas?.[index]?.nome}
-                            textoAjuda='Insira nome ou email do professor'
-                            lista={'opcoesProfessores'}
-                          />
-                          <datalist className="datalistCadastroCurso" id="opcoesProfessores">
-                            {
-                              opcoesProfessores ? (opcoesProfessores.map((professor) => (
-                                <option className="optionCadastroCurso" 
-                                  value={professor.nome || professor.email}>
-                                    {professor.nome || professor.email}
-                                </option>
-                              ))) : (<option>Nenhum professor encontrado</option>)
-                            }
-                          </datalist>
                         </td>
                         <td>
                       <FontAwesomeIcon
