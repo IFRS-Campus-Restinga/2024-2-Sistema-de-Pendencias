@@ -11,6 +11,7 @@ from dependencias_app.views.cursoViews import *
 from dependencias_app.views.eventoViews import *
 from dependencias_app.views.pptViews import *
 from dependencias_app.views.pedViews import *
+from dependencias_app.views.planoEstudosViews import *
 
 
 
@@ -58,7 +59,10 @@ urlpatterns = [
 
     # views de PED
     path('cadastrarPED/EMI/', cadastrar_PED_EMI),
-    path('cadastrarPED/ProEJA/', cadastrar_PED_ProEJA)
+    path('cadastrarPED/ProEJA/', cadastrar_PED_ProEJA),
+
+    # views plano de estudos
+    path('cadastrar-plano-estudos/', cadastrar_plano_estudo)
 
     ]
 

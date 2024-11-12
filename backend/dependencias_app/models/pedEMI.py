@@ -5,7 +5,7 @@ from .disciplina import Disciplina
 from .curso import Curso
 from dependencias_app.enums.trimestreRec import TrimestreRec
 from dependencias_app.enums.serieAnoProgressao import SerieAnoProgressao
-from .planoEstudos import PlanoEstudos
+from .planoEstudosEMI import PlanoEstudos
 from .formEncerramento import FormEncerramento
 
 class PED_EMI(Dependencia):
