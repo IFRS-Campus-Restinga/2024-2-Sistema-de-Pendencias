@@ -1,25 +1,18 @@
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from dependencias_app.models.curso import Curso
-from dependencias_app.models.turma import Turma
-from dependencias_app.models.disciplina import Disciplina
-from dependencias_app.models.professor import Professor
-from dependencias_app.serializers.pedEMISerializer import PED_EMISerializer
-from dependencias_app.serializers.pedPROEJASerializer import PED_ProEJASerializer
+from django.shortcuts import get_object_or_404
+from dependencias_app.models.ped import PED
+from dependencias_app.serializers.pedSerializer import PED_Serializer
 from dependencias_app.permissoes import *
 
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
-def cadastrar_PED_EMI(request):
+def cadastrar_PED(request):
     try:
         data = request.data
 
-        data.pop('anoSemestreReprov', None)
-
-        print(data)
-
-        serializer = PED_EMISerializer(data=data)
+        serializer = PED_Serializer(data=data)
 
         if not serializer.is_valid(): raise Exception(serializer.error_messages)
 
@@ -28,25 +21,29 @@ def cadastrar_PED_EMI(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:
         return Response({'mensagem: ': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
 
-@api_view(['POST'])
-@permission_classes([GestaoEscolar])
-def cadastrar_PED_ProEJA(request):
+@api_view(['GET'])
+@permission_classes([Professor])
+def por_id(request, pedId):
     try:
-        data = request.data
+        ped = get_object_or_404(PED, pk=pedId)
 
-        data.pop('turmaOrigem', None)
-        data.pop('serieAnoProgressao', None)
-        data.pop('trimestreRec', None)
+        serializer = PED_Serializer(ped)
 
-        print(data)
-
-        serializer = PED_ProEJASerializer(data=data)
-
-        if not serializer.is_valid(): raise Exception(serializer.error_messages)
-
-        serializer.save()
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({'mensagem: ': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['GET'])
+@permission_classes([Professor])
+def listar_por_professor(request, professor):
+    try:
+        lista_ped = PED.objects.filter(professor=professor)
+
+        serializer = PED_Serializer(lista_ped, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)

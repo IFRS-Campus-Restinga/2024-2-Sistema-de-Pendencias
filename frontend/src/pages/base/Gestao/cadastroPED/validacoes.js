@@ -95,24 +95,7 @@ export const validarFormularioPED = (formData, modalidade) => {
 
     const erroDisciplina = validarDisciplina(formData.disciplina);
     if (erroDisciplina) erros.disciplina = erroDisciplina;
-
-    if (modalidade === 'Integrado') {
-        const erroTurma = validarTurmaOrigem(formData.turmaOrigem, modalidade);
-        if (erroTurma) erros.turmaOrigem = erroTurma
-
-        const erroSerieAnoProgressao = validarSerieAnoProgressao(formData.serieAnoProgressao);
-        if (erroSerieAnoProgressao) erros.serieAnoProgressao = erroSerieAnoProgressao
-
-        const erroTrimestreRec = validarTrimestreRec(formData.trimestreRec);
-        if (erroTrimestreRec) erros.trimestreRec = erroTrimestreRec
-
-    } else if (modalidade === 'ProEJA') {
-        const erroAnoSemestreReprov = validarAnoSemestreReprov(formData.anoSemestreReprov);
-        if (erroAnoSemestreReprov) erros.anoSemestreReprov = erroAnoSemestreReprov
-    } else {
-        erros.modalidade = 'Modalidade inválida'
-    }
-
+    
     console.log(erros);
 
     return erros;

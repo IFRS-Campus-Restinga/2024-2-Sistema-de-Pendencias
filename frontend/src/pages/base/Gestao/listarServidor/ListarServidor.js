@@ -21,7 +21,8 @@ const ListarServidor = () => {
   const [filtroGeral, setFiltroGeral] = useState('');
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
-  const [statusFiltro, setStatusFiltro] = useState('');
+  const [isActiveFiltro, setIsActiveFiltro] = useState('');
+  const [matriculaFiltro, setMatriculaFiltro] = useState('');
 
   const navigate = useNavigate();
 
@@ -78,7 +79,9 @@ const ListarServidor = () => {
     setDataFim('');
     setFiltroGeral('');
     setPerfilFiltro('');
-    setStatusFiltro('');
+    setMatriculaFiltro('');
+    setIsActiveFiltro('');
+    fetchServidores();
 
     setOrdenacao({ coluna: '', ordem: 'asc' });
 
@@ -103,7 +106,8 @@ const ListarServidor = () => {
       (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
       (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
       (!perfilFiltro || servidor.perfil === perfilFiltro) &&
-      (!statusFiltro || (servidor.status && servidor.status.includes(statusFiltro)))
+      (!matriculaFiltro || (servidor.infos_professor.matricula && servidor.infos_professor.matricula.includes(matriculaFiltro))) &&
+      (!isActiveFiltro || (servidor.is_active && servidor.is_active.includes(isActiveFiltro)))
     );
     setServidoresFiltrados(servidoresFiltrados);
   };
@@ -223,9 +227,9 @@ return (
                 <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
               )}
             </th>
-            <th onClick={() => ordenarPorColuna('status')}>
+            <th onClick={() => ordenarPorColuna('is_active')}>
               Status
-              {ordenacao.coluna === 'status' && (
+              {ordenacao.coluna === 'is_active' && (
                 <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
               )}
             </th>
@@ -242,7 +246,7 @@ return (
               <td>{servidor.infos_professor?.matricula ?? '-'}</td>
               <td>{servidor.email || '-'}</td>
               <td>{servidor.data_ingresso || '-'}</td>
-              <td>{servidor.is_active ? 'Ativo' : 'Inativo'}</td>
+              <td>{servidor.is_active === true ? 'Ativo' : 'Inativo'}</td>
               <td className='icone-container'>
               <img 
                 className='iconeAcoes'

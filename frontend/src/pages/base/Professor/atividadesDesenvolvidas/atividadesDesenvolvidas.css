@@ -1,0 +1,119 @@
+  
+/* Alinhamento da info-aluno e botão em uma linha */
+.info-e-botao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .info-aluno {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .info-aluno p {
+    margin: 0;
+  }
+  
+    /* Tabela de Atividades */
+    .tabela-atividades {
+      width: 100%;
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+    
+    .tabela-atividades table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    
+    .tabela-atividades th,
+    .tabela-atividades td {
+      padding: 10px;
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+      font-size: 14px;
+    }
+    
+    .tabela-atividades th {
+      background-color: #006b3f;
+      color: white;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    
+    .tabela-atividades tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    
+    .tabela-atividades tr:nth-child(odd) {
+      background-color: white;
+    }
+    
+    /* Nota Final */
+    .nota-final {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    
+    .nota-final p {
+      margin: 5px 0;
+    }
+    
+    /* Responsividade */
+    @media (max-width: 1125px) {
+      .tabela-atividades table {
+        th, td {
+          font-size: 12px;
+          padding: 8px;
+        }
+      }
+    }
+    
+    @media (max-width: 900px) {
+      .tabela-atividades table {
+        th, td {
+          font-size: 10px;
+          padding: 6px;
+        }
+      }
+    
+      button {
+        font-size: 12px;
+        padding: 8px 12px;
+      }
+    }
+    
+    @media (max-width: 740px) {
+      .tabela-atividades table {
+        th, td {
+          font-size: 9px;
+          padding: 5px;
+        }
+      }
+    
+    }
+    
+    @media (max-width: 600px) {
+      .atividades-container {
+        margin: 10px;
+      }
+    
+      .info-aluno {
+        font-size: 14px;
+      }
+    
+      .tabela-atividades table {
+        th, td {
+          font-size: 8px;
+          padding: 4px;
+        }
+      }
+    }
+    

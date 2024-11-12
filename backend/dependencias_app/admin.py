@@ -6,10 +6,12 @@ from dependencias_app.models.evento import Evento
 from dependencias_app.models.ppt import PPT
 from dependencias_app.models.professor import Professor
 from dependencias_app.models.turma import Turma
-from dependencias_app.models.pedEMI import PED_EMI
-from dependencias_app.models.pedPROEJA import PED_ProEJA
+from dependencias_app.models.ped import PED
+from dependencias_app.models.planoEstudosEMI import PlanoEstudos_EMI
+from dependencias_app.models.planoEstudosProEJA import PlanoEstudos_ProEJA
+from dependencias_app.models.formEncerramento import FormEncerramento
 from google_auth.models import UsuarioBase
-from dependencias_app.models.planoEstudos import PlanoEstudos
+from dependencias_app.models.atividade import Atividade
 
 
 admin.site.register(Aluno)
@@ -20,6 +22,8 @@ admin.site.register(PPT)
 admin.site.register(Professor)
 admin.site.register(Turma)
 admin.site.register(UsuarioBase)
-admin.site.register(PED_EMI)
-admin.site.register(PED_ProEJA)
-admin.site.register(PlanoEstudos)
+admin.site.register(PED)
+admin.site.register(PlanoEstudos_EMI)
+admin.site.register(PlanoEstudos_ProEJA)
+admin.site.register(FormEncerramento)
+admin.site.register(Atividade)

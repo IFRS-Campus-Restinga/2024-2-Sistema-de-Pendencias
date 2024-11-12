@@ -5,45 +5,29 @@ import FormContainer from "../../../../components/FormContainer/FormContainer";
 import { ToastContainer, toast } from 'react-toastify';
 import "./planoEstudos.css";
 import { PlanoEstudosService } from "../../../../services/planoEstudosService";
-import cursoService from "../../../../services/cursoService";
 import { validarFormularioPlanoEstudos } from "./validacoes";
-import { usuarioBaseService } from "../../../../services/usuarioBaseService";
+import { PEDService } from "../../../../services/pedService";
+import { useParams } from "react-router-dom";
 
-// Definindo as opções fixas (valores das classes)
-const TrimestreRec = [
-  '1º', '2º', '3º', '1º e 2º', '1º e 3º', '2º e 3º', 'Todos'
-];
+const serieAnoProgressao = ['1º Ano', '2º Ano','3º Ano','4º Ano']
 
-const Turnos = [
-  'Manhã', 'Tarde', 'Noite', 'Integral'
-];
+const Turnos = ['Manhã', 'Tarde', 'Noite', 'Integral'];
 
-const FormaOferta = [
-  'Presencial', 'EAD', 'Híbrido'
-];
+const FormaOferta = ['Presencial', 'EAD', 'Híbrido'];
 
 const PlanoEstudos = () => {
-  const [cursos, setCursos] = useState([]);
-  const [disciplinas, setDisciplinas] = useState([]);
-  const [opcoesAlunos, setOpcoesAlunos] = useState([]);
-  const [formData, setFormData] = useState({
-    aluno: "",
-    curso: "",
-    disciplina: "",
-    semestreAnoLetivo: "",
-    componenteCurricular: "",
-    semestreCurso: "",
-    trimestreRecuperacao: "",
-    formaOferta: "",
-    turno: "",
-    parecerPedagogico: "",
-  });
+  const {pedId} = useParams()
+  const [PED, setPED] = useState({})
+  const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
+  const [turmas, setTurmas] = useState([])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const erros = validarFormularioPlanoEstudos(formData);
+
+    console.log(formData)
 
     if (Object.keys(erros).length !== 0) {
       setErrors(erros);
@@ -61,16 +45,11 @@ const PlanoEstudos = () => {
         });
 
         setFormData({
-          aluno: '',
-          curso: '',
-          disciplina: '',
-          semestreAnoLetivo: '',
-          componenteCurricular: '',
-          semestreCurso: '',
-          trimestreRecuperacao: '',
-          formaOferta: '',
+          trimestre_recuperar: '',
+          forma_oferta: '',
           turno: '',
-          parecerPedagogico: ''
+          parecer_pedagogico: '',
+          ano_progressao: ''
         });
 
         setErrors({});
@@ -80,215 +59,187 @@ const PlanoEstudos = () => {
     }
   };
 
-  // Função para buscar cursos
-  const fetchCursos = async () => {
-    try {
-      const res = await cursoService.list();
-      setCursos(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const handleTrimestreRec = (e) => {
+    const { checked, value } = e.target;
+    let newTrimestreRec = formData.trimestre_recuperar.split(', '); // Divide a string atual em um array
 
-  // Função para buscar alunos
-  const fetchAlunos = async (e) => {
+    if (checked) {
+        // Se o checkbox foi marcado, adiciona o valor à lista, caso não exista
+        if (!newTrimestreRec.includes(value)) {
+            newTrimestreRec.push(value);
+        }
+    } else {
+        // Se o checkbox foi desmarcado, remove o valor da lista
+        newTrimestreRec = newTrimestreRec.filter(item => item !== value);
+    }
+
+    // Remove valores vazios e qualquer item indesejado (strings vazias ou espaços extras)
+    newTrimestreRec = newTrimestreRec.filter(item => item.trim() !== '');
+
+    // Ordena em ordem alfabética
+    newTrimestreRec.sort();
+
+    // Atualiza o estado com a string concatenada e sem vírgulas extras
+    setFormData({
+        ...formData,
+        trimestre_recuperar: newTrimestreRec.join(', '), // Concatena os valores novamente em uma string
+    });
+};
+
+  const fecthPED = async () => {
     try {
-      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Aluno');
-      setOpcoesAlunos(res.data);
+      const res = await PEDService.porId(pedId)
+
+      if (res.status!== 200) throw new Error(res.data.message)
+
+      setPED(res.data)
+      setTurmas(res.data.curso.turmas)
+
+      console.log(res.data)
+
+      if (res.data.modalidade) {
+        setFormData({
+          trimestre_recuperar: "",
+          forma_oferta: "",
+          serie_progressao: "",
+          turno: "",
+          parecer_pedagogico: "",
+          ano_progressao: "",
+          ped: res.data.id
+        })
+      } else if (res.data.modalidade) {
+        setFormData({
+          anoSemestreReprov: "",
+          forma_oferta: "",
+          turno: "",
+          parecer_pedagogico: "",
+          ped: res.data.id
+        })
+      }
+
       console.log(res.data)
     } catch (error) {
-      console.log(error);
+      console.error(error)
     }
-  };
+  }
 
-  // Carregar as opções ao montar o componente
   useEffect(() => {
-    fetchCursos();
-  }, []); 
+    fecthPED()
+  },[])
 
   return (
     <>
       <ToastContainer />
       <FormContainer onSubmit={handleSubmit} titulo="Cadastro Plano de Estudos">
         {Object.keys(errors).length === 0 ? (<></>) : (<p style={{ color: 'red' }}>*Preencha os campos obrigatórios</p>)}
+        {
+          PED.modalidade === 'Integrado' ? (
+            <section className="sectionCadastroPlanoEstudos">
+              <div className="divCadastroPlanoEstudos">
+                <label className="labelCadastroPlanoEstudos">
+                  Série
+                  <select
+                    className={errors.serie_progressao ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
+                    onChange={(e) => setFormData({ ...formData, serie_progressao: e.target.value })}
+                  >
+                    <option value="">Selecione a série/ano da progressão</option>
+                    {serieAnoProgressao.map((serie, index) => (
+                      <option key={index} value={serie}>
+                        {serie}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="labelCadastroPlanoEstudos">
+                  Turma Origem
+                  <select
+                    className={errors.turma_origem ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
+                    onChange={(e) => setFormData({ ...formData, turma_origem: e.target.value })}
+                  >
+                    <option value="">Selecione a turma de origem</option>
+                    {turmas.map((turma, index) => (
+                      <option key={index} value={turma.id}>
+                        {turma.numero}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="divCadastroPED">
+                  <label className="labelCadastroPED">
+                    Trimestres a Recuperar
+                    {errors.trimestre_recuperar ? <p style={{color: 'red', fontSize: '10px'}}>{errors.trimestre_recuperar}</p> : (<></>)}
+                    <div className="divTrimestreRec">
+                      <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" value='1º' id="1" hidden/>
+                      <label className="labelTrimestreRec" htmlFor="1">1º Trimestre</label>
+                      <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" value='2º' id="2" hidden/>
+                      <label className="labelTrimestreRec" htmlFor="2">2º Trimestre</label>
+                      <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" value='3º' id='3' hidden/>
+                      <label className="labelTrimestreRec" htmlFor="3">3º Trimestre</label>
+                    </div>
+                  </label>
+                </div>
 
-        <label className="labelCadastroPlanoEstudos">
-          Aluno
-          <Input
-            tipo="text"
-            nome="aluno"
-            onChange={(e) => {
-              fetchAlunos(e);
-              if (opcoesAlunos && e.target.value) {
-                const param = e.target.value;
-                const aluno = opcoesAlunos.find((aluno) => aluno.nome === param || aluno.matricula === param || aluno.email === param);
-                if (aluno) setFormData({ ...formData, aluno: aluno.id });
-              }
-            }}
-            erro={errors.aluno}
-            textoAjuda="Insira nome ou matrícula do aluno"
-            lista="opcoesAlunos"
-          />
-        </label>
-        <datalist id="opcoesAlunos">
-          {opcoesAlunos ? (
-            opcoesAlunos.map((aluno) => (
-              <option key={aluno.id} value={aluno.nome || aluno.infos_aluno.matricula || aluno.email}>
-                {aluno.nome || aluno.matricula || aluno.email}
-              </option>
-            ))
+              <div className="divCadastroPlanoEstudos">
+                <label className="labelCadastroPlanoEstudos">
+                  Forma de Oferta
+                  <select
+                    className={errors.forma_oferta ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
+                    onChange={(e) => setFormData({ ...formData, forma_oferta: e.target.value })}
+                  >
+                    <option value="">Selecione a forma de oferta</option>
+                    {FormaOferta.map((forma, index) => (
+                      <option key={index} value={forma}>
+                        {forma}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="labelCadastroPlanoEstudos">
+                  Turno
+                  <select
+                    className={errors.turno ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
+                    onChange={(e) => setFormData({ ...formData, turno: e.target.value })}
+                  >
+                    <option value="">Selecione o turno</option>
+                    {Turnos.map((turno, index) => (
+                      <option key={index} value={turno}>
+                        {turno}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            </section>
           ) : (
-            <option>Nenhum aluno encontrado</option>
-          )}
-        </datalist>
+            <></>
+          )
+        }
 
-        <section className="sectionCadastroPlanoEstudos">
-          <div className="divCadastroPlanoEstudos">
-            <label className="labelCadastroPlanoEstudos">
-              Curso
-              <select
-                className={errors.curso ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
-                name="curso"
-                onFocus={fetchCursos}  // Carregar cursos ao clicar na seta
-                onChange={(e) => {
-                  setFormData({ ...formData, curso: Number(e.target.value) });
-                  const cursoId = e.target.value;
-                  const curso = cursos.find((curso) => curso.id === Number(cursoId));
-                  if (curso) {
-                    setDisciplinas(curso.disciplinas);
-                  }
-                }}
-              >
-                <option value="">Selecione um curso</option>
-                {cursos.map((curso) => (
-                  <option key={curso.id} value={curso.id}>
-                    {curso.nome}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="labelCadastroPlanoEstudos">
-              Disciplina
-              <select
-                className={errors.disciplina ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
-                onFocus={() => { 
-                  if (formData.curso) {
-                    const curso = cursos.find((curso) => curso.id === formData.curso);
-                    if (curso) setDisciplinas(curso.disciplinas); 
-                  }
-                }}  // Carregar disciplinas ao clicar na seta
-                onChange={(e) => setFormData({ ...formData, disciplina: Number(e.target.value) })}
-              >
-                <option value="">Selecione uma disciplina</option>
-                {disciplinas.map((disciplina) => (
-                  <option key={disciplina.id} value={disciplina.id}>
-                    {disciplina.nome}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="divCadastroPlanoEstudos">
-            <label className="labelCadastroPlanoEstudos">
-              Semestre / Ano Letivo
-              <Input
-                tipo="text"
-                nome="semestreAnoLetivo"
-                onChange={(e) => setFormData({ ...formData, semestreAnoLetivo: e.target.value })}
-                erro={errors.semestreAnoLetivo}
-              />
-            </label>
-
-            <label className="labelCadastroPlanoEstudos">
-              Componente Curricular
-              <Input
-                tipo="text"
-                nome="componenteCurricular"
-                onChange={(e) => setFormData({ ...formData, componenteCurricular: e.target.value })}
-                erro={errors.componenteCurricular}
-              />
-            </label>
-          </div>
-        </section>
-
-        <section className="sectionCadastroPlanoEstudos">
-          <div className="divCadastroPlanoEstudos">
-            <label className="labelCadastroPlanoEstudos">
-              Semestre / Série do Curso
-              <Input
-                tipo="text"
-                nome="semestreCurso"
-                onChange={(e) => setFormData({ ...formData, semestreCurso: e.target.value })}
-                erro={errors.semestreCurso}
-              />
-            </label>
-
-            <label className="labelCadastroPlanoEstudos">
-              Trimestre de Recuperação
-              <select
-                className={errors.trimestreRecuperacao ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
-                onChange={(e) => setFormData({ ...formData, trimestreRecuperacao: e.target.value })}
-              >
-                <option value="">Selecione o trimestre de recuperação</option>
-                {TrimestreRec.map((trimestre, index) => (
-                  <option key={index} value={trimestre}>
-                    {trimestre}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="divCadastroPlanoEstudos">
-            <label className="labelCadastroPlanoEstudos">
-              Forma de Oferta
-              <select
-                className={errors.formaOferta ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
-                onChange={(e) => setFormData({ ...formData, formaOferta: e.target.value })}
-              >
-                <option value="">Selecione a forma de oferta</option>
-                {FormaOferta.map((forma, index) => (
-                  <option key={index} value={forma}>
-                    {forma}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="labelCadastroPlanoEstudos">
-              Turno
-              <select
-                className={errors.turno ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
-                onChange={(e) => setFormData({ ...formData, turno: e.target.value })}
-              >
-                <option value="">Selecione o turno</option>
-                {Turnos.map((turno, index) => (
-                  <option key={index} value={turno}>
-                    {turno}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        </section>
 
         <section className="sectionCadastroPlanoEstudos">
           <div className="divCadastroPlanoEstudos">
             <label className="labelCadastroPlanoEstudos">
               Parecer Pedagógico
               <textarea
-                className={errors.parecerPedagogico ? 'errorTextAreaCadastroPlanoEstudos' : 'textAreaCadastroPlanoEstudos'}
-                onChange={(e) => setFormData({ ...formData, parecerPedagogico: e.target.value })}
-                value={formData.parecerPedagogico}
+                className={errors.parecer_pedagogico ? 'errorTextAreaCadastroPlanoEstudos' : 'textAreaCadastroPlanoEstudos'}
+                onChange={(e) => setFormData({ ...formData, parecer_pedagogico: e.target.value })}
+                value={formData.parecer_pedagogico}
                 rows="3"
               />
             </label>
           </div>
+          <label className="labelCadastroPlanoEstudos">
+                Ano Progressão
+                <Input
+                  type='text'
+                  className={errors.ano_progressao ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
+                  onChange={(e) => setFormData({ ...formData, ano_progressao: e.target.value })}
+                />
+              </label>
         </section>
 
-        <Button tipo="submit" texto="Cadastrar" />
+        <Button tipo="submit" text='Cadastrar' />
       </FormContainer>
     </>
   );

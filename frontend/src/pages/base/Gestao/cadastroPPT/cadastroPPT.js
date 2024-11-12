@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Input from "../../../../components/Input/Input";
 import Button from "../../../../components/Button/Button";
 import FormContainer from "../../../../components/FormContainer/FormContainer"; // Importe o FormContainer
@@ -10,6 +10,7 @@ import { validarFormularioPPT, validarTurmas } from "./validacoes";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 
 const CadastroPPT = () => {
+  const formRef = useRef()
   const [cursos, setCursos] = useState([])
   const [disciplinas, setDisciplinas] = useState([])
   const [opcoesAlunos, setOpcoesAlunos] = useState([])
@@ -22,7 +23,7 @@ const CadastroPPT = () => {
     turmaProgressao: "",
     dataInicio: "",
     dataFim: "",
-    observacoes: "",
+    observacao: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -57,10 +58,12 @@ const CadastroPPT = () => {
           dataFim: '',
           dataInicio: '',
           disciplina: '',
-          observacoes: '',
+          observacao: '',
           turmaOrigem: '',
           turmaProgressao: ''
         })
+
+        formRef.current.reset()
 
         setErrors({})
       } catch (error) {
@@ -72,7 +75,7 @@ const CadastroPPT = () => {
 
   const fetchCursos = async () => {
     try {
-      const res = await cursoService.list()
+      const res = await cursoService.porModalidade('Integrado')
       
       setCursos(res.data)
     } catch (error) {
@@ -97,13 +100,13 @@ const CadastroPPT = () => {
   return (
     <>
       <ToastContainer/>
-      <FormContainer onSubmit={handleSubmit} titulo="Cadastro PPT">
+      <FormContainer onSubmit={handleSubmit} titulo="Cadastro PPT" ref={formRef}>
         {Object.keys(errors).length === 0 ? (<></>) : (<p style={{color: 'red'}}>*Preencha os campos obrigatórios</p>)}
         <label className="labelCadastroPPT">
           Aluno
             <Input
-              tipo='text'
-              nome='aluno'
+              type='text'
+              name='aluno'
               onChange={(e) => {
                 fetchAlunos(e)
                 
@@ -207,8 +210,8 @@ const CadastroPPT = () => {
             <label className="labelCadastroPPT">
               Data Inicial
               <Input
-                tipo='date'
-                nome='dataInicio'
+                type='date'
+                name='dataInicio'
                 onChange={(e) => setFormData({...formData, dataInicio: e.target.value})}
                 erro={errors.dataInicio}
                 dataMinima={new Date().toISOString().split('T')[0]}
@@ -220,8 +223,8 @@ const CadastroPPT = () => {
             <label className="labelCadastroPPT">
               Data Final
               <Input
-                tipo='date'
-                nome='dataFinal'
+                type='date'
+                name='dataFinal'
                 onChange={(e) => setFormData({...formData, dataFim: e.target.value})}
                 erro={errors.dataFim}
                 dataMinima={new Date().toISOString().split('T')[0]}
@@ -234,9 +237,9 @@ const CadastroPPT = () => {
           Observações (opcional)
           <textarea
             className="textAreaCadastroPPT"
-            onChange={(e) => setFormData({...formData, observacoes: e.target.value})}
+            onChange={(e) => setFormData({...formData, observacao: e.target.value})}
             name="observacoes"
-            value={formData.observacoes}
+            value={formData.observacao}
             placeholder="Caso haja alguma observação sobre o aluno, insira aqui"
           />
         </label>

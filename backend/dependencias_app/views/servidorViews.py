@@ -64,3 +64,24 @@ def deletar_servidor(request, id):
         return Response({'mensagem': 'Servidor não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+def editar_servidor(request, id):
+    try:
+        servidor = UsuarioBase.objects.get(pk=id)
+
+        print("Dados recebidos:", request.data)
+
+        servidor_serializer = UsuarioBaseSerializer(servidor, data=request.data)
+
+        if servidor_serializer.is_valid():
+            servidor_serializer.save()
+            return Response(servidor_serializer.data, status=status.HTTP_200_OK)
+        else:
+            # Imprima os erros detalhados de validação
+            print("Erros de validação:", servidor_serializer.errors)
+            return Response(servidor_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except UsuarioBase.DoesNotExist:
+        return Response({'mensagem': 'Servidor não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)

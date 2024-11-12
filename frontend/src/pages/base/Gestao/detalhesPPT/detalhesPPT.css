@@ -1,3 +1,10 @@
+.formContainerDetails{
+    width: 50%;
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+}
+
 .green-bar-container {
     display: flex;
     justify-content: center;

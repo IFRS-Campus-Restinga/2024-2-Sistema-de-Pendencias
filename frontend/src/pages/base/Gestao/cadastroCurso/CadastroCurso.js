@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { validarFormularioCurso, validarCampo } from './validacoes'; // Importa suas funções de validação
@@ -12,6 +12,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 
 const CadastroCurso = () => {
+  const formRef = useRef()
   const [modalidade, setModalidade] = useState("Integrado");
   const [opcoesCoordenadores, setOpcoesCoordenadores] = useState([])
   const [formData, setFormData] = useState({
@@ -26,7 +27,15 @@ const CadastroCurso = () => {
 
   const trocaModalidade = (novoValor) => {
     setModalidade(novoValor);
-    setFormData(prevData => ({ ...prevData, modalidade: novoValor })); // Atualiza a modalidade no formData
+    setFormData({
+      carga_horaria: '',
+      coordenador: '',
+      modalidade: novoValor,
+      nome: '',
+      turmas: []
+    }); // Atualiza a modalidade no formData
+
+    formRef.current.reset()
   };
 
   const addTurma = () => {
@@ -85,6 +94,8 @@ const CadastroCurso = () => {
           style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
           progressStyle: { backgroundColor: '#fff' }
         });
+
+        formRef.current.reset()
       } catch (erro) {
         toast.error(erro.message, {
           position: "bottom-center",
@@ -122,7 +133,7 @@ const CadastroCurso = () => {
   return (
     <>
       <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo='Cadastrar Curso' comprimento='70%'>
+      <FormContainer onSubmit={handleSubmit} titulo='Cadastrar Curso' comprimento='70%' ref={formRef}>
         {showErrorMessage && <p className="error">* Preencha os campos obrigatórios</p>}
         
         <div className="modalidade-container">
@@ -190,54 +201,63 @@ const CadastroCurso = () => {
             }
           </datalist>
           <br/>
-        <div className="add-turma">
-          <button type="button" onClick={addTurma} className="add-button">
-            <FontAwesomeIcon
-              icon={faPlusCircle}
-              style={{ color: "#006b3f", cursor: "pointer", fontSize: "24px" }}
-            />
-            <span className="labelCadastroCurso" style={{ color: "black" }}>Adicionar Turma</span>
-          </button>
-        </div>
-        
-        {formData.turmas.length > 0 && (
-          <div className="turmas-lista">
-            <table className="tabelaCadastroCurso">
-              <thead className="cabecalhoTabelaCadastroCurso">
-                <tr>
-                  <th>Número da Turma</th>
-                  <th>Ação</th>
-                </tr>
-              </thead>
-              <tbody>
-                {formData.turmas.map((turma, index) => (
-                  <tr key={index}>
-                    <td>
-                      <Input 
-                        tipo='text'
-                        value={turma.numero}
-                        onChange={(e) => handleTurmaChange(index, e.target.value)}
-                        textoAjuda='Digite o número da turma'
-                        onBlur={() => handleBlur('turmas')}
-                        erro={errors.turmas && errors.turmas[index] ? true : false}
-                      />
-                      {errors.turmas && errors.turmas[index] && (
-                        <p className="error">{errors.turmas}</p>
-                      )}
-                    </td>
-                    <td>
-                      <FontAwesomeIcon
-                        icon={faTrash}
-                        style={{ cursor: "pointer", color: "red", fontSize: "20px" }}
-                        onClick={() => removeTurma(index)}
-                      />
-                    </td>
+          {
+            modalidade === 'Integrado' ? (
+              <div className="add-turma">
+                <button type="button" onClick={addTurma} className="add-button">
+                  <FontAwesomeIcon
+                    icon={faPlusCircle}
+                    style={{ color: "#006b3f", cursor: "pointer", fontSize: "24px" }}
+                  />
+                  <span className="labelCadastroCurso" style={{ color: "black" }}>Adicionar Turma</span>
+                </button>
+
+            {formData.turmas.length > 0 ? (
+            <div className="turmas-lista">
+              <table className="tabelaCadastroCurso">
+                <thead className="cabecalhoTabelaCadastroCurso">
+                  <tr>
+                    <th>Número da Turma</th>
+                    <th>Ação</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                </thead>
+                <tbody>
+                  {formData.turmas.map((turma, index) => (
+                    <tr key={index}>
+                      <td>
+                        <Input 
+                          tipo='text'
+                          value={turma.numero}
+                          onChange={(e) => handleTurmaChange(index, e.target.value)}
+                          textoAjuda='Digite o número da turma'
+                          onBlur={() => handleBlur('turmas')}
+                          erro={errors.turmas && errors.turmas[index] ? true : false}
+                        />
+                        {errors.turmas && errors.turmas[index] && (
+                          <p className="error">{errors.turmas[index]}</p>
+                        )}
+                      </td>
+                      <td>
+                        <FontAwesomeIcon
+                          icon={faTrash}
+                          style={{ cursor: "pointer", color: "red", fontSize: "20px" }}
+                          onClick={() => removeTurma(index)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            ) : (
+              <></>
+          )}
+    </div>
+  ) : (
+    <></>
+  )
+}
+
         
         <Button tipo='submit' text='Cadastrar Curso' />
       </FormContainer>
