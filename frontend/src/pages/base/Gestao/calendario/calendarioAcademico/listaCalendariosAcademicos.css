@@ -1,0 +1,36 @@
+/* ListarCalendariosAcademicosPage.css */
+.listar-calendarios-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.listar-calendarios-container h2 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.listar-calendarios-container ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.calendario-item {
+    cursor: pointer;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f7f7f7;
+    transition: background-color 0.2s;
+}
+
+.calendario-item:hover {
+    background-color: #e0e0e0;
+}
+
+.calendario-item:active {
+    background-color: #ccc;
+}
