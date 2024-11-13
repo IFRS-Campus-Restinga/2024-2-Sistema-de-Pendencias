@@ -32,25 +32,25 @@ export const validarDisciplina = (disciplina) => {
 
 // Validação para o campo "turmaOrigem"
 export const validarTurmaOrigem = (turmaOrigem) => {
-    if (!turmaOrigem || Number(turmaOrigem) === NaN) return 'Campo obrigatório.';
+    if (!turmaOrigem || isNaN(turmaOrigem)) return 'Campo obrigatório.';
 
     return ''
 };
 
-export const validarTurmas = (turmaOrigem, turmaProgressao) => {
-    if(turmaOrigem && turmaProgressao) {
-        if (Number(turmaOrigem.numero) < Number(turmaProgressao.numero)) return 'A turma de progressão não pode ser superior a de origem!'
-    }
+export const validarSerieProgressao = (serie_progressao) => {
+    const series = ['1º Ano', '2º Ano','3º Ano','4º Ano']
 
-    return
+    if (serie_progressao === '' || !serie_progressao) return 'Campo obrigatório'
+
+    if (!series.includes(serie_progressao)) return 'Campo inválido'
+
+
+
+    return ''
 }
 
-export const validarSerieAnoProgressao = (serieAno) => {
-    const serieAnoProgressao = ['1º Ano', '2º Ano','3º Ano','4º Ano']
-
-    if (serieAno === '' || !serieAno) return 'Campo obrigatório'
-
-    if (!serieAnoProgressao.includes(serieAno)) return 'Campo inválido'
+export const validarSerieTurma = (serie_progressao, turmaOrigem) => {
+    if (Number(serie_progressao[0] >= Number(turmaOrigem.numero[0]))) return 'A série de progressão não pode ser superior à turma de origem'
 
     return ''
 }
@@ -97,22 +97,21 @@ export const validarFormularioPED = (formData, modalidade) => {
     if (erroDisciplina) erros.disciplina = erroDisciplina;
 
     if (modalidade === 'Integrado') {
-        const erroTurma = validarTurmaOrigem(formData.turmaOrigem, modalidade);
-        if (erroTurma) erros.turmaOrigem = erroTurma
+        const erroTurmaOrigem = validarTurmaOrigem(formData.turma_origem)
+        if (erroTurmaOrigem) erros.turma_origem = erroTurmaOrigem
 
-        const erroSerieAnoProgressao = validarSerieAnoProgressao(formData.serieAnoProgressao);
-        if (erroSerieAnoProgressao) erros.serieAnoProgressao = erroSerieAnoProgressao
+        const erroSerieProgressao = validarSerieProgressao(formData.serie_progressao)
+        if (erroSerieProgressao) erros.serie_progressao = erroSerieProgressao
 
-        const erroTrimestreRec = validarTrimestreRec(formData.trimestreRec);
-        if (erroTrimestreRec) erros.trimestreRec = erroTrimestreRec
-
+        const erroTrimestreRecuperar = validarTrimestreRec(formData.trimestre_recuperar)
+        if (erroTrimestreRecuperar) erros.trimestre_recuperar = erroTrimestreRecuperar
     } else if (modalidade === 'ProEJA') {
-        const erroAnoSemestreReprov = validarAnoSemestreReprov(formData.anoSemestreReprov);
+        const erroAnoSemestreReprov = validarAnoSemestreReprov(formData.anoSemestreReprov)
         if (erroAnoSemestreReprov) erros.anoSemestreReprov = erroAnoSemestreReprov
     } else {
-        erros.modalidade = 'Modalidade inválida'
+        erros.modalidade = 'Modalidade Inválida'
     }
-
+    
     console.log(erros);
 
     return erros;

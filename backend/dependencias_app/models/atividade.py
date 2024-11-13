@@ -1,6 +1,7 @@
 from django.db import models
 from .base import BaseModel
-from dependencias_app.models.ped import PED
+from dependencias_app.models.pedEMI import PED_EMI
+from dependencias_app.models.pedProEJA import PED_ProEJA
 from django.core.validators import MinLengthValidator
 
 class Atividade(BaseModel):
@@ -9,7 +10,20 @@ class Atividade(BaseModel):
     nota = models.FloatField(default=0)
     data_criacao = models.DateTimeField(auto_now_add=True)
     data_de_entrega = models.DateField()
-    ped = models.ForeignKey(PED, on_delete=models.DO_NOTHING, related_name='atividades', null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+class Atividade_EMI(Atividade):
+    ped = models.ForeignKey(PED_EMI, on_delete=models.DO_NOTHING, related_name='atividades_emi')
+    
+    class Meta:
+        abstract = False
+        verbose_name_plural = 'Atividades EMI'
+
+class Atividade_ProEJA(Atividade):
+    ped = models.ForeignKey(PED_ProEJA, on_delete=models.DO_NOTHING, related_name='atividades_proeja')
 
     class Meta:
         abstract = False
+        verbose_name_plural = 'Atividades ProEJA'

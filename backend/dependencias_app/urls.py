@@ -12,6 +12,7 @@ from dependencias_app.views.eventoViews import *
 from dependencias_app.views.pptViews import *
 from dependencias_app.views.pedViews import *
 from dependencias_app.views.atividadeViews import *
+from dependencias_app.views.planoEstudosViews import *
 
 
 
@@ -28,9 +29,13 @@ urlpatterns = [
     # views de curso/disciplinas
     # curso já manipula turmas por vínculo, por isso turmas não necessitam de uma view própria
     path('cadastrar-curso/', cadastrar_curso),
-    path('cadastrar-disciplina/', cadastrar_disciplina),
     path('listar-cursos/', listar_cursos),
     path('listar-cursos/<str:modalidade>/', listar_por_modalidade),
+    path('cursos/<int:curso_id>/', obter_curso, name='obter_curso'),
+    path('editar-curso/<int:curso_id>/', atualizar_curso, name='atualizar_curso'),
+
+    # views de disciplinas
+    path('cadastrar-disciplina/', cadastrar_disciplina),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
 
     # views de evento/calendario
@@ -40,7 +45,6 @@ urlpatterns = [
     path('deletar-evento/<int:evento_id>/', deletar_evento, name='deletar_evento'),
     path('eventos/<int:evento_id>/', obter_evento, name='obter_evento'),
     
-
     # views de lista de usuários
     path('usuario/<int:idUsuario>/', get_infos_usuario),
     path('dados-aluno/<int:idAluno>/', get_aluno_infos),
@@ -57,13 +61,21 @@ urlpatterns = [
     path('cadastrar-ppt/', cadastrar_ppt),
     path('listar-ppt/', listar_ppt),
     path('listar-ppt/<int:idPpt>/', listar_ppt_id),
-    #path('editar-ppt/<int:idPpt>/', editar_ppt),
+    path('editar-ppt/<int:idPpt>/', editar_ppt),
     
     # views de PED
-    path('cadastrarPED/', cadastrar_PED),
+    path('cadastrarPED-EMI/', cadastrar_PED_EMI),
+    path('cadastrarPED-ProEJA/', cadastrar_PED_ProEJA),
+    path('listar-ped/<int:professor>/', listar_por_professor),
+    path('ped/<int:pedId>/', por_id),
+    path('cadastrar-plano-estudos/', cadastrar_plano_estudos),
 
     #views para atividades da ped
+    # path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),
     path('listar-atividades/<int:ped_id>/', listar_atividades, name='listar_atividades'),
+
+    #view editar servidor
+    path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),
     ]
 
 

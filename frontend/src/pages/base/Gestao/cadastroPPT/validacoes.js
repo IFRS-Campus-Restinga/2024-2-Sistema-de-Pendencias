@@ -41,7 +41,7 @@ export const validarTurmaProgressao = (turmaProgressao) => {
 
 export const validarTurmas = (turmaOrigem, turmaProgressao) => {
     if(turmaOrigem && turmaProgressao) {
-        if (Number(turmaOrigem.numero) < Number(turmaProgressao.numero)) return 'A turma de progressão não pode ser superior a de origem!'
+        if (Number(turmaOrigem.numero) <= Number(turmaProgressao.numero)) return 'A turma de progressão não pode ser superior a de origem!'
     }
 
     return

@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from dependencias_app.models.planoEstudosEMI import PlanoEstudos_EMI
+from dependencias_app.models.planoEstudos import PlanoEstudos
 
-class PlanoEstudos_EMISerializer(serializers.ModelSerializer):
+class PlanoEstudos_Serializer(serializers.ModelSerializer):
     class Meta:
-        model = PlanoEstudos_EMI
+        model = PlanoEstudos
         fields = '__all__'
 
     def save(self, **kwargs):

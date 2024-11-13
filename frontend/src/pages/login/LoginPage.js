@@ -26,11 +26,11 @@ const LoginPage = () => {
         const decoded = jwtDecode(res.data.token)
 
         // redireciona os usuários professores e alunos para preenchimento de informações adicionais de perfil no primeiro login
-        if (decoded.primeiroLogin === true && (decoded.perfil === 'Aluno' || decoded.perfil === 'Professor')) {
-          redirect(`sessao/${decoded.perfil}/${decoded.idUsuario}/perfil`)
+        if (decoded.primeiroLogin === true && (decoded.grupo === 'Aluno' || decoded.grupo === 'Professor')) {
+          redirect(`sessao/${decoded.grupo}/${decoded.idUsuario}/perfil`)
         } else {
           // redireciona os usuários para sua respectiva página home após o primeiro login
-          redirect(`sessao/${decoded.perfil}/${decoded.idUsuario}`)
+          redirect(`sessao/${decoded.grupo}/${decoded.idUsuario}`)
         }
   
     } catch (error) {

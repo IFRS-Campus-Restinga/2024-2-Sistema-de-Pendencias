@@ -17,19 +17,20 @@ const ListarServidor = () => {
   const [servidores, setServidores] = useState([]);
   const [servidoresFiltrados, setServidoresFiltrados] = useState([]);
   const [ordenacao, setOrdenacao] = useState({ coluna: '', ordem: 'asc' });
-  const [perfilFiltro, setPerfilFiltro] = useState('');
+  const [grupoFiltro, setGrupoFiltro] = useState('');
   const [filtroGeral, setFiltroGeral] = useState('');
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
   const [isActiveFiltro, setIsActiveFiltro] = useState('');
+  const [matriculaFiltro, setMatriculaFiltro] = useState('');
 
   const navigate = useNavigate();
 
   const handleClick = (servidor) => {
-    navigate(`/sessao/GestaoEscolar/2/listaServidor/${servidor.id}/visualizarServidor`, { state: { servidor }});
+    navigate(`/sessao/GestaoEscolar/2/listaServidor/${servidor.id}/detalhesServidor`, { state: { servidor }});
   };
 
-  const perfilMap = {
+  const grupoMap = {
     'GestaoEscolar': 'Gestão Escolar',
     'RegistroEscolar': 'Registros Escolares',
     'Coordenador': 'Coordenador',
@@ -41,8 +42,6 @@ const ListarServidor = () => {
       const response = await servidorService.listar()
       setServidores(response.data);
       setServidoresFiltrados(response.data)
-      console.log(response.data)
-      console.log(servidoresFiltrados)
     } catch (error) {
       console.error('Erro ao buscar servidores:', error);
     }
@@ -55,10 +54,10 @@ const ListarServidor = () => {
       let valorA = a[coluna] || '-';  // Valor A ou "-"
       let valorB = b[coluna] || '-';  // Valor B ou "-"
   
-      // Tratar a coluna 'perfil' usando o mapeamento específico
-      if (coluna === 'perfil') {
-        valorA = perfilMap[a.perfil] || '-';
-        valorB = perfilMap[b.perfil] || '-';
+      // Tratar a coluna 'grupo' usando o mapeamento específico
+      if (coluna === 'grupo') {
+        valorA = grupoMap[a.grupo] || '-';
+        valorB = grupoMap[b.grupo] || '-';
       }
   
       // Puxar valores preenchidos ("-") para o fim, independente da ordem
@@ -77,7 +76,7 @@ const ListarServidor = () => {
     setDataInicio('');
     setDataFim('');
     setFiltroGeral('');
-    setPerfilFiltro('');
+    setGrupoFiltro('');
     setMatriculaFiltro('');
     setIsActiveFiltro('');
     fetchServidores();
@@ -104,7 +103,7 @@ const ListarServidor = () => {
       ) &&
       (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
       (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
-      (!perfilFiltro || servidor.perfil === perfilFiltro) &&
+      (!grupoFiltro || servidor.grupo === grupoFiltro) &&
       (!matriculaFiltro || (servidor.infos_professor.matricula && servidor.infos_professor.matricula.includes(matriculaFiltro))) &&
       (!isActiveFiltro || (servidor.is_active && servidor.is_active.includes(isActiveFiltro)))
     );
@@ -125,11 +124,11 @@ return (
               onChange={(e) => setFiltroGeral(e.target.value)}/>
           </span>
           <span className="spanListarServidor">
-            <label className='labelListarServidor'>Filtrar por Perfil</label>
+            <label className='labelListarServidor'>Filtrar por Grupo</label>
             <select
               className='selectListarServidor'
-              value={perfilFiltro}
-              onChange={(e) => setPerfilFiltro(e.target.value)}
+              value={grupoFiltro}
+              onChange={(e) => setGrupoFiltro(e.target.value)}
             >
               <option value="">Todos</option>
               <option value="GestaoEscolar">Gestão Escolar</option>
@@ -181,7 +180,7 @@ return (
       <table className='tabelaListarServidor'>
         <thead className='cabecalhoListarServidor'>
           <tr className='linhaListarServidor'>
-            <th onClick={() => ordenarPorColuna('perfil')}>
+            <th onClick={() => ordenarPorColuna('grupo')}>
               <div className="th-conteudo">
                 <img
                   className="icone-ordenar"
@@ -190,8 +189,8 @@ return (
                   style={{ cursor: 'pointer', marginLeft: '8px' }}
                   title="Ordenar"
                   />
-                  <p>Perfil</p>
-                {ordenacao.coluna === 'perfil' && (
+                  <p>Grupo</p>
+                {ordenacao.coluna === 'grupo' && (
                 <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
                 )}
               </div>
@@ -239,7 +238,7 @@ return (
         <tbody>
           {servidoresFiltrados.map((servidor) => (
             <tr key={`${servidor.id}-${servidor.nome}`}>
-              <td>{perfilMap[servidor.perfil] || '-'}</td>
+              <td>{grupoMap[servidor.grupo] || '-'}</td>
               <td>{servidor.nome || '-'}</td>
               <td>{servidor.infos_professor?.cpf ?? '-'}</td>
               <td>{servidor.infos_professor?.matricula ?? '-'}</td>

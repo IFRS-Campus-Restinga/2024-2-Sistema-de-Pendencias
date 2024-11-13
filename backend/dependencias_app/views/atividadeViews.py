@@ -1,31 +1,35 @@
-from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from dependencias_app.models.atividade import Atividade
-from dependencias_app.models.ped import PED
-from dependencias_app.serializers.atividadeSerializer import AtividadeSerializer
-from rest_framework.permissions import IsAuthenticated
+from dependencias_app.models.atividade import *
+from dependencias_app.models.pedEMI import PED_EMI
+from dependencias_app.models.pedProEJA import PED_ProEJA
+from dependencias_app.serializers.atividadeSerializer import *
 from dependencias_app.permissoes import Professor
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([Professor])
-def listar_atividades(request, ped_id):
-    # Busca o PED pelo ID
-    ped = PED.objects.filter(id=ped_id).first()
-    if not ped:
-        return Response({"erro": "PED não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+def listar_atividades(request, pedId):
+    try:
+        ped = PED_EMI.objects.get(id=pedId)
 
-    # Checa se o professor logado é o responsável pela PED
-    if ped.professor != request.user:
-        return Response({"erro": "Acesso não autorizado"}, status=status.HTTP_403_FORBIDDEN)
+        if isinstance(ped, PED_EMI):
+            atividades = Atividade_EMI.objects.filter(ped=ped.id)
 
-    # Filtra atividades relacionadas ao PED
-    atividades = Atividade.objects.filter(ped=ped)
+            atividades_serializer = Atividade_EMI_Serializer(atividades, many=True)
 
-    # Adiciona o aluno do PED a cada atividade para o serializer (caso necessário)
-    for atividade in atividades:
-        atividade.aluno = ped.aluno
+            return Response(atividades_serializer.data, status=status.HTTP_200_OK)
+        else:
+            ped = PED_ProEJA.objects.filter(ped=ped.id)
 
-    serializer = AtividadeSerializer(atividades, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+            if isinstance(ped, PED_ProEJA):
+                atividades = Atividade_ProEJA.objects.filter(ped=ped.id)
+
+                atividades_serializer = Atividade_ProEJA_Serializer(atividades, many=True)
+
+                return Response(atividades_serializer.data, status=status.HTTP_200_OK)
+            else:
+                raise Exception('PED não encontrada')
+        
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
