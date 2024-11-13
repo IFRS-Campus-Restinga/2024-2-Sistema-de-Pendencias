@@ -21,6 +21,17 @@ export const cursoService = {
         }
     },
 
+    // Método para atualizar um curso
+    update: async (id, params) => {
+        try {
+            const res = await api.put(`api/editar-curso/${id}/`, params); // Endpoint de edição de curso
+            return res;
+        } catch (erro) {
+            console.error("Erro ao atualizar curso:", erro);
+            throw erro;
+        }
+    },
+
     porModalidade: async (modalidade) => {
         const res = await api.get(`api/listar-cursos/${modalidade}`).catch((erro) => {
             return erro
@@ -37,7 +48,18 @@ export const cursoService = {
             console.error('Erro ao deletar curso:', error);
             throw error; // Lança o erro
         }
-    }
+    },
+
+    // Método para obter um curso pelo ID
+    getCursoById: async (id) => {
+        try {
+            const res = await api.get(`api/cursos/${id}/`); // Endpoint para pegar curso por ID
+            return res;
+        } catch (erro) {
+            console.error("Erro ao buscar curso:", erro);
+            throw erro;
+        }
+    },
 };
 
 export default cursoService;

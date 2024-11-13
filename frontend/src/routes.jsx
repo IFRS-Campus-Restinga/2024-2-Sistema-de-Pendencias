@@ -18,7 +18,7 @@ import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
 import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendario/eventoCalendario"
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
-import VisualizarServidor from './pages/base/Gestao/visualizarServidor/VisualizarServidor'
+import DetalhesServidor from './pages/base/Gestao/detalhesServidor/DetalhesServidor'
 import EditarServidor from './pages/base/Gestao/editarServidor/EditarServidor'
 import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
 import EditarPPT from './pages/base/Gestao/editarPPT/editarPPT'
@@ -95,8 +95,8 @@ const router = createBrowserRouter([
                 element: <CalendarioPage />
             },
             {
-                path: ':idUsuario/listaServidor/:idServidor/visualizarServidor',
-                element: <VisualizarServidor />
+                path: ':idUsuario/listaServidor/:idServidor/detalhesServidor',
+                element: <DetalhesServidor />
             },
             {
                 path: ':idUsuario/cadastroPPT',
@@ -111,12 +111,12 @@ const router = createBrowserRouter([
                 element: <DetalhesPPT />
             },
             {
-                path: ':idUsuario/listaServidor/:idServidor/visualizarServidor/editarServidor',
-                element: <EditarServidor />
-            },
-            {
                 path: ':idUsuario/detalhesPPT/:idPpt/editarPPT',
                 element: <EditarPPT />
+            },
+            {
+                path: ':idUsuario/editarServidor/:idServidor',
+                element: <CadastroServidor />
             },
         ]
         // Adicionar outros caminhos que vão derivar da tela de home após autenticação

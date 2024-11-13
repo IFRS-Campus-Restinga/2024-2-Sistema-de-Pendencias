@@ -29,9 +29,13 @@ urlpatterns = [
     # views de curso/disciplinas
     # curso já manipula turmas por vínculo, por isso turmas não necessitam de uma view própria
     path('cadastrar-curso/', cadastrar_curso),
-    path('cadastrar-disciplina/', cadastrar_disciplina),
     path('listar-cursos/', listar_cursos),
     path('listar-cursos/<str:modalidade>/', listar_por_modalidade),
+    path('cursos/<int:curso_id>/', obter_curso, name='obter_curso'),
+    path('editar-curso/<int:curso_id>/', atualizar_curso, name='atualizar_curso'),
+
+    # views de disciplinas
+    path('cadastrar-disciplina/', cadastrar_disciplina),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
 
     # views de evento/calendario
@@ -57,7 +61,7 @@ urlpatterns = [
     path('cadastrar-ppt/', cadastrar_ppt),
     path('listar-ppt/', listar_ppt),
     path('listar-ppt/<int:idPpt>/', listar_ppt_id),
-    #path('editar-ppt/<int:idPpt>/', editar_ppt),
+    path('editar-ppt/<int:idPpt>/', editar_ppt),
     
     # views de PED
     path('cadastrarPED-EMI/', cadastrar_PED_EMI),
@@ -69,6 +73,9 @@ urlpatterns = [
     #views para atividades da ped
     # path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),
     path('listar-atividades/<int:ped_id>/', listar_atividades, name='listar_atividades'),
+
+    #view editar servidor
+    path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),
     ]
 
 

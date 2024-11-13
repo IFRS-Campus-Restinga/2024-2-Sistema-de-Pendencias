@@ -10,8 +10,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
-@permission_classes([Professor])
+@api_view(['POST'])
+@permission_classes([GestaoEscolar | Professor])
 def cadastrar_plano_estudos(request, pedId):
     logger.info('Dados recebidos: %s', request.data)
     try:

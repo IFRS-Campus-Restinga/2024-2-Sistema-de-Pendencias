@@ -1,11 +1,11 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Button from '../../../../components/Button/Button';
-import "./VisualizarServidor.css";
+import "./DetalhesServidor.css";
 import FormContainer from '../../../../components/FormContainer/FormContainer';
 
 
-const VisualizarServidor = () => {
+const DetalhesServidor = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { servidor } = location.state || {};  // Recupera o estado passado
@@ -14,7 +14,7 @@ const VisualizarServidor = () => {
         return <div>Nenhum servidor foi selecionado.</div>;
     }
 
-    const perfilMap = {
+    const grupoMap = {
         'GestaoEscolar': 'Gestão Escolar',
         'RegistroEscolar': 'Registros Escolares',
         'Coordenador': 'Coordenador',
@@ -23,7 +23,7 @@ const VisualizarServidor = () => {
 
     // Função para editar servidor
     const handleEditar = () => {
-        navigate(`/sessao/GestaoEscolar/2/listaServidor/${servidor.id}/visualizarServidor/editarServidor`, { state: { servidor }});
+        navigate(`/sessao/GestaoEscolar/2/editarServidor/${servidor.id}`, { state: { servidor } });
     };
 
     return (
@@ -31,11 +31,11 @@ const VisualizarServidor = () => {
             <p className="detalhe-servidor"><strong>Status:</strong> {servidor.is_active === true ? 'Ativo' : 'Inativo'}</p>
             <p className="detalhe-servidor"><strong>Nome:</strong> {servidor.nome}</p>
             <p className="detalhe-servidor"><strong>Email:</strong> {servidor.email}</p>
-            <p className="detalhe-servidor"><strong>Perfil:</strong> {perfilMap[servidor.perfil]}</p>
+            <p className="detalhe-servidor"><strong>Perfil:</strong> {grupoMap[servidor.grupo]}</p>
             <p className="detalhe-servidor"><strong>Matricula:</strong> {servidor.matricula}</p>           
             <Button tipo='submit' text='Editar Servidor' onClick={handleEditar}/>
         </FormContainer>
     );
 };
 
-export default VisualizarServidor;
+export default DetalhesServidor;
