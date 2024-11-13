@@ -15,6 +15,13 @@ export const validarCurso = (curso) => {
     return ''
 };
 
+export const validarProfessor = (professor) => {
+    if (!professor) return 'Campo obrigatório.';
+    if (isNaN(professor)) return 'Campo inválido'
+
+    return ''
+};
+
 // Validação para o campo "turmaOrigem"
 export const validarDisciplina = (disciplina) => {
     if (!disciplina) return 'Campo obrigatório.';
@@ -60,10 +67,14 @@ export const validarDatas = (dataInicio, dataFim) => {
 export const validarFormularioPPT = (formData) => {
     const erros = {};
 
-    console.log(formData);
-
     const erroAluno = validarAluno(formData.aluno);
     if (erroAluno) erros.aluno = erroAluno;
+
+    const erroProfessorPPT = validarProfessor(formData.professor_ppt);
+    if (erroProfessorPPT) erros.professor_ppt = erroProfessorPPT;
+    
+    const erroProfessorDisciplina = validarProfessor(formData.professor_disciplina);
+    if (erroProfessorDisciplina) erros.professor_disciplina = erroProfessorDisciplina;
 
     const erroCurso = validarCurso(formData.curso);
     if (erroCurso) erros.curso = erroCurso;
@@ -71,14 +82,11 @@ export const validarFormularioPPT = (formData) => {
     const erroDisciplina = validarDisciplina(formData.disciplina);
     if (erroDisciplina) erros.disciplina = erroDisciplina;
 
-    const erroTurmaOrigem = validarTurmaOrigem(formData.turmaOrigem);
+    const erroTurmaOrigem = validarTurmaOrigem(formData.turma_origem);
     if (erroTurmaOrigem) erros.turmaOrigem = erroTurmaOrigem
 
-    const erroTurmaProgressao = validarTurmaProgressao(formData.turmaProgressao);
+    const erroTurmaProgressao = validarTurmaProgressao(formData.turma_progressao);
     if (erroTurmaProgressao) erros.turmaProgressao = erroTurmaProgressao
-
-    const erroDatas = validarDatas(formData.dataInicio, formData.dataFim);
-    if (erroDatas) erros.datas = erroDatas
 
     return erros;
 };

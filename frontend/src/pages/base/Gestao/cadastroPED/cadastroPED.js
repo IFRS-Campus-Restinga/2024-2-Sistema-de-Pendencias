@@ -18,8 +18,18 @@ const CadastroPED = () => {
   const [turmas, setTurmas] = useState([])
   const [opcoesAlunos, setOpcoesAlunos] = useState([])
   const [opcoesProfessores, setOpcoesProfessores] = useState([])
-  const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({
+    aluno: '',
+    professor_ped: '',
+    professor_disciplina: '',
+    curso: '',
+    disciplina: '',
+    turma_origem: '',
+    serie_progressao: '',
+    trimestre_recuperar: '',
+    observacao: '',
+  });
 
   const serieProgressao = ['1º Ano', '2º Ano','3º Ano','4º Ano']
 
@@ -58,7 +68,6 @@ const CadastroPED = () => {
         turma_origem: '',
         serie_progressao: '',
         trimestre_recuperar: '',
-        data_criacao: new Date().toLocaleDateString('en-CA'),
         observacao: '',
       })
     } else {
@@ -69,7 +78,6 @@ const CadastroPED = () => {
         curso: '',
         disciplina: '',
         ano_semestre_reprov: '',
-        data_criacao: new Date().toLocaleDateString('en-CA'),
         observacao: ''
       })
     }
@@ -82,22 +90,27 @@ const CadastroPED = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const erros = validarFormularioPED(formData)
+    const erros = validarFormularioPED(formData, modalidade)
 
-    if (modalidade === 'Integrado')  erros.serieTurma = validarSerieTurma(formData.serie_progressao, turmas.find((turma) => turma.id === formData.turma_origem))
+    if (modalidade === 'Integrado') {
+      const erroTurma = validarSerieTurma(formData.serie_progressao, turmas.find((turma) => turma.id === formData.turma_origem))
 
+      if (erroTurma) erros.turma_serie = erroTurma
+    }
+    
     if (Object.keys(erros).length !== 0) {
+      console.log(erros)
       setErrors(erros)
     } else {
       try {
         if (modalidade === 'Integrado') {
-          const res = PEDService.create_EMI(formData)
+          const res = await PEDService.create_EMI(formData)
 
-          if (res.status !== 201) throw new Error(res.data.message)
+          if (res.status !== 201) throw new Error(res)
         } else {
           const res = await PEDService.create_ProEJA(formData)
 
-          if (res.status !== 201) throw new Error(res.data.message)
+          if (res.status !== 201) throw new Error(res)
         }
       
         toast.success("Dependência cadastrada com sucesso!", {
@@ -109,12 +122,15 @@ const CadastroPED = () => {
 
         setFormData({
           aluno: '',
+          professor_ped: '',
+          professor_disciplina: '',
           curso: '',
-          dataInicio: new Date().toLocaleDateString('en-CA'),
           disciplina: '',
-          modalidade: modalidade,
+          turma_origem: '',
+          serie_progressao: '',
+          trimestre_recuperar: '',
           observacao: '',
-          professor: '',
+          ano_semestre_reprov: '',
         })
 
         formRef.current.reset()
@@ -305,6 +321,7 @@ const CadastroPED = () => {
                     
                         if (curso) {
                           setDisciplinas(curso.disciplinas);
+                          setTurmas(curso.turmas)
                         }
                       }
                     }>
@@ -315,7 +332,6 @@ const CadastroPED = () => {
                         ))
                       }
                     </select>
-                    {errors.curso ? <p style={{color: 'red', fontSize: '10px'}}>{errors.curso}</p> : (<></>)}
                   </label>
                   <label className="labelCadastroPED">
                     Disciplina *
@@ -329,14 +345,13 @@ const CadastroPED = () => {
                         ))
                       }
                     </select>
-                    {errors.disciplina ? <p style={{color: 'red', fontSize: '10px'}}>{errors.disciplina}</p> : (<></>)}
                   </label>
                 </div>
                 <div className="divCadastroPED">
-                <label className="labelCadastroPlanoEstudos">
-                  Série *
+                <label className="labelCadastroPED">
+                  Série da Progressão *
                   <select
-                    className={errors.serie_progressao ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
+                    className={errors.serie_progressao || errors.turma_serie ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
                     onChange={(e) => setFormData({ ...formData, serie_progressao: e.target.value })}
                   >
                     <option value="">Selecione a série/ano da progressão</option>
@@ -346,12 +361,13 @@ const CadastroPED = () => {
                       </option>
                     ))}
                   </select>
+                  {errors.turma_serie ? <p style={{color: 'red', fontSize: '10px'}}>{errors.turma_serie}</p> : <></>}
                 </label>
-                <label className="labelCadastroPlanoEstudos">
+                <label className="labelCadastroPED">
                   Turma Origem *
                   <select
-                    className={errors.turma_origem ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
-                    onChange={(e) => setFormData({ ...formData, turma_origem: e.target.value })}
+                    className={errors.turma_origem || errors.turma_serie ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
+                    onChange={(e) => setFormData({ ...formData, turma_origem: Number(e.target.value) })}
                   >
                     <option value="">Selecione a turma de origem</option>
                     {turmas.map((turma, index) => (
@@ -360,6 +376,7 @@ const CadastroPED = () => {
                       </option>
                     ))}
                   </select>
+                  {errors.turma_serie ? <p style={{color: 'red', fontSize: '10px'}}>{errors.turma_serie}</p> : <></>}
                 </label>
                 </div>
               </section>
@@ -484,7 +501,6 @@ const CadastroPED = () => {
                     ))
                   }
                 </select>
-                {errors.curso ? <p style={{color: 'red', fontSize: '10px'}}>{errors.curso}</p> : (<></>)}
               </label>
               <label className="labelCadastroPED">
                 Disciplina *
@@ -498,10 +514,9 @@ const CadastroPED = () => {
                     ))
                   }
                 </select>
-                {errors.disciplina ? <p style={{color: 'red', fontSize: '10px'}}>{errors.disciplina}</p> : (<></>)}
               </label>
               <label className="labelCadastroPED">
-                Ano/Semestre de Reprovação
+                Ano/Semestre de Reprovação *
                 <Input
                   type='text'
                   onChange={(e) => setFormData({...formData, ano_semestre_reprov: e.target.value})}
