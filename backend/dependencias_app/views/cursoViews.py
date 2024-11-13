@@ -8,6 +8,9 @@ from dependencias_app.models.curso import Curso
 from dependencias_app.models.turma import Turma
 from dependencias_app.serializers.turmaSerializer import TurmaSerializer
 from dependencias_app.utils.error_handler import handle_view_errors
+import logging
+
+logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
@@ -72,3 +75,37 @@ def listar_turmas_por_curso(request, curso_id):
 
     except Curso.DoesNotExist:
         return Response({'error': 'Curso não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    
+    
+@api_view(['GET'])
+def obter_curso(request, curso_id):
+    try:
+        curso = Curso.objects.get(id=curso_id)  # Buscando o curso pelo ID
+        serializer = CursoSerializer(curso)  # Serializando o curso encontrado
+        return Response(serializer.data, status=status.HTTP_200_OK)  # Retorna os dados do curso em formato JSON com status 200 OK
+    except Curso.DoesNotExist:
+        logger.error('Curso não encontrado: ID %s', curso_id)
+        return Response({'mensagem': 'Curso não encontrado'}, status=status.HTTP_404_NOT_FOUND)  # Retorna erro 404 caso não encontre o curso
+    except Exception as e:
+        logger.error('Erro ao obter curso: %s', str(e))
+        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  # Retorna erro 500 para qualquer outro tipo de erro  
+
+
+@api_view(['PUT'])
+def atualizar_curso(request, curso_id):
+    try:
+        curso = Curso.objects.get(id=curso_id)  # Buscando o curso pelo ID
+        serializer = CursoSerializer(curso, data=request.data)  # Atualizando o curso com os dados da requisição
+        if serializer.is_valid():  # Verificando se os dados são válidos
+            serializer.save()  # Salvando as alterações no curso
+            logger.info('Curso atualizado com sucesso: %s', serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)  # Retorna os dados do curso atualizado com status 200 OK
+        logger.error('Erro de validação na atualização: %s', serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Retorna erro 400 se os dados forem inválidos
+
+    except Curso.DoesNotExist:
+        logger.error('Curso não encontrado para atualização: ID %s', curso_id)
+        return Response({'mensagem': 'Curso não encontrado'}, status=status.HTTP_404_NOT_FOUND)  # Retorna erro 404 caso o curso não exista
+    except Exception as e:
+        logger.error('Erro ao atualizar curso: %s', str(e))
+        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  # Retorna erro 500 para outros erros      

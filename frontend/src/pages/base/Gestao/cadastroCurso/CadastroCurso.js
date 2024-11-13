@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { validarFormularioCurso, validarCampo } from './validacoes'; // Importa suas funções de validação
@@ -10,11 +10,16 @@ import "./CadastroCurso.css";
 import Switch from "../../../../components/Switch/Switch";
 import { ToastContainer, toast } from "react-toastify";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const CadastroCurso = () => {
-  const formRef = useRef()
+  const formRef = useRef();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { cursoId } = location.state || {};  // Pegando o cursoId se presente
+
   const [modalidade, setModalidade] = useState("Integrado");
-  const [opcoesCoordenadores, setOpcoesCoordenadores] = useState([])
+  const [opcoesCoordenadores, setOpcoesCoordenadores] = useState([]);
   const [formData, setFormData] = useState({
     nome: '',
     carga_horaria: '',
@@ -25,9 +30,32 @@ const CadastroCurso = () => {
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
 
+  // Se estamos em edição, carregamos os dados do curso
+  useEffect(() => {
+    if (cursoId) {
+      cursoService.getCursoById(cursoId)  // Alterado para getCursoById
+        .then(response => {
+          const curso = response.data;
+          setFormData({
+            nome: curso.nome,
+            carga_horaria: curso.carga_horaria,
+            modalidade: curso.modalidade,
+            coordenador: curso.coordenador,
+            turmas: curso.turmas || []
+          });
+          setModalidade(curso.modalidade);
+        })
+        .catch(error => {
+          console.error("Erro ao carregar dados do curso para edição:", error);
+          toast.error("Erro ao carregar dados do curso.");
+        });
+    }
+  }, [cursoId]);
+
   const trocaModalidade = (novoValor) => {
     setModalidade(novoValor);
     setFormData({
+      ...formData,
       carga_horaria: '',
       coordenador: '',
       modalidade: novoValor,
@@ -35,7 +63,7 @@ const CadastroCurso = () => {
       turmas: []
     }); // Atualiza a modalidade no formData
 
-    formRef.current.reset()
+    formRef.current.reset();
   };
 
   const addTurma = () => {
@@ -44,14 +72,14 @@ const CadastroCurso = () => {
       turmas: [...prevData.turmas, { numero: '' }],
     }));
   };
-  
+
   const handleTurmaChange = (index, value) => {
     const updatedTurmas = formData.turmas.map((turma, i) =>
       i === index ? { ...turma, numero: value } : turma
     );
     setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
   };
-  
+
   const removeTurma = (index) => {
     const updatedTurmas = formData.turmas.filter((_, i) => i !== index);
     setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
@@ -67,14 +95,15 @@ const CadastroCurso = () => {
       setErrors(erros);
     } else {
       try {
-        const response = await cursoService.create(formData);
+        const response = cursoId 
+          ? await cursoService.update(cursoId, formData)  // Atualiza curso se estiver editando
+          : await cursoService.create(formData);  // Cria curso se for um novo
 
-        if (response.status !== 201) {
+        if (response.status !== 200 && response.status !== 201) {
           const errorMessage = response.data?.message || 'Erro desconhecido';
           throw new Error(errorMessage);
         }
 
-      
         // Limpa os campos do formulário e estados de erro
         setFormData({
           nome: '',
@@ -87,14 +116,14 @@ const CadastroCurso = () => {
         setErrors({});
         setShowErrorMessage(false);
 
-        toast.success("Curso cadastrado com sucesso!", {
+        toast.success(cursoId ? "Curso editado com sucesso!" : "Curso cadastrado com sucesso!", {
           position: "bottom-center",
           autoClose: 3000,
           style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
           progressStyle: { backgroundColor: '#fff' }
         });
 
-        formRef.current.reset()
+        formRef.current.reset();
       } catch (erro) {
         toast.error(erro.message, {
           position: "bottom-center",
@@ -102,20 +131,20 @@ const CadastroCurso = () => {
           style: { backgroundColor: '#d11c28', color: '#fff', textAlign: 'center' },
           progressStyle: { backgroundColor: '#fff' }
         });
-        console.error('Erro ao cadastrar curso!', erro);
+        console.error('Erro ao cadastrar ou editar curso!', erro);
       }
     }
   };
 
   const fetchCoordenadores = async (e) => {
     try {
-      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Coordenador')
+      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Coordenador');
 
-      setOpcoesCoordenadores(res.data)
+      setOpcoesCoordenadores(res.data);
     } catch (error) {
-      console.error('Erro ao buscar coordenadores: ', error)
+      console.error('Erro ao buscar coordenadores: ', error);
     }
-  }
+  };
 
   const handleBlur = (campo) => {
     const error = validarCampo(campo, formData[campo]);
@@ -132,21 +161,21 @@ const CadastroCurso = () => {
   return (
     <>
       <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo='Cadastrar Curso' comprimento='70%' ref={formRef}>
+      <FormContainer onSubmit={handleSubmit} titulo={cursoId ? 'Editar Curso' : 'Cadastrar Curso'} comprimento='70%' ref={formRef}>
         {showErrorMessage && <p className="error">* Preencha os campos obrigatórios</p>}
-        
+
         <div className="modalidade-container">
           <label className="labelCadastroCurso">Modalidade</label>
           <Switch valor={modalidade} valor1='ProEJA' valor2='Integrado' stateHandler={trocaModalidade} />
         </div>
-        
+
         <div className="input-group">
           <label htmlFor="nome" className="labelCadastroCurso">Nome</label>
-          <Input 
+          <Input
             tipo="text"
             value={formData.nome}
-            erro={errors.nome} 
-            onChange={(e) => setFormData({...formData, nome: e.target.value})}
+            erro={errors.nome}
+            onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
             onBlur={() => handleBlur('nome')}
             textoAjuda='Nome do curso'
           />
@@ -155,11 +184,11 @@ const CadastroCurso = () => {
 
         <div className="input-group">
           <label htmlFor="carga_horaria" className="labelCadastroCurso">Carga Horária</label>
-          <Input 
+          <Input
             tipo='text'
             value={formData.carga_horaria}
             erro={errors.carga_horaria}
-            onChange={(e) => setFormData({...formData, carga_horaria: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, carga_horaria: e.target.value })}
             onBlur={() => handleBlur('carga_horaria')}
           />
           {errors.carga_horaria && <p className="error">{errors.carga_horaria}</p>}
@@ -167,97 +196,96 @@ const CadastroCurso = () => {
 
         <label className="labelCadastroCurso">
           Coordenador
-            <Input
-              tipo='text'
-              nome='coordenador'
-              onChange={(e) => {
-                fetchCoordenadores(e)
-                
-                if (opcoesCoordenadores) {
-                  const param = e.target.value
+          <Input
+            tipo='text'
+            nome='coordenador'
+            onChange={(e) => {
+              fetchCoordenadores(e);
 
-                  const coordenador = opcoesCoordenadores.find((coordenador) => param === coordenador.nome || param === coordenador.email)
+              if (opcoesCoordenadores) {
+                const param = e.target.value;
 
-                  if (coordenador) setFormData({...formData, coordenador: coordenador.id})
-                }
+                const coordenador = opcoesCoordenadores.find((coordenador) => param === coordenador.nome || param === coordenador.email);
 
-              }}
-              onBlur={() => handleBlur('coordenador')}
-              erro={errors.coordenador}
-              textoAjuda='Insira nome ou email do coordenador'
-              lista={'opcoesCoordenadores'}
-            />
-          </label>
-          <datalist className="datalistCadastroCurso" id="opcoesCoordenadores">
-            {
-              opcoesCoordenadores ? (opcoesCoordenadores.map((coordenador) => (
-                <option className="optionCadastroCurso" 
-                  value={coordenador.nome || coordenador.email}>
-                    {coordenador.nome || coordenador.email}
-                </option>
-              ))) : (<option>Nenhum coordenador encontrado</option>)
-            }
-          </datalist>
-          <br/>
+                if (coordenador) setFormData({ ...formData, coordenador: coordenador.id });
+              }
+
+            }}
+            onBlur={() => handleBlur('coordenador')}
+            erro={errors.coordenador}
+            textoAjuda='Insira nome ou email do coordenador'
+            lista={'opcoesCoordenadores'}
+          />
+        </label>
+        <datalist className="datalistCadastroCurso" id="opcoesCoordenadores">
           {
-            modalidade === 'Integrado' ? (
-              <div className="add-turma">
-                <button type="button" onClick={addTurma} className="add-button">
-                  <FontAwesomeIcon
-                    icon={faPlusCircle}
-                    style={{ color: "#006b3f", cursor: "pointer", fontSize: "24px" }}
-                  />
-                  <span className="labelCadastroCurso" style={{ color: "black" }}>Adicionar Turma</span>
-                </button>
+            opcoesCoordenadores ? (opcoesCoordenadores.map((coordenador) => (
+              <option className="optionCadastroCurso"
+                value={coordenador.nome || coordenador.email}>
+                {coordenador.nome || coordenador.email}
+              </option>
+            ))) : (<option>Nenhum coordenador encontrado</option>)
+          }
+        </datalist>
+        <br />
+        {
+          modalidade === 'Integrado' ? (
+            <div className="add-turma">
+              <button type="button" onClick={addTurma} className="add-button">
+                <FontAwesomeIcon
+                  icon={faPlusCircle}
+                  style={{ color: "#006b3f", cursor: "pointer", fontSize: "24px" }}
+                />
+                <span className="labelCadastroCurso" style={{ color: "black" }}>Adicionar Turma</span>
+              </button>
 
-            {formData.turmas.length > 0 ? (
-            <div className="turmas-lista">
-              <table className="tabelaCadastroCurso">
-                <thead className="cabecalhoTabelaCadastroCurso">
-                  <tr>
-                    <th>Número da Turma</th>
-                    <th>Ação</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {formData.turmas.map((turma, index) => (
-                    <tr key={index}>
-                      <td>
-                        <Input 
-                          tipo='text'
-                          value={turma.numero}
-                          onChange={(e) => handleTurmaChange(index, e.target.value)}
-                          textoAjuda='Digite o número da turma'
-                          onBlur={() => handleBlur('turmas')}
-                          erro={errors.turmas && errors.turmas[index] ? true : false}
-                        />
-                        {errors.turmas && errors.turmas[index] && (
-                          <p className="error">{errors.turmas[index]}</p>
-                        )}
-                      </td>
-                      <td>
-                        <FontAwesomeIcon
-                          icon={faTrash}
-                          style={{ cursor: "pointer", color: "red", fontSize: "20px" }}
-                          onClick={() => removeTurma(index)}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              {formData.turmas.length > 0 ? (
+                <div className="turmas-lista">
+                  <table className="tabelaCadastroCurso">
+                    <thead className="cabecalhoTabelaCadastroCurso">
+                      <tr>
+                        <th>Número da Turma</th>
+                        <th>Ação</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData.turmas.map((turma, index) => (
+                        <tr key={index}>
+                          <td>
+                            <Input
+                              tipo='text'
+                              value={turma.numero}
+                              onChange={(e) => handleTurmaChange(index, e.target.value)}
+                              textoAjuda='Digite o número da turma'
+                              onBlur={() => handleBlur('turmas')}
+                              erro={errors.turmas && errors.turmas[index] ? true : false}
+                            />
+                            {errors.turmas && errors.turmas[index] && (
+                              <p className="error">{errors.turmas[index]}</p>
+                            )}
+                          </td>
+                          <td>
+                            <FontAwesomeIcon
+                              icon={faTrash}
+                              style={{ cursor: "pointer", color: "red", fontSize: "20px" }}
+                              onClick={() => removeTurma(index)}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
-            ) : (
-              <></>
-          )}
-    </div>
-  ) : (
-    <></>
-  )
-}
+          ) : (
+            <></>
+          )
+        }
 
-        
-        <Button tipo='submit' text='Cadastrar Curso' />
+        <Button tipo='submit' text={cursoId ? 'Salvar Alterações' : 'Cadastrar Curso'} />
       </FormContainer>
     </>
   );
