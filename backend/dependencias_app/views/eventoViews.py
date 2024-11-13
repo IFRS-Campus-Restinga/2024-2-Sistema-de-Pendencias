@@ -95,7 +95,7 @@ def obter_evento(request, evento_id):
 #Métodos para relação de criação de pacotes de eventos para calendarios academicos especificos
 
 @api_view(['POST'])
-def cadastrar_pacote(request):
+def cadastrar_calendario_academico(request):
     """
     CADASTRA UM NOVO PACOTE DE EVENTOS COM BASE NOS DADOS FORNECIDOS
     """
@@ -106,16 +106,16 @@ def cadastrar_pacote(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-def listar_pacotes(request):
+def listar_calendarios_academicos(request):
     """
     LISTA TODOS OS PACOTES DE EVENTOS CADASTRADOS
     """
-    pacotes = CalendarioAcademico.objects.all()
-    serializer = CalendarioAcademicoSerializer(pacotes, many=True)
+    calendariosAcademicos = CalendarioAcademico.objects.all()
+    serializer = CalendarioAcademicoSerializer(calendariosAcademicos, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-def listar_eventos_do_pacote(request, id_pacote):
+def listar_eventos_do_calendario_academico(request, id_pacote):
     """
     LISTA TODOS OS EVENTOS DENTRO DO INTERVALO DE UM PACOTE ESPECÍFICO
     """
