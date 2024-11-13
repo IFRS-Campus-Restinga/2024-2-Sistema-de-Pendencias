@@ -27,7 +27,7 @@ const ListarServidor = () => {
   const navigate = useNavigate();
 
   const handleClick = (servidor) => {
-    navigate(`/sessao/GestaoEscolar/2/listaServidor/${servidor.id}/visualizarServidor`, { state: { servidor }});
+    navigate(`/sessao/GestaoEscolar/2/listaServidor/${servidor.id}/detalhesServidor`, { state: { servidor }});
   };
 
   const grupoMap = {
