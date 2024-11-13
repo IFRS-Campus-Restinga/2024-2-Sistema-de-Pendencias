@@ -1,6 +1,6 @@
 // Validação para o campo "aluno"
 export const validarAluno = (aluno) => {
-    if (aluno.length === 0) return 'Campo obrigatório.';
+    if (!aluno || aluno.length === 0) return 'Campo obrigatório.';
 
     if (Number(aluno) === NaN) return 'Aluno Inválido'
 
@@ -9,7 +9,7 @@ export const validarAluno = (aluno) => {
 
 // Validação para o campo "professor"
 export const validarProfessor = (professor) => {
-    if (professor.length === 0) return 'Campo obrigatório.';
+    if (!professor || professor.length === 0) return 'Campo obrigatório.';
 
     if (Number(professor) === NaN) return 'Professor inválido'
 
@@ -44,21 +44,21 @@ export const validarSerieProgressao = (serie_progressao) => {
 
     if (!series.includes(serie_progressao)) return 'Campo inválido'
 
-
-
     return ''
 }
 
-export const validarSerieTurma = (serie_progressao, turmaOrigem) => {
-    if (Number(serie_progressao[0] >= Number(turmaOrigem.numero[0]))) return 'A série de progressão não pode ser superior à turma de origem'
+export const validarSerieTurma = (serie_progressao, turma_origem) => {
+    if (serie_progressao && turma_origem) {
+        if (Number(serie_progressao[0] >= Number(turma_origem.numero[0]))) return 'A série de progressão não pode ser superior ou igual à turma de origem'
+    }
 
-    return ''
+    return
 }
 
-export const validarAnoSemestreReprov = (anoSemestreReprov) => {
+export const validarAnoSemestreReprov = (ano_semestre_reprov) => {
     const turmaProejaRegex = /^\d{4}\/\d{1}$/; // Aceita o formato 2023/2
-
-    if (!turmaProejaRegex.test(anoSemestreReprov)) return 'Número da turma deve ser no formato "20xx/x" para ProEja.';
+    if (!ano_semestre_reprov || ano_semestre_reprov === '') return 'Campo obrigatório'
+    if (!turmaProejaRegex.test(ano_semestre_reprov)) return 'Número da turma deve ser no formato "20xx/x" para ProEja.';
 
 }
 
@@ -82,13 +82,14 @@ export const validarTrimestreRec = (trimestresRec) => {
 export const validarFormularioPED = (formData, modalidade) => {
     const erros = {};
 
-    console.log(formData)
-
     const erroAluno = validarAluno(formData.aluno);
     if (erroAluno) erros.aluno = erroAluno;
 
-    const erroProfessor = validarProfessor(formData.professor);
-    if (erroProfessor) erros.professor = erroProfessor;
+    const erroProfessorPED = validarProfessor(formData.professor_ped);
+    if (erroProfessorPED) erros.professor_ped = erroProfessorPED;
+
+    const erroProfessorDisciplina = validarProfessor(formData.professor_disciplina);
+    if (erroProfessorDisciplina) erros.professor_disciplina = erroProfessorDisciplina;
 
     const erroCurso = validarCurso(formData.curso);
     if (erroCurso) erros.curso = erroCurso;
@@ -105,14 +106,13 @@ export const validarFormularioPED = (formData, modalidade) => {
 
         const erroTrimestreRecuperar = validarTrimestreRec(formData.trimestre_recuperar)
         if (erroTrimestreRecuperar) erros.trimestre_recuperar = erroTrimestreRecuperar
+
     } else if (modalidade === 'ProEJA') {
-        const erroAnoSemestreReprov = validarAnoSemestreReprov(formData.anoSemestreReprov)
-        if (erroAnoSemestreReprov) erros.anoSemestreReprov = erroAnoSemestreReprov
+        const erroAnoSemestreReprov = validarAnoSemestreReprov(formData.ano_semestre_reprov)
+        if (erroAnoSemestreReprov) erros.ano_semestre_reprov = erroAnoSemestreReprov
     } else {
         erros.modalidade = 'Modalidade Inválida'
     }
     
-    console.log(erros);
-
     return erros;
 };

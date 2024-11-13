@@ -13,8 +13,8 @@ class PPTSerializer(serializers.ModelSerializer):
     aluno = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Aluno'))
     curso = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.filter(modalidade='Integrado'))
     disciplina = serializers.PrimaryKeyRelatedField(queryset=Disciplina.objects.all())
-    turmaOrigem = serializers.PrimaryKeyRelatedField(queryset=Turma.objects.all())
-    turmaProgressao = serializers.PrimaryKeyRelatedField(queryset=Turma.objects.all())
+    turma_origem = serializers.PrimaryKeyRelatedField(queryset=Turma.objects.all())
+    turma_progressao = serializers.PrimaryKeyRelatedField(queryset=Turma.objects.all())
 
     class Meta:
         model = PPT
@@ -30,19 +30,19 @@ class PPTSerializer(serializers.ModelSerializer):
     def validate(self, data):
         curso = data.get('curso')
         disciplina = data.get('disciplina')
-        turmaOrigem = data.get('turmaOrigem')
-        turmaProgressao = data.get('turmaProgressao')
+        turma_origem = data.get('turma_origem')
+        turma_progressao = data.get('turma_progressao')
 
         if not disciplina.cursos.filter(id=curso.id).exists():
             raise serializers.ValidationError("A disciplina não está vinculada ao curso fornecido.")
         
-        if turmaOrigem.curso.id != curso.id:
+        if turma_origem.curso.id != curso.id:
             raise serializers.ValidationError("A turma de origem não está vinculada ao curso fornecido.")
         
-        if turmaProgressao.curso.id != curso.id:
+        if turma_progressao.curso.id != curso.id:
             raise serializers.ValidationError("A turma de progressao não está vinculada ao curso fornecido.")
         
-        if int(turmaOrigem.numero) < int(turmaProgressao.numero):
+        if int(turma_origem.numero) < int(turma_progressao.numero):
             raise serializers.ValidationError("A turma de origem não pode ser inferior à turma de progressão.")
         
         return data
@@ -63,12 +63,12 @@ class PPTSerializer(serializers.ModelSerializer):
             representation['disciplina'] = DisciplinaSerializer(instance.disciplina).data
         
         # consulta dados da turma de origem
-        if hasattr(instance, 'turmaOrigem'):
-            representation['turmaOrigem'] = TurmaSerializer(instance.turmaOrigem).data
+        if hasattr(instance, 'turma_origem'):
+            representation['turma_origem'] = TurmaSerializer(instance.turma_origem).data
         
         # consulta dados da turma de progressão
-        if hasattr(instance, 'turmaProgressao'):
-            representation['turmaProgressao'] = TurmaSerializer(instance.turmaProgressao).data
+        if hasattr(instance, 'turma_progressao'):
+            representation['turma_progressao'] = TurmaSerializer(instance.turma_progressao).data
 
         # retorna os dados em vez de apenas os id's que fazem o vinculo entre cada instância da PPT
         return representation

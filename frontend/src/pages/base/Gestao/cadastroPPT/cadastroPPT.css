@@ -17,9 +17,9 @@
   margin-top: 7px;
 }
 
-.selectCadastroPPT {
+.selectCadastroPPT,
+.errorSelectCadastroPPT {
   font-size: 15px;
-  border: 1px solid #ccc;
   padding: 7px;
   border-radius: 8px;
   margin-top: 5px;
@@ -36,4 +36,8 @@
 .selectCadastroPPT:focus,
 .textAreaCadastroPPT:focus {
   border: 1px solid #797979;
+}
+
+.errorSelectCadastroPPT {
+  border: 2px solid #f00;
 }
