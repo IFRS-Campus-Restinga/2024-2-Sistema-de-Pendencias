@@ -3,7 +3,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from dependencias_app.permissoes import *
 from dependencias_app.serializers.eventoSerializer import EventoSerializer
+from dependencias_app.serializers.calendarioAcademicoSerializer import CalendarioAcademicoSerializer
 from dependencias_app.models.evento import Evento
+from dependencias_app.models.calendarioAcademico import CalendarioAcademico
 import logging
 
 logger = logging.getLogger(__name__)
@@ -89,4 +91,44 @@ def obter_evento(request, evento_id):
     except Exception as e:
         logger.error('Erro ao obter evento: %s', str(e))
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+#Métodos para relação de criação de pacotes de eventos para calendarios academicos especificos
+
+@api_view(['POST'])
+def cadastrar_pacote(request):
+    """
+    CADASTRA UM NOVO PACOTE DE EVENTOS COM BASE NOS DADOS FORNECIDOS
+    """
+    serializer = CalendarioAcademicoSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def listar_pacotes(request):
+    """
+    LISTA TODOS OS PACOTES DE EVENTOS CADASTRADOS
+    """
+    pacotes = CalendarioAcademico.objects.all()
+    serializer = CalendarioAcademicoSerializer(pacotes, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def listar_eventos_do_pacote(request, id_pacote):
+    """
+    LISTA TODOS OS EVENTOS DENTRO DO INTERVALO DE UM PACOTE ESPECÍFICO
+    """
+    try:
+        pacote = CalendarioAcademico.objects.get(id=id_pacote)
+        eventos = Evento.objects.filter(
+            data_inicio__gte=pacote.data_inicio,
+            data_fim__lte=pacote.data_fim,
+            tipo_calendario=pacote.tipo_calendario
+        )
+        serializer = EventoSerializer(eventos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except CalendarioAcademico.DoesNotExist:
+        return Response({"mensagem": "Pacote não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
 
