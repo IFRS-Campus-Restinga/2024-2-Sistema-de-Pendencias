@@ -34,7 +34,7 @@ const servidorService = {
         let endpoint;
 
         endpoints.forEach((endpointObject) => {
-            if (endpointObject.tipo === params.perfil) {
+            if (endpointObject.tipo === params.grupo) {
                 endpoint = endpointObject.endpoint;
             }
         });

@@ -24,11 +24,11 @@ class Coordenador(GrupoPermission):
 
 class RegistroEscolar(GrupoPermission):
     def __init__(self):
-        super().__init__('RegistroEscolar')
+        super().__init__('Registro Escolar')
 
 class GestaoEscolar(GrupoPermission):
     def __init__(self):
-        super().__init__('GestaoEscolar')
+        super().__init__('Gestão Escolar')
 
 # classe que combina permissões, para quando mais de um perfil tiver acesso à mesma view
 class Or(BasePermission):

@@ -15,7 +15,6 @@ from dependencias_app.views.atividadeViews import *
 from dependencias_app.views.planoEstudosViews import *
 
 
-
 urlpatterns = [
     # views cadastro de usuários
     path('cadastrar-gestao-escolar/', cadastrar_gestao_escolar),
@@ -25,6 +24,7 @@ urlpatterns = [
     path('cadastrar-aluno/', cadastrar_aluno),
     path('dados-adicionais-aluno/', infos_adicionais_aluno),
     path('dados-adicionais-professor/', infos_adicionais_professor),
+    path('listar-grupos/', listar_grupos),
 
     # views de curso/disciplinas
     # curso já manipula turmas por vínculo, por isso turmas não necessitam de uma view própria

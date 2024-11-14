@@ -5,7 +5,7 @@ import FormContainer from "../../../../components/FormContainer/FormContainer"; 
 import { ToastContainer, toast } from 'react-toastify'
 import "./cadastroPPT.css";
 import { PPTService } from "../../../../services/emiPptService"
-import cursoService from "../../../../services/cursoService";
+import {cursoService} from "../../../../services/cursoService";
 import { validarFormularioPPT, validarTurmas } from "./validacoes";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 
@@ -127,7 +127,7 @@ const CadastroPPT = () => {
                   const param = e.target.value
                   console.log(e.target.value)
 
-                  const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || param === aluno.infos_aluno.matricula || param === aluno.email)
+                  const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || param === aluno?.matricula || param === aluno.email)
 
                   if (aluno) setFormData({...formData, aluno: aluno.id})
                 }
@@ -141,8 +141,8 @@ const CadastroPPT = () => {
           {
             opcoesAlunos ? (opcoesAlunos.map((aluno) => (
               <option className="optionCadastroPPT" 
-                value={aluno.nome || aluno.infos_aluno.matricula || aluno.email}>
-                  {aluno.nome || aluno.infos_aluno.matricula || aluno.email}
+                value={aluno.nome || aluno?.matricula || aluno.email}>
+                  {aluno.nome || aluno?.matricula || aluno.email}
               </option>
             ))) : (<option>Nenhum aluno encontrado</option>)
           }

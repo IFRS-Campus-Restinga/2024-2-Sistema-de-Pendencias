@@ -20,9 +20,11 @@ def cadastrar_ppt(request):
     try:
         data = request.data
 
+        print(data)
+
         serializer = PPTSerializer(data=data)
         
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             # Salvar o novo objeto PPT
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

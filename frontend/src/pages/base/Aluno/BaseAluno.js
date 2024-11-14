@@ -8,7 +8,7 @@ import { jwtDecode } from 'jwt-decode'
 
 const BaseAluno = () => {
     const redirect = useNavigate()
-    const homeUrl = `/sessao/Aluno/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`
+    const homeUrl = `/sessao/${jwtDecode(sessionStorage.getItem('token')).grupo}/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`
 
     const validaAluno = () => {
         const res = validaUsuario('Aluno')

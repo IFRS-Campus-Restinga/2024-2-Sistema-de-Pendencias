@@ -11,10 +11,10 @@ import { jwtDecode } from "jwt-decode";
 
 const BaseGestao = () => {
   const redirect = useNavigate()
-  const homeUrl = `/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`
+  const homeUrl = `/sessao/${jwtDecode(sessionStorage.getItem('token')).grupo}/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`
   
     const validaGestao = () => {
-      const res = validaUsuario('GestaoEscolar')
+      const res = validaUsuario('Gestão Escolar')
 
       if (!res.status) {
           if (res.grupo === undefined) redirect('/')
@@ -41,8 +41,12 @@ const BaseGestao = () => {
         <div className="navItemContainer">
         <Dropdown titulo='Dependências' itens={[
         {
-        name: "Consultar Dependências",
-        link: `${homeUrl}/dependencias`
+        name: "Dependências - EMI",
+        link: `${homeUrl}/peds-emi`
+        },
+        {
+        name: "Dependências - ProEJA",
+        link: `${homeUrl}/peds-proeja`
         },
         {
         name: "Cadastro PED",
@@ -50,13 +54,8 @@ const BaseGestao = () => {
         },
         {
         name: "Gerenciar PPT",
-        link: `${homeUrl}/listaPPT`
-        },
-        {
-          name: "Detalhes PPT",
-          link: `${homeUrl}/detalhesPPT`
-          },
-        
+        link: `${homeUrl}/ppts`
+        }        
         ]} icone={<FontAwesomeIcon icon={faBook}  color="black" size="xl"/>}
         />
         </div>
@@ -82,11 +81,11 @@ const BaseGestao = () => {
         },
         {
         name: "Servidores",
-        link: `${homeUrl}/listaServidor`
+        link: `${homeUrl}/servidores`
         },
         {
         name: "Cursos",
-        link: `${homeUrl}/listaCurso`
+        link: `${homeUrl}/cursos`
         },
         {
         name: "Disciplinas",
