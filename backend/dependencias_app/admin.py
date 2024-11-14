@@ -7,7 +7,7 @@ from dependencias_app.models.ppt import PPT
 from dependencias_app.models.professor import Professor
 from dependencias_app.models.turma import Turma
 from dependencias_app.models.pedEMI import PED_EMI
-from dependencias_app.models.pedProEJA import PED_ProEJA
+from dependencias_app.models.pedPROEJA import PED_ProEJA
 from dependencias_app.models.planoEstudos import PlanoEstudos
 from dependencias_app.models.formEncerramento import FormEncerramento
 from google_auth.models import UsuarioBase
