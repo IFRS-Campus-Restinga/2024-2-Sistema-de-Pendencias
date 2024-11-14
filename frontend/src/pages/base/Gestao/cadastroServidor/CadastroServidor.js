@@ -48,6 +48,7 @@ const CadastroServidor = () => {
         const grupoId = grupoMap[grupo];
 
         const dataToSend = { grupo: grupoId, email };
+        const dataToSendGrupoNome = { grupo, email };
 
         const validationErrors = validarFormulario(dataToSend);
 
@@ -60,7 +61,9 @@ const CadastroServidor = () => {
                 if (isEditing) {
                     // Atualiza o servidor existente
                     const response = await servidorService.editar(servidor.id, dataToSend);
-                    if (response.ok) {
+                    console.log("Response:", response);
+
+                    if (response) {
                         toast.success(`Servidor atualizado com sucesso!`, {
                             position: "bottom-center",
                             autoClose: 3000,
@@ -75,7 +78,7 @@ const CadastroServidor = () => {
                         });
                         setErrors({}); // Limpar os erros também
 
-                        navigate('/sessao/GestaoEscolar/2/listaServidor/${servidor.id}/detalhesServidor');
+                        navigate(`/sessao/GestaoEscolar/2/listaServidor`);
 
                     } else {
                         throw new Error('Erro ao editar o servidor');
@@ -83,8 +86,10 @@ const CadastroServidor = () => {
 
                 } else {
                     // Cria um novo servidor
-                    const response = await servidorService.create(dataToSend, 'csrftoken');
-                    if (response.ok) {
+                    const response = await servidorService.create(dataToSendGrupoNome, 'csrftoken');
+                    console.log(response);
+
+                    if (response.status === 201) {
                         toast.success(`Novo ${grupo} cadastrado com sucesso!`, {
                             position: "bottom-center",
                             autoClose: 3000,
@@ -98,8 +103,6 @@ const CadastroServidor = () => {
                             email: '',
                         });
                         setErrors({}); // Limpar os erros também
-
-                        navigate('/sessao/GestaoEscolar/2/listaServidor/${servidor.id}/detalhesServidor');
                     } else {
                         throw new Error('Erro ao cadastrar o servidor');
 
@@ -133,8 +136,8 @@ const CadastroServidor = () => {
 
     return (
         <>
-            <ToastContainer />
             <FormContainer titulo={isEditing ? 'Editar Servidor' : 'Cadastrar Servidor'} onSubmit={enviarHandler}>
+            <ToastContainer /> 
                 {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
                 <span className='spanCadastroServidor'>Perfil</span>
                 <div className="radio-container">

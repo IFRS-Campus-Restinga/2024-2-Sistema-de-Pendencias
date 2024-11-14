@@ -15,16 +15,16 @@ def cadastrar_gestao_escolar(request):
     logger.info('Dados recebidos: %s', request.data)
     try:
         # extrai o nome do perfil da requisição
-        perfil_nome = request.data.get('perfil', None)
+        nome_grupo = request.data.get('grupo', None)
 
-        if perfil_nome != 'GestaoEscolar':
+        if nome_grupo != 'GestaoEscolar':
             raise ValueError("O campo 'perfil' é obrigatório.")
 
         # tenta encontrar o grupo pelo nome
         try:
-            grupo = Group.objects.get(name=perfil_nome)
+            grupo = Group.objects.get(name=nome_grupo)
         except Group.DoesNotExist:
-            raise ValueError(f"Perfil '{perfil_nome}' não encontrado.")
+            raise ValueError(f"Perfil '{nome_grupo}' não encontrado.")
         
         # adiciona o id do grupo correspondente ao perfil em um dicionario
         data = request.data
