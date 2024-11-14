@@ -3,7 +3,7 @@ from .disciplina import Disciplina
 from .curso import Curso
 from google_auth.models import UsuarioBase
 from django.db import models
-from .planoEstudosEMI import PlanoEstudos
+from .planoEstudos import PlanoEstudos
 from .formEncerramento import FormEncerramento
 
 class PED_ProEJA(Dependencia):
