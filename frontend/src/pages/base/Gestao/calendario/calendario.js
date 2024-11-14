@@ -39,6 +39,7 @@ const CalendarioPage = () => {
                     start: new Date(evento.data_inicio),
                     end: new Date(evento.data_fim),
                     allDay: false,
+
                 }));
                 setEventos(eventosData);
             } catch (error) {
@@ -103,6 +104,7 @@ const CalendarioPage = () => {
                         date: "Data",
                         time: "Hora",
                         event: "Evento",
+                        allDay: "Dia Todo",
                         noEventsInRange: "Nenhum evento neste período",
                         showMore: total => `+ Ver mais (${total})`
                     }}

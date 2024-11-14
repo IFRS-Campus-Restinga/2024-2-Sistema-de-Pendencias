@@ -1,0 +1,35 @@
+/* ListarEventosDoCalendarioPage.css */
+.listar-eventos-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.listar-eventos-container h2 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.listar-eventos-container ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.listar-eventos-container li {
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f7f7f7;
+    transition: background-color 0.2s;
+}
+
+.listar-eventos-container li:hover {
+    background-color: #e0e0e0;
+}
+
+.listar-eventos-container li:active {
+    background-color: #ccc;
+}

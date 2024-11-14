@@ -44,6 +44,9 @@ urlpatterns = [
     path('editar-evento/<int:evento_id>/', atualizar_evento, name='atualizar_evento'),
     path('deletar-evento/<int:evento_id>/', deletar_evento, name='deletar_evento'),
     path('eventos/<int:evento_id>/', obter_evento, name='obter_evento'),
+    path('cadastrar-calendario-academico/', cadastrar_calendario_academico, name='cadastrar_calendario_academico'),
+    path('listar-calendarios-academicos/', listar_calendarios_academicos, name='listar_calendarios_academicos'),
+    path('calendario-academico/<int:id_pacote>/eventos/', listar_eventos_do_calendario_academico, name='listar_eventos_do_calendario_academico'),
     
     # views de lista de usuários
     path('usuario/<int:idUsuario>/', get_infos_usuario),
