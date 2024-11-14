@@ -1,7 +1,9 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth.models import Group
 from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
+from dependencias_app.serializers.grupoSerializer import Grupo_Serializer
 from dependencias_app.permissoes import *
 from google_auth.models import UsuarioBase
 from django.shortcuts import get_object_or_404
@@ -33,5 +35,17 @@ def listar_por_parametro(request, param, grupo):
 
     except Exception as e:
         return Response({'mensagem: ': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+@permission_classes([GestaoEscolar | RegistroEscolar | Coordenador])
+def listar_grupos(request):
+    try:
+        grupos = Group.objects.all()
+
+        serializer = Grupo_Serializer(grupos, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
     

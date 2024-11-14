@@ -6,7 +6,7 @@ import { jwtDecode } from 'jwt-decode'
 
 const BaseCoordenador = () => {
     const redirect = useNavigate()
-    const homeUrl = `/sessao/Coordenador/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`
+    const homeUrl = `/sessao/${jwtDecode(sessionStorage.getItem('token')).grupo}/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`
 
     const validaCoordenador = () => {
         const res = validaUsuario('Registro')

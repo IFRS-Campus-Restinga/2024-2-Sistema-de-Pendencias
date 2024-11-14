@@ -30,7 +30,7 @@ import EditarPPT from './pages/base/Gestao/editarPPT/editarPPT'
 // Filhos de Professor
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
 import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfessor'
-import ListarPEDProfessor from './pages/base/Professor/perfilProfessor/listarPED/ListarPEDProfessor'
+import ListarPEDEMIProfessor from './pages/base/Professor/listarPED_EMI/ListarPED_EMIProfessor'
 import PlanoEstudos from './pages/base/Professor/planoEstudos/planoEstudos'
 import AtividadesDesenvolvidas from './pages/base/Professor/atividadesDesenvolvidas/atividadesDesenvolvidas'
 
@@ -39,6 +39,8 @@ import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
 import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
 import ListarPPT from './pages/base/Gestao/listarPPT/ListarPPT'
+import ListarPEDEMI from './pages/base/Gestao/listarPED_EMI/ListarPED_EMI'
+import ListarPEDProEJA from './pages/base/Gestao/listarPED_ProEJA/ListarPED_ProEJA'
 
 const router = createBrowserRouter([
     {
@@ -47,7 +49,7 @@ const router = createBrowserRouter([
     },
     // Rotas do perfil de Gestao Escolar
     {
-        path: '/sessao/GestaoEscolar/',
+        path: '/sessao/Gestão Escolar/',
         element: <BaseGestao />,
         children: [
             {
@@ -75,11 +77,11 @@ const router = createBrowserRouter([
                 element: <CadastroPED />
             },
             {
-                path: ':idUsuario/listaServidor',
+                path: ':idUsuario/servidores',
                 element: <ListarServidor />
             },
             {
-                path: ':idUsuario/listaCurso',
+                path: ':idUsuario/cursos',
                 element: <ListarCurso />
             },
             {
@@ -95,7 +97,7 @@ const router = createBrowserRouter([
                 element: <CalendarioPage />
             },
             {
-                path: ':idUsuario/listaServidor/:idServidor/detalhesServidor',
+                path: ':idUsuario/servidores/:idServidor',
                 element: <DetalhesServidor />
             },
             {
@@ -103,19 +105,27 @@ const router = createBrowserRouter([
                 element: <CadastroPPT />
             },
             {
-                path: ':idUsuario/listaPPT',
+                path: ':idUsuario/ppts',
                 element: <ListarPPT />
             },
             {
-                path: ':idUsuario/detalhesPPT/:idPpt',
+                path: ':idUsuario/peds-emi',
+                element: <ListarPEDEMI />
+            },
+            {
+                path: ':idUsuario/peds-proeja',
+                element: <ListarPEDProEJA />
+            },
+            {
+                path: ':idUsuario/ppts/:idPpt',
                 element: <DetalhesPPT />
             },
             {
-                path: ':idUsuario/detalhesPPT/:idPpt/editarPPT',
+                path: ':idUsuario/ppts/:idPpt/editarPPT',
                 element: <EditarPPT />
             },
             {
-                path: ':idUsuario/editarServidor/:idServidor',
+                path: ':idUsuario/servidores/:idServidor/editarServidor',
                 element: <CadastroServidor />
             },
         ]
@@ -124,7 +134,7 @@ const router = createBrowserRouter([
     },
     // Rotas de Registro Escolar
     {
-        path: '/sessao/RegistroEscolar/',
+        path: '/sessao/Registro Escolar/',
         element: <BaseRegistro />,
         // adicionar abaixo, as children de registro
     },
@@ -150,8 +160,8 @@ const router = createBrowserRouter([
                 element: <PerfilProfessor />
             },
             {
-                path: ':idUsuario/minhasPEDs/',
-                element: <ListarPEDProfessor />
+                path: ':idUsuario/minhasPeds-EMI/',
+                element: <ListarPEDEMIProfessor />
             },
             {
                 path: ':idUsuario/ped/:pedId/planoEstudos',

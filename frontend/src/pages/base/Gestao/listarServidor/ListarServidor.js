@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './ListarServidor.css';
 import FormContainer from '../../../../components/FormContainer/FormContainer'
 import Button from "../../../../components/Button/Button";
 import Input from '../../../../components/Input/Input';
-import Lupa from "../../../../assets/lupa.png";
-import Ordenar from "../../../../assets/ordenar-branco.png";
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import servidorService from '../../../../services/servidorService';
 import { Link } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import { useNavigate } from 'react-router-dom';
+import { usuarioBaseService } from '../../../../services/usuarioBaseService';
+import Tabela from '../../../../components/Tabela/Tabela';
 
 const ListarServidor = () => {
   const [servidores, setServidores] = useState([]);
   const [servidoresFiltrados, setServidoresFiltrados] = useState([]);
+  const [grupos, setGrupos] = useState([])
   const [ordenacao, setOrdenacao] = useState({ coluna: '', ordem: 'asc' });
   const [grupoFiltro, setGrupoFiltro] = useState('');
   const [filtroGeral, setFiltroGeral] = useState('');
@@ -23,55 +22,38 @@ const ListarServidor = () => {
   const [dataFim, setDataFim] = useState('');
   const [isActiveFiltro, setIsActiveFiltro] = useState('');
   const [matriculaFiltro, setMatriculaFiltro] = useState('');
-
+  
   const navigate = useNavigate();
 
   const handleClick = (servidor) => {
-    navigate(`/sessao/GestaoEscolar/2/listaServidor/${servidor.id}/detalhesServidor`, { state: { servidor }});
-  };
-
-  const grupoMap = {
-    'GestaoEscolar': 'Gestão Escolar',
-    'RegistroEscolar': 'Registros Escolares',
-    'Coordenador': 'Coordenador',
-    'Professor': 'Professor'
+    navigate(`${servidor.id}/detalhesServidor`, { state: { servidor }});
   };
 
   const fetchServidores = async () => {
     try {
       const response = await servidorService.listar()
+
       setServidores(response.data);
       setServidoresFiltrados(response.data)
     } catch (error) {
       console.error('Erro ao buscar servidores:', error);
     }
   };
- 
-  const ordenarPorColuna = (coluna) => {
-    const novaOrdem = ordenacao.coluna === coluna && ordenacao.ordem === 'asc' ? 'desc' : 'asc';
-  
-    const servidoresOrdenados = [...servidoresFiltrados].sort((a, b) => {
-      let valorA = a[coluna] || '-';  // Valor A ou "-"
-      let valorB = b[coluna] || '-';  // Valor B ou "-"
-  
-      // Tratar a coluna 'grupo' usando o mapeamento específico
-      if (coluna === 'grupo') {
-        valorA = grupoMap[a.grupo] || '-';
-        valorB = grupoMap[b.grupo] || '-';
-      }
-  
-      // Puxar valores preenchidos ("-") para o fim, independente da ordem
-      if (valorA === '-' && valorB !== '-') return 1;  // Coloca "-" depois
-      if (valorA !== '-' && valorB === '-') return -1; // Coloca preenchidos antes
-  
-      // Se ambos são preenchidos ou ambos são vazios ("-"), ordenar normalmente
-      return valorA < valorB ? (novaOrdem === 'asc' ? -1 : 1) : (valorA > valorB ? (novaOrdem === 'asc' ? 1 : -1) : 0);
-    });
-  
-    setServidoresFiltrados(servidoresOrdenados);
-    setOrdenacao({ coluna, ordem: novaOrdem });
-  };
 
+  const fetchGrupos = async () => {
+    try {
+      const res = await usuarioBaseService.listarGrupos()
+
+      if (res.status !== 200) throw new Error(res)
+
+      const grupos = res.data.filter((grupo) => grupo.name !== 'Aluno')
+
+      setGrupos(grupos)
+    } catch (error) {
+      console.error('Erro ao buscar grupos: ', error)
+    }
+  }
+ 
   const limparBusca = () => {
     setDataInicio('');
     setDataFim('');
@@ -86,33 +68,30 @@ const ListarServidor = () => {
     fetchServidores();
   };
 
-
-  useEffect(() => {
-    fetchServidores();
-  }, []);
-
-  
-
   const filtrarServidores = () => {
     const servidoresFiltrados = servidores.filter(servidor => 
       (!filtroGeral || 
         (servidor.nome && servidor.nome.toLowerCase().includes(filtroGeral.toLowerCase())) ||
-        (servidor.infos_professor && servidor.infos_professor.matricula && servidor.infos_professor.matricula.includes(filtroGeral)) ||
-        (servidor.infos_professor && servidor.infos_professor.cpf && servidor.infos_professor.cpf.includes(filtroGeral)) ||
+        (servidor.matricula && servidor.matricula.includes(filtroGeral)) ||
+        (servidor.cpf && servidor.cpf.includes(filtroGeral)) ||
         (servidor.email && servidor.email.includes(filtroGeral))
       ) &&
       (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
       (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
       (!grupoFiltro || servidor.grupo === grupoFiltro) &&
-      (!matriculaFiltro || (servidor.infos_professor.matricula && servidor.infos_professor.matricula.includes(matriculaFiltro))) &&
+      (!matriculaFiltro || (servidor.matricula && servidor.matricula.includes(matriculaFiltro))) &&
       (!isActiveFiltro || (servidor.is_active && servidor.is_active.includes(isActiveFiltro)))
     );
     setServidoresFiltrados(servidoresFiltrados);
   };
 
+  useEffect(() => {
+    fetchServidores();
+    fetchGrupos()
+  }, []);
+
 return (
   <>
-    <ToastContainer />
     <FormContainer titulo='Lista de Servidores' comprimento='90%'>
       <section className='sectionListarServidor'>
         <div className='divListarServidor'>
@@ -131,10 +110,11 @@ return (
               onChange={(e) => setGrupoFiltro(e.target.value)}
             >
               <option value="">Todos</option>
-              <option value="GestaoEscolar">Gestão Escolar</option>
-              <option value="RegistroEscolar">Registros Escolares</option>
-              <option value="Coordenador">Coordenador</option>
-              <option value="Professor">Professor</option>
+              {
+                grupos.map((grupo) => (
+                  <option value={grupo.name}>{grupo.name}</option>
+                ))
+              }
             </select>
           </span>
         </div>
@@ -160,28 +140,27 @@ return (
           </span>
         </div>
       </section>
-    <span className="spanListarServidor">
-      <Button
-        text="Buscar"
-        onClick={filtrarServidores}
-      />
-      <Button
-        text="Limpar campos"
-        onClick={limparBusca}
-        color="#4A4A4A"
-      />
-      <Link to={`/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroServidor`}>
-        <Button 
-          text='Adicionar novo'
+      <span className="spanListarServidor">
+        <Button
+          text="Buscar"
+          onClick={filtrarServidores}
         />
-      </Link>
+        <Button
+          text="Limpar campos"
+          onClick={limparBusca}
+          color="#4A4A4A"
+        />
+        <Link to={`/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroServidor`}>
+          <Button 
+            text='Adicionar novo'
+          />
+        </Link>
     </span>
     <div className='tabelaContainerListarServidor'>
-      <table className='tabelaListarServidor'>
+      {/* <table className='tabelaListarServidor'>
         <thead className='cabecalhoListarServidor'>
           <tr className='linhaListarServidor'>
             <th onClick={() => ordenarPorColuna('grupo')}>
-              <div className="th-conteudo">
                 <img
                   className="icone-ordenar"
                   src={Ordenar}
@@ -193,7 +172,6 @@ return (
                 {ordenacao.coluna === 'grupo' && (
                 <span className={`seta ${ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}`}></span>
                 )}
-              </div>
             </th>
             <th onClick={() => ordenarPorColuna('nome')}>
               Nome
@@ -238,10 +216,10 @@ return (
         <tbody>
           {servidoresFiltrados.map((servidor) => (
             <tr key={`${servidor.id}-${servidor.nome}`}>
-              <td>{grupoMap[servidor.grupo] || '-'}</td>
+              <td>{servidor?.grupo || '-'}</td>
               <td>{servidor.nome || '-'}</td>
-              <td>{servidor.infos_professor?.cpf ?? '-'}</td>
-              <td>{servidor.infos_professor?.matricula ?? '-'}</td>
+              <td>{servidor.cpf || '-'}</td>
+              <td>{servidor.matricula || '-'}</td>
               <td>{servidor.email || '-'}</td>
               <td>{servidor.data_ingresso || '-'}</td>
               <td>{servidor.is_active === true ? 'Ativo' : 'Inativo'}</td>
@@ -256,7 +234,8 @@ return (
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> */}
+      <Tabela listaFiltrada={servidoresFiltrados}/>
     </div>
     </FormContainer>
   </>
