@@ -77,7 +77,7 @@ const ListarCursos = () => {
   const handleEditCurso = (cursoId) => {
     const usuarioId = jwtDecode(sessionStorage.getItem('token')).idUsuario;
     // Navegar para o formulário de edição, passando o ID do curso
-    navigate(`/sessao/GestaoEscolar/${usuarioId}/cadastroCurso`, { state: { cursoId } });
+    navigate(`/sessao/Gestão Escolar/${usuarioId}/cadastroCurso`, { state: { cursoId } });
   };
 
   // Usa useMemo para evitar refazer a filtragem e ordenação toda vez
