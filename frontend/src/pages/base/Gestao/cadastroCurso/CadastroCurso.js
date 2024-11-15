@@ -17,41 +17,19 @@ const CadastroCurso = () => {
   const formRef = useRef();
   const navigate = useNavigate();
   const location = useLocation();
-  const { cursoId } = location.state || {};  // Pegando o cursoId se presente
+  const { curso } = location.state || {};  // Pegando o cursoId se presente
 
   const [modalidade, setModalidade] = useState("Integrado");
   const [opcoesCoordenadores, setOpcoesCoordenadores] = useState([]);
   const [formData, setFormData] = useState({
-    nome: '',
-    carga_horaria: '',
-    modalidade: modalidade,
-    coordenador: '',
-    turmas: []
+    nome: curso?.nome || '',
+    carga_horaria: curso?.carga_horaria || '',
+    modalidade: curso?.modalidade || modalidade,
+    coordenador: curso?.coordenador || '',
+    turmas: curso?.turmas || []
   });
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
-
-  // Carregar dados do curso se estiver editando
-  useEffect(() => {
-    if (cursoId) {
-      cursoService.getCursoById(cursoId)
-        .then(response => {
-          const curso = response.data;
-          setFormData({
-            nome: curso.nome,
-            carga_horaria: curso.carga_horaria,
-            modalidade: curso.modalidade,
-            coordenador: curso.coordenador.id,  // Presumindo que o coordenador tenha um ID
-            turmas: curso.turmas || []
-          });
-          setModalidade(curso.modalidade);
-        })
-        .catch(error => {
-          console.error("Erro ao carregar dados do curso para edição:", error);
-          toast.error("Erro ao carregar dados do curso.");
-        });
-    }
-  }, [cursoId]);
 
   const trocaModalidade = (novoValor) => {
     setModalidade(novoValor);
@@ -95,8 +73,8 @@ const CadastroCurso = () => {
       setErrors(erros);
     } else {
       try {
-        const response = cursoId 
-          ? await cursoService.update(cursoId, formData)  // Atualiza curso se estiver editando
+        const response = curso 
+          ? await cursoService.update(curso.id, formData)  // Atualiza curso se estiver editando
           : await cursoService.create(formData);  // Cria curso se for um novo
 
         if (response.status !== 200 && response.status !== 201) {
@@ -116,7 +94,7 @@ const CadastroCurso = () => {
         setErrors({});
         setShowErrorMessage(false);
 
-        toast.success(cursoId ? "Curso editado com sucesso!" : "Curso cadastrado com sucesso!", {
+        toast.success(curso ? "Curso editado com sucesso!" : "Curso cadastrado com sucesso!", {
           position: "bottom-center",
           autoClose: 3000,
           style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
@@ -124,8 +102,9 @@ const CadastroCurso = () => {
         });
 
         formRef.current.reset();
-        if (!cursoId) {
-          navigate(`sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`); // Redirecionar após criar o curso
+
+        if (!curso) {
+          navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`); // Redirecionar após criar o curso
         }
       } catch (erro) {
         toast.error(erro.message, {
@@ -160,10 +139,14 @@ const CadastroCurso = () => {
     }
   };
 
+  useEffect(() => {
+    console.log(curso)
+  }, [])
+
   return (
     <>
       <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo={cursoId ? 'Editar Curso' : 'Cadastrar Curso'} comprimento='70%' ref={formRef}>
+      <FormContainer onSubmit={handleSubmit} titulo={curso ? 'Editar Curso' : 'Cadastrar Curso'} comprimento='70%' ref={formRef}>
         {showErrorMessage && <p className="error">* Preencha os campos obrigatórios</p>}
 
         <div className="modalidade-container">
@@ -175,7 +158,7 @@ const CadastroCurso = () => {
           <label htmlFor="nome" className="labelCadastroCurso">Nome</label>
           <Input
             tipo="text"
-            value={formData.nome}
+            valor={formData.nome}
             erro={errors.nome}
             onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
             onBlur={() => handleBlur('nome')}
@@ -188,7 +171,7 @@ const CadastroCurso = () => {
           <label htmlFor="carga_horaria" className="labelCadastroCurso">Carga Horária</label>
           <Input
             tipo='text'
-            value={formData.carga_horaria}
+            valor={formData.carga_horaria}
             erro={errors.carga_horaria}
             onChange={(e) => setFormData({ ...formData, carga_horaria: e.target.value })}
             onBlur={() => handleBlur('carga_horaria')}
@@ -213,6 +196,7 @@ const CadastroCurso = () => {
             }}
             onBlur={() => handleBlur('coordenador')}
             erro={errors.coordenador}
+            valor={curso.coordenador?.email}
             textoAjuda='Insira nome ou email do coordenador'
             lista={'opcoesCoordenadores'}
           />
@@ -250,7 +234,7 @@ const CadastroCurso = () => {
                         <td>
                           <Input
                             tipo='text'
-                            value={turma.numero}
+                            valor={turma.numero}
                             onChange={(e) => handleTurmaChange(index, e.target.value)}
                             textoAjuda='Digite o número da turma'
                             onBlur={() => handleBlur('turmas')}
@@ -276,7 +260,7 @@ const CadastroCurso = () => {
           </div>
         )}
 
-        <Button tipo='submit' text={cursoId ? 'Salvar Alterações' : 'Cadastrar Curso'} />
+        <Button tipo='submit' text={curso ? 'Salvar Alterações' : 'Cadastrar Curso'} />
       </FormContainer>
     </>
   );

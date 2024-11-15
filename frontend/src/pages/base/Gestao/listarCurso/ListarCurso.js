@@ -74,10 +74,10 @@ const ListarCursos = () => {
   };
 
   // Função para navegação de edição de curso
-  const handleEditCurso = (cursoId) => {
+  const handleEditCurso = (curso) => {
     const usuarioId = jwtDecode(sessionStorage.getItem('token')).idUsuario;
     // Navegar para o formulário de edição, passando o ID do curso
-    navigate(`/sessao/Gestão Escolar/${usuarioId}/cadastroCurso`, { state: { cursoId } });
+    navigate(`/sessao/Gestão Escolar/${usuarioId}/cadastroCurso`, {state: {curso: curso}});
   };
 
   // Usa useMemo para evitar refazer a filtragem e ordenação toda vez
@@ -140,7 +140,7 @@ const ListarCursos = () => {
                       className='iconeAcoes'
                       src={Lupa}
                       alt="Buscar"
-                      onClick={() => handleEditCurso(curso.id)} // Chama a função de edição
+                      onClick={() => handleEditCurso(curso)} // Chama a função de edição
                       title="Editar"
                       style={{ width: '16px', height: '16px' }}
                     />
