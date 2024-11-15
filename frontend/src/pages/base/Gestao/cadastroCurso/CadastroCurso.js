@@ -11,7 +11,7 @@ import Switch from "../../../../components/Switch/Switch";
 import { ToastContainer, toast } from "react-toastify";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 import { useLocation, useNavigate } from "react-router-dom";
-import {jwtDecode} from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode';
 
 const CadastroCurso = () => {
   const formRef = useRef();
@@ -19,7 +19,8 @@ const CadastroCurso = () => {
   const location = useLocation();
   const { curso } = location.state || {};  // Pegando o cursoId se presente
 
-  const [modalidade, setModalidade] = useState("Integrado");
+  // Inicialize a modalidade com o valor do curso ou 'Integrado' como padrão
+  const [modalidade, setModalidade] = useState(curso ? curso.modalidade : 'Integrado');
   const [opcoesCoordenadores, setOpcoesCoordenadores] = useState([]);
   const [formData, setFormData] = useState({
     nome: curso?.nome || '',
@@ -31,19 +32,35 @@ const CadastroCurso = () => {
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
 
+  // Atualiza o valor de modalidade sempre que o curso for alterado
+  useEffect(() => {
+    if (curso) {
+      setModalidade(curso.modalidade);
+      setFormData({
+        ...formData,
+        modalidade: curso.modalidade,
+        nome: curso.nome,
+        carga_horaria: curso.carga_horaria,
+        coordenador: curso.coordenador,
+        turmas: curso.turmas
+      });
+    }
+  }, [curso]);
+
+  // Função para alterar a modalidade e resetar campos relacionados
   const trocaModalidade = (novoValor) => {
     setModalidade(novoValor);
     setFormData({
       ...formData,
+      modalidade: novoValor,
       carga_horaria: '',
       coordenador: '',
-      modalidade: novoValor,
-      nome: '',
       turmas: []
     });
     formRef.current.reset();
   };
 
+  // Função para adicionar uma nova turma
   const addTurma = () => {
     setFormData((prevData) => ({
       ...prevData,
@@ -51,6 +68,7 @@ const CadastroCurso = () => {
     }));
   };
 
+  // Função para manipular mudança nos números das turmas
   const handleTurmaChange = (index, value) => {
     const updatedTurmas = formData.turmas.map((turma, i) =>
       i === index ? { ...turma, numero: value } : turma
@@ -58,11 +76,13 @@ const CadastroCurso = () => {
     setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
   };
 
+  // Função para remover uma turma
   const removeTurma = (index) => {
     const updatedTurmas = formData.turmas.filter((_, i) => i !== index);
     setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
   };
 
+  // Função para submeter o formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -117,6 +137,7 @@ const CadastroCurso = () => {
     }
   };
 
+  // Função para buscar coordenadores com base no valor digitado
   const fetchCoordenadores = async (e) => {
     try {
       const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Coordenador');
@@ -137,10 +158,6 @@ const CadastroCurso = () => {
       });
     }
   };
-
-  useEffect(() => {
-    console.log(curso)
-  }, [])
 
   return (
     <>
@@ -193,7 +210,7 @@ const CadastroCurso = () => {
             }}
             onBlur={() => handleBlur('coordenador')}
             erro={errors.coordenador}
-            valor={curso.coordenador?.email}
+            valor={curso?.coordenador?.email || ''}
             textoAjuda='Insira nome ou email do coordenador'
             lista={'opcoesCoordenadores'}
           />
