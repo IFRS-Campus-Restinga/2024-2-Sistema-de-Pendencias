@@ -17,35 +17,20 @@ const CadastroCurso = () => {
   const formRef = useRef();
   const navigate = useNavigate();
   const location = useLocation();
-  const { curso } = location.state || {};  // Pegando o curso se presente
+  const { curso } = location.state || {};  // Pegando o cursoId se presente
 
   const [modalidade, setModalidade] = useState("Integrado");
   const [opcoesCoordenadores, setOpcoesCoordenadores] = useState([]);
   const [formData, setFormData] = useState({
     nome: curso?.nome || '',
     carga_horaria: curso?.carga_horaria || '',
-    modalidade: curso?.modalidade || '',
+    modalidade: curso?.modalidade || modalidade,
     coordenador: curso?.coordenador || '',
-    turmas: curso?.turmas || [],
+    turmas: curso?.turmas || []
   });
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
 
-
-  // Carregar dados do curso se estiver editando
-  useEffect(() => {
-    if (curso) {
-      setFormData({
-        nome: curso.nome,
-        carga_horaria: curso.carga_horaria,
-        modalidade: curso.modalidade,
-        coordenador: curso.coordenador,
-        turmas: curso.turmas
-      });
-    }
-  }, [curso]);
-
-  
   const trocaModalidade = (novoValor) => {
     setModalidade(novoValor);
     setFormData({
@@ -88,8 +73,8 @@ const CadastroCurso = () => {
       setErrors(erros);
     } else {
       try {
-        const response = curso
-          ? await cursoService.update(curso, formData)  // Atualiza curso se estiver editando
+        const response = curso 
+          ? await cursoService.update(curso.id, formData)  // Atualiza curso se estiver editando
           : await cursoService.create(formData);  // Cria curso se for um novo
 
         if (response.status !== 200 && response.status !== 201) {
@@ -116,8 +101,9 @@ const CadastroCurso = () => {
         });
 
         formRef.current.reset();
+
         if (!curso) {
-          navigate('/sessao/GestaoEscolar'); // Redirecionar após criar o curso
+          navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`); // Redirecionar após criar o curso
         }
       } catch (erro) {
         toast.error(erro.message, {
@@ -152,6 +138,10 @@ const CadastroCurso = () => {
     }
   };
 
+  useEffect(() => {
+    console.log(curso)
+  }, [])
+
   return (
     <>
       <ToastContainer />
@@ -167,7 +157,7 @@ const CadastroCurso = () => {
           <label htmlFor="nome" className="labelCadastroCurso">Nome</label>
           <Input
             tipo="text"
-            value={formData.nome}
+            valor={formData.nome}
             erro={errors.nome}
             onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
             onBlur={() => handleBlur('nome')}
@@ -180,7 +170,7 @@ const CadastroCurso = () => {
           <label htmlFor="carga_horaria" className="labelCadastroCurso">Carga Horária</label>
           <Input
             tipo='text'
-            value={formData.carga_horaria}
+            valor={formData.carga_horaria}
             erro={errors.carga_horaria}
             onChange={(e) => setFormData({ ...formData, carga_horaria: e.target.value })}
             onBlur={() => handleBlur('carga_horaria')}
@@ -203,6 +193,7 @@ const CadastroCurso = () => {
             }}
             onBlur={() => handleBlur('coordenador')}
             erro={errors.coordenador}
+            valor={curso.coordenador?.email}
             textoAjuda='Insira nome ou email do coordenador'
             lista={'opcoesCoordenadores'}
           />
@@ -240,9 +231,8 @@ const CadastroCurso = () => {
                       <tr key={index}>
                         <td>
                           <Input
-                            tipo="text"
-                            value={turma.numero}
-                            erro={errors.numero}
+                            tipo='text'
+                            valor={turma.numero}
                             onChange={(e) => handleTurmaChange(index, e.target.value)}
                             textoAjuda='Ex.: 2023/1 ou 211'
                           />
@@ -270,7 +260,8 @@ const CadastroCurso = () => {
             )}
           </div>
         )}
-        <Button tipo="submit" texto={curso ? "Atualizar Curso" : "Cadastrar Curso"} largura="100%" />
+
+        <Button tipo='submit' text={curso ? 'Salvar Alterações' : 'Cadastrar Curso'} />
       </FormContainer>
     </>
   );
