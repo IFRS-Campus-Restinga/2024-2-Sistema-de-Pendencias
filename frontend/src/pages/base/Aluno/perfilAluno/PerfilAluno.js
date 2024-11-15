@@ -47,7 +47,7 @@ const PerfilAluno = () => {
                     });
         
                     setTimeout(() => {
-                        redirect(`/sessao/${jwtDecode(sessionStorage.getItem('token')).perfil}/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`)
+                        redirect(`/sessao/${jwtDecode(sessionStorage.getItem('token')).grupo}/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`)
                     }, 2000)
                 } else if (res.status === 200) {
                     toast.success("Informações atualizadas com sucesso!", {

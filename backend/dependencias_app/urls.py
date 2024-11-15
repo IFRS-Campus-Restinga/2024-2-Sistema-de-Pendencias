@@ -15,7 +15,6 @@ from dependencias_app.views.atividadeViews import *
 from dependencias_app.views.planoEstudosViews import *
 
 
-
 urlpatterns = [
     # views cadastro de usuários
     path('cadastrar-gestao-escolar/', cadastrar_gestao_escolar),
@@ -25,6 +24,7 @@ urlpatterns = [
     path('cadastrar-aluno/', cadastrar_aluno),
     path('dados-adicionais-aluno/', infos_adicionais_aluno),
     path('dados-adicionais-professor/', infos_adicionais_professor),
+    path('listar-grupos/', listar_grupos),
 
     # views de curso/disciplinas
     # curso já manipula turmas por vínculo, por isso turmas não necessitam de uma view própria
@@ -44,6 +44,9 @@ urlpatterns = [
     path('editar-evento/<int:evento_id>/', atualizar_evento, name='atualizar_evento'),
     path('deletar-evento/<int:evento_id>/', deletar_evento, name='deletar_evento'),
     path('eventos/<int:evento_id>/', obter_evento, name='obter_evento'),
+    path('cadastrar-calendario-academico/', cadastrar_calendario_academico, name='cadastrar_calendario_academico'),
+    path('listar-calendarios-academicos/', listar_calendarios_academicos, name='listar_calendarios_academicos'),
+    path('calendario-academico/<int:id_pacote>/eventos/', listar_eventos_do_calendario_academico, name='listar_eventos_do_calendario_academico'),
     
     # views de lista de usuários
     path('usuario/<int:idUsuario>/', get_infos_usuario),
@@ -61,7 +64,7 @@ urlpatterns = [
     path('cadastrar-ppt/', cadastrar_ppt),
     path('listar-ppt/', listar_ppt),
     path('listar-ppt/<int:idPpt>/', listar_ppt_id),
-    #path('editar-ppt/<int:idPpt>/', editar_ppt),
+    path('editar-ppt/<int:idPpt>/', editar_ppt),
     
     # views de PED
     path('cadastrarPED-EMI/', cadastrar_PED_EMI),
@@ -73,6 +76,9 @@ urlpatterns = [
     #views para atividades da ped
     # path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),
     path('listar-atividades/<int:ped_id>/', listar_atividades, name='listar_atividades'),
+
+    #view editar servidor
+    path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),
     ]
 
 

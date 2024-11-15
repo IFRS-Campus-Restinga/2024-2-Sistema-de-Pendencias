@@ -43,4 +43,5 @@ def cadastrar_plano_estudos(request, pedId):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
+        logger.error("Erro ao cadastrar Plano de Estudo Dirigido: %s", str(e))
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)

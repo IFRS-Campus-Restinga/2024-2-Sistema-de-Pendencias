@@ -7,7 +7,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ptBR } from 'date-fns/locale';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { eventoCalendarioService } from '../../../../services/eventoCalendarioService';
+import { calendarioAcademicoService } from '../../../../services/calendarioAcademicoService';
 import FormContainer from "../../../../components/FormContainer/FormContainer";
+import Switch from '../../../../components/Switch/Switch';
+import Button from '../../../../components/Button/Button';
 import './calendario.css';
 
 const locales = {
@@ -26,8 +29,9 @@ const CalendarioPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [eventos, setEventos] = useState([]);
+    const [calendarios, setCalendarios] = useState([]);
+    const [modalidade, setModalidade] = useState('Integrado'); // Estado para a modalidade do calendário
     const { eventoCriado, eventoAtualizado, eventoExcluido } = location.state || {};
-
 
     useEffect(() => {
         const fetchEventos = async () => {
@@ -39,6 +43,7 @@ const CalendarioPage = () => {
                     start: new Date(evento.data_inicio),
                     end: new Date(evento.data_fim),
                     allDay: false,
+                    tipo_calendario: evento.tipo_calendario
                 }));
                 setEventos(eventosData);
             } catch (error) {
@@ -46,67 +51,115 @@ const CalendarioPage = () => {
             }
         };
 
+        const fetchCalendarios = async () => {
+            try {
+                const response = await calendarioAcademicoService.listarCalendariosAcademicos();
+                setCalendarios(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar calendários acadêmicos:", error);
+            }
+        };
+
         fetchEventos();
+        fetchCalendarios();
 
         if (eventoCriado) {
             toast.success("Evento criado com sucesso!", {
-              position: "bottom-center",
-              autoClose: 3000,
-              style: { backgroundColor: '#28A745', color: '#fff' },
-              progressStyle: { backgroundColor: '#fff' }
+                position: "bottom-center",
+                autoClose: 3000,
+                style: { backgroundColor: '#28A745', color: '#fff' },
+                progressStyle: { backgroundColor: '#fff' }
             });
-          }
+        }
 
         if (eventoAtualizado) {
             toast.success("Evento atualizado com sucesso!", {
-              position: "bottom-center",
-              autoClose: 3000,
-              style: { backgroundColor: '#28A745', color: '#fff' },
-              progressStyle: { backgroundColor: '#fff' }
+                position: "bottom-center",
+                autoClose: 3000,
+                style: { backgroundColor: '#28A745', color: '#fff' },
+                progressStyle: { backgroundColor: '#fff' }
             });
         }
 
         if (eventoExcluido) {
             toast.success("Evento excluído com sucesso!", {
-              position: "bottom-center",
-              autoClose: 3000,
-              style: { backgroundColor: '#28A745', color: '#fff' },
-              progressStyle: { backgroundColor: '#fff' }
+                position: "bottom-center",
+                autoClose: 3000,
+                style: { backgroundColor: '#28A745', color: '#fff' },
+                progressStyle: { backgroundColor: '#fff' }
             });
         }
-    }, [eventoCriado, eventoAtualizado, eventoExcluido])
+    }, [eventoCriado, eventoAtualizado, eventoExcluido]);
 
-        const handleEventClick = (event) => {
-            navigate(`/sessao/GestaoEscolar/1/calendario/evento/${event.id}`, { state: { evento: event } });  // Navegar para a página de edição do evento
-        };
+    const handleEventClick = (event) => {
+        navigate(`/sessao/GestaoEscolar/1/calendario/evento/${event.id}`, { state: { evento: event } });
+    };
+
+    // Filtrar os eventos conforme a modalidade selecionada
+    const filteredEventos = eventos.filter(evento => evento.tipo_calendario === modalidade);
+    const filteredCalendarios = calendarios.filter(calendario => calendario.tipo_calendario === modalidade);
+
+    const trocaModalidade = (novoValor) => {
+        setModalidade(novoValor);
+    };
 
     return (
         <FormContainer titulo="Calendário de Eventos">
             <ToastContainer />
-            <div className="calendario-container">
-                <Calendar
-                    localizer={localizer}
-                    events={eventos}
-                    startAccessor="start"
-                    endAccessor="end"
-                    style={{ height: 500 }}
-                    culture="pt-BR"
-                    onSelectEvent={handleEventClick}
-                    messages={{
-                        next: "Próximo",
-                        previous: "Anterior",
-                        today: "Hoje",
-                        month: "Mês",
-                        week: "Semana",
-                        day: "Dia",
-                        agenda: "Agenda",
-                        date: "Data",
-                        time: "Hora",
-                        event: "Evento",
-                        noEventsInRange: "Nenhum evento neste período",
-                        showMore: total => `+ Ver mais (${total})`
-                    }}
-                />
+            <div className="calendario-page-container">
+                <div className="calendario-container">
+                    <Calendar
+                        localizer={localizer}
+                        events={filteredEventos}
+                        startAccessor="start"
+                        endAccessor="end"
+                        style={{ height: 500 }}
+                        culture="pt-BR"
+                        onSelectEvent={handleEventClick}
+                        messages={{
+                            next: "Próximo",
+                            previous: "Anterior",
+                            today: "Hoje",
+                            month: "Mês",
+                            week: "Semana",
+                            day: "Dia",
+                            agenda: "Agenda",
+                            date: "Data",
+                            time: "Hora",
+                            event: "Evento",
+                            allDay: "Dia Todo",
+                            noEventsInRange: "Nenhum evento neste período",
+                            showMore: total => `+ Ver mais (${total})`
+                        }}
+                    />
+                </div>
+                <div className="calendarios-academicos-container">
+                    <div className="switch-container">
+                        <Switch
+                            valor1="ProEJA"
+                            valor2="Integrado"
+                            valor={modalidade}
+                            stateHandler={trocaModalidade}
+                        />
+                    </div>
+                    <h3>Calendários Acadêmicos - {modalidade}</h3>
+                    <ul className="calendarios-list">
+                        {filteredCalendarios.map(calendario => (
+                            <li
+                                key={calendario.id}
+                                className="calendario-item"
+                                onClick={() => navigate(`/sessao/GestaoEscolar/1/calendarioAcademico/${calendario.id}/eventos`)}
+                            >
+                                {calendario.titulo}
+                            </li>
+                        ))}
+                    </ul>
+                    <Button
+                        tipo="button"
+                        text="Novo calendário acadêmico"
+                        onClick={() => navigate("/sessao/GestaoEscolar/1/cadastroCalendarioAcademico")}
+                    />
+                </div>
             </div>
         </FormContainer>
     );

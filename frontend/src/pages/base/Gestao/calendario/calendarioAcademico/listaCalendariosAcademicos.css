@@ -1,0 +1,44 @@
+.listar-calendarios-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.calendarios-columns {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 800px;
+  gap: 30px; /* Aumenta o espaçamento entre as colunas */
+}
+
+.coluna-integrado, .coluna-proeja {
+  flex: 1;
+  padding: 10px;
+}
+
+h3 {
+  text-align: center;
+  color: #006400;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+ul {
+  list-style-type: none; /* Remove os pontos da lista */
+  padding: 0;
+}
+
+.calendario-item {
+  cursor: pointer;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 8%; /* Aumenta o espaçamento entre os itens */
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.calendario-item:hover {
+  background-color: #f0f0f0;
+}

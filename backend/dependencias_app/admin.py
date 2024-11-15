@@ -3,6 +3,7 @@ from dependencias_app.models.aluno import Aluno
 from dependencias_app.models.curso import Curso
 from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.evento import Evento
+from dependencias_app.models.calendarioAcademico import CalendarioAcademico
 from dependencias_app.models.ppt import PPT
 from dependencias_app.models.professor import Professor
 from dependencias_app.models.turma import Turma
@@ -18,6 +19,7 @@ admin.site.register(Aluno)
 admin.site.register(Curso)
 admin.site.register(Disciplina)
 admin.site.register(Evento)
+admin.site.register(CalendarioAcademico)
 admin.site.register(PPT)
 admin.site.register(Professor)
 admin.site.register(Turma)

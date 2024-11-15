@@ -6,6 +6,7 @@ import Input from '../../../../components/Input/Input'
 import Button from '../../../../components/Button/Button'
 import { Link, useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
+import Tabela from '../../../../components/Tabela/Tabela'
 
 
 const ListarPPT = () => {
@@ -57,7 +58,7 @@ const ListarPPT = () => {
             if (res.status !== 200) throw new Error(res.response.data.mensagem)
             
             setListaPPT(res.data)
-            console.log(res.data)
+            setDependenciasFiltradas(res.data)
         } catch (error) {
             console.error('Erro ao buscar PPTs: ', error)
         }
@@ -91,46 +92,14 @@ const ListarPPT = () => {
                         text='Limpar Campos'
                         color="#4A4A4A"
                     />
-                    <Link to={`/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroPPT`}>
+                    <Link to={`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroPPT`}>
                     <Button
                         text='Adicionar nova'
                         />
                     </Link>
                 </span>
             <div className='containerTabelaListarPPT'>
-                <table className='tabelaListarPPT'>
-                    <thead className='cabecalhoListarPPT'>
-                        <th>Aluno</th>
-                        <th>Curso</th>
-                        <th>Disciplina</th>
-                        <th>Turma de Origem</th>
-                        <th>Turma de Progressão</th>
-                        <th>Status</th>
-                        <th>Situação</th>
-                        <th>Data Início</th>
-                        <th>Data Final</th>
-                        <th>Ações</th>
-                    </thead>
-                    <tbody className='corpoListarPPT'>
-                        {
-                            listaPPT.map((ppt) => (
-                                <tr>
-                                    <td>{ppt.aluno.nome || '-'}</td>
-                                    <td>{ppt.curso.nome}</td>
-                                    <td>{ppt.disciplina.nome}</td>
-                                    <td>{ppt.turmaOrigem.numero}</td>
-                                    <td>{ppt.turmaProgressao.numero}</td>
-                                    <td>{ppt.status}</td>
-                                    <td>{ppt.situacao}</td>
-                                    <td>{new Date(ppt.dataInicio).toLocaleDateString('pt-BR')}</td>
-                                    <td>{new Date(ppt.dataFim).toLocaleDateString('pt-BR')}</td>
-                                    <td><Button text="ver" onClick={() => detalhesPpt(ppt.id)}>ver</Button></td>
-                                </tr>
-                                
-                            ))
-                        }
-                    </tbody>
-                </table>
+                <Tabela listaFiltrada={dependenciasFiltradas} fontSize='10px'/>
             </div>
         </FormContainer>
         </>

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
-import { PEDService } from "../../../../../services/pedService"
+import { PEDService } from "../../../../services/pedService"
 import { jwtDecode } from "jwt-decode"
-import FormContainer from "../../../../../components/FormContainer/FormContainer"
-import './ListarPEDProfessor.css'
+import FormContainer from "../../../../components/FormContainer/FormContainer"
+import './ListarPED_EMIProfessor.css'
 
 
-const ListarPEDProfessor = () => {
+const ListarPEDEMIProfessor = () => {
     const [PED, setPED] = useState([])
 
     const fetchPED = async () => {
@@ -26,7 +26,7 @@ const ListarPEDProfessor = () => {
     }, [])
 
     return (
-        <FormContainer titulo='Minhas PEDs' comprimento='80%'>
+        <FormContainer titulo='Minhas PEDs - EMI' comprimento='80%'>
             <div className="divListarPEDProfessor"></div>
             <div className="professorPEDContainer">
                 <span className="cabecalhoPEDContainer">
@@ -58,4 +58,4 @@ const ListarPEDProfessor = () => {
     )
 }
 
-export default ListarPEDProfessor
+export default ListarPEDEMIProfessor

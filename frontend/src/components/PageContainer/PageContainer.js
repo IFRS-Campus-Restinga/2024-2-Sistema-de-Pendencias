@@ -6,7 +6,7 @@ import "./PageContainer.css";
 const PageContainer = ({ children, homeUrl }) => {  
   return (
     <div className="PageContainer">
-      <Header homeUrl={homeUrl} />
+      <Header homeUrl={homeUrl}/>
         <MainContainer>
           {children}
         </MainContainer>

@@ -17,4 +17,12 @@ export const usuarioBaseService = {
 
         return res
     },
+
+    listarGrupos: async () => {
+        const res = await api.get(`api/listar-grupos/`).catch((erro) => {
+            return erro
+        })
+
+        return res
+    }
 }

@@ -21,11 +21,20 @@ const endpoints = [
 ]
 
 const servidorService = {
+    getById: async (idServidor) => {
+        try {
+            const response = await api.get(`/api/servidores/${idServidor}/`);
+            return response;
+        } catch (error) {
+            throw new Error('Erro ao buscar o servidor: ' + error.message);
+        }
+    },
+
     create: async (params) => {
         let endpoint;
 
         endpoints.forEach((endpointObject) => {
-            if (endpointObject.tipo === params.perfil) {
+            if (endpointObject.tipo === params.grupo) {
                 endpoint = endpointObject.endpoint;
             }
         });
@@ -84,7 +93,7 @@ const servidorService = {
                 return;
             }
     
-            const response = await api.put(`/api/visualizar-servidor/${idServidor}/editar/`, dadosAtualizados);
+            const response = await api.put(`/api/editar-servidor/${idServidor}/`, dadosAtualizados);
             
             if (response.status === 200) {
                 console.log("Servidor editado com sucesso:", response.data);
