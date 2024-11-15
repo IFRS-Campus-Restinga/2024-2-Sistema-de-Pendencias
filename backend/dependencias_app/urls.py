@@ -65,6 +65,7 @@ urlpatterns = [
     path('listar-ppt/', listar_ppt),
     path('listar-ppt/<int:idPpt>/', listar_ppt_id),
     path('editar-ppt/<int:idPpt>/', editar_ppt),
+    path('desativar-ppt/<int:idPpt>/', desativar_ppt),
     
     # views de PED
     path('cadastrarPED-EMI/', cadastrar_PED_EMI),

@@ -35,4 +35,14 @@ export const PPTService = {
     }
   },
 
+  desativar: async (id, dados) => {
+    try {
+      const response = await api.post(`api/desativar-ppt/${id}/`, dados);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao desativar PPT:', error);
+      throw error;
+    }
+  }
+
 }
