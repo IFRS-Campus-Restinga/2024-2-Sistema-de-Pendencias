@@ -150,7 +150,7 @@ return (
           onClick={limparBusca}
           color="#4A4A4A"
         />
-        <Link to={`/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroServidor`}>
+        <Link to={`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroServidor`}>
           <Button 
             text='Adicionar novo'
           />
