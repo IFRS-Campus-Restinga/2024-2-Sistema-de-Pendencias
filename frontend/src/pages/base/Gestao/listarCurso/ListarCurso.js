@@ -113,7 +113,7 @@ const ListarCursos = () => {
           <div className='divListarCursos'>
             <Button text="Buscar" onClick={filtrarCursos} />
             <Button text="Limpar campos" onClick={limparBusca} color="#4A4A4A" />
-            <Link to={`/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroCurso`}>
+            <Link to={`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroCurso`}>
               <Button text='Adicionar Novo' />
             </Link>
           </div>

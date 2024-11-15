@@ -12,12 +12,23 @@ from dependencias_app.serializers.planoEstudosSerializer import PlanoEstudos_Ser
 from dependencias_app.serializers.formEncerramentoSerializer import FormEncerramentoSerializer
 
 class PED_EMI_Serializer(serializers.ModelSerializer):
+    # variáveis de entrada do serializer (POST), recebe as chaves primárias para vincular as tabelas
     aluno = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Aluno'))
     professor_disciplina = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
     professor_ped = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
     curso = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.filter(modalidade='Integrado'))
     disciplina = serializers.PrimaryKeyRelatedField(queryset=Disciplina.objects.all())
     turma_origem = serializers.PrimaryKeyRelatedField(queryset=Turma.objects.all())
+    plano_estudos = PlanoEstudos_Serializer(read_only=True)
+    form_encerramento = FormEncerramentoSerializer(read_only=True)
+
+    # variáveis de saída do serializer (GET), retorna um dado por tabela vinculada
+    aluno = serializers.SerializerMethodField()
+    professor_disciplina = serializers.SerializerMethodField()
+    professor_ped = serializers.SerializerMethodField()
+    curso = serializers.SerializerMethodField()
+    disciplina = serializers.SerializerMethodField()
+    turma_origem = serializers.SerializerMethodField()
     plano_estudos = PlanoEstudos_Serializer(read_only=True)
     form_encerramento = FormEncerramentoSerializer(read_only=True)
 
@@ -32,6 +43,36 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
         formPED_EMI.save()
         return formPED_EMI
     
+    def get_aluno(self, obj):
+        if obj.aluno and hasattr(obj, 'aluno'):
+            return obj.aluno.nome or obj.aluno.email[:10]
+        return None
+    
+    def get_professor_ped(self, obj):
+        if obj.professor_ped and hasattr(obj, 'professor_ped'):
+            return obj.professor_ped.nome or obj.professor_ped.email
+        return None
+    
+    def get_professor_disciplina(self, obj):
+        if obj.professor_disciplina and hasattr(obj, 'professor_disciplina'):
+            return obj.professor_disciplina.nome or obj.professor_disciplina.email
+        return None
+    
+    def get_curso(self, obj):
+        if obj.curso and hasattr(obj, 'curso'):
+            return obj.curso.nome
+        return None
+    
+    def get_disciplina(self, obj):
+        if obj.disciplina and hasattr(obj, 'disciplina'):
+            return obj.disciplina.nome
+        return None
+    
+    def get_turma_origem(self, obj):
+        if obj.turma_origem and hasattr(obj, 'turma_origem'):
+            return obj.turma_origem.numero
+        return None
+    
     def validate(self, data):
         curso = data.get('curso')
         disciplina = data.get('disciplina')
@@ -45,40 +86,3 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
             raise serializers.ValidationError('A série de progressão não pode ser inferior a turma de origem')
         
         return data
-    
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-
-        # consultar dados do aluno
-        if hasattr(instance, 'aluno'):
-            representation['aluno'] = UsuarioBaseSerializer(instance.aluno).data
-        
-        # consulta dados do professores
-        if hasattr(instance, 'professor_disciplina'):
-            representation['professor_disciplina'] = UsuarioBaseSerializer(instance.professor_disciplina).data
-        
-        if hasattr(instance, 'professor_ped'):
-            representation['professor_ped'] = UsuarioBaseSerializer(instance.professor_ped).data
-        
-        # consulta dados do curso
-        if hasattr(instance, 'curso'):
-            representation['curso'] = CursoSerializer(instance.curso).data
-        
-        # consulta dados da disciplina
-        if hasattr(instance, 'disciplina'):
-            representation['disciplina'] = DisciplinaSerializer(instance.disciplina).data
-
-        if hasattr(instance, 'plano_estudos'):
-            representation['plano_estudos'] = PlanoEstudos_Serializer(instance.plano_estudos).data
-        else:
-            representation['plano_estudos'] = {}
-        
-        if hasattr(instance, 'form_encerramento'):
-            representation['form_encerramento'] = FormEncerramentoSerializer(instance.form_encerramento).data
-        else:
-            representation['form_encerramento'] = {}
-        
-        # retorna os dados em vez de apenas os id's que fazem o vinculo entre cada instância da PED
-        return representation
-
-

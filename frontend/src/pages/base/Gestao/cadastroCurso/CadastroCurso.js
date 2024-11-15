@@ -11,6 +11,7 @@ import Switch from "../../../../components/Switch/Switch";
 import { ToastContainer, toast } from "react-toastify";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 import { useLocation, useNavigate } from "react-router-dom";
+import {jwtDecode} from 'jwt-decode'
 
 const CadastroCurso = () => {
   const formRef = useRef();
@@ -124,7 +125,7 @@ const CadastroCurso = () => {
 
         formRef.current.reset();
         if (!cursoId) {
-          navigate('/sessao/GestaoEscolar'); // Redirecionar após criar o curso
+          navigate(`sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`); // Redirecionar após criar o curso
         }
       } catch (erro) {
         toast.error(erro.message, {

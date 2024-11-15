@@ -17,13 +17,13 @@ const CadastroPPT = () => {
   const [opcoesProfessores, setOpcoesProfessores] = useState([])
   const [turmas, setTurmas] = useState([])
   const [formData, setFormData] = useState({
-    aluno: "",
-    professor_disciplina: "",
-    professor_ppt: "",
-    curso: "",
-    disciplina: "",
-    turma_origem: "",
-    turma_progressao: "",
+    aluno_id: "",
+    professor_disciplina_id: "",
+    professor_ppt_id: "",
+    curso_id: "",
+    disciplina_id: "",
+    turma_origem_id: "",
+    turma_progressao_id: "",
     observacao: "",
   });
   const [errors, setErrors] = useState({});
@@ -129,7 +129,7 @@ const CadastroPPT = () => {
 
                   const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || param === aluno?.matricula || param === aluno.email)
 
-                  if (aluno) setFormData({...formData, aluno: aluno.id})
+                  if (aluno) setFormData({...formData, aluno_id: aluno.id})
                 }
               }}
               erro={errors.aluno}
@@ -161,7 +161,7 @@ const CadastroPPT = () => {
 
                 const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
 
-                if (professor) setFormData({...formData, professor_ppt: professor.id})
+                if (professor) setFormData({...formData, professor_ppt_id: professor.id})
               }
             }}
             erro={errors.professor_ppt}
@@ -193,7 +193,7 @@ const CadastroPPT = () => {
 
                 const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
 
-                if (professor) setFormData({...formData, professor_disciplina: professor.id})
+                if (professor) setFormData({...formData, professor_disciplina_id: professor.id})
               }
             }}
             erro={errors.professor_disciplina}
@@ -216,7 +216,7 @@ const CadastroPPT = () => {
             <label className="labelCadastroPPT">
               Curso *
               <select className={errors.curso ? 'errorSelectCadastroPPT' : 'selectCadastroPPT'} name="curso" onChange={(e) => {        
-                  setFormData({...formData, curso: Number(e.target.value)})
+                  setFormData({...formData, curso_id: Number(e.target.value)})
 
                   const cursoId = e.target.value;
               
@@ -239,7 +239,7 @@ const CadastroPPT = () => {
             <label className="labelCadastroPPT">
               Disciplina *
               <select className={errors.disciplina ? 'errorSelectCadastroPPT' : 'selectCadastroPPT'}
-                onChange={(e) => setFormData({...formData, disciplina: Number(e.target.value)})}
+                onChange={(e) => setFormData({...formData, disciplina_id: Number(e.target.value)})}
               >
                 <option className="optionCadastroPPT" value=''>Selecione uma disciplina</option>
                 {
@@ -254,7 +254,7 @@ const CadastroPPT = () => {
             <label className="labelCadastroPPT">
               Turma de Origem *
               <select className={errors.turmaOrigem ? 'errorSelectCadastroPPT' : 'selectCadastroPPT'}
-                onChange={(e) => setFormData({...formData, turma_origem: Number(e.target.value)})}
+                onChange={(e) => setFormData({...formData, turma_origem_id: Number(e.target.value)})}
               >
                 <option className="optionCadastroPPT" value=''>Selecione uma turma</option>
                 {
@@ -268,7 +268,7 @@ const CadastroPPT = () => {
             <label className="labelCadastroPPT">
               Turma de Progressão *
               <select className={errors.turmaProgressao ? 'errorSelectCadastroPPT' : 'selectCadastroPPT'}
-                onChange={(e) => setFormData({...formData, turma_progressao: Number(e.target.value)})}
+                onChange={(e) => setFormData({...formData, turma_progressao_id: Number(e.target.value)})}
               >
                 <option className="optionCadastroPPT" value=''>Selecione uma turma</option>
                 {

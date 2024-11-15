@@ -7,8 +7,8 @@ from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerial
 from dependencias_app.serializers.turmaSerializer import TurmaSerializer
 
 class CursoSerializer(serializers.ModelSerializer):
-    turmas = TurmaSerializer(many=True)
-    disciplinas = DisciplinaSerializer(many=True)
+    turmas = TurmaSerializer(many=True, read_only=True)
+    disciplinas = DisciplinaSerializer(many=True, read_only=True)
 
     class Meta:
         model = Curso

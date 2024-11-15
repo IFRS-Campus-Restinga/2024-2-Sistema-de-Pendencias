@@ -20,8 +20,6 @@ def cadastrar_ppt(request):
     try:
         data = request.data
 
-        print(data)
-
         serializer = PPTSerializer(data=data)
         
         if serializer.is_valid(raise_exception=True):
