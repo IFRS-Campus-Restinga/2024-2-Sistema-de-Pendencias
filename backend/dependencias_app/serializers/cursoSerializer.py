@@ -16,11 +16,6 @@ class CursoSerializer(serializers.ModelSerializer):
     
     def save(self, **kwargs):
         formCurso = super().save(**kwargs)
-
         formCurso.full_clean()
         formCurso.save()
         return formCurso
-
-
-      
-
