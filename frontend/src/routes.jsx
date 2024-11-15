@@ -185,7 +185,7 @@ const router = createBrowserRouter([
                 element: <PlanoEstudos />
             },
             {
-                path: ':idUsuario/atividades/:pedId',
+                path: ':idUsuario/atividades/:pedTipo/:pedId',
                 element: <AtividadesDesenvolvidas />,
             }
         ]
