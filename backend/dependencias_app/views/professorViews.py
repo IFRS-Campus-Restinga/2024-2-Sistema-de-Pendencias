@@ -13,7 +13,7 @@ from google_auth.models import UsuarioBase
 def cadastrar_professor(request):
     try:
         # extrai o nome do grupo
-        nome_grupo = request.data.get('perfil', None)
+        nome_grupo = request.data.get('grupo', None)
 
         # verifica se é válido
         if nome_grupo != 'Professor': raise Exception('Perfil inválido')
