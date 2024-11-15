@@ -77,7 +77,7 @@ const ListarCursos = () => {
   const handleEditCurso = (cursoId) => {
     const usuarioId = jwtDecode(sessionStorage.getItem('token')).idUsuario;
     // Navegar para o formulário de edição, passando o ID do curso
-    navigate(`/sessao/GestaoEscolar/${usuarioId}/cadastroCurso`, { state: { cursoId } });
+    navigate(`/sessao/Gestão Escolar/${usuarioId}/cadastroCurso`, { state: { cursoId } });
   };
 
   // Usa useMemo para evitar refazer a filtragem e ordenação toda vez
@@ -113,7 +113,7 @@ const ListarCursos = () => {
           <div className='divListarCursos'>
             <Button text="Buscar" onClick={filtrarCursos} />
             <Button text="Limpar campos" onClick={limparBusca} color="#4A4A4A" />
-            <Link to={`/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroCurso`}>
+            <Link to={`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroCurso`}>
               <Button text='Adicionar Novo' />
             </Link>
           </div>
