@@ -15,7 +15,7 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
     professor_ped_id = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
     professor_disciplina_id = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
     curso_id = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.filter(modalidade='ProEJA'))
-    disciplina_id = serializers.PrimaryKeyRelatedField(queryset=Disciplina.objects.none())
+    disciplina_id = serializers.PrimaryKeyRelatedField(queryset=Disciplina.objects.all())
     plano_estudos = PlanoEstudos_Serializer(read_only=True)
     form_encerramento = FormEncerramentoSerializer(read_only=True)
 
@@ -33,26 +33,16 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
         fields = '__all__'
     
     def create(self, validated_data):
-        aluno = validated_data.pop('aluno_id', None)
-        professor_ppt = validated_data.pop('professor_ppt_id', None)
-        professor_disciplina = validated_data.pop('professor_disciplina_id', None)
-        curso = validated_data.pop('curso_id', None)
-        disciplina = validated_data.pop('disciplina_id', None)
-        turma_origem = validated_data.pop('turma_origem_id', None)
-        turma_progressao = validated_data.pop('turma_progressao_id', None)
-
-        ppt_instance = PED_ProEJA.objects.create(
-            aluno=aluno,
-            professor_ppt=professor_ppt,
-            professor_disciplina=professor_disciplina,
-            curso=curso,
-            disciplina=disciplina,
-            turma_origem=turma_origem,
-            turma_progressao=turma_progressao,
+        ped_instance = PED_ProEJA.objects.create(
+            aluno=validated_data.pop('aluno_id', None),
+            professor_ped=validated_data.pop('professor_ped_id', None),
+            professor_disciplina=validated_data.pop('professor_disciplina_id', None),
+            curso=validated_data.pop('curso_id', None),
+            disciplina=validated_data.pop('disciplina_id', None),
             **validated_data  # Preenche os outros campos do modelo
         )
         
-        return ppt_instance
+        return ped_instance
 
     
     def get_aluno(self, obj):
@@ -89,10 +79,20 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
         return formPED_EMI
     
     def validate(self, data):
-        curso = data.get('curso')
-        disciplina = data.get('disciplina')
+        curso = data.get('curso_id')
+        disciplina = data.get('disciplina_id')
 
         if not disciplina.cursos.filter(id=curso.id).exists():
             raise serializers.ValidationError('A disciplina informada não pertence ao curso informado')
         
         return data
+    
+    def to_representation(self, instance):
+        # Retorna os dados relacionados diretamente, ao invés de IDs
+        representation = super().to_representation(instance)
+
+        for field in ['aluno_id', 'professor_ped_id', 'professor_disciplina_id', 'curso_id', 'disciplina_id', 'plano_estudos', 'form_encerramento', 'data_criacao']:
+            representation.pop(field, None)
+            
+        return representation
+

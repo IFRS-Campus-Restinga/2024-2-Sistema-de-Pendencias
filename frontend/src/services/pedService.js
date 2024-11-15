@@ -31,5 +31,21 @@ export const PEDService = {
     })
 
     return res
+  },
+
+  listaEMI: async () => {
+    const res = await api.get('api/ped/emi/').catch((erro) => {
+      return erro
+    })
+
+    return res
+  },
+
+  listaProEJA: async () => {
+    const res = await api.get('api/ped/proeja').catch((erro) => {
+      return erro
+    })
+
+    return res
   }
 }
