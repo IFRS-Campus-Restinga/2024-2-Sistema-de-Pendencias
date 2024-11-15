@@ -66,26 +66,53 @@ class PPTSerializer(serializers.ModelSerializer):
         
         return data
     
+    def set_disabled(self, ppt):
+        ppt.status = 'Desativado'
+        ppt.save()
+
+        return ppt
+    
     def get_aluno(self, obj):
-        return obj.aluno.nome or obj.aluno.email[:10] if obj.aluno else None
+        return obj.aluno.nome or obj.aluno.email if obj.aluno else None
+
+    def get_aluno_id(self, obj):
+        return obj.aluno.id if obj.aluno else None
     
     def get_professor_ppt(self, obj):
         return obj.professor_ppt.nome or obj.professor_ppt.email if obj.professor_ppt else None
+
+    def get_professor_ppt_id(self, obj):
+        return obj.professor_ppt.id if obj.professor_ppt else None
     
     def get_professor_disciplina(self, obj):
         return obj.professor_disciplina.nome or obj.professor_disciplina.email if obj.professor_disciplina else None
     
+    def get_professor_disciplina_id(self, obj):
+        return obj.professor_disciplina.id if obj.professor_disciplina else None
+    
     def get_curso(self, obj):
         return obj.curso.nome if obj.curso else None
+    
+    def get_curso_id(self, obj):
+        return obj.curso.id if obj.curso else None
     
     def get_disciplina(self, obj):
         return obj.disciplina.nome if obj.disciplina else None
     
+    def get_disciplina_id(self, obj):
+        return obj.disciplina.id if obj.disciplina else None
+    
     def get_turma_origem(self, obj):
         return obj.turma_origem.numero if obj.turma_origem else None
     
+    def get_turma_origem_id(self, obj):
+        return obj.turma_origem.id if obj.turma_origem else None
+
     def get_turma_progressao(self, obj):
         return obj.turma_progressao.numero if obj.turma_progressao else None
+    
+    def get_turma_progressao_id(self, obj):
+        return obj.turma_progressao.id if obj.turma_progressao else None
 
     def to_representation(self, instance):
         # Retorna os dados relacionados diretamente, ao invés de IDs

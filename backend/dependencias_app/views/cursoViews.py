@@ -19,11 +19,14 @@ def cadastrar_curso(request):
     turmas = request.data.get('turmas', [])  # Lista de números das turmas
     
     modalidade = request.data.get('modalidade', None)
+
     data = request.data
 
     print(data)
 
     serializer = CursoSerializer(data=data)
+
+    data.pop('turmas')
 
     if serializer.is_valid():
         curso = serializer.save()  # Cria o curso
