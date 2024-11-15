@@ -25,6 +25,8 @@ import DetalhesServidor from './pages/base/Gestao/detalhesServidor/DetalhesServi
 import EditarServidor from './pages/base/Gestao/editarServidor/EditarServidor'
 import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
 import EditarPPT from './pages/base/Gestao/editarPPT/editarPPT'
+import EditarCurso from './pages/base/Gestao/editarCurso/editarCurso'
+
 
 // Filhos de Registro
 
@@ -142,6 +144,10 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/servidores/:idServidor/editarServidor',
                 element: <CadastroServidor />
+            },
+            {
+                path: ':idUsuario/cursos/:idCurso/editarCurso',
+                element: <EditarCurso />
             },
         ]
         // Adicionar outros caminhos que vão derivar da tela de home após autenticação

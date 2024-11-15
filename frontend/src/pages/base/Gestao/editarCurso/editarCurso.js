@@ -1,50 +1,86 @@
-import React, { useRef, useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { validarFormularioCurso, validarCampo } from './validacoes'; 
-import { cursoService } from "../../../../services/cursoService";
-import FormContainer from "../../../../components/FormContainer/FormContainer";
+import React, { useState, useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../../../../components/Button/Button";
-import Input from '../../../../components/Input/Input';
-import "./CadastroCurso.css";
+import FormContainer from "../../../../components/FormContainer/FormContainer";
+import Input from "../../../../components/Input/Input";
 import Switch from "../../../../components/Switch/Switch";
 import { ToastContainer, toast } from "react-toastify";
+import { cursoService } from "../../../../services/cursoService";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";
-import { useLocation, useNavigate } from "react-router-dom";
 
-const CadastroCurso = () => {
+// Corrigindo o caminho de importação para o arquivo correto (se necessário, ajuste o caminho)
+import EditarCursoComponent from './editarCurso'; // Supondo que 'editarCurso' esteja no mesmo diretório
+
+// Função de validação do formulário
+const validarFormularioCurso = (formData) => {
+  const erros = {};
+  
+  // Validação do nome do curso
+  if (!formData.nome) {
+    erros.nome = "O nome do curso é obrigatório";
+  }
+
+  // Validação da carga horária
+  if (!formData.carga_horaria) {
+    erros.carga_horaria = "A carga horária é obrigatória";
+  }
+
+  // Validação do coordenador
+  if (!formData.coordenador) {
+    erros.coordenador = "O coordenador é obrigatório";
+  }
+
+  return erros;
+};
+
+// Função para validar campos individuais
+const validarCampo = (campo, valor) => {
+  if (!valor) {
+    return `${campo} é obrigatório`;
+  }
+  return null;
+};
+
+const EditarCurso = () => {
   const formRef = useRef();
   const navigate = useNavigate();
   const location = useLocation();
-  const { curso } = location.state || {};  // Pegando o curso se presente
+  const { cursoId } = location.state || {};  // Pegando o cursoId se presente
 
   const [modalidade, setModalidade] = useState("Integrado");
   const [opcoesCoordenadores, setOpcoesCoordenadores] = useState([]);
   const [formData, setFormData] = useState({
-    nome: curso?.nome || '',
-    carga_horaria: curso?.carga_horaria || '',
-    modalidade: curso?.modalidade || '',
-    coordenador: curso?.coordenador || '',
-    turmas: curso?.turmas || [],
+    nome: '',
+    carga_horaria: '',
+    modalidade: modalidade,
+    coordenador: '',
+    turmas: []
   });
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
 
-
   // Carregar dados do curso se estiver editando
   useEffect(() => {
-    if (curso) {
-      setFormData({
-        nome: curso.nome,
-        carga_horaria: curso.carga_horaria,
-        modalidade: curso.modalidade,
-        coordenador: curso.coordenador,
-        turmas: curso.turmas
-      });
+    if (cursoId) {
+      cursoService.getCursoById(cursoId)
+        .then(response => {
+          const curso = response.data;
+          setFormData({
+            nome: curso.nome,
+            carga_horaria: curso.carga_horaria,
+            modalidade: curso.modalidade,
+            coordenador: curso.coordenador.id,  // Presumindo que o coordenador tenha um ID
+            turmas: curso.turmas || []
+          });
+          setModalidade(curso.modalidade);
+        })
+        .catch(error => {
+          console.error("Erro ao carregar dados do curso para edição:", error);
+          toast.error("Erro ao carregar dados do curso.");
+        });
     }
-  }, [curso]);
+  }, [cursoId]);
 
-  
   const trocaModalidade = (novoValor) => {
     setModalidade(novoValor);
     setFormData({
@@ -87,15 +123,21 @@ const CadastroCurso = () => {
       setErrors(erros);
     } else {
       try {
-        const response = curso
-          ? await cursoService.update(curso, formData)  // Atualiza curso se estiver editando
-          : await cursoService.create(formData);  // Cria curso se for um novo
+        const updatedData = {
+          ...formData,
+          is_active: formData.status === 'Ativo',  // Presumindo que o curso tenha um status
+        };
+        
+        const response = cursoId 
+          ? await cursoService.update(cursoId, updatedData)  // Atualiza curso se estiver editando
+          : await cursoService.create(updatedData);  // Cria curso se for um novo
 
         if (response.status !== 200 && response.status !== 201) {
           const errorMessage = response.data?.message || 'Erro desconhecido';
           throw new Error(errorMessage);
         }
 
+        // Limpa os campos do formulário e estados de erro
         setFormData({
           nome: '',
           carga_horaria: '',
@@ -107,7 +149,7 @@ const CadastroCurso = () => {
         setErrors({});
         setShowErrorMessage(false);
 
-        toast.success(curso ? "Curso editado com sucesso!" : "Curso cadastrado com sucesso!", {
+        toast.success(cursoId ? "Curso editado com sucesso!" : "Curso cadastrado com sucesso!", {
           position: "bottom-center",
           autoClose: 3000,
           style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
@@ -115,8 +157,8 @@ const CadastroCurso = () => {
         });
 
         formRef.current.reset();
-        if (!curso) {
-          navigate('/sessao/GestaoEscolar'); // Redirecionar após criar o curso
+        if (!cursoId) {
+          navigate('/sessao/Gestão Escolar'); // Redirecionar após criar o curso
         }
       } catch (erro) {
         toast.error(erro.message, {
@@ -130,6 +172,7 @@ const CadastroCurso = () => {
     }
   };
 
+  // Função para buscar coordenadores de forma assíncrona
   const fetchCoordenadores = async (e) => {
     try {
       const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Coordenador');
@@ -154,7 +197,7 @@ const CadastroCurso = () => {
   return (
     <>
       <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo={curso ? 'Editar Curso' : 'Cadastrar Curso'} comprimento='70%' ref={formRef}>
+      <FormContainer onSubmit={handleSubmit} titulo={cursoId ? 'Editar Curso' : 'Cadastrar Curso'} comprimento='70%' ref={formRef}>
         {showErrorMessage && <p className="error">* Preencha os campos obrigatórios</p>}
 
         <div className="modalidade-container">
@@ -194,9 +237,11 @@ const CadastroCurso = () => {
             nome='coordenador'
             onChange={(e) => {
               fetchCoordenadores(e);
+
               if (opcoesCoordenadores) {
                 const param = e.target.value;
                 const coordenador = opcoesCoordenadores.find((coordenador) => param === coordenador.nome || param === coordenador.email);
+
                 if (coordenador) setFormData({ ...formData, coordenador: coordenador.id });
               }
             }}
@@ -208,71 +253,18 @@ const CadastroCurso = () => {
         </label>
         <datalist className="datalistCadastroCurso" id="opcoesCoordenadores">
           {opcoesCoordenadores ? (opcoesCoordenadores.map((coordenador) => (
-            <option key={coordenador.id} className="optionCadastroCurso"
+            <option className="optionCadastroCurso"
               value={coordenador.nome || coordenador.email}>
               {coordenador.nome || coordenador.email}
             </option>
           ))) : (<option>Nenhum coordenador encontrado</option>)}
         </datalist>
         <br />
-
-        {modalidade === 'Integrado' && (
-          <div className="add-turma">
-            <button type="button" onClick={addTurma} className="add-button">
-              <FontAwesomeIcon
-                icon={faPlusCircle}
-                style={{ color: "#006b3f", cursor: "pointer", fontSize: "24px" }}
-              />
-              <span className="labelCadastroCurso" style={{ color: "black" }}>Adicionar Turma</span>
-            </button>
-            {formData.turmas.length > 0 && (
-              <div className="turmas-lista">
-                <table className="tabelaCadastroCurso">
-                  <thead className="cabecalhoTabelaCadastroCurso">
-                    <tr>
-                      <th>Número da Turma</th>
-                      <th>Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {formData.turmas.map((turma, index) => (
-                      <tr key={index}>
-                        <td>
-                          <Input
-                            tipo="text"
-                            value={turma.numero}
-                            erro={errors.numero}
-                            onChange={(e) => handleTurmaChange(index, e.target.value)}
-                            textoAjuda='Ex.: 2023/1 ou 211'
-                          />
-                        </td>
-                        <td>
-                          <button
-                            className="botaoRemoverTurma"
-                            onClick={() => removeTurma(index)}
-                          >
-                            <FontAwesomeIcon
-                              icon={faTrash}
-                              style={{
-                                color: "rgb(205, 68, 59)",
-                                fontSize: "15px",
-                                cursor: "pointer"
-                              }}
-                            />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
-        <Button tipo="submit" texto={curso ? "Atualizar Curso" : "Cadastrar Curso"} largura="100%" />
+        
+        <Button tipo='submit' text={cursoId ? 'Salvar Alterações' : 'Cadastrar Curso'} />
       </FormContainer>
     </>
   );
 };
 
-export default CadastroCurso;
+export default EditarCurso;
