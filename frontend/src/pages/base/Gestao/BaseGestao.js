@@ -96,7 +96,7 @@ const BaseGestao = () => {
         />  
         </div>
       </nav>
-        <Outlet />  
+      <Outlet />
     </PageContainer>
   );
 };

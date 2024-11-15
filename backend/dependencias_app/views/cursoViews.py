@@ -17,16 +17,22 @@ logger = logging.getLogger(__name__)
 def cadastrar_curso(request):
     # Extraia os dados da requisição
     turmas = request.data.get('turmas', [])  # Lista de números das turmas
+    
     modalidade = request.data.get('modalidade', None)
+
     data = request.data
-    data.pop('turmas')
+
+    print(data)
 
     serializer = CursoSerializer(data=data)
+
+    data.pop('turmas')
 
     if serializer.is_valid():
         curso = serializer.save()  # Cria o curso
     
         if modalidade == 'Integrado':
+            if not turmas: raise Exception('O cursos da modalidade integrado devem ter turmas vinculadas')
             # Criar uma turma para cada número na lista
             for turma in turmas:
                 turma['curso'] = curso.id

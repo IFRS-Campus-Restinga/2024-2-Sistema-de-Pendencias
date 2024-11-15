@@ -30,6 +30,8 @@ def cadastrar_PED_ProEJA(request):
     try:
         data = request.data
 
+        print(data)
+
         serializer = PED_ProEJA_Serializer(data=data)
 
         if not serializer.is_valid(): raise Exception(serializer.error_messages)
@@ -40,6 +42,32 @@ def cadastrar_PED_ProEJA(request):
     except Exception as e:
         return Response({'mensagem: ': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([GestaoEscolar])
+def listar_PED_EMI(request):
+    lista = PED_EMI.objects.all()
+
+    serializer = PED_EMI_Serializer(lista, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([GestaoEscolar])
+def listar_PED_ProEJA(request):
+    lista = PED_ProEJA.objects.all()
+
+    serializer = PED_ProEJA_Serializer(lista, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([GestaoEscolar])
+def listar_PED_EMI(request):
+    lista = PED_EMI.objects.all()
+
+    serializer = PED_EMI_Serializer(lista, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar | Professor])

@@ -20,12 +20,12 @@ const CadastroPED = () => {
   const [opcoesProfessores, setOpcoesProfessores] = useState([])
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    aluno: '',
-    professor_ped: '',
-    professor_disciplina: '',
-    curso: '',
-    disciplina: '',
-    turma_origem: '',
+    aluno_id: '',
+    professor_ped_id: '',
+    professor_disciplina_id: '',
+    curso_id: '',
+    disciplina_id: '',
+    turma_origem_id: '',
     serie_progressao: '',
     trimestre_recuperar: '',
     observacao: '',
@@ -60,23 +60,23 @@ const CadastroPED = () => {
 
     if (novoValor === 'Integrado') {
       setFormData({
-        aluno: '',
-        professor_ped: '',
-        professor_disciplina: '',
-        curso: '',
-        disciplina: '',
-        turma_origem: '',
+        aluno_id: '',
+        professor_ped_id: '',
+        professor_disciplina_id: '',
+        curso_id: '',
+        disciplina_id: '',
+        turma_origem_id: '',
         serie_progressao: '',
         trimestre_recuperar: '',
         observacao: '',
       })
     } else {
       setFormData({
-        aluno: '',
-        professor_ped: '',
-        professor_disciplina: '',
-        curso: '',
-        disciplina: '',
+        aluno_id: '',
+        professor_ped_id: '',
+        professor_disciplina_id: '',
+        curso_id: '',
+        disciplina_id: '',
         ano_semestre_reprov: '',
         observacao: ''
       })
@@ -93,7 +93,7 @@ const CadastroPED = () => {
     const erros = validarFormularioPED(formData, modalidade)
 
     if (modalidade === 'Integrado') {
-      const erroTurma = validarSerieTurma(formData.serie_progressao, turmas.find((turma) => turma.id === formData.turma_origem))
+      const erroTurma = validarSerieTurma(formData.serie_progressao, turmas.find((turma) => turma.id === formData.turma_origem_id))
 
       if (erroTurma) erros.turma_serie = erroTurma
     }
@@ -121,12 +121,12 @@ const CadastroPED = () => {
         });
 
         setFormData({
-          aluno: '',
-          professor_ped: '',
-          professor_disciplina: '',
-          curso: '',
-          disciplina: '',
-          turma_origem: '',
+          aluno_id: '',
+          professor_ped_id: '',
+          professor_disciplina_id: '',
+          curso_id: '',
+          disciplina_id: '',
+          turma_origem_id: '',
           serie_progressao: '',
           trimestre_recuperar: '',
           observacao: '',
@@ -207,9 +207,9 @@ const CadastroPED = () => {
                             const param = e.target.value
                             console.log(e.target.value)
           
-                            const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || aluno.infos_aluno.matricula || aluno.email)
+                            const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || aluno.matricula|| aluno.email)
           
-                            if (aluno) setFormData({...formData, aluno: aluno.id})
+                            if (aluno) setFormData({...formData, aluno_id: aluno.id})
                           }
           
                         }}
@@ -222,8 +222,8 @@ const CadastroPED = () => {
                     {
                       opcoesAlunos ? (opcoesAlunos.map((aluno) => (
                         <option className="optionCadastroPED" 
-                          value={aluno.nome || aluno.infos_aluno.matricula || aluno.email}>
-                            {aluno.nome || aluno.infos_aluno.matricula || aluno.email}
+                          value={aluno.nome || aluno.matricula || aluno.email}>
+                            {aluno.nome || aluno.matricula || aluno.email}
                         </option>
                       ))) : (<option>Nenhum aluno encontrado</option>)
                     }
@@ -242,7 +242,7 @@ const CadastroPED = () => {
           
                           const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
           
-                          if (professor) setFormData({...formData, professor_ped: professor.id})
+                          if (professor) setFormData({...formData, professor_ped_id: professor.id})
                         }
                       }}
                       erro={errors.professor_ped}
@@ -274,7 +274,7 @@ const CadastroPED = () => {
           
                           const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
           
-                          if (professor) setFormData({...formData, professor_disciplina: professor.id})
+                          if (professor) setFormData({...formData, professor_disciplina_id: professor.id})
                         }
                       }}
                       erro={errors.professor_disciplina}
@@ -313,7 +313,7 @@ const CadastroPED = () => {
                   <label className="labelCadastroPED">
                     Curso *
                     <select className={errors.curso ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="curso" onChange={(e) => {        
-                        setFormData({...formData, curso: Number(e.target.value)})
+                        setFormData({...formData, curso_id: Number(e.target.value)})
 
                         const cursoId = e.target.value;
                     
@@ -336,7 +336,7 @@ const CadastroPED = () => {
                   <label className="labelCadastroPED">
                     Disciplina *
                     <select className={errors.disciplina ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
-                      onChange={(e) => setFormData({...formData, disciplina: Number(e.target.value)})}
+                      onChange={(e) => setFormData({...formData, disciplina_id: Number(e.target.value)})}
                     >
                       <option className="optionCadastroPED" value=''>Selecione uma disciplina</option>
                       {
@@ -367,7 +367,7 @@ const CadastroPED = () => {
                   Turma Origem *
                   <select
                     className={errors.turma_origem || errors.turma_serie ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
-                    onChange={(e) => setFormData({ ...formData, turma_origem: Number(e.target.value) })}
+                    onChange={(e) => setFormData({ ...formData, turma_origem_id: Number(e.target.value) })}
                   >
                     <option value="">Selecione a turma de origem</option>
                     {turmas.map((turma, index) => (
@@ -395,9 +395,9 @@ const CadastroPED = () => {
                       const param = e.target.value
                       console.log(e.target.value)
     
-                      const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || aluno.infos_aluno.matricula || aluno.email)
+                      const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || aluno.matricula || aluno.email)
     
-                      if (aluno) setFormData({...formData, aluno: aluno.id})
+                      if (aluno) setFormData({...formData, aluno_id: aluno.id})
                     }
     
                   }}
@@ -410,8 +410,8 @@ const CadastroPED = () => {
                 {
                   opcoesAlunos ? (opcoesAlunos.map((aluno) => (
                     <option className="optionCadastroPED" 
-                      value={aluno.nome || aluno.infos_aluno.matricula || aluno.email}>
-                        {aluno.nome || aluno.infos_aluno.matricula || aluno.email}
+                      value={aluno.nome || aluno.matricula || aluno.email}>
+                        {aluno.nome || aluno.matricula || aluno.email}
                     </option>
                   ))) : (<option>Nenhum aluno encontrado</option>)
                 }
@@ -430,7 +430,7 @@ const CadastroPED = () => {
           
                           const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
           
-                          if (professor) setFormData({...formData, professor_ped: professor.id})
+                          if (professor) setFormData({...formData, professor_ped_id: professor.id})
                         }
                       }}
                       erro={errors.professor_ped}
@@ -462,7 +462,7 @@ const CadastroPED = () => {
       
                       const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
       
-                      if (professor) setFormData({...formData, professor_disciplina: professor.id})
+                      if (professor) setFormData({...formData, professor_disciplina_id: professor.id})
                     }
                   }}
                   erro={errors.professor_disciplina}
@@ -483,7 +483,7 @@ const CadastroPED = () => {
               <label className="labelCadastroPED">
                 Curso *
                 <select className={errors.curso ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="curso" onChange={(e) => {        
-                    setFormData({...formData, curso: Number(e.target.value)})
+                    setFormData({...formData, curso_id: Number(e.target.value)})
 
                     const cursoId = e.target.value;
                 
@@ -505,7 +505,7 @@ const CadastroPED = () => {
               <label className="labelCadastroPED">
                 Disciplina *
                 <select className={errors.disciplina ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
-                  onChange={(e) => setFormData({...formData, disciplina: Number(e.target.value)})}
+                  onChange={(e) => setFormData({...formData, disciplina_id: Number(e.target.value)})}
                 >
                   <option className="optionCadastroPED" value=''>Selecione uma disciplina</option>
                   {
