@@ -91,7 +91,7 @@ class PPTSerializer(serializers.ModelSerializer):
         # Retorna os dados relacionados diretamente, ao invés de IDs
         representation = super().to_representation(instance)
 
-        for field in ['aluno_id', 'professor_ppt_id', 'professor_disciplina_id', 'curso_id', 'disciplina_id', 'turma_origem_id', 'turma_progressao_id']:
+        for field in ['aluno_id', 'professor_ppt_id', 'professor_disciplina_id', 'curso_id', 'disciplina_id', 'turma_origem_id', 'turma_progressao_id', 'data_criacao']:
             representation.pop(field, None)
             
         return representation
