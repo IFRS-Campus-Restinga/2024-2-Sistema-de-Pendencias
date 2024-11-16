@@ -25,7 +25,7 @@ const CadastroCurso = () => {
     carga_horaria: curso?.carga_horaria || '',
     modalidade: curso?.modalidade || modalidade,
     coordenador: curso?.coordenador?.nome || curso?.coordenador?.email || '',  // Ajuste para coordenador
-    turmas: curso?.turmas || []
+    turmas: curso?.turmas || []  // Garantir que seja um array
   });
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -39,7 +39,7 @@ const CadastroCurso = () => {
         nome: curso.nome,
         carga_horaria: curso.carga_horaria,
         coordenador: curso.coordenador?.nome || curso.coordenador?.email || '',  // Garantindo que o coordenador seja um valor simples
-        turmas: curso.turmas
+        turmas: curso.turmas || []  // Garantir que turmas seja um array
       });
     }
   }, [curso]);
@@ -51,7 +51,7 @@ const CadastroCurso = () => {
       modalidade: novoValor,
       carga_horaria: '',
       coordenador: '',  // Não limpar o coordenador aqui, para preservar o valor
-      turmas: []
+      turmas: []  // Limpar as turmas quando mudar a modalidade
     });
   };
 
@@ -61,12 +61,13 @@ const CadastroCurso = () => {
     try {
       if (inputValue.length > 2) { // Começa a buscar quando o usuário digitar 3 caracteres
         const res = await usuarioBaseService.buscarPorParametro(inputValue, 'Coordenador');
-        setOpcoesCoordenadores(res.data);
+        setOpcoesCoordenadores(res.data || []);  // Garantir que seja um array vazio em caso de erro ou resposta vazia
       } else {
         setOpcoesCoordenadores([]); // Limpa a lista de opções se o campo for muito curto
       }
     } catch (error) {
       console.error('Erro ao buscar coordenadores: ', error);
+      setOpcoesCoordenadores([]);  // Garantir que seja um array vazio em caso de erro
     }
   };
 
@@ -156,7 +157,7 @@ const CadastroCurso = () => {
   const addTurma = () => {
     setFormData((prevData) => ({
       ...prevData,
-      turmas: [...prevData.turmas, { numero: '' }],
+      turmas: [...prevData.turmas, { numero: '' }],  // Adiciona uma turma vazia
     }));
   };
 
