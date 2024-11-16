@@ -26,13 +26,14 @@ urlpatterns = [
     path('dados-adicionais-professor/', infos_adicionais_professor),
     path('listar-grupos/', listar_grupos),
 
-    # views de curso/disciplinas
+    # views de curso
     # curso já manipula turmas por vínculo, por isso turmas não necessitam de uma view própria
     path('cadastrar-curso/', cadastrar_curso),
     path('listar-cursos/', listar_cursos),
     path('listar-cursos/<str:modalidade>/', listar_por_modalidade),
     path('cursos/<int:curso_id>/', obter_curso, name='obter_curso'),
     path('editar-curso/<int:curso_id>/', atualizar_curso, name='atualizar_curso'),
+    path('cursos/<int:curso_id>/atualizar/', atualizar_curso, name='atualizar_curso'),
 
     # views de disciplinas
     path('cadastrar-disciplina/', cadastrar_disciplina),

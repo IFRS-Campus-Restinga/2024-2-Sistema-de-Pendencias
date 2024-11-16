@@ -97,21 +97,61 @@ def obter_curso(request, curso_id):
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  # Retorna erro 500 para qualquer outro tipo de erro  
 
 
+# @api_view(['PUT'])
+# def atualizar_curso(request, curso_id):
+#     try:
+#         curso = Curso.objects.get(id=curso_id)  # Buscando o curso pelo ID
+#         serializer = CursoSerializer(curso, data=request.data)  # Atualizando o curso com os dados da requisição
+#         if serializer.is_valid():  # Verificando se os dados são válidos
+#             serializer.save()  # Salvando as alterações no curso
+#             logger.info('Curso atualizado com sucesso: %s', serializer.data)
+#             return Response(serializer.data, status=status.HTTP_200_OK)  # Retorna os dados do curso atualizado com status 200 OK
+#         logger.error('Erro de validação na atualização: %s', serializer.errors)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Retorna erro 400 se os dados forem inválidos
+
+#     except Curso.DoesNotExist:
+#         logger.error('Curso não encontrado para atualização: ID %s', curso_id)
+#         return Response({'mensagem': 'Curso não encontrado'}, status=status.HTTP_404_NOT_FOUND)  # Retorna erro 404 caso o curso não exista
+#     except Exception as e:
+#         logger.error('Erro ao atualizar curso: %s', str(e))
+#         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  # Retorna erro 500 para outros erros      
+
+
 @api_view(['PUT'])
+@permission_classes([GestaoEscolar])
 def atualizar_curso(request, curso_id):
+    # Extraímos os dados da requisição
+    turmas = request.data.get('turmas', [])
+    modalidade = request.data.get('modalidade', None)
+    
     try:
         curso = Curso.objects.get(id=curso_id)  # Buscando o curso pelo ID
-        serializer = CursoSerializer(curso, data=request.data)  # Atualizando o curso com os dados da requisição
-        if serializer.is_valid():  # Verificando se os dados são válidos
-            serializer.save()  # Salvando as alterações no curso
-            logger.info('Curso atualizado com sucesso: %s', serializer.data)
-            return Response(serializer.data, status=status.HTTP_200_OK)  # Retorna os dados do curso atualizado com status 200 OK
-        logger.error('Erro de validação na atualização: %s', serializer.errors)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Retorna erro 400 se os dados forem inválidos
-
     except Curso.DoesNotExist:
-        logger.error('Curso não encontrado para atualização: ID %s', curso_id)
-        return Response({'mensagem': 'Curso não encontrado'}, status=status.HTTP_404_NOT_FOUND)  # Retorna erro 404 caso o curso não exista
-    except Exception as e:
-        logger.error('Erro ao atualizar curso: %s', str(e))
-        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  # Retorna erro 500 para outros erros      
+        return Response({'message': 'Curso não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Atualiza o curso com os dados recebidos
+    serializer = CursoSerializer(curso, data=request.data, partial=True)  # partial=True permite atualização de campos específicos
+
+    if serializer.is_valid():
+        updated_curso = serializer.save()  # Atualiza o curso
+
+        # Caso a modalidade seja 'Integrado' e as turmas sejam fornecidas, tratamos as turmas
+        if modalidade == 'Integrado':
+            if turmas is not None:
+                # Limpa as turmas existentes, ou pode ser uma lógica diferente se necessário
+                updated_curso.turmas.all().delete()
+
+                # Criar uma turma para cada número na lista
+                for turma in turmas:
+                    turma['curso'] = updated_curso.id
+                    turma_serializer = TurmaSerializer(data=turma)
+
+                    if turma_serializer.is_valid():
+                        turma_serializer.save()  # Salva a turma no banco de dados
+                    else:
+                        return Response(turma_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({'id': updated_curso.id, 'message': 'Curso atualizado com sucesso!'}, status=status.HTTP_200_OK)
+    
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

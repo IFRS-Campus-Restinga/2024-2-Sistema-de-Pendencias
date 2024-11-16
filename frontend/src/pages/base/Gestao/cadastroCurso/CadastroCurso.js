@@ -11,7 +11,6 @@ import Switch from "../../../../components/Switch/Switch";
 import { ToastContainer, toast } from "react-toastify";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 import { useLocation, useNavigate } from "react-router-dom";
-import { jwtDecode } from 'jwt-decode';
 
 const CadastroCurso = () => {
   const formRef = useRef();
@@ -32,7 +31,6 @@ const CadastroCurso = () => {
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
 
-  // Atualiza o valor de modalidade sempre que o curso for alterado
   useEffect(() => {
     if (curso) {
       setModalidade(curso.modalidade);
@@ -41,48 +39,45 @@ const CadastroCurso = () => {
         modalidade: curso.modalidade,
         nome: curso.nome,
         carga_horaria: curso.carga_horaria,
-        coordenador: curso.coordenador,
+        coordenador: curso.coordenador || '',
         turmas: curso.turmas
       });
     }
   }, [curso]);
 
-  // Função para alterar a modalidade e resetar campos relacionados
   const trocaModalidade = (novoValor) => {
     setModalidade(novoValor);
     setFormData({
       ...formData,
       modalidade: novoValor,
       carga_horaria: '',
-      coordenador: '',
+      coordenador: '',  // Não limpar o coordenador aqui, para preservar o valor
       turmas: []
     });
-    formRef.current.reset();
   };
 
-  // Função para adicionar uma nova turma
-  const addTurma = () => {
-    setFormData((prevData) => ({
-      ...prevData,
-      turmas: [...prevData.turmas, { numero: '' }],
-    }));
+  // Função para buscar coordenadores com base no valor digitado
+  const fetchCoordenadores = async (e) => {
+    const inputValue = e.target.value;
+    try {
+      if (inputValue.length > 2) { // Começa a buscar quando o usuário digitar 3 caracteres
+        const res = await usuarioBaseService.buscarPorParametro(inputValue, 'Coordenador');
+        setOpcoesCoordenadores(res.data);
+      } else {
+        setOpcoesCoordenadores([]); // Limpa a lista de opções se o campo for muito curto
+      }
+    } catch (error) {
+      console.error('Erro ao buscar coordenadores: ', error);
+    }
   };
 
-  // Função para manipular mudança nos números das turmas
-  const handleTurmaChange = (index, value) => {
-    const updatedTurmas = formData.turmas.map((turma, i) =>
-      i === index ? { ...turma, numero: value } : turma
-    );
-    setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
+  const handleCoordenadorChange = (e) => {
+    const valor = e.target.value;
+    setFormData({ ...formData, coordenador: valor });
+    // Buscando coordenadores sempre que o campo mudar
+    fetchCoordenadores(e);
   };
 
-  // Função para remover uma turma
-  const removeTurma = (index) => {
-    const updatedTurmas = formData.turmas.filter((_, i) => i !== index);
-    setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
-  };
-
-  // Função para submeter o formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -122,9 +117,8 @@ const CadastroCurso = () => {
 
         formRef.current.reset();
 
-        if (!curso) {
-          navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`); // Redirecionar após criar o curso
-        }
+        navigate('/cursos');  // Substitua '/cursos' pela rota da lista de cursos
+
       } catch (erro) {
         toast.error(erro.message, {
           position: "bottom-center",
@@ -134,16 +128,6 @@ const CadastroCurso = () => {
         });
         console.error('Erro ao cadastrar ou editar curso!', erro);
       }
-    }
-  };
-
-  // Função para buscar coordenadores com base no valor digitado
-  const fetchCoordenadores = async (e) => {
-    try {
-      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Coordenador');
-      setOpcoesCoordenadores(res.data);
-    } catch (error) {
-      console.error('Erro ao buscar coordenadores: ', error);
     }
   };
 
@@ -157,6 +141,28 @@ const CadastroCurso = () => {
         return rest;
       });
     }
+  };
+
+  // Função para adicionar uma nova turma
+  const addTurma = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      turmas: [...prevData.turmas, { numero: '' }],
+    }));
+  };
+
+  // Função para manipular mudança nos números das turmas
+  const handleTurmaChange = (index, value) => {
+    const updatedTurmas = formData.turmas.map((turma, i) =>
+      i === index ? { ...turma, numero: value } : turma
+    );
+    setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
+  };
+
+  // Função para remover uma turma
+  const removeTurma = (index) => {
+    const updatedTurmas = formData.turmas.filter((_, i) => i !== index);
+    setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
   };
 
   return (
@@ -200,28 +206,23 @@ const CadastroCurso = () => {
           <Input
             tipo='text'
             nome='coordenador'
-            onChange={(e) => {
-              fetchCoordenadores(e);
-              if (opcoesCoordenadores) {
-                const param = e.target.value;
-                const coordenador = opcoesCoordenadores.find((coordenador) => param === coordenador.nome || param === coordenador.email);
-                if (coordenador) setFormData({ ...formData, coordenador: coordenador.id });
-              }
-            }}
+            onChange={handleCoordenadorChange}
             onBlur={() => handleBlur('coordenador')}
             erro={errors.coordenador}
-            valor={curso?.coordenador?.email || ''}
+            valor={formData.coordenador}
             textoAjuda='Insira nome ou email do coordenador'
-            lista={'opcoesCoordenadores'}
           />
         </label>
         <datalist className="datalistCadastroCurso" id="opcoesCoordenadores">
-          {opcoesCoordenadores ? (opcoesCoordenadores.map((coordenador) => (
-            <option key={coordenador.id} className="optionCadastroCurso"
-              value={coordenador.nome || coordenador.email}>
-              {coordenador.nome || coordenador.email}
-            </option>
-          ))) : (<option>Nenhum coordenador encontrado</option>)}
+          {opcoesCoordenadores && opcoesCoordenadores.length > 0 ? (
+            opcoesCoordenadores.map((coordenador) => (
+              <option key={coordenador.id} value={coordenador.nome || coordenador.email}>
+                {coordenador.nome || coordenador.email}
+              </option>
+            ))
+          ) : (
+            <option>Nenhum coordenador encontrado</option>
+          )}
         </datalist>
         <br />
 
