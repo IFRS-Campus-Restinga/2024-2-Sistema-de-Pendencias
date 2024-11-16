@@ -18,14 +18,13 @@ const CadastroCurso = () => {
   const location = useLocation();
   const { curso } = location.state || {};  // Pegando o cursoId se presente
 
-  // Inicialize a modalidade com o valor do curso ou 'Integrado' como padrão
   const [modalidade, setModalidade] = useState(curso ? curso.modalidade : 'Integrado');
   const [opcoesCoordenadores, setOpcoesCoordenadores] = useState([]);
   const [formData, setFormData] = useState({
     nome: curso?.nome || '',
     carga_horaria: curso?.carga_horaria || '',
     modalidade: curso?.modalidade || modalidade,
-    coordenador: curso?.coordenador || '',
+    coordenador: curso?.coordenador?.nome || curso?.coordenador?.email || '',  // Ajuste para coordenador
     turmas: curso?.turmas || []
   });
   const [errors, setErrors] = useState({});
@@ -39,7 +38,7 @@ const CadastroCurso = () => {
         modalidade: curso.modalidade,
         nome: curso.nome,
         carga_horaria: curso.carga_horaria,
-        coordenador: curso.coordenador || '',
+        coordenador: curso.coordenador?.nome || curso.coordenador?.email || '',  // Garantindo que o coordenador seja um valor simples
         turmas: curso.turmas
       });
     }
@@ -71,11 +70,21 @@ const CadastroCurso = () => {
     }
   };
 
+  // Função chamada quando o valor do campo coordenador muda
   const handleCoordenadorChange = (e) => {
     const valor = e.target.value;
     setFormData({ ...formData, coordenador: valor });
-    // Buscando coordenadores sempre que o campo mudar
+    // Buscar coordenadores sempre que o campo mudar
     fetchCoordenadores(e);
+  };
+
+  // Função chamada quando o coordenador é selecionado
+  const handleCoordenadorSelect = (coordenador) => {
+    setFormData({
+      ...formData,
+      coordenador: coordenador.nome || coordenador.email  // Atualiza com o nome ou e-mail selecionado
+    });
+    setOpcoesCoordenadores([]);  // Limpar as opções depois de selecionar
   };
 
   const handleSubmit = async (e) => {
@@ -209,14 +218,15 @@ const CadastroCurso = () => {
             onChange={handleCoordenadorChange}
             onBlur={() => handleBlur('coordenador')}
             erro={errors.coordenador}
-            valor={formData.coordenador}
+            valor={formData.coordenador}  // Exibindo o nome ou email do coordenador
             textoAjuda='Insira nome ou email do coordenador'
+            list="opcoesCoordenadores"
           />
         </label>
-        <datalist className="datalistCadastroCurso" id="opcoesCoordenadores">
-          {opcoesCoordenadores && opcoesCoordenadores.length > 0 ? (
+        <datalist id="opcoesCoordenadores">
+          {opcoesCoordenadores.length > 0 ? (
             opcoesCoordenadores.map((coordenador) => (
-              <option key={coordenador.id} value={coordenador.nome || coordenador.email}>
+              <option key={coordenador.id} value={coordenador.nome || coordenador.email} onClick={() => handleCoordenadorSelect(coordenador)}>
                 {coordenador.nome || coordenador.email}
               </option>
             ))
@@ -224,7 +234,7 @@ const CadastroCurso = () => {
             <option>Nenhum coordenador encontrado</option>
           )}
         </datalist>
-        <br />
+        {errors.coordenador && <p className="error">{errors.coordenador}</p>}
 
         {modalidade === 'Integrado' && (
           <div className="add-turma">
