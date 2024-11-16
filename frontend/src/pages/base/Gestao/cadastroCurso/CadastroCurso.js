@@ -218,7 +218,7 @@ const CadastroCurso = () => {
             onChange={handleCoordenadorChange}
             onBlur={() => handleBlur('coordenador')}
             erro={errors.coordenador}
-            valor={formData.coordenador}  // Exibindo o nome ou email do coordenador
+            valor={curso?.coordenador?.email}
             textoAjuda='Insira nome ou email do coordenador'
             list="opcoesCoordenadores"
           />

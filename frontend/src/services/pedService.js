@@ -25,24 +25,28 @@ export const PEDService = {
     return res
   },
 
-  porId: async (idPED) => {
-    const res = await api.get(`api/ped/${idPED}/`).catch((erro) => {
+  porId: async (pedId) => {
+    const res = await api.get(`api/ped/${pedId}/`, {
+      params: {
+        retornar_ids: true
+      }
+    }).catch((erro) => {
       return erro
     })
 
     return res
   },
 
-  listaEMI: async () => {
-    const res = await api.get('api/ped/emi/').catch((erro) => {
+  listaEMI: async (professorId) => {
+    const res = await api.get(`api/ped-emi/?professorId=${professorId}`).catch((erro) => {
       return erro
     })
 
     return res
   },
 
-  listaProEJA: async () => {
-    const res = await api.get('api/ped/proeja').catch((erro) => {
+  listaProEJA: async (professorId) => {
+    const res = await api.get(`api/ped-proeja/?professorId=${professorId}`).catch((erro) => {
       return erro
     })
 

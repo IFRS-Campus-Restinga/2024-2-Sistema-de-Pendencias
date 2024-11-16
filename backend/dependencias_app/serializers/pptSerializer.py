@@ -73,10 +73,7 @@ class PPTSerializer(serializers.ModelSerializer):
         return ppt
     
     def get_aluno(self, obj):
-        return obj.aluno.nome or obj.aluno.email if obj.aluno else None
-
-    def get_aluno_id(self, obj):
-        return obj.aluno.id if obj.aluno else None
+        return obj.aluno.nome or obj.aluno.nome or obj.aluno.email[:10] if obj.aluno else None
     
     def get_professor_ppt(self, obj):
         return obj.professor_ppt.nome or obj.professor_ppt.email if obj.professor_ppt else None
@@ -115,10 +112,21 @@ class PPTSerializer(serializers.ModelSerializer):
         return obj.turma_progressao.id if obj.turma_progressao else None
 
     def to_representation(self, instance):
-        # Retorna os dados relacionados diretamente, ao invés de IDs
+        request = self.context.get('request')
+        retornar_ids = request and request.query_params.get('retornar_ids') == 'true'
+    
         representation = super().to_representation(instance)
-
-        for field in ['aluno_id', 'professor_ppt_id', 'professor_disciplina_id', 'curso_id', 'disciplina_id', 'turma_origem_id', 'turma_progressao_id', 'data_criacao']:
-            representation.pop(field, None)
+    
+        if retornar_ids:
+            # Substitui os nomes/valores pelas IDs das instâncias relacionadas
+            representation['aluno'] = instance.aluno.id if instance.aluno else None
+            representation['professor_disciplina'] = instance.professor_disciplina.id if instance.professor_disciplina else None
+            representation['professor_ped'] = instance.professor_ped.id if instance.professor_ped else None
+            representation['curso'] = instance.curso.id if instance.curso else None
+            representation['disciplina'] = instance.disciplina.id if instance.disciplina else None
+            representation['turma_origem'] = instance.turma_origem.id if instance.turma_origem else None
+        else:
+            for field in ['aluno_id', 'professor_ppt_id', 'professor_disciplina_id', 'curso_id', 'disciplina_id', 'turma_origem_id', 'turma_progressao_id', 'data_criacao']:
+                representation.pop(field, None)
             
         return representation

@@ -9,10 +9,15 @@ import cursoService from "../../../../services/cursoService";
 import { validarFormularioPED, validarSerieTurma } from "./validacoes";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 import { PEDService } from "../../../../services/pedService";
+import { Link, useLocation } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faL, faLock } from "@fortawesome/free-solid-svg-icons";
 
 const CadastroPED = () => {
   const formRef = useRef()
-  const [modalidade, setModalidade] = useState('Integrado')
+  const location = useLocation()
+  const {state} = location.state || {}
+  const [modalidade, setModalidade] = useState(state?.serie_progressao ? 'Integrado' : 'ProEJA' || 'Integrado')
   const [cursos, setCursos] = useState([])
   const [disciplinas, setDisciplinas] = useState([])
   const [turmas, setTurmas] = useState([])
@@ -55,6 +60,14 @@ const CadastroPED = () => {
     });
   };
 
+  const verificaTrimestres = (trimestre) => {
+    if (state.trimestre_recuperar) {
+      if (state.trimestre_recuperar.includes(trimestre)) return true
+    }
+
+    return false
+  }
+
   const trocaModalidade = (novoValor) => {
     setModalidade(novoValor);
 
@@ -82,7 +95,7 @@ const CadastroPED = () => {
       })
     }
 
-    formRef.current.reset()
+    state = {}
 
     setErrors({})
   };
@@ -165,6 +178,18 @@ const CadastroPED = () => {
     }
   }
 
+  const fetchPED = async (pedId) => {
+    try {
+      const res = await PEDService.porId(pedId)
+
+      if (res.status !== 200) throw new Error(res)
+
+      setFormData(res.data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const fetchProfessores = async (e) => {
     try {
       const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Professor')
@@ -176,19 +201,31 @@ const CadastroPED = () => {
   }
 
   useEffect(() => {
+    if (state) {
+      fetchPED(state.id)
+    }
+
+    console.log(state)
+
     fetchCursos()
   }, [modalidade])
 
   return (
     <>
       <ToastContainer/>
-      <FormContainer onSubmit={handleSubmit} titulo="Cadastro PED" ref={formRef}>
+      <FormContainer onSubmit={handleSubmit} titulo={state ? 'Editar PED' : 'Cadastro PED'} ref={formRef}>
         {Object.keys(errors).length === 0 ? (<></>) : (<p style={{color: 'red'}}>*Preencha os campos obrigatórios</p>)}
         <span className="spanCadastroPED">
           <p className="pCadastroPED"> 
             Modalidade
           </p>
-            <Switch valor1='ProEJA' valor2='Integrado' valor={modalidade} stateHandler={trocaModalidade}/>
+            <Switch 
+              valor1='ProEJA' 
+              valor2='Integrado' 
+              valor={modalidade} 
+              stateHandler={state ? null : trocaModalidade}
+              imagemCustom={state ? <FontAwesomeIcon icon={faLock} size="xl" color={modalidade === 'Integrado' ? '#006b3f' : '#fff'}/> : <></>}
+            />
         </span>
         {
           modalidade === 'Integrado' ? (
@@ -200,6 +237,7 @@ const CadastroPED = () => {
                       <Input
                         tipo='text'
                         nome='aluno'
+                        valor={state?.aluno || ''}
                         onChange={(e) => {
                           fetchAlunos(e)
                           
@@ -233,6 +271,7 @@ const CadastroPED = () => {
                     <Input
                       tipo='text'
                       nome='professor'
+                      valor={state?.professor_ped || ''}
                       onChange={(e) => {
                         fetchProfessores(e)
                         
@@ -265,6 +304,7 @@ const CadastroPED = () => {
                     <Input
                       tipo='text'
                       nome='professor'
+                      valor={state?.professor_disciplina || ''}
                       onChange={(e) => {
                         fetchProfessores(e)
                         
@@ -298,11 +338,11 @@ const CadastroPED = () => {
                       Trimestres a Recuperar *
                       {errors.trimestre_recuperar ? <p style={{color: 'red', fontSize: '10px'}}>{errors.trimestre_recuperar}</p> : (<></>)}
                       <div className="divTrimestreRec">
-                        <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" value='1º' id="1" hidden/>
+                        <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" checked={verificaTrimestres('1º')} value='1º' id="1" hidden/>
                         <label className="labelTrimestreRec" htmlFor="1">1º Trimestre</label>
-                        <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" value='2º' id="2" hidden/>
+                        <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" checked={verificaTrimestres('2º')} value='2º' id="2" hidden/>
                         <label className="labelTrimestreRec" htmlFor="2">2º Trimestre</label>
-                        <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" value='3º' id='3' hidden/>
+                        <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" checked={verificaTrimestres('3º')} value='3º' id='3' hidden/>
                         <label className="labelTrimestreRec" htmlFor="3">3º Trimestre</label>
                       </div>
                     </label>
@@ -325,7 +365,7 @@ const CadastroPED = () => {
                         }
                       }
                     }>
-                      <option className="optionCadastroPED" value=''>Selecione um curso</option>
+                      <option className="optionCadastroPED" value=''>{state.curso ? state.curso : 'Selecione um curso'}</option>
                       {
                         cursos.map((curso, index) => (
                           <option className="optionCadastroPED" value={curso.id} id={index}>{curso.nome}</option>
@@ -338,7 +378,7 @@ const CadastroPED = () => {
                     <select className={errors.disciplina ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
                       onChange={(e) => setFormData({...formData, disciplina_id: Number(e.target.value)})}
                     >
-                      <option className="optionCadastroPED" value=''>Selecione uma disciplina</option>
+                      <option className="optionCadastroPED" value=''>{state.disciplina ? state.disciplina : 'Selecione uma disciplina'}</option>
                       {
                         disciplinas.map((disciplina) => (
                           <option className="optionCadastroPED" value={disciplina.id}>{disciplina.nome}</option>
@@ -354,7 +394,7 @@ const CadastroPED = () => {
                     className={errors.serie_progressao || errors.turma_serie ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
                     onChange={(e) => setFormData({ ...formData, serie_progressao: e.target.value })}
                   >
-                    <option value="">Selecione a série/ano da progressão</option>
+                    <option value="">{state.serie_progressao ? state.serie_progressao : 'Selecione a série/ano da progressão'}</option>
                     {serieProgressao.map((serie, index) => (
                       <option key={index} value={serie}>
                         {serie}
@@ -369,7 +409,7 @@ const CadastroPED = () => {
                     className={errors.turma_origem || errors.turma_serie ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
                     onChange={(e) => setFormData({ ...formData, turma_origem_id: Number(e.target.value) })}
                   >
-                    <option value="">Selecione a turma de origem</option>
+                    <option value="">{state.turma_origem ? state.turma_origem : 'Selecione a turma de origem'}</option>
                     {turmas.map((turma, index) => (
                       <option key={index} value={turma.id}>
                         {turma.numero}
@@ -388,6 +428,7 @@ const CadastroPED = () => {
                 <Input
                   tipo='text'
                   nome='aluno'
+                  valor={state.aluno || ''}
                   onChange={(e) => {
                     fetchAlunos(e)
                     
@@ -421,6 +462,7 @@ const CadastroPED = () => {
                     <Input
                       tipo='text'
                       nome='professor'
+                      valor={state.professor_ped || ''}
                       onChange={(e) => {
                         fetchProfessores(e)
                         
@@ -453,6 +495,7 @@ const CadastroPED = () => {
                 <Input
                   tipo='text'
                   nome='professor'
+                  valor={state.professor_disciplina || ''}
                   onChange={(e) => {
                     fetchProfessores(e)
                     
@@ -494,8 +537,8 @@ const CadastroPED = () => {
                     }
                   }
                 }>
-                  <option className="optionCadastroPED" value=''>Selecione um curso</option>
-                  {
+                      <option className="optionCadastroPED" value=''>{state.curso ? state.curso : 'Selecione um curso'}</option>
+                      {
                     cursos.map((curso, index) => (
                       <option className="optionCadastroPED" value={curso.id} id={index}>{curso.nome}</option>
                     ))
@@ -507,8 +550,8 @@ const CadastroPED = () => {
                 <select className={errors.disciplina ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
                   onChange={(e) => setFormData({...formData, disciplina_id: Number(e.target.value)})}
                 >
-                  <option className="optionCadastroPED" value=''>Selecione uma disciplina</option>
-                  {
+                      <option className="optionCadastroPED" value=''>{state.disciplina ? state.disciplina : 'Selecione uma disciplina'}</option>
+                      {
                     disciplinas.map((disciplina) => (
                       <option className="optionCadastroPED" value={disciplina.id}>{disciplina.nome}</option>
                     ))
@@ -520,6 +563,7 @@ const CadastroPED = () => {
                 <Input
                   type='text'
                   onChange={(e) => setFormData({...formData, ano_semestre_reprov: e.target.value})}
+                  valor={state.ano_semestre_reprov || ''}
                   erro={errors.ano_semestre_reprov}
                   textoAjuda='Insira no formato Ano/Semestre - xxxx/x'
                 />
@@ -537,7 +581,23 @@ const CadastroPED = () => {
             placeholder="Caso haja alguma observação sobre o aluno, insira aqui"
           />
         </label>
-        <Button color="#006b3f" text="Cadastrar" tipo="submit" />
+        <div className="containerBotoes" style={{display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', flexWrap: 'wrap'}}>
+          <Button color="#006b3f" text={state ? 'Salvar Alterações' : 'Cadastrar'} tipo="submit" />
+          {
+            state ? (
+              <>
+                <Link to={'planoEstudos'}>
+                  <Button color="#006b3f" text='Plano de Estudos'/>
+                </Link>
+                <Link to={'formEnceramento'}>
+                  <Button color="#006b3f" text='Formulário de Encerramento'/>
+                </Link>
+              </>
+            ) : (
+              <></>
+            )
+          }
+        </div>
       </FormContainer>
     </>
   );

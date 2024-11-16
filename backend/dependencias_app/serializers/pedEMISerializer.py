@@ -101,10 +101,21 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
         return data
     
     def to_representation(self, instance):
-        # Retorna os dados relacionados diretamente, ao invés de IDs
+        request = self.context.get('request')
+        retornar_ids = request and request.query_params.get('retornar_ids') == 'true'
+    
         representation = super().to_representation(instance)
-
-        for field in ['aluno_id', 'professor_ped_id', 'professor_disciplina_id', 'curso_id', 'disciplina_id', 'turma_origem_id', 'plano_estudos', 'form_encerramento', 'data_criacao']:
-            representation.pop(field, None)
+    
+        if retornar_ids:
+            # Substitui os nomes/valores pelas IDs das instâncias relacionadas
+            representation['aluno'] = instance.aluno.id if instance.aluno else None
+            representation['professor_disciplina'] = instance.professor_disciplina.id if instance.professor_disciplina else None
+            representation['professor_ped'] = instance.professor_ped.id if instance.professor_ped else None
+            representation['curso'] = instance.curso.id if instance.curso else None
+            representation['disciplina'] = instance.disciplina.id if instance.disciplina else None
+            representation['turma_origem'] = instance.turma_origem.id if instance.turma_origem else None
+        else:
+            for field in ['aluno_id', 'professor_ped_id', 'professor_disciplina_id', 'curso_id', 'disciplina_id', 'turma_origem_id', 'plano_estudos', 'form_encerramento', 'data_criacao']:
+                representation.pop(field, None)
             
         return representation
