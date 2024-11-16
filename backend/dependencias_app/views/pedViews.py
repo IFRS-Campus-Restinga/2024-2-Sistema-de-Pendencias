@@ -43,31 +43,35 @@ def cadastrar_PED_ProEJA(request):
         return Response({'mensagem: ': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([GestaoEscolar])
-def listar_PED_EMI(request):
-    lista = PED_EMI.objects.all()
+@permission_classes([GestaoEscolar | Professor])
+def listar_PED_EMI(request, professorId=None):
+    try:
+        if  professorId:
+            lista = PED_EMI.objects.filter(professor_ped=professorId)
+        else:
+            lista = PED_EMI.objects.all()
 
-    serializer = PED_EMI_Serializer(lista, many=True)
+        serializer = PED_EMI_Serializer(lista, many=True)
 
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-@api_view(['GET'])
-@permission_classes([GestaoEscolar])
-def listar_PED_ProEJA(request):
-    lista = PED_ProEJA.objects.all()
-
-    serializer = PED_ProEJA_Serializer(lista, many=True)
-
-    return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([GestaoEscolar])
-def listar_PED_EMI(request):
-    lista = PED_EMI.objects.all()
+@permission_classes([GestaoEscolar | Professor])
+def listar_PED_ProEJA(request, professorId=None):
+    try:
+        if professorId:
+            lista = PED_ProEJA.objects.filter(professor_ped=professorId)
+        else:
+            lista = PED_ProEJA.objects.all()
+        
+        serializer = PED_ProEJA_Serializer(lista, many=True)
 
-    serializer = PED_EMI_Serializer(lista, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar | Professor])

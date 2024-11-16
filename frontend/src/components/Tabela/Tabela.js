@@ -56,74 +56,76 @@ const Tabela = ({listaFiltrada, fontSize}) => {
 
     return(
         listaFiltrada.length ? (
-            <table className="tabela" style={{fontSize: fontSize}}>
-                <thead className="cabecalhoTabela">
-                    <tr className="linhaCabecalhoTabela">
-                        {
-                            colunas.map((coluna, index) => (
-                                index === 1 && coluna !== 'id' ? (
-                                    <th key={index} className="colunaCabecalhoTabela" onClick={() => ordenarPorColuna(coluna)}>
-                                        <div className="th-ordenar">
-                                            <img
-                                                className="icone-ordenar"
-                                                src={Ordenar}
-                                                alt="Ordenar"
-                                                style={{ cursor: 'pointer'}}
-                                                title="Ordenar"
-                                            />
-                                        {
-                                            coluna !== 'id' ? (
+            <div className="divContainerTabela">
+                <table className="tabela" style={{fontSize: fontSize}}>
+                    <thead className="cabecalhoTabela">
+                        <tr className="linhaCabecalhoTabela">
+                            {
+                                colunas.map((coluna, index) => (
+                                    index === 1 && coluna !== 'id' ? (
+                                        <th key={index} className="colunaCabecalhoTabela" onClick={() => ordenarPorColuna(coluna)}>
+                                            <div className="th-ordenar">
+                                                <img
+                                                    className="icone-ordenar"
+                                                    src={Ordenar}
+                                                    alt="Ordenar"
+                                                    style={{ cursor: 'pointer'}}
+                                                    title="Ordenar"
+                                                />
+                                            {
+                                                coluna !== 'id' ? (
+                                                    <p className="textoCelula">
+                                                        {formatTituloCabecalho(coluna) || '-'}
+                                                        {ordenacao.coluna === coluna ? (<span className={ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}></span>):(<></>)}
+                                                    </p>
+                                                ) : (
+                                                    <></>
+                                                )
+                                            }
+                                            </div>
+                                        </th>
+                                    ) : (
+                                        coluna !== 'id' ? (
+                                            <th key={index} className="colunaCabecalhoTabela" onClick={() => ordenarPorColuna(coluna)}>
                                                 <p className="textoCelula">
                                                     {formatTituloCabecalho(coluna) || '-'}
                                                     {ordenacao.coluna === coluna ? (<span className={ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}></span>):(<></>)}
                                                 </p>
-                                            ) : (
-                                                <></>
-                                            )
-                                        }
-                                        </div>
-                                    </th>
-                                ) : (
-                                    coluna !== 'id' ? (
-                                        <th key={index} className="colunaCabecalhoTabela" onClick={() => ordenarPorColuna(coluna)}>
-                                            <p className="textoCelula">
-                                                {formatTituloCabecalho(coluna) || '-'}
-                                                {ordenacao.coluna === coluna ? (<span className={ordenacao.ordem === 'asc' ? 'seta-baixo' : 'seta-cima'}></span>):(<></>)}
-                                            </p>
-                                        </th>
-                                    ) : (
-                                        <></>
+                                            </th>
+                                        ) : (
+                                            <></>
+                                        )
                                     )
-                                )
+                                ))
+                            }
+                            <th className="colunaCabecalhoTabela">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody className="corpoTabela">
+                        {
+                            listaOrdenada.map((item, index) => (
+                                <tr key={index} className="linhaCorpoTabela">
+                                    {
+                                        colunas.map((coluna, colIndex) => (
+                                            coluna !== 'id' ? (
+                                                <td key={colIndex} className="colunaCorpoTabela">{item[coluna] || '-'}</td>
+                                            ) : (<></>)
+                                        ))
+                                    }
+                                    <td className="colunaCorpoTabela">
+                                    <img 
+                                        className='iconeAcoes'
+                                        src={Lupa} 
+                                        alt="Visualizar" 
+                                        onClick={() => detalhesItem(item)}
+                                        title="Visualizar"/>
+                                    </td>
+                                </tr>
                             ))
                         }
-                        <th className="colunaCabecalhoTabela">Ações</th>
-                    </tr>
-                </thead>
-                <tbody className="corpoTabela">
-                    {
-                        listaOrdenada.map((item, index) => (
-                            <tr key={index} className="linhaCorpoTabela">
-                                {
-                                    colunas.map((coluna, colIndex) => (
-                                        coluna !== 'id' ? (
-                                            <td key={colIndex} className="colunaCorpoTabela">{item[coluna] || '-'}</td>
-                                        ) : (<></>)
-                                    ))
-                                }
-                                <td className="colunaCorpoTabela">
-                                <img 
-                                    className='iconeAcoes'
-                                    src={Lupa} 
-                                    alt="Visualizar" 
-                                    onClick={() => detalhesItem(item)}
-                                    title="Visualizar"/>
-                                </td>
-                            </tr>
-                        ))
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         ) : (
             <div className="divTabela">
                 Nenhuma informação para ser exibida
