@@ -1,3 +1,4 @@
+/* Estilo para a seção e container */
 .sectionCadastroPlanoEstudos {
   width: 100%;
   display: flex;
@@ -9,6 +10,7 @@
   padding: 7px;
 }
 
+/* Estilo para o label (texto de descrição) */
 .labelCadastroPlanoEstudos {
   display: flex;
   flex-direction: column;
@@ -17,23 +19,53 @@
   margin-top: 7px;
 }
 
+/* Estilo para o campo Select (forma de oferta, turno) */
 .selectCadastroPlanoEstudos {
   font-size: 15px;
-  border: 1px solid #ccc;
+  border: 1px solid #ccc;  /* Borda padrão */
   padding: 7px;
   border-radius: 8px;
   margin-top: 5px;
 }
 
+/* Estilo para o campo Textarea (parecer pedagógico) */
 .textAreaCadastroPlanoEstudos {
   font-family: Arial, Helvetica, sans-serif;
   padding: 5px;
   margin-top: 7px;
-  border: 1px solid #ccc;
+  border: 1px solid #ccc;  /* Borda padrão */
   border-radius: 8px;
 }
 
+/* Estilo de foco para campos normais */
 .textAreaCadastroPlanoEstudos:focus,
 .selectCadastroPlanoEstudos:focus {
-  border: 1px solid #797979;
+  border: 1px solid #797979;  /* Borda de foco (sem erro) */
+}
+
+/* Estilo para campos com erro (quando o campo não for preenchido corretamente) */
+
+/* Para Select */
+.errorSelectCadastroPlanoEstudos {
+  border: 1px solid red; /* Borda vermelha para erro */
+  background-color: #f8d7da;  /* Fundo vermelho claro para erro */
+}
+
+/* Para Textarea */
+.errorTextAreaCadastroPlanoEstudos {
+  border: 1px solid red;  /* Borda vermelha para erro */
+  background-color: #f8d7da;  /* Fundo vermelho claro para erro */
+}
+
+/* Estilo de foco para campos com erro (quando em foco) */
+.errorSelectCadastroPlanoEstudos:focus,
+.errorTextAreaCadastroPlanoEstudos:focus {
+  border-color: red;  /* Mantém borda vermelha ao focar */
+}
+
+/* Mensagem de erro abaixo dos campos */
+.errorMessage {
+  color: red;
+  font-size: 10px;
+  margin-top: 5px;
 }

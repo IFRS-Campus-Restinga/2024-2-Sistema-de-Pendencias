@@ -22,7 +22,7 @@ import ListarEventosDoCalendarioPage from './pages/base/Gestao/calendario/calend
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 import DetalhesServidor from './pages/base/Gestao/detalhesServidor/DetalhesServidor'
-import EditarServidor from './pages/base/Gestao/editarServidor/EditarServidor'
+//import EditarServidor from './pages/base/Gestao/editarServidor/EditarServidor'
 import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
 import EditarPPT from './pages/base/Gestao/editarPPT/editarPPT'
 
@@ -141,10 +141,10 @@ const router = createBrowserRouter([
                 path: ':idUsuario/ppts/:idPpt/editarPPT',
                 element: <EditarPPT />
             },
-            {
-                path: ':idUsuario/servidores/:idServidor/editarServidor',
-                element: <CadastroServidor />
-            },
+            // {
+            //     path: ':idUsuario/servidores/:idServidor/editarServidor',
+            //     element: <CadastroServidor />
+            // },
             
         ]
         // Adicionar outros caminhos que vão derivar da tela de home após autenticação
