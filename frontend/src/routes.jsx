@@ -45,6 +45,7 @@ import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
 import ListarPPT from './pages/base/Gestao/listarPPT/ListarPPT'
 import ListarPEDEMI from './pages/base/Gestao/listarPED_EMI/ListarPED_EMI'
 import ListarPEDProEJA from './pages/base/Gestao/listarPED_ProEJA/ListarPED_ProEJA'
+import ListarPEDProEJAProfessor from './pages/base/Professor/listarPED_ProEJAProfessor/ListarPED_ProEJAProfessor'
 
 const router = createBrowserRouter([
     {
@@ -177,11 +178,27 @@ const router = createBrowserRouter([
                 element: <PerfilProfessor />
             },
             {
-                path: ':idUsuario/minhasPeds-EMI/',
+                path: ':idUsuario/peds-emi/',
                 element: <ListarPEDEMIProfessor />
             },
             {
-                path: ':idUsuario/ped/:pedId/planoEstudos',
+                path: ':idUsuario/peds-proeja/',
+                element: <ListarPEDProEJAProfessor />
+            },
+            {
+                path: ':idUsuario/peds-emi/:pedId',
+                element: <CadastroPED />
+            },
+            {
+                path: ':idUsuario/peds-proeja/:pedId',
+                element: <CadastroPED />
+            },
+            {
+                path: ':idUsuario/peds-emi/:pedId/planoEstudos',
+                element: <PlanoEstudos />
+            },
+            {
+                path: ':idUsuario/peds-proeja/:pedId/planoEstudos',
                 element: <PlanoEstudos />
             },
             {
