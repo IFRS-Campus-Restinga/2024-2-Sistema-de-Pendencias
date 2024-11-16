@@ -43,7 +43,38 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
         )
         
         return ped_instance
+    
+    def update(self, instance, validated_data):
+        # Obter as chaves primárias (IDs) das entidades relacionadas
+        aluno_id = validated_data.get('aluno_id', None).id
+        professor_ped_id = validated_data.get('professor_ped_id', None).id
+        professor_disciplina_id = validated_data.get('professor_disciplina_id', None).id
+        curso_id = validated_data.get('curso_id', None).id
+        disciplina_id = validated_data.get('disciplina_id', None).id
 
+        # Atualizar os campos com as chaves primárias
+        if aluno_id:
+            instance.aluno = UsuarioBase.objects.get(id=aluno_id)
+        if professor_ped_id:
+            instance.professor_ped = UsuarioBase.objects.get(id=professor_ped_id)
+        if professor_disciplina_id:
+            instance.professor_disciplina = UsuarioBase.objects.get(id=professor_disciplina_id)
+        if curso_id:
+            instance.curso = Curso.objects.get(id=curso_id)
+        if disciplina_id:
+            instance.disciplina = Disciplina.objects.get(id=disciplina_id)
+
+        # Atualizar os outros campos que não são chaves primárias
+        for attr, value in validated_data.items():
+            if attr.endswith('_id'):  # Ignorar campos com _id, pois já foram tratados
+                continue
+            setattr(instance, attr, value)
+
+        # Salvar a instância atualizada
+        instance.full_clean()
+        instance.save()
+        
+        return instance
     
     def get_aluno(self, obj):
         if obj.aluno and hasattr(obj, 'aluno'):
@@ -95,12 +126,14 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
     
         if retornar_ids:
             # Substitui os nomes/valores pelas IDs das instâncias relacionadas
-            representation['aluno'] = instance.aluno.id if instance.aluno else None
-            representation['professor_disciplina'] = instance.professor_disciplina.id if instance.professor_disciplina else None
-            representation['professor_ped'] = instance.professor_ped.id if instance.professor_ped else None
-            representation['curso'] = instance.curso.id if instance.curso else None
-            representation['disciplina'] = instance.disciplina.id if instance.disciplina else None
-            representation['turma_origem'] = instance.turma_origem.id if instance.turma_origem else None
+            representation['aluno_id'] = instance.aluno.id if instance.aluno else None
+            representation['professor_disciplina_id'] = instance.professor_disciplina.id if instance.professor_disciplina else None
+            representation['professor_ped_id'] = instance.professor_ped.id if instance.professor_ped else None
+            representation['curso_id'] = instance.curso.id if instance.curso else None
+            representation['disciplina_id'] = instance.disciplina.id if instance.disciplina else None
+
+            for field in ['aluno', 'professor_ped', 'professor_disciplina', 'curso', 'disciplina', 'plano_estudos', 'form_encerramento', 'data_criacao', 'data_inicio', 'data_final', 'nota_final', ]:
+                representation.pop(field, None)
         else:
             for field in ['aluno_id', 'professor_ped_id', 'professor_disciplina_id', 'curso_id', 'disciplina_id', 'plano_estudos', 'form_encerramento', 'data_criacao']:
                 representation.pop(field, None)

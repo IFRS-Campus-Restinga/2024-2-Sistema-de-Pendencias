@@ -141,11 +141,19 @@ const router = createBrowserRouter([
                 path: ':idUsuario/ppts/:idPpt/editarPPT',
                 element: <EditarPPT />
             },
-            // {
-            //     path: ':idUsuario/servidores/:idServidor/editarServidor',
-            //     element: <CadastroServidor />
-            // },
-            
+            {
+                path: ':idUsuario/peds-emi/:pedId',
+                element: <CadastroPED />
+            },
+            {
+                path: ':idUsuario/peds-proeja/:pedId',
+                element: <CadastroPED />
+            },
+            {
+                path: ':idUsuario/servidores/:idServidor/editarServidor',
+                element: <CadastroServidor />
+            },
+
         ]
         // Adicionar outros caminhos que vão derivar da tela de home após autenticação
 

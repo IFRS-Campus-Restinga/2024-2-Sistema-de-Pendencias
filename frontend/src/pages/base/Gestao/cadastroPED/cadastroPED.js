@@ -14,10 +14,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faL, faLock } from "@fortawesome/free-solid-svg-icons";
 
 const CadastroPED = () => {
-  const formRef = useRef()
   const location = useLocation()
   const {state} = location.state || {}
-  const [modalidade, setModalidade] = useState(state ? state.serie_progressao ? 'Inetegrado' : 'ProEJA' : 'Integrado')
+  const [modalidade, setModalidade] = useState(state ? state.serie_progressao ? 'Integrado' : 'ProEJA' : 'Integrado')
   const [cursos, setCursos] = useState([])
   const [disciplinas, setDisciplinas] = useState([])
   const [turmas, setTurmas] = useState([])
@@ -35,6 +34,18 @@ const CadastroPED = () => {
     trimestre_recuperar: '',
     observacao: '',
   });
+
+  const [dadosFormEdicao, setDadosFormEdicao] = useState({
+    aluno: '',
+    professor_ped: '',
+    professor_disciplina: '',
+    curso: '',
+    disciplina: '',
+    turma_origem: '',
+    ano_semestre_reprov: '',
+    serie_progressao: '',
+    trimestre_recuperar: '',
+  })
 
   const serieProgressao = ['1º Ano', '2º Ano','3º Ano','4º Ano']
 
@@ -58,21 +69,18 @@ const CadastroPED = () => {
         ...formData,
         trimestre_recuperar: novoTrimestre.join(', '),
     });
+
+    setDadosFormEdicao({...dadosFormEdicao, trimestre_recuperar: novoTrimestre.join(', ')})
   };
 
   const verificaTrimestres = (trimestre) => {
-    if (state) {
-      if (modalidade === 'Integrado') {
-        return state.trimestre_recuperar.includes(trimestre)
-      }
-    }
-
-    return false
+      if (modalidade === 'Integrado') return formData.trimestre_recuperar.includes(trimestre)
   }
 
   const trocaModalidade = (novoValor) => {
     if (!state) {
       setModalidade(novoValor);
+  
       if (novoValor === 'Integrado') {
         setFormData({
           aluno_id: '',
@@ -81,6 +89,18 @@ const CadastroPED = () => {
           curso_id: '',
           disciplina_id: '',
           turma_origem_id: '',
+          serie_progressao: '',
+          trimestre_recuperar: '',
+          observacao: '',
+        })
+  
+        setDadosFormEdicao({
+          aluno: '',
+          professor_ped: '',
+          professor_disciplina: '',
+          curso: '',
+          disciplina: '',
+          turma_origem: '',
           serie_progressao: '',
           trimestre_recuperar: '',
           observacao: '',
@@ -94,6 +114,16 @@ const CadastroPED = () => {
           disciplina_id: '',
           ano_semestre_reprov: '',
           observacao: ''
+        })
+  
+        setDadosFormEdicao({
+          aluno: '',
+          professor_ped: '',
+          professor_disciplina: '',
+          curso: '',
+          disciplina: '',
+          ano_semestre_reprov: '',
+          observacao: '',
         })
       }
     }
@@ -117,17 +147,30 @@ const CadastroPED = () => {
       setErrors(erros)
     } else {
       try {
-        if (modalidade === 'Integrado') {
-          const res = await PEDService.create_EMI(formData)
+        if (state) {
+          // verifica se já existe um state, para chamar a view de edição
+          if (modalidade === 'Integrado') {
+            const res = await PEDService.atualizar_EMI(formData, state.id)
 
-          if (res.status !== 201) throw new Error(res)
+            if (res.status !== 200) throw new Error(res)
+          } else {
+            const res = await PEDService.atualizar_ProEJA(formData, state.id)
+
+            if (res.status !== 200) throw new Error(res)
+          }
         } else {
-          const res = await PEDService.create_ProEJA(formData)
-
-          if (res.status !== 201) throw new Error(res)
+          if (modalidade === 'Integrado') {
+            const res = await PEDService.create_EMI(formData)
+  
+            if (res.status !== 201) throw new Error(res)
+          } else {
+            const res = await PEDService.create_ProEJA(formData)
+  
+            if (res.status !== 201) throw new Error(res)
+          }
         }
       
-        toast.success("Dependência cadastrada com sucesso!", {
+        toast.success(state ? "Dependência atualizada com sucesso" : "Dependência Cadastrada com sucesso", {
           position: "bottom-center",
           autoClose: 3000,
           style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
@@ -147,8 +190,19 @@ const CadastroPED = () => {
           ano_semestre_reprov: '',
         })
 
-        formRef.current.reset()
-
+        setDadosFormEdicao({
+          aluno: '',
+          curso: '',
+          disciplina: '',
+          observacao: '',
+          professor_disciplina: '',
+          professor_ped: '',
+          serie_progressao: '',
+          trimestre_recuperar: '',
+          turma_origem: '',
+          ano_semestre_reprov: ''
+        })
+      
         setErrors({})
 
       } catch (error) {
@@ -181,7 +235,7 @@ const CadastroPED = () => {
 
   const fetchPED = async (pedId) => {
     try {
-      const res = await PEDService.porId(pedId)
+      const res = await PEDService.porId(pedId, modalidade)
 
       if (res.status !== 200) throw new Error(res)
 
@@ -204,6 +258,31 @@ const CadastroPED = () => {
   useEffect(() => {
     if (state) {
       fetchPED(state.id)
+      setDadosFormEdicao(state)
+    } else {
+      setFormData({
+        aluno_id: '',
+        professor_ped_id: '',
+        professor_disciplina_id: '',
+        curso_id: '',
+        disciplina_id: '',
+        turma_origem_id: '',
+        serie_progressao: '',
+        trimestre_recuperar: '',
+        observacao: '',
+      })
+
+      setDadosFormEdicao({
+        aluno: '',
+        professor_ped: '',
+        professor_disciplina: '',
+        disciplina: '',
+        ano_semestre_reprov: '',
+        curso: '',
+        serie_progressao: '',
+        trimestre_recuperar: '',
+        turma_origem: '',
+      })
     }
 
     fetchCursos()
@@ -212,7 +291,7 @@ const CadastroPED = () => {
   return (
     <>
       <ToastContainer/>
-      <FormContainer onSubmit={handleSubmit} titulo={state ? 'Editar PED' : 'Cadastro PED'} ref={formRef}>
+      <FormContainer onSubmit={handleSubmit} titulo={state ? 'Editar PED' : 'Cadastro PED'}>
         {Object.keys(errors).length === 0 ? (<></>) : (<p style={{color: 'red'}}>*Preencha os campos obrigatórios</p>)}
         <span className="spanCadastroPED">
           <p className="pCadastroPED"> 
@@ -236,8 +315,10 @@ const CadastroPED = () => {
                       <Input
                         tipo='text'
                         nome='aluno'
-                        valor={state?.aluno || ''}
+                        valor={dadosFormEdicao.aluno}
                         onChange={(e) => {
+                          setDadosFormEdicao({...dadosFormEdicao, aluno: e.target.value})
+
                           fetchAlunos(e)
                           
                           if (opcoesAlunos) {
@@ -270,8 +351,10 @@ const CadastroPED = () => {
                     <Input
                       tipo='text'
                       nome='professor'
-                      valor={state?.professor_ped || ''}
+                      valor={dadosFormEdicao.professor_ped}
                       onChange={(e) => {
+                        setDadosFormEdicao({...dadosFormEdicao, professor_ped: e.target.value})
+
                         fetchProfessores(e)
                         
                         if (opcoesProfessores) {
@@ -303,8 +386,10 @@ const CadastroPED = () => {
                     <Input
                       tipo='text'
                       nome='professor'
-                      valor={state?.professor_disciplina || ''}
+                      valor={dadosFormEdicao.professor_disciplina}
                       onChange={(e) => {
+                        setDadosFormEdicao({...dadosFormEdicao, professor_disciplina: e.target.value})
+
                         fetchProfessores(e)
                         
                         if (opcoesProfessores) {
@@ -351,23 +436,30 @@ const CadastroPED = () => {
                 <div className="divCadastroPED">
                   <label className="labelCadastroPED">
                     Curso *
-                    <select className={errors.curso ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="curso" onChange={(e) => {        
-                        setFormData({...formData, curso_id: Number(e.target.value)})
-
+                    <select className={errors.curso ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="curso"
+                      value={dadosFormEdicao.curso}
+                      onChange={(e) => {
+                        setDadosFormEdicao({...dadosFormEdicao, curso: e.target.value})        
+                        
                         const cursoId = e.target.value;
-                    
+                        
                         const curso = cursos.find(curso => curso.id === Number(cursoId)); // Encontra o curso correspondente
-                    
+                        
                         if (curso) {
+                          setFormData({...formData, curso_id: Number(e.target.value)})
                           setDisciplinas(curso.disciplinas);
                           setTurmas(curso.turmas)
                         }
                       }
                     }>
-                      <option className="optionCadastroPED" value=''>{state?.curso ? state.curso : 'Selecione um curso'}</option>
+                      {
+                        !state ? (
+                          <option className="optionCadastroPED" value=''>{'Selecione um curso'}</option>
+                        ) : (<></>)
+                      }
                       {
                         cursos.map((curso, index) => (
-                          <option className="optionCadastroPED" value={curso.id} id={index}>{curso.nome}</option>
+                          <option className="optionCadastroPED" value={curso.id} key={index}>{curso.nome}</option>
                         ))
                       }
                     </select>
@@ -375,12 +467,19 @@ const CadastroPED = () => {
                   <label className="labelCadastroPED">
                     Disciplina *
                     <select className={errors.disciplina ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
-                      onChange={(e) => setFormData({...formData, disciplina_id: Number(e.target.value)})}
+                      value={dadosFormEdicao.disciplina}
+                      onChange={(e) => {
+                        setDadosFormEdicao({...dadosFormEdicao, disciplina: e.target.value})        
+                        setFormData({...formData, disciplina_id: Number(e.target.value)})}}
                     >
-                      <option className="optionCadastroPED" value=''>{state?.disciplina ? state.disciplina : 'Selecione uma disciplina'}</option>
                       {
-                        disciplinas.map((disciplina) => (
-                          <option className="optionCadastroPED" value={disciplina.id}>{disciplina.nome}</option>
+                        !state ? (
+                          <option className="optionCadastroPED" value=''>{'Selecione uma disciplina'}</option>
+                        ) : (<></>)
+                      }
+                      {
+                        disciplinas.map((disciplina, index) => (
+                          <option className="optionCadastroPED" value={disciplina.id} key={index}>{disciplina.nome}</option>
                         ))
                       }
                     </select>
@@ -391,14 +490,22 @@ const CadastroPED = () => {
                   Série da Progressão *
                   <select
                     className={errors.serie_progressao || errors.turma_serie ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
-                    onChange={(e) => setFormData({ ...formData, serie_progressao: e.target.value })}
+                    value={dadosFormEdicao.serie_progressao}
+                    onChange={(e) => {
+                      setDadosFormEdicao({...dadosFormEdicao, serie_progressao: e.target.value})        
+                      setFormData({ ...formData, serie_progressao: e.target.value })
+                    }}
                   >
-                    <option value="">{state?.serie_progressao ? state.serie_progressao : 'Selecione a série/ano da progressão'}</option>
-                    {serieProgressao.map((serie, index) => (
-                      <option key={index} value={serie}>
-                        {serie}
-                      </option>
-                    ))}
+                      {
+                        !state ? (
+                          <option className="optionCadastroPED" value=''>{'Selecione uma serie para progressão'}</option>
+                        ) : (<></>)
+                      }
+                      {
+                        serieProgressao.map((serie, index) => (
+                          <option className="optionCadastroPED" value={serie.id} key={index}>{serie}</option>
+                        ))
+                      }
                   </select>
                   {errors.turma_serie ? <p style={{color: 'red', fontSize: '10px'}}>{errors.turma_serie}</p> : <></>}
                 </label>
@@ -406,29 +513,39 @@ const CadastroPED = () => {
                   Turma Origem *
                   <select
                     className={errors.turma_origem || errors.turma_serie ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
-                    onChange={(e) => setFormData({ ...formData, turma_origem_id: Number(e.target.value) })}
+                    value={dadosFormEdicao.turma_origem}
+                    onChange={(e) => {
+                      setDadosFormEdicao({...dadosFormEdicao, turma_origem: e.target.value})          
+                      setFormData({ ...formData, turma_origem_id: Number(e.target.value) })
+                    }}
                   >
-                    <option value="">{state?.turma_origem ? state.turma_origem : 'Selecione a turma de origem'}</option>
-                    {turmas.map((turma, index) => (
-                      <option key={index} value={turma.id}>
-                        {turma.numero}
-                      </option>
-                    ))}
+                      {
+                        !state ? (
+                          <option className="optionCadastroPED" value=''>{'Selecione uma turma'}</option>
+                        ) : (<></>)
+                      }
+                      {
+                        turmas.map((turma, index) => (
+                          <option className="optionCadastroPED" value={turma.id} key={index}>{turma.numero}</option>
+                        ))
+                      }
                   </select>
                   {errors.turma_serie ? <p style={{color: 'red', fontSize: '10px'}}>{errors.turma_serie}</p> : <></>}
                 </label>
                 </div>
               </section>
             </>
-          ) : (
+            ) : (
             <>
               <label className="labelCadastroPED">
               Aluno *
                 <Input
                   tipo='text'
                   nome='aluno'
-                  valor={state?.aluno || ''}
+                  valor={dadosFormEdicao.aluno}
                   onChange={(e) => {
+                    setDadosFormEdicao({...dadosFormEdicao, aluno: e.target.value})
+
                     fetchAlunos(e)
                     
                     if (opcoesAlunos) {
@@ -438,8 +555,7 @@ const CadastroPED = () => {
                       const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || aluno.matricula || aluno.email)
     
                       if (aluno) setFormData({...formData, aluno_id: aluno.id})
-                    }
-    
+                    }    
                   }}
                   erro={errors.aluno}
                   textoAjuda='Insira nome ou matrícula do aluno'
@@ -461,8 +577,9 @@ const CadastroPED = () => {
                     <Input
                       tipo='text'
                       nome='professor'
-                      valor={state?.professor_ped || ''}
+                      valor={dadosFormEdicao.professor_ped}
                       onChange={(e) => {
+                        setDadosFormEdicao({...dadosFormEdicao, professor_ped: e.target.value})
                         fetchProfessores(e)
                         
                         if (opcoesProfessores) {
@@ -494,8 +611,9 @@ const CadastroPED = () => {
                 <Input
                   tipo='text'
                   nome='professor'
-                  valor={state?.professor_disciplina || ''}
+                  valor={dadosFormEdicao.professor_disciplina}
                   onChange={(e) => {
+                    setDadosFormEdicao({...formData, professor_disciplina: e.target.value})
                     fetchProfessores(e)
                     
                     if (opcoesProfessores) {
@@ -524,35 +642,50 @@ const CadastroPED = () => {
               </datalist>
               <label className="labelCadastroPED">
                 Curso *
-                <select className={errors.curso ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="curso" onChange={(e) => {        
-                    setFormData({...formData, curso_id: Number(e.target.value)})
+                <select className={errors.curso ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="curso" 
+                    value={dadosFormEdicao.curso}
+                    onChange={(e) => {
+                    setDadosFormEdicao({...dadosFormEdicao, curso: e.target.value})        
 
                     const cursoId = e.target.value;
-                
+                  
                     const curso = cursos.find(curso => curso.id === Number(cursoId)); // Encontra o curso correspondente
-                
+                    console.log(curso)
+
                     if (curso) {
+                      setFormData({...formData, curso_id: Number(e.target.value)})
                       setDisciplinas(curso.disciplinas);
                     }
                   }
                 }>
-                      <option className="optionCadastroPED" value=''>{state?.curso ? state.curso : 'Selecione um curso'}</option>
+                  {
+                        !state ? (
+                          <option className="optionCadastroPED" value=''>{'Selecione um curso'}</option>
+                        ) : (<></>)
+                      }
                       {
-                    cursos.map((curso, index) => (
-                      <option className="optionCadastroPED" value={curso.id} id={index}>{curso.nome}</option>
-                    ))
-                  }
+                        cursos.map((curso, index) => (
+                          <option className="optionCadastroPED" value={curso.id} key={index}>{curso.nome}</option>
+                        ))
+                      }
                 </select>
               </label>
               <label className="labelCadastroPED">
                 Disciplina *
                 <select className={errors.disciplina ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
-                  onChange={(e) => setFormData({...formData, disciplina_id: Number(e.target.value)})}
+                  value={dadosFormEdicao.disciplina}
+                  onChange={(e) => {
+                    setDadosFormEdicao({...dadosFormEdicao, disciplina: e.target.value})        
+                    setFormData({...formData, disciplina_id: Number(e.target.value)})}}
                 >
-                      <option className="optionCadastroPED" value=''>{state?.disciplina ? state.disciplina : 'Selecione uma disciplina'}</option>
-                      {
-                    disciplinas.map((disciplina) => (
-                      <option className="optionCadastroPED" value={disciplina.id}>{disciplina.nome}</option>
+                  {
+                    !state ? (
+                      <option className="optionCadastroPED" value=''>{'Selecione uma disciplina'}</option>
+                    ) : (<></>)
+                  }
+                  {
+                    disciplinas.map((disciplina, index) => (
+                      <option className="optionCadastroPED" value={disciplina.id} key={index}>{disciplina.nome}</option>
                     ))
                   }
                 </select>
@@ -561,8 +694,10 @@ const CadastroPED = () => {
                 Ano/Semestre de Reprovação *
                 <Input
                   type='text'
-                  onChange={(e) => setFormData({...formData, ano_semestre_reprov: e.target.value})}
-                  valor={state?.ano_semestre_reprov || ''}
+                  onChange={(e) => {
+                    setFormData({...formData, ano_semestre_reprov: e.target.value})
+                }}
+                  valor={formData.ano_semestre_reprov}
                   erro={errors.ano_semestre_reprov}
                   textoAjuda='Insira no formato Ano/Semestre - xxxx/x'
                 />
@@ -574,7 +709,10 @@ const CadastroPED = () => {
           Observação (opcional)
           <textarea
             className="textAreaCadastroPED"
-            onChange={(e) => setFormData({...formData, observacao: e.target.value})}
+            onChange={(e) => {
+
+              setFormData({...formData, observacao: e.target.value})
+            }}
             name="observacao"
             value={formData.observacao}
             placeholder="Caso haja alguma observação sobre o aluno, insira aqui"

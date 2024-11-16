@@ -25,8 +25,8 @@ export const PEDService = {
     return res
   },
 
-  porId: async (pedId) => {
-    const res = await api.get(`api/ped/${pedId}/`, {
+  porId: async (pedId, modalidade) => {
+    const res = await api.get(`api/ped/${pedId}/${modalidade}`, {
       params: {
         retornar_ids: true
       }
@@ -47,6 +47,22 @@ export const PEDService = {
 
   listaProEJA: async (professorId) => {
     const res = await api.get(`api/ped-proeja/?professorId=${professorId}`).catch((erro) => {
+      return erro
+    })
+
+    return res
+  },
+
+  atualizar_EMI: async (params, pedId) => {
+    const res = await api.post(`api/atualizar-emi/${pedId}/`, params).catch((erro) => {
+      return erro
+    })
+
+    return res
+  },
+
+  atualizar_ProEJA: async (params, pedId) => {
+    const res = await api.post(`api/atualizar-proeja/${pedId}/`, params).catch((erro) => {
       return erro
     })
 

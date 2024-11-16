@@ -21,12 +21,17 @@ const CadastroCurso = () => {
   const [modalidade, setModalidade] = useState(curso ? curso.modalidade : 'Integrado');
   const [opcoesCoordenadores, setOpcoesCoordenadores] = useState([]);
   const [formData, setFormData] = useState({
-    nome: curso?.nome || '',
-    carga_horaria: curso?.carga_horaria || '',
-    modalidade: curso?.modalidade || modalidade,
-    coordenador: curso?.coordenador?.nome || curso?.coordenador?.email || '',  // Ajuste para coordenador
-    turmas: curso?.turmas || []  // Garantir que seja um array
+    nome: '',
+    carga_horaria: '',
+    modalidade: modalidade,
+    coordenador: '',  // Ajuste para coordenador
+    turmas: []  // Garantir que seja um array
   });
+
+  const [dadosFormEdicao, setDadosFormEdicao] = useState({
+    coordenador: '',
+  })
+
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
 
@@ -34,20 +39,22 @@ const CadastroCurso = () => {
     if (curso) {
       setModalidade(curso.modalidade);
       setFormData({
-        ...formData,
         modalidade: curso.modalidade,
         nome: curso.nome,
         carga_horaria: curso.carga_horaria,
-        coordenador: curso.coordenador?.nome || curso.coordenador?.email || '',  // Garantindo que o coordenador seja um valor simples
+        coordenador: curso.coordenador.id,  // Garantindo que o coordenador seja um valor simples
         turmas: curso.turmas || []  // Garantir que turmas seja um array
       });
+      setDadosFormEdicao({
+        coordenador: curso.coordenador.email
+      })
     }
   }, [curso]);
 
   const trocaModalidade = (novoValor) => {
     setModalidade(novoValor);
     setFormData({
-      ...formData,
+      nome: '',
       modalidade: novoValor,
       carga_horaria: '',
       coordenador: '',  // Não limpar o coordenador aqui, para preservar o valor
@@ -69,23 +76,6 @@ const CadastroCurso = () => {
       console.error('Erro ao buscar coordenadores: ', error);
       setOpcoesCoordenadores([]);  // Garantir que seja um array vazio em caso de erro
     }
-  };
-
-  // Função chamada quando o valor do campo coordenador muda
-  const handleCoordenadorChange = (e) => {
-    const valor = e.target.value;
-    setFormData({ ...formData, coordenador: valor });
-    // Buscar coordenadores sempre que o campo mudar
-    fetchCoordenadores(e);
-  };
-
-  // Função chamada quando o coordenador é selecionado
-  const handleCoordenadorSelect = (coordenador) => {
-    setFormData({
-      ...formData,
-      coordenador: coordenador.nome || coordenador.email  // Atualiza com o nome ou e-mail selecionado
-    });
-    setOpcoesCoordenadores([]);  // Limpar as opções depois de selecionar
   };
 
   const handleSubmit = async (e) => {
@@ -213,27 +203,38 @@ const CadastroCurso = () => {
 
         <label className="labelCadastroCurso">
           Coordenador
-          <Input
-            tipo='text'
-            nome='coordenador'
-            onChange={handleCoordenadorChange}
-            onBlur={() => handleBlur('coordenador')}
-            erro={errors.coordenador}
-            valor={curso?.coordenador?.email}
-            textoAjuda='Insira nome ou email do coordenador'
-            list="opcoesCoordenadores"
-          />
+            <Input
+              tipo='text'
+              nome='coordenador'
+              valor={dadosFormEdicao.coordenador}
+              onChange={(e) => {
+                setDadosFormEdicao({...dadosFormEdicao, coordenador: e.target.value})
+                fetchCoordenadores(e)
+                
+                if (opcoesCoordenadores) {
+                  const param = e.target.value
+                  console.log(e.target.value)
+
+                  const coordenador = opcoesCoordenadores.find((coordenador) => param === coordenador.nome || coordenador.matricula|| coordenador.email)
+
+                  if (coordenador) setFormData({...formData, coordenador: coordenador.id})
+                }
+
+              }}
+              erro={errors.coordenador}
+              textoAjuda='Insira email do coordenador'
+              lista={'opcoesCoordenadores'}
+            />
         </label>
-        <datalist id="opcoesCoordenadores">
-          {opcoesCoordenadores.length > 0 ? (
-            opcoesCoordenadores.map((coordenador) => (
-              <option key={coordenador.id} value={coordenador.nome || coordenador.email} onClick={() => handleCoordenadorSelect(coordenador)}>
-                {coordenador.nome || coordenador.email}
+        <datalist className="datalistCadastroPED" id="opcoesCoordenadores">
+          {
+            opcoesCoordenadores ? (opcoesCoordenadores.map((coordenador) => (
+              <option className="optionCadastroPED" 
+                value={coordenador.email}>
+                  {coordenador.email}
               </option>
-            ))
-          ) : (
-            <option>Nenhum coordenador encontrado</option>
-          )}
+            ))) : (<option>Nenhum aluno encontrado</option>)
+          }
         </datalist>
         {errors.coordenador && <p className="error">{errors.coordenador}</p>}
 

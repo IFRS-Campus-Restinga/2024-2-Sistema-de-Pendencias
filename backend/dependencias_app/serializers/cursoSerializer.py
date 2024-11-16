@@ -10,7 +10,7 @@ from dependencias_app.serializers.turmaSerializer import TurmaSerializer
 class CursoSerializer(serializers.ModelSerializer):
     turmas = TurmaSerializer(many=True)  # Removido read_only=True
     disciplinas = DisciplinaSerializer(many=True)  # Removido read_only=True
-    coordenador = UsuarioBaseSerializer()  # Representação completa do coordenador
+    coordenador = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Coordenador'))  # Representação completa do coordenador
 
     class Meta:
         model = Curso
