@@ -12,13 +12,13 @@ import { usuarioBaseService } from '../../../../services/usuarioBaseService';
 const CadastroServidor = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { servidor } = location.state || {};  // Recupera os dados do servidor passados via navegação
-    console.log(servidor);
+    const { state } = location.state || {};  // Recupera os dados do servidor passados via navegação
+    console.log(state);
     const [formData, setFormData] = useState({
-        grupo: servidor?.grupo || 'Professor',  // Usa dados do servidor se estiverem disponíveis
-        email: servidor?.email || '',
+        grupo: state?.grupo || 'Professor',  // Usa dados do servidor se estiverem disponíveis
+        email: state?.email || '',
     });
-    const [isEditing, setIsEditing] = useState(!!servidor); // Define se é edição ou cadastro
+    const [isEditing, setIsEditing] = useState(!!state); // Define se é edição ou cadastro
     const [errors, setErrors] = useState({});
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const [grupos, setGrupos] = useState([])
@@ -45,16 +45,16 @@ const CadastroServidor = () => {
 
     useEffect(() => {
         fetchGrupos()
-        if (servidor) {
+        if (state) {
             setIsEditing(true);
             setFormData({
-                grupo: servidor.grupo,
-                email: servidor.email,
+                grupo: state.grupo,
+                email: state.email,
             });
         } else {
             setIsEditing(false); // Se não há servidor, é um cadastro novo
         }
-    }, [servidor]);
+    }, [state]);
 
     const enviarHandler = async (e) => {
         e.preventDefault();
@@ -75,7 +75,7 @@ const CadastroServidor = () => {
             try {
                 if (isEditing) {
                     // Atualiza o servidor existente
-                    const response = await servidorService.editar(servidor.id, dataToSend);
+                    const response = await servidorService.editar(state.id, dataToSend);
                     console.log("Response:", response);
 
                     if (response) {
