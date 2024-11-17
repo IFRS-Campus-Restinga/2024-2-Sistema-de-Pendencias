@@ -25,9 +25,9 @@ const CadastroServidor = () => {
 
     const grupoMap = {
         // ID de cada grupo (de acordo com o auth.group)
-        'GestaoEscolar': 1,
+        'Gestão Escolar': 1,
         'Coordenador': 3,
-        'RegistroEscolar': 4,
+        'Registro Escolar': 4,
         'Professor': 5,
     };
 
@@ -93,7 +93,7 @@ const CadastroServidor = () => {
                         });
                         setErrors({}); // Limpar os erros também
 
-                        navigate(`/sessao/GestaoEscolar/2/listaServidor`);
+                        navigate(`/sessao/Gestão Escolar/2/servidores`);
 
                     } else {
                         throw new Error('Erro ao editar o servidor');

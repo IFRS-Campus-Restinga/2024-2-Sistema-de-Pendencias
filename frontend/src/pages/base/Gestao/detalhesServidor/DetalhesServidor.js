@@ -20,7 +20,7 @@ const DetalhesServidor = () => {
     };
 
     return (
-        <FormContainer comprimento="50%" titulo={"Detalhes do Servidor"}>
+        <FormContainer comprimento="70%" titulo={"Detalhes do Servidor"}>
             <p className="detalhe-servidor"><strong>Status:</strong> {state.ativo}</p>
             <p className="detalhe-servidor"><strong>Nome:</strong> {state.nome}</p>
             <p className="detalhe-servidor"><strong>Email:</strong> {state.email}</p>
