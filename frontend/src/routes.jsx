@@ -22,9 +22,9 @@ import ListarEventosDoCalendarioPage from './pages/base/Gestao/calendario/calend
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 import DetalhesServidor from './pages/base/Gestao/detalhesServidor/DetalhesServidor'
-import EditarServidor from './pages/base/Gestao/editarServidor/EditarServidor'
 import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
-import EditarPPT from './pages/base/Gestao/editarPPT/editarPPT'
+import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
+import ListarAluno from './pages/base/Gestao/listarAluno/ListarAluno'
 
 // Filhos de Registro
 
@@ -36,14 +36,18 @@ import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfes
 import ListarPEDEMIProfessor from './pages/base/Professor/listarPED_EMI/ListarPED_EMIProfessor'
 import PlanoEstudos from './pages/base/Professor/planoEstudos/planoEstudos'
 import AtividadesDesenvolvidas from './pages/base/Professor/atividadesDesenvolvidas/atividadesDesenvolvidas'
+import AdicionarAtividade from './pages/base/Professor/atividadesDesenvolvidas/adicionarAtividade/adicionarAtividade'
+import DetalhesAtividade from './pages/base/Professor/atividadesDesenvolvidas/detalhesAtividade/detalhesAtividade'
+import DetalhesPEDProfessor from './pages/base/Professor/detalhesPED/DetalhesPEDProfessor'
 
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
-import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
 import ListarPPT from './pages/base/Gestao/listarPPT/ListarPPT'
 import ListarPEDEMI from './pages/base/Gestao/listarPED_EMI/ListarPED_EMI'
 import ListarPEDProEJA from './pages/base/Gestao/listarPED_ProEJA/ListarPED_ProEJA'
+import ListarPEDProEJAProfessor from './pages/base/Professor/listarPED_ProEJAProfessor/ListarPED_ProEJAProfessor'
+import DetalhesPED from './pages/base/Professor/detalhesPED/DetalhesPEDProfessor'
 
 const router = createBrowserRouter([
     {
@@ -137,12 +141,37 @@ const router = createBrowserRouter([
             },
             {
                 path: ':idUsuario/ppts/:idPpt/editarPPT',
-                element: <EditarPPT />
+                element: <CadastroPPT />
+            },
+            {
+                path: ':idUsuario/peds-emi/:pedId',
+                element: <DetalhesPED />
+            },
+            {
+                path: ':idUsuario/peds-proeja/:pedId',
+                element: <DetalhesPED />
+            },
+            {
+                path: ':idUsuario/peds-emi/:pedId/editar',
+                element: <CadastroPED />
+            },
+            {
+                path: ':idUsuario/peds-proeja/:pedId/editar',
+                element: <CadastroPED />
+            },
+            {
+                path: ':idUsario/peds-proeja/:pedId/planoEstudos',
+                element: <PlanoEstudos />
             },
             {
                 path: ':idUsuario/servidores/:idServidor/editarServidor',
                 element: <CadastroServidor />
             },
+            {
+                path: ':idUsuario/alunos',
+                element: <ListarAluno />
+            },
+
         ]
         // Adicionar outros caminhos que vão derivar da tela de home após autenticação
 
@@ -175,17 +204,47 @@ const router = createBrowserRouter([
                 element: <PerfilProfessor />
             },
             {
-                path: ':idUsuario/minhasPeds-EMI/',
+                path: ':idUsuario/peds-emi/',
                 element: <ListarPEDEMIProfessor />
             },
             {
-                path: ':idUsuario/ped/:pedId/planoEstudos',
+                path: ':idUsuario/peds-proeja/',
+                element: <ListarPEDProEJAProfessor />
+            },
+            {
+                path: ':idUsuario/peds-emi/:pedId',
+                element: <DetalhesPEDProfessor />
+            },
+            {
+                path: ':idUsuario/peds-proeja/:pedId',
+                element: <DetalhesPEDProfessor />
+            },
+            {
+                path: ':idUsuario/peds-emi/:pedId/planoEstudos',
                 element: <PlanoEstudos />
             },
             {
-                path: ':idUsuario/atividades/:pedId',
-                element: <AtividadesDesenvolvidas />,
+                path: ':idUsuario/peds-proeja/:pedId/planoEstudos',
+                element: <PlanoEstudos />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId',
+                element: <AtividadesDesenvolvidas />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId/adicionarAtividade',
+                element: <AdicionarAtividade />,
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId/detalhes/:atividadeId',
+                element: <DetalhesAtividade />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId/editarAtividade/:atividadeId',
+                element: <AdicionarAtividade />,
             }
+
+
         ]
     },
     // Rotas de Aluno

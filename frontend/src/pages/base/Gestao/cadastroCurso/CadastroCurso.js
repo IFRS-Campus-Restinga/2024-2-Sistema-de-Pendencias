@@ -16,72 +16,66 @@ const CadastroCurso = () => {
   const formRef = useRef();
   const navigate = useNavigate();
   const location = useLocation();
-  const { cursoId } = location.state || {};  // Pegando o cursoId se presente
+  const { curso } = location.state || {};  // Pegando o cursoId se presente
 
-  const [modalidade, setModalidade] = useState("Integrado");
+  const [modalidade, setModalidade] = useState(curso ? curso.modalidade : 'Integrado');
   const [opcoesCoordenadores, setOpcoesCoordenadores] = useState([]);
   const [formData, setFormData] = useState({
     nome: '',
     carga_horaria: '',
     modalidade: modalidade,
-    coordenador: '',
-    turmas: []
+    coordenador: '',  // Ajuste para coordenador
+    turmas: []  // Garantir que seja um array
   });
+
+  const [dadosFormEdicao, setDadosFormEdicao] = useState({
+    coordenador: '',
+  })
+
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
 
-  // Carregar dados do curso se estiver editando
   useEffect(() => {
-    if (cursoId) {
-      cursoService.getCursoById(cursoId)
-        .then(response => {
-          const curso = response.data;
-          setFormData({
-            nome: curso.nome,
-            carga_horaria: curso.carga_horaria,
-            modalidade: curso.modalidade,
-            coordenador: curso.coordenador.id,  // Presumindo que o coordenador tenha um ID
-            turmas: curso.turmas || []
-          });
-          setModalidade(curso.modalidade);
-        })
-        .catch(error => {
-          console.error("Erro ao carregar dados do curso para edição:", error);
-          toast.error("Erro ao carregar dados do curso.");
-        });
+    if (curso) {
+      setModalidade(curso.modalidade);
+      setFormData({
+        modalidade: curso.modalidade,
+        nome: curso.nome,
+        carga_horaria: curso.carga_horaria,
+        coordenador: curso.coordenador.id,  // Garantindo que o coordenador seja um valor simples
+        turmas: curso.turmas || []  // Garantir que turmas seja um array
+      });
+      setDadosFormEdicao({
+        coordenador: curso.coordenador.email
+      })
     }
-  }, [cursoId]);
+  }, [curso]);
 
   const trocaModalidade = (novoValor) => {
     setModalidade(novoValor);
     setFormData({
-      ...formData,
-      carga_horaria: '',
-      coordenador: '',
-      modalidade: novoValor,
       nome: '',
-      turmas: []
+      modalidade: novoValor,
+      carga_horaria: '',
+      coordenador: '',  // Não limpar o coordenador aqui, para preservar o valor
+      turmas: []  // Limpar as turmas quando mudar a modalidade
     });
-    formRef.current.reset();
   };
 
-  const addTurma = () => {
-    setFormData((prevData) => ({
-      ...prevData,
-      turmas: [...prevData.turmas, { numero: '' }],
-    }));
-  };
-
-  const handleTurmaChange = (index, value) => {
-    const updatedTurmas = formData.turmas.map((turma, i) =>
-      i === index ? { ...turma, numero: value } : turma
-    );
-    setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
-  };
-
-  const removeTurma = (index) => {
-    const updatedTurmas = formData.turmas.filter((_, i) => i !== index);
-    setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
+  // Função para buscar coordenadores com base no valor digitado
+  const fetchCoordenadores = async (e) => {
+    const inputValue = e.target.value;
+    try {
+      if (inputValue.length > 2) { // Começa a buscar quando o usuário digitar 3 caracteres
+        const res = await usuarioBaseService.buscarPorParametro(inputValue, 'Coordenador');
+        setOpcoesCoordenadores(res.data || []);  // Garantir que seja um array vazio em caso de erro ou resposta vazia
+      } else {
+        setOpcoesCoordenadores([]); // Limpa a lista de opções se o campo for muito curto
+      }
+    } catch (error) {
+      console.error('Erro ao buscar coordenadores: ', error);
+      setOpcoesCoordenadores([]);  // Garantir que seja um array vazio em caso de erro
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -89,13 +83,15 @@ const CadastroCurso = () => {
 
     const erros = validarFormularioCurso(formData);
 
+    console.log(erros)
+
     if (Object.keys(erros).length !== 0) {
       setShowErrorMessage(true);
       setErrors(erros);
     } else {
       try {
-        const response = cursoId 
-          ? await cursoService.update(cursoId, formData)  // Atualiza curso se estiver editando
+        const response = curso 
+          ? await cursoService.update(curso.id, formData)  // Atualiza curso se estiver editando
           : await cursoService.create(formData);  // Cria curso se for um novo
 
         if (response.status !== 200 && response.status !== 201) {
@@ -103,7 +99,8 @@ const CadastroCurso = () => {
           throw new Error(errorMessage);
         }
 
-        // Limpa os campos do formulário e estados de erro
+        setModalidade('Integrado')
+
         setFormData({
           nome: '',
           carga_horaria: '',
@@ -115,7 +112,7 @@ const CadastroCurso = () => {
         setErrors({});
         setShowErrorMessage(false);
 
-        toast.success(cursoId ? "Curso editado com sucesso!" : "Curso cadastrado com sucesso!", {
+        toast.success(curso ? "Curso editado com sucesso!" : "Curso cadastrado com sucesso!", {
           position: "bottom-center",
           autoClose: 3000,
           style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
@@ -123,9 +120,7 @@ const CadastroCurso = () => {
         });
 
         formRef.current.reset();
-        if (!cursoId) {
-          navigate('/sessao/GestaoEscolar'); // Redirecionar após criar o curso
-        }
+
       } catch (erro) {
         toast.error(erro.message, {
           position: "bottom-center",
@@ -135,15 +130,6 @@ const CadastroCurso = () => {
         });
         console.error('Erro ao cadastrar ou editar curso!', erro);
       }
-    }
-  };
-
-  const fetchCoordenadores = async (e) => {
-    try {
-      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Coordenador');
-      setOpcoesCoordenadores(res.data);
-    } catch (error) {
-      console.error('Erro ao buscar coordenadores: ', error);
     }
   };
 
@@ -159,10 +145,32 @@ const CadastroCurso = () => {
     }
   };
 
+  // Função para adicionar uma nova turma
+  const addTurma = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      turmas: [...prevData.turmas, { numero: '' }],  // Adiciona uma turma vazia
+    }));
+  };
+
+  // Função para manipular mudança nos números das turmas
+  const handleTurmaChange = (index, value) => {
+    const updatedTurmas = formData.turmas.map((turma, i) =>
+      i === index ? { ...turma, numero: value } : turma
+    );
+    setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
+  };
+
+  // Função para remover uma turma
+  const removeTurma = (index) => {
+    const updatedTurmas = formData.turmas.filter((_, i) => i !== index);
+    setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
+  };
+
   return (
     <>
       <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo={cursoId ? 'Editar Curso' : 'Cadastrar Curso'} comprimento='70%' ref={formRef}>
+      <FormContainer onSubmit={handleSubmit} titulo={curso ? 'Editar Curso' : 'Cadastrar Curso'} comprimento='70%' ref={formRef}>
         {showErrorMessage && <p className="error">* Preencha os campos obrigatórios</p>}
 
         <div className="modalidade-container">
@@ -174,7 +182,7 @@ const CadastroCurso = () => {
           <label htmlFor="nome" className="labelCadastroCurso">Nome</label>
           <Input
             tipo="text"
-            value={formData.nome}
+            valor={formData.nome}
             erro={errors.nome}
             onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
             onBlur={() => handleBlur('nome')}
@@ -187,7 +195,7 @@ const CadastroCurso = () => {
           <label htmlFor="carga_horaria" className="labelCadastroCurso">Carga Horária</label>
           <Input
             tipo='text'
-            value={formData.carga_horaria}
+            valor={formData.carga_horaria}
             erro={errors.carga_horaria}
             onChange={(e) => setFormData({ ...formData, carga_horaria: e.target.value })}
             onBlur={() => handleBlur('carga_horaria')}
@@ -197,34 +205,41 @@ const CadastroCurso = () => {
 
         <label className="labelCadastroCurso">
           Coordenador
-          <Input
-            tipo='text'
-            nome='coordenador'
-            onChange={(e) => {
-              fetchCoordenadores(e);
+            <Input
+              tipo='text'
+              nome='coordenador'
+              valor={dadosFormEdicao.coordenador}
+              onChange={(e) => {
+                setDadosFormEdicao({...dadosFormEdicao, coordenador: e.target.value})
+                fetchCoordenadores(e)
+                
+                if (opcoesCoordenadores) {
+                  const param = e.target.value
+                  console.log(e.target.value)
 
-              if (opcoesCoordenadores) {
-                const param = e.target.value;
-                const coordenador = opcoesCoordenadores.find((coordenador) => param === coordenador.nome || param === coordenador.email);
+                  const coordenador = opcoesCoordenadores.find((coordenador) => param === coordenador.nome || coordenador.matricula|| coordenador.email)
 
-                if (coordenador) setFormData({ ...formData, coordenador: coordenador.id });
-              }
-            }}
-            onBlur={() => handleBlur('coordenador')}
-            erro={errors.coordenador}
-            textoAjuda='Insira nome ou email do coordenador'
-            lista={'opcoesCoordenadores'}
-          />
+                  if (coordenador) setFormData({...formData, coordenador: coordenador.id})
+                }
+
+              }}
+              erro={errors.coordenador}
+              textoAjuda='Insira email do coordenador'
+              lista={'opcoesCoordenadores'}
+            />
         </label>
-        <datalist className="datalistCadastroCurso" id="opcoesCoordenadores">
-          {opcoesCoordenadores ? (opcoesCoordenadores.map((coordenador) => (
-            <option className="optionCadastroCurso"
-              value={coordenador.nome || coordenador.email}>
-              {coordenador.nome || coordenador.email}
-            </option>
-          ))) : (<option>Nenhum coordenador encontrado</option>)}
+        <datalist className="datalistCadastroPED" id="opcoesCoordenadores">
+          {
+            opcoesCoordenadores ? (opcoesCoordenadores.map((coordenador) => (
+              <option className="optionCadastroPED" 
+                value={coordenador.email}>
+                  {coordenador.email}
+              </option>
+            ))) : (<option>Nenhum aluno encontrado</option>)
+          }
         </datalist>
-        <br />
+        {errors.coordenador && <p className="error">{errors.coordenador}</p>}
+
         {modalidade === 'Integrado' && (
           <div className="add-turma">
             <button type="button" onClick={addTurma} className="add-button">
@@ -240,7 +255,7 @@ const CadastroCurso = () => {
                   <thead className="cabecalhoTabelaCadastroCurso">
                     <tr>
                       <th>Número da Turma</th>
-                      <th>Ação</th>
+                      <th>Ações</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -249,22 +264,25 @@ const CadastroCurso = () => {
                         <td>
                           <Input
                             tipo='text'
-                            value={turma.numero}
+                            valor={turma.numero}
                             onChange={(e) => handleTurmaChange(index, e.target.value)}
-                            textoAjuda='Digite o número da turma'
-                            onBlur={() => handleBlur('turmas')}
-                            erro={errors.turmas && errors.turmas[index] ? true : false}
+                            textoAjuda='Ex.: 2023/1 ou 211'
                           />
-                          {errors.turmas && errors.turmas[index] && (
-                            <p className="error">{errors.turmas[index]}</p>
-                          )}
                         </td>
                         <td>
-                          <FontAwesomeIcon
-                            icon={faTrash}
-                            style={{ cursor: "pointer", color: "red", fontSize: "20px" }}
+                          <button
+                            className="botaoRemoverTurma"
                             onClick={() => removeTurma(index)}
-                          />
+                          >
+                            <FontAwesomeIcon
+                              icon={faTrash}
+                              style={{
+                                color: "rgb(205, 68, 59)",
+                                fontSize: "15px",
+                                cursor: "pointer"
+                              }}
+                            />
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -275,7 +293,7 @@ const CadastroCurso = () => {
           </div>
         )}
 
-        <Button tipo='submit' text={cursoId ? 'Salvar Alterações' : 'Cadastrar Curso'} />
+        <Button tipo='submit' text={curso ? 'Salvar Alterações' : 'Cadastrar Curso'} />
       </FormContainer>
     </>
   );

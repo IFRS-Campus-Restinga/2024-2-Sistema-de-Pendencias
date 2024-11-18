@@ -33,7 +33,7 @@ const ListarCalendariosAcademicosPage = () => {
       <h2>Calendários Acadêmicos</h2>
       <div className="calendarios-columns">
         <div className="coluna-integrado">
-          <h3>Integrado</h3>
+          <h3 className='h3CalendariosAcademicos'>Integrado</h3>
           <ul>
             {calendariosIntegrado.map(calendario => (
               <li

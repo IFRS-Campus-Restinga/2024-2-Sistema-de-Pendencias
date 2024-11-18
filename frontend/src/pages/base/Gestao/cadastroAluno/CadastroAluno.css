@@ -1,20 +1,21 @@
-.formContainer {
-  width: 60%;
-}
-
-.containerCadastroAluno {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 60%;
-}
-
 .labelCadastroAluno {
   font-weight: bold;
   margin-bottom: 5px;
   display: block;
   font-size: 15px;
+}
+
+.spanCadastroAluno {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.pCadastroAluno {
+  font-weight: 600;
+  font-size: 15px;
+  margin-left: 10px;
+  width: 70%;
 }
 
 .erros {

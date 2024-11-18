@@ -1,0 +1,27 @@
+.formContainer {
+    width: 90%;
+}
+
+.containerButton {
+    display: flex;
+    justify-content: center;
+    margin-top: 45px;
+}
+
+.tabelaContainerListarAluno {
+    width: 100%;
+    max-height: 250px;
+    overflow-y: scroll;
+    max-width: 100%;
+    overflow-x: scroll;
+}
+
+.spanListarAluno {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    align-self: center;
+    width: 100%;
+}

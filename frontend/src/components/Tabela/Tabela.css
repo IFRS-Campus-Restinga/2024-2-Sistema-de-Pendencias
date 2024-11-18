@@ -1,6 +1,13 @@
+.divContainerTabela {
+    width: 100%;
+    max-width: 100%;
+    max-height: 350px;
+    overflow: scroll;
+}
+
 .icone-ordenar {
-    max-width: 14%;
-    max-height: 5%;
+    width: 15px;
+    height: 15px
 }
 
 .textoCelula {
@@ -8,6 +15,19 @@
     align-items: center;
     justify-content: center;
     width: 100%;
+}
+
+.divTabela {
+    display: flex;
+    width: 100%;
+    background-color: #006b3f;
+    color: white;
+    padding: 10px;
+    justify-content: center;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 10px;
+    margin-top: 15px;
 }
 
 .iconeAcoes {
@@ -21,7 +41,6 @@
     width: 100%;
     max-height: 350px;
     border-collapse: collapse;
-    table-layout: fixed;
     overflow: scroll;
 
     .th-ordenar {
@@ -29,15 +48,15 @@
         align-items: center;
     }
 
-    tr:nth-child(even) {
+    .linhaCabecalhoTabela:nth-child(even) {
         background-color: #f9f9f9;
     }
 
-    tr:nth-child(odd) {
+    .linhaCabecalhoTabela:nth-child(odd) {
         background-color: white;
     }
 
-    th {
+    .colunaCabecalhoTabela {
         cursor: pointer;
         background-color: #006b3f;
         color: white;
@@ -49,40 +68,9 @@
         white-space: nowrap;
     }
 
-    th,
-    td {
-        width: 20%;
-        height: fit-content;
-        min-width: min-content;
-        border: 1px solid #ddd;
-        text-align: center;
-        border-left: none;
-        border-right: none;
-        word-wrap: break-word;
+    .colunaCorpoTabela {
         padding: 5px;
-    }
-}
-
-@media (max-width: 1125px) {
-    .tabela {
-
-        th,
-        tr,
-        td {
-            font-size: 10px;
-            width: fit-content;
-            min-width: fit-content;
-            height: 45px;
-        }
-
-        tr {
-            word-wrap: break-word;
-        }
-    }
-
-    .icone-ordenar {
-        min-width: 20px;
-        min-height: 20px;
+        text-align: center;
     }
 }
 

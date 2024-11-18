@@ -30,6 +30,8 @@ def cadastrar_PED_ProEJA(request):
     try:
         data = request.data
 
+        print(data)
+
         serializer = PED_ProEJA_Serializer(data=data)
 
         if not serializer.is_valid(): raise Exception(serializer.error_messages)
@@ -40,34 +42,89 @@ def cadastrar_PED_ProEJA(request):
     except Exception as e:
         return Response({'mensagem: ': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([GestaoEscolar | Professor])
+def listar_PED_EMI(request):
+    try:
+        professorId = request.GET.get('professorId')  # Captura o parâmetro de query da URL
+
+        if  professorId:
+            lista = PED_EMI.objects.filter(professor_ped=professorId)
+        else:
+            lista = PED_EMI.objects.all()
+
+        serializer = PED_EMI_Serializer(lista, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar | Professor])
-def por_id(request, pedId):
+def listar_PED_ProEJA(request):
     try:
-        ped = get_object_or_404(PED_EMI, pk=pedId) or get_object_or_404(PED_ProEJA, pk=pedId)
+        professorId = request.GET.get('professorId')  # Captura o parâmetro de query da URL
 
-        if isinstance(ped, PED_ProEJA): serializer = PED_ProEJA_Serializer(ped)
+        if professorId:
+            lista = PED_ProEJA.objects.filter(professor_ped=professorId)
+        else:
+            lista = PED_ProEJA.objects.all()
         
-        if isinstance(ped, PED_EMI): serializer = PED_EMI_Serializer(ped)
+        serializer = PED_ProEJA_Serializer(lista, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([GestaoEscolar | Professor])
+def por_id(request, pedId, modalidade):
+    try:
+        if modalidade == 'Integrado':
+            ped = get_object_or_404(PED_EMI, pk=pedId)
+
+            serializer = PED_EMI_Serializer(ped, context={'request': request})
+        elif modalidade == 'ProEJA':
+            ped = get_object_or_404(PED_ProEJA, pk=pedId)
+
+            serializer = PED_ProEJA_Serializer(ped, context={'request': request})
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([GestaoEscolar])
+def atualizar_EMI(request, pedId):
+    try:
+
+        print(request.data)
+        ped = get_object_or_404(PED_EMI, pk=pedId)
+
+        serializer = PED_EMI_Serializer(ped, data=request.data)
+
+        if not serializer.is_valid(): raise Exception(serializer.errors)
+
+        serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
-
-@api_view(['GET'])
-@permission_classes([Professor])
-def listar_por_professor(request, professor):
+@api_view(['POST'])
+@permission_classes([GestaoEscolar])
+def atualizar_ProEJA(request, pedId):
     try:
-        ped_proeja = PED_ProEJA.objects.filter(professor_ped_proeja=professor)
+        ped = get_object_or_404(PED_ProEJA, pk=pedId)
 
-        ped_emi = PED_EMI.objects.filter(professor_ped_emi=professor)
+        serializer = PED_ProEJA_Serializer(ped, data=request.data)
 
-        serializer_proeja = PED_EMI_Serializer(ped_proeja)
+        if not serializer.is_valid(): raise Exception(serializer.error_messages)
 
-        serializer_emi = PED_EMI_Serializer(ped_emi)
+        serializer.save()
 
-        return Response(serializer_emi.data + serializer_proeja.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)

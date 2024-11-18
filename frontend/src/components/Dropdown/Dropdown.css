@@ -53,12 +53,13 @@
   background-color: #fff;
   width: fit-content;
   margin-top: 43px;
+  z-index: 3;
 }
 
 .dropdown-usuario-conteudo {
   background-color: #006b3f;
   border: 2px solid #003c23;
-  z-index: 3;
+  z-index: 4;
   margin-top: 60px;
 
   .link,

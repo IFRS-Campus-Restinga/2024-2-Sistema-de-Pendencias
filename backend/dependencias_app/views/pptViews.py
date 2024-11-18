@@ -20,8 +20,6 @@ def cadastrar_ppt(request):
     try:
         data = request.data
 
-        print(data)
-
         serializer = PPTSerializer(data=data)
         
         if serializer.is_valid(raise_exception=True):
@@ -72,6 +70,28 @@ def editar_ppt(request, idPpt):
             # Salvar as alterações no banco de dados
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        # Caso o serializer não seja válido
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except PPT.DoesNotExist:
+        return Response({'mensagem': 'PPT não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([GestaoEscolar])
+def desativar_ppt(request, idPpt):
+    logger.info('ID recebido para desativar: %s', idPpt)
+    try:
+        # Buscar o objeto PPT pelo ID
+        ppt = PPT.objects.get(id=idPpt)
+
+        serializer = PPTSerializer(ppt)
+
+        # Verificar se os dados são válidos
+        if serializer:
+            serializer.set_disabled(ppt)
+            return Response(True, status=status.HTTP_200_OK)
         
         # Caso o serializer não seja válido
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

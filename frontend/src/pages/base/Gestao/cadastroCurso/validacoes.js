@@ -16,13 +16,15 @@ export const validarCargaHoraria = (carga_horaria) => {
     return '';
 };
 
+// Validação para o campo "coordenador"
 export const validarCoordenador = (coordenador) => {
-    if (!coordenador) return 'Campo obrigatório'
+    if (!coordenador) return 'Campo obrigatório';
 
-    if (isNaN(coordenador)) return 'Coordenador inválido'
+    // Aqui você pode adicionar qualquer validação para coordenador, caso seja necessário
+    if (isNaN(coordenador)) return 'Coordenador inválido';
 
-    return ''
-}
+    return '';
+};
 
 // Validação para o campo "curso"
 export const validarCurso = (curso) => {
@@ -30,10 +32,10 @@ export const validarCurso = (curso) => {
         return 'Campo obrigatório.';
     }
 
-    // Verifica se o nome do curso tem pelo menos 3 caracteres, começa com letra maiúscula e não contém espaços
-    const regex = /^[A-Z][a-zA-Z]{2,}$/; // Mínimo de 3 caracteres, sendo o primeiro maiúsculo
+    // Verifica se o nome do curso tem pelo menos 3 caracteres, começa com letra maiúscula e pode conter acentos
+    const regex = /^[A-ZÀ-ÿ][a-zA-ZÀ-ÿ\s]{2,}$/; // Permite letras com acentos, e um mínimo de 3 caracteres
     if (!regex.test(curso)) {
-        return 'O Nome do curso deve ser no formato "Xxx" (mínimo 3 caracteres) e não pode conter espaços.';
+        return 'O Nome do curso deve começar com letra maiúscula e ter pelo menos 3 caracteres. Pode conter acentos e espaços.';
     }
 
     return '';

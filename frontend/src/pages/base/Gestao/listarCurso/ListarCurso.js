@@ -1,5 +1,3 @@
-// ListarCursos.js
-
 import React, { useState, useEffect, useMemo } from 'react';
 import './ListarCurso.css';
 import Button from "../../../../components/Button/Button";
@@ -8,7 +6,7 @@ import Input from '../../../../components/Input/Input';
 import Lupa from "../../../../assets/lupa.png"; // Ajuste o caminho conforme necessário
 import { ToastContainer } from 'react-toastify';
 import cursoService from '../../../../services/cursoService';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
 const ListarCursos = () => {
@@ -74,10 +72,10 @@ const ListarCursos = () => {
   };
 
   // Função para navegação de edição de curso
-  const handleEditCurso = (cursoId) => {
+  const handleEditCurso = (curso) => {
     const usuarioId = jwtDecode(sessionStorage.getItem('token')).idUsuario;
     // Navegar para o formulário de edição, passando o ID do curso
-    navigate(`/sessao/GestaoEscolar/${usuarioId}/cadastroCurso`, { state: { cursoId } });
+    navigate(`/sessao/Gestão Escolar/${usuarioId}/cadastroCurso`, {state: {curso: curso}});
   };
 
   // Usa useMemo para evitar refazer a filtragem e ordenação toda vez
@@ -113,9 +111,7 @@ const ListarCursos = () => {
           <div className='divListarCursos'>
             <Button text="Buscar" onClick={filtrarCursos} />
             <Button text="Limpar campos" onClick={limparBusca} color="#4A4A4A" />
-            <Link to={`/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroCurso`}>
-              <Button text='Adicionar Novo' />
-            </Link>
+            <Button text='Adicionar Novo' onClick={() => navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroCurso`)} />
           </div>
         </section>
 
@@ -140,7 +136,7 @@ const ListarCursos = () => {
                       className='iconeAcoes'
                       src={Lupa}
                       alt="Buscar"
-                      onClick={() => handleEditCurso(curso.id)} // Chama a função de edição
+                      onClick={() => handleEditCurso(curso)} // Chama a função de edição
                       title="Editar"
                       style={{ width: '16px', height: '16px' }}
                     />

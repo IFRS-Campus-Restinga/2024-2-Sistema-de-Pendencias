@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react"
-import FormContainer from "../../../../components/FormContainer/FormContainer"
-import Tabela from "../../../../components/Tabela/Tabela"
-import Input from "../../../../components/Input/Input"
-import Button from '../../../../components/Button/Button'
 import { PEDService } from "../../../../services/pedService"
-import './ListarPED_ProEJA.css'
+import Tabela from "../../../../components/Tabela/Tabela"
+import FormContainer from "../../../../components/FormContainer/FormContainer"
+import { jwtDecode } from "jwt-decode"
+import Input from "../../../../components/Input/Input"
+import Button from "../../../../components/Button/Button"
 
 
 
-const ListarPEDProEJA = () => {
-    const [listaPED_ProEJA, setListaPED_ProEJA] = useState([])
+const ListarPEDProEJAProfessor = () => {
+    const [PED, setPED] = useState([])
     const [listaFiltrada, setListaFiltrada] = useState([])
     const [filtro, setFiltro] = useState({
         filtroGeral: '',
@@ -19,21 +19,21 @@ const ListarPEDProEJA = () => {
         situacao: ''
     })
 
-    const fetchPED_ProEJA = async () => {
+    const fetchPED = async () => {
         try {
-            const res = await PEDService.listaProEJA()
+            const res = await PEDService.listaProEJA(jwtDecode(sessionStorage.getItem('token')).idUsuario)
 
-            if (res.status !== 200) throw new Error(res)
+            if (res.status !== 200) throw new Error(res.data.message)
 
-            setListaPED_ProEJA(res.data)
+            setPED(res.data)
             setListaFiltrada(res.data)
         } catch (error) {
-            console.error(error)
+            console.error('Erro ao buscar as PEDs', error)
         }
     }
 
     const filtrarPEDs = () => {
-        const PEDsFiltradas = listaPED_ProEJA.filter((ped) =>
+        const PEDsFiltradas = PED.filter((ped) =>
             (!filtro.filtroGeral || 
               (ped.aluno && ped.aluno.toLowerCase().includes(filtro.filtroGeral.toLowerCase())) ||
               (ped.professor_ped && ped.professor_ped.toLowerCase().includes(filtro.filtroGeral.toLowerCase())) ||
@@ -47,7 +47,6 @@ const ListarPEDProEJA = () => {
             (!filtro.situacao || ped.situacao === filtro.situacao)
           );
 
-          console.log(PEDsFiltradas)
           setListaFiltrada(PEDsFiltradas);
     };
 
@@ -62,12 +61,11 @@ const ListarPEDProEJA = () => {
     }
 
     useEffect(() => {
-        fetchPED_ProEJA()
+        fetchPED()
     },[filtro])
 
-
-    return(
-        <FormContainer titulo='Dependências - ProEJA' comprimento='95%'>
+    return (
+        <FormContainer titulo='Minhas PEDs - ProEJA' comprimento='90%'>
             <section className="sectionListarPEDGestao">
                 <div className="divListarPEDGestao">
                     <label className="labelListarPEDGestao">
@@ -125,7 +123,8 @@ const ListarPEDProEJA = () => {
             </section>
             <Tabela listaFiltrada={listaFiltrada} fontSize={'10px'}/>
         </FormContainer>
+        
     )
 }
 
-export default ListarPEDProEJA
+export default ListarPEDProEJAProfessor

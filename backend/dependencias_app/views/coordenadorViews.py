@@ -8,7 +8,7 @@ from google_auth.models import UsuarioBase
 @api_view(['POST'])
 def cadastrarCoordenador(request):
     try:
-        name = request.data.get('perfil', None)
+        name = request.data.get('grupo', None)
 
         if name != 'Coordenador': raise Exception('perfil inválido')
 
@@ -18,7 +18,6 @@ def cadastrarCoordenador(request):
         # adiciona o id do grupo correspondente ao perfil em um dicionario
         data = request.data
         data['grupo'] = grupo.id
-        data.pop('perfil', None)
 
         # passa o dicionario para o serializador
         serializer = UsuarioBaseSerializer(data=data)

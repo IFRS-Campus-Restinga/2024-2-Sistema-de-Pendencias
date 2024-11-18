@@ -5,16 +5,3 @@
     height: 100vh;
     min-height: 100vh;
 }
-
-.contentContainer {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
-
-@media (max-width: 760px) {
-    .contentContainer {
-        display: flex;
-        flex-direction: row;
-    }
-}

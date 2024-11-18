@@ -9,15 +9,17 @@
   justify-content: space-between;
   width: 100%;
   max-width: 800px;
-  gap: 30px; /* Aumenta o espaçamento entre as colunas */
+  gap: 30px;
+  /* Aumenta o espaçamento entre as colunas */
 }
 
-.coluna-integrado, .coluna-proeja {
+.coluna-integrado,
+.coluna-proeja {
   flex: 1;
   padding: 10px;
 }
 
-h3 {
+.h3CalendariosAcademicos {
   text-align: center;
   color: #006400;
   font-weight: bold;
@@ -25,7 +27,8 @@ h3 {
 }
 
 ul {
-  list-style-type: none; /* Remove os pontos da lista */
+  list-style-type: none;
+  /* Remove os pontos da lista */
   padding: 0;
 }
 
@@ -34,7 +37,8 @@ ul {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  margin-bottom: 8%; /* Aumenta o espaçamento entre os itens */
+  margin-bottom: 8%;
+  /* Aumenta o espaçamento entre os itens */
   transition: background-color 0.3s ease;
   text-align: center;
 }

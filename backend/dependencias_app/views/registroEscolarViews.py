@@ -11,7 +11,7 @@ from google_auth.models import UsuarioBase
 def cadastrar_registro_escolar(request):
     try:
         # extrai o nome do perfil da requisição
-        name = request.data.get('perfil', None)
+        name = request.data.get('grupo', None)
 
         if name != 'RegistroEscolar': raise Exception('perfil inválido')
 

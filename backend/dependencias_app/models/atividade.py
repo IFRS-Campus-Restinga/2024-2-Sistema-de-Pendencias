@@ -15,15 +15,13 @@ class Atividade(BaseModel):
         abstract = True
 
 class Atividade_EMI(Atividade):
-    ped = models.ForeignKey(PED_EMI, on_delete=models.DO_NOTHING, related_name='atividades_emi')
+    ped_emi = models.ForeignKey(PED_EMI, on_delete=models.DO_NOTHING, related_name='atividades_emi')
     
     class Meta:
-        abstract = False
         verbose_name_plural = 'Atividades EMI'
 
 class Atividade_ProEJA(Atividade):
-    ped = models.ForeignKey(PED_ProEJA, on_delete=models.DO_NOTHING, related_name='atividades_proeja')
+    ped_proeja = models.ForeignKey(PED_ProEJA, on_delete=models.DO_NOTHING, related_name='atividades_proeja')
 
     class Meta:
-        abstract = False
         verbose_name_plural = 'Atividades ProEJA'

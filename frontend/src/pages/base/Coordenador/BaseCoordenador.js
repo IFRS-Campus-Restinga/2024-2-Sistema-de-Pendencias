@@ -9,7 +9,7 @@ const BaseCoordenador = () => {
     const homeUrl = `/sessao/${jwtDecode(sessionStorage.getItem('token')).grupo}/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`
 
     const validaCoordenador = () => {
-        const res = validaUsuario('Registro')
+        const res = validaUsuario('Coordenador')
 
         if (!res.status) {
             if (res.grupo === undefined) redirect('/')

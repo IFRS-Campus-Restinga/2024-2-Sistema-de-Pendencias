@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { disciplinaService } from "../../../../services/disciplinaService";
 import { cursoService } from "../../../../services/cursoService";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
@@ -12,6 +12,7 @@ import { validarCampo, validarFormularioDisciplina } from "./validacoes";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 
 const CadastroDisciplina = () => {
+  const formRef = useRef()
   const [opcoesProfessores, setOpcoesProfessores] = useState([])
   const [cursos, setCursos] = useState([]);
   const [errors, setErrors] = useState({});
@@ -64,7 +65,7 @@ const CadastroDisciplina = () => {
         
         if (response.status !== 201) throw new Error(response.response.data.mensagem)
   
-        toast.success("Curso cadastrado com sucesso!", {
+        toast.success("Disciplinas cadastradas e vinculadas ao curso com sucesso!", {
           position: "bottom-center",
           autoClose: 3000,
           style: { backgroundColor: '#28A745', color: '#fff' },
@@ -76,6 +77,8 @@ const CadastroDisciplina = () => {
           disciplinas: [],
           novasDisciplinas: []
         })
+
+        formRef.current.reset()
 
         setErrors({})
       } catch (erro) {
@@ -143,7 +146,7 @@ const CadastroDisciplina = () => {
   return (
     <>
       <ToastContainer/>
-      <FormContainer titulo='Cadastro Disciplina' onSubmit={handleSubmit} comprimento='80%'>
+      <FormContainer titulo='Cadastro Disciplina' onSubmit={handleSubmit} comprimento='80%' ref={formRef}>
               <span className='spanCadastroCurso'>
                 <label htmlFor="curso" className='labelCadastroDisciplina'>
                   Curso
@@ -246,21 +249,23 @@ const CadastroDisciplina = () => {
                         <div className='colunaDisciplina'>Nome</div>
                         <div className='colunaDisciplina'>Carga Horária</div>
                       </span>
-                        {
-                          disciplinas.map((disciplina, index) => (
-                            <label className='labelContainerDisciplinas' htmlFor={`checkbox-${disciplina.id}`} >
-                                <input type='checkbox' className='checkboxDisciplina' id={`checkbox-${disciplina.id}`} value={disciplina.id} onChange={vinculaDisciplina} hidden/>
-                                <div className='linhaTabelaDisciplina'>
-                                  <p className='textoTabela'>
-                                    {disciplina.nome}
-                                  </p>
-                                  <p className='textoTabela'>
-                                    {disciplina.carga_horaria} h
-                                  </p>
-                                </div>
-                            </label>
-                          ))
-                        }
+                      <div className="containerTabelaDisciplinas">
+                          {
+                            disciplinas.map((disciplina, index) => (
+                              <label className='labelContainerDisciplinas' htmlFor={`checkbox-${disciplina.id}`} >
+                                  <input type='checkbox' className='checkboxDisciplina' id={`checkbox-${disciplina.id}`} value={disciplina.id} onChange={vinculaDisciplina} hidden/>
+                                  <div className='linhaTabelaDisciplina'>
+                                    <p className='textoTabela'>
+                                      {disciplina.nome}
+                                    </p>
+                                    <p className='textoTabela'>
+                                      {disciplina.carga_horaria} h
+                                    </p>
+                                  </div>
+                              </label>
+                            ))
+                          }
+                      </div>
                     </div>
                   </>
                 ) : (

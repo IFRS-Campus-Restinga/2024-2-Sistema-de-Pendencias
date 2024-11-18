@@ -44,11 +44,11 @@ const BaseProfessor = () => {
                             itens={[
                                 {
                                     name: 'Minhas PEDs - EMI',
-                                    link: `${homeUrl}/minhasPeds-EMI`
+                                    link: `${homeUrl}/peds-emi`
                                 },
                                 {
                                     name: 'Minhas PEDs - ProEJA',
-                                    link: `${homeUrl}/minhasPeds-ProEJA`
+                                    link: `${homeUrl}/peds-proeja`
                                 },
                             ]}
                         />

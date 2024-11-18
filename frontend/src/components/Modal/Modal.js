@@ -1,8 +1,16 @@
 import React from 'react';
 import './Modal.css';
-import Button from '../Button/Button';
+import Button from '../Button/Button';  // Botão reutilizável, como você já tem
 
-const Modal = ({ estaAberto, aoFechar, mensagem }) => {
+const Modal = ({ 
+  estaAberto, 
+  aoFechar, 
+  mensagem, 
+  onClick, 
+  textoCancelar = 'Cancelar',  // Valor padrão 'Cancelar' caso não seja passado
+  textoOk = 'OK',
+  colorButton              // Valor padrão 'OK' caso não seja passado
+}) => {
   if (!estaAberto) return null;
 
   return (
@@ -12,8 +20,14 @@ const Modal = ({ estaAberto, aoFechar, mensagem }) => {
           &times;
         </button>
         <div className="conteudo-modal">
-          <p id='mensagem-modal'>{mensagem}</p>
-          <Button text="OK" width="110px" onClick={aoFechar} />
+          <p id="mensagem-modal">{mensagem}</p>
+          <div className="botoes-modal">
+            {/* Botão Cancelar - fecha o modal */}
+            <Button text={textoCancelar} width="110px" onClick={aoFechar} />
+
+            {/* Botão OK - chama a função onClick */}
+            <Button text={textoOk} width="110px" onClick={onClick} color={colorButton}/>
+          </div>
         </div>
       </div>
     </div>

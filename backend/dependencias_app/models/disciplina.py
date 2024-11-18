@@ -3,8 +3,8 @@ from .base import *
 from .curso import Curso
 
 class Disciplina(BaseModel):
-    cursos = models.ManyToManyField(Curso, related_name='cursos')
-    nome = models.CharField(max_length=36, blank=False, null=False)
+    cursos = models.ManyToManyField(Curso, related_name='disciplinas')
+    nome = models.CharField(max_length=70, blank=False, null=False)
     carga_horaria = models.PositiveIntegerField(blank=False, null=False)
 
     class Meta:

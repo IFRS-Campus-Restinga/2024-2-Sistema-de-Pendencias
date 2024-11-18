@@ -82,8 +82,8 @@ const PerfilProfessor = () => {
             })
 
             setFormData({
-                cpf: res.data.infos_professor.cpf || '',
-                matricula: res.data.infos_professor.matricula || '',
+                cpf: res.data.cpf || '',
+                matricula: res.data.matricula || '',
                 usuario: jwtDecode(sessionStorage.getItem('token')).idUsuario
             })
 
