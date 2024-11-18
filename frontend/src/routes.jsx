@@ -22,10 +22,9 @@ import ListarEventosDoCalendarioPage from './pages/base/Gestao/calendario/calend
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 import DetalhesServidor from './pages/base/Gestao/detalhesServidor/DetalhesServidor'
-//import EditarServidor from './pages/base/Gestao/editarServidor/EditarServidor'
 import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
-import EditarPPT from './pages/base/Gestao/editarPPT/editarPPT'
-
+import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
+import ListarAluno from './pages/base/Gestao/listarAluno/ListarAluno'
 
 // Filhos de Registro
 
@@ -43,7 +42,6 @@ import DetalhesAtividade from './pages/base/Professor/atividadesDesenvolvidas/de
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
-import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
 import ListarPPT from './pages/base/Gestao/listarPPT/ListarPPT'
 import ListarPEDEMI from './pages/base/Gestao/listarPED_EMI/ListarPED_EMI'
 import ListarPEDProEJA from './pages/base/Gestao/listarPED_ProEJA/ListarPED_ProEJA'
@@ -141,7 +139,7 @@ const router = createBrowserRouter([
             },
             {
                 path: ':idUsuario/ppts/:idPpt/editarPPT',
-                element: <EditarPPT />
+                element: <CadastroPPT />
             },
             {
                 path: ':idUsuario/peds-emi/:pedId',
@@ -154,6 +152,10 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/servidores/:idServidor/editarServidor',
                 element: <CadastroServidor />
+            },
+            {
+                path: ':idUsuario/alunos',
+                element: <ListarAluno />
             },
 
         ]

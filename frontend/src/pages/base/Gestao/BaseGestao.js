@@ -77,7 +77,7 @@ const BaseGestao = () => {
         <Dropdown titulo='Gerenciar Cadastros' itens={[
         {
         name: "Alunos",
-        link: `${homeUrl}/cadastroAluno`
+        link: `${homeUrl}/alunos`
         },
         {
         name: "Servidores",
