@@ -8,6 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Lupa from "../../../../assets/lupa.png";
 import atividadeService from '../../../../services/atividadeService';
+import { jwtDecode } from 'jwt-decode';
 import Input from '../../../../components/Input/Input';
 import Tabela from '../../../../components/Tabela/Tabela';
 
@@ -53,12 +54,14 @@ const AtividadesDesenvolvidas = () => {
 
   // Função para navegação para adicionar nova atividade
   const handleAdicionarAtividade = () => {
-    navigate(`/professor/atividades/${pedTipo}/${pedId}/adicionar`);
+    const usuarioId = jwtDecode(sessionStorage.getItem('token')).idUsuario;
+    navigate(`/sessao/Professor/${usuarioId}/atividades/${pedTipo}/${pedId}/adicionarAtividade`);
   };
 
   // Função para navegar para a visualização da atividade
   const handleVisualizarAtividade = (atividadeId) => {
-    navigate(`/professor/atividades/${atividadeId}/detalhes`);
+    const usuarioId = jwtDecode(sessionStorage.getItem('token')).idUsuario;
+    navigate(`/sessao/Professor/${usuarioId}/atividades/${pedTipo}/${pedId}/detalhes/${atividadeId}`);
   };
 
 

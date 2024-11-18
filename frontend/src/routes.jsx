@@ -37,6 +37,8 @@ import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfes
 import ListarPEDEMIProfessor from './pages/base/Professor/listarPED_EMI/ListarPED_EMIProfessor'
 import PlanoEstudos from './pages/base/Professor/planoEstudos/planoEstudos'
 import AtividadesDesenvolvidas from './pages/base/Professor/atividadesDesenvolvidas/atividadesDesenvolvidas'
+import AdicionarAtividade from './pages/base/Professor/atividadesDesenvolvidas/adicionarAtividade/adicionarAtividade'
+import DetalhesAtividade from './pages/base/Professor/atividadesDesenvolvidas/detalhesAtividade/detalhesAtividade'
 
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
@@ -211,8 +213,22 @@ const router = createBrowserRouter([
             },
             {
                 path: ':idUsuario/atividades/:pedTipo/:pedId',
-                element: <AtividadesDesenvolvidas />,
-            }
+                element: <AtividadesDesenvolvidas />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId/adicionarAtividade',
+                element: <AdicionarAtividade />,
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId/detalhes/:atividadeId',
+                element: <DetalhesAtividade />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId/editarAtividade/:atividadeId',
+                element: <AdicionarAtividade />,
+              }
+              
+
         ]
     },
     // Rotas de Aluno
