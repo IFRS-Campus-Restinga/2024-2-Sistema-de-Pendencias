@@ -78,7 +78,8 @@ urlpatterns = [
     path('ped-emi/<int:professorId>/', listar_por_professor),
     path('ped-proeja/<int:professorId>/', listar_por_professor),
     path('ped/<int:pedId>/<str:modalidade>/', por_id),
-    path('cadastrar-plano-estudos/', cadastrar_plano_estudos),
+    #path('cadastrar-plano-estudos/', cadastrar_plano_estudos),
+    path('cadastrar-plano-estudos/<int:pedId>/', cadastrar_plano_estudos),
 
 
     #views para atividades da ped

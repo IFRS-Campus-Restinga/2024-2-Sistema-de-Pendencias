@@ -1,71 +1,83 @@
-/* Estilo para a seção e container */
 .sectionCadastroPlanoEstudos {
   width: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .divCadastroPlanoEstudos {
   width: 50%;
-  padding: 7px;
+  padding: 10px;
+  box-sizing: border-box;
+  min-width: 300px;
 }
 
-/* Estilo para o label (texto de descrição) */
 .labelCadastroPlanoEstudos {
   display: flex;
   flex-direction: column;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: bold;
-  margin-top: 7px;
+  margin-top: 10px;
 }
 
-/* Estilo para o campo Select (forma de oferta, turno) */
 .selectCadastroPlanoEstudos {
   font-size: 15px;
-  border: 1px solid #ccc;  /* Borda padrão */
-  padding: 7px;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
   border-radius: 8px;
   margin-top: 5px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Estilo para o campo Textarea (parecer pedagógico) */
+.inputCadastroPlanoEstudos {
+  font-size: 15px;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-top: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .textAreaCadastroPlanoEstudos {
   font-family: Arial, Helvetica, sans-serif;
-  padding: 5px;
+  padding: 8px 12px;
   margin-top: 7px;
-  border: 1px solid #ccc;  /* Borda padrão */
+  border: 1px solid #ccc;
   border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Estilo de foco para campos normais */
 .textAreaCadastroPlanoEstudos:focus,
-.selectCadastroPlanoEstudos:focus {
-  border: 1px solid #797979;  /* Borda de foco (sem erro) */
+.selectCadastroPlanoEstudos:focus,
+.inputCadastroPlanoEstudos:focus {
+  border: 1px solid #797979;
+  outline: none;
 }
 
-/* Estilo para campos com erro (quando o campo não for preenchido corretamente) */
-
-/* Para Select */
 .errorSelectCadastroPlanoEstudos {
-  border: 1px solid red; /* Borda vermelha para erro */
-  background-color: #f8d7da;  /* Fundo vermelho claro para erro */
+  border: 1px solid #e74c3c;
 }
 
-/* Para Textarea */
+.errorInputCadastroPlanoEstudos {
+  border: 1px solid #e74c3c;
+}
+
 .errorTextAreaCadastroPlanoEstudos {
-  border: 1px solid red;  /* Borda vermelha para erro */
-  background-color: #f8d7da;  /* Fundo vermelho claro para erro */
+  border: 1px solid #e74c3c;
 }
 
-/* Estilo de foco para campos com erro (quando em foco) */
 .errorSelectCadastroPlanoEstudos:focus,
+.errorInputCadastroPlanoEstudos:focus,
 .errorTextAreaCadastroPlanoEstudos:focus {
-  border-color: red;  /* Mantém borda vermelha ao focar */
+  border-color: #e74c3c;
 }
 
-/* Mensagem de erro abaixo dos campos */
 .errorMessage {
-  color: red;
-  font-size: 10px;
+  color: #e74c3c;
+  font-size: 12px;
   margin-top: 5px;
+  margin-bottom: 10px;
 }
