@@ -78,7 +78,7 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
     
     def get_aluno(self, obj):
         if obj.aluno and hasattr(obj, 'aluno'):
-            return obj.aluno.nome or obj.aluno.email[:10]
+            return obj.aluno.nome or obj.aluno.email.split('@')[0]
         return None
     
     def get_professor_ped(self, obj):

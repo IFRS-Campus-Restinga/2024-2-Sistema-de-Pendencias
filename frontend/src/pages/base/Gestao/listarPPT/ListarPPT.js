@@ -100,7 +100,6 @@ const ListarPPT = () => {
                     <div className='divListarPPT'>
                         <label className='labelListarPPT'>
                             Buscar status
-                            <br/>
                             <select className='statusOption' onChange={(e) => setFormData(prevData => ({ ...prevData, status: e.target.value }))}>
                                 <option className="statusOption" value=''>Selecione um status</option>
                                 {
@@ -128,10 +127,7 @@ const ListarPPT = () => {
                         />
                     </Link>
                 </span>
-
-                <div className='containerTabelaListarPPT'>
-                    <Tabela listaFiltrada={dependenciasFiltradas} fontSize='10px' />
-                </div>
+                <Tabela listaFiltrada={dependenciasFiltradas} fontSize='10px' />
             </FormContainer>
         </>
     );

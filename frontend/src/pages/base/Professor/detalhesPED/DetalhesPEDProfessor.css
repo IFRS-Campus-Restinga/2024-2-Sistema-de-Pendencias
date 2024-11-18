@@ -1,0 +1,56 @@
+.sectionDetalhesPED {
+    width: 100%;
+    display: flex;
+}
+
+.divDetalhesPED {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+}
+
+.divStatusPED {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    flex: 1;
+    background-color: #f1f1f1;
+    margin-top: 10px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.labelDetalhesPED {
+    font-weight: bold;
+    font-size: 15px;
+    margin: 10px;
+}
+
+.pDetalhesPED {
+    font-weight: 400;
+    font-size: 20px;
+    padding: 5px;
+}
+
+.spanDetalhesPED {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.labelCabecalhoDetalhesPED {
+    background-color: #006b3f;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 15px;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+
+.labelStatusPED {
+    margin: auto;
+}

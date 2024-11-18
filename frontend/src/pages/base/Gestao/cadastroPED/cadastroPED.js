@@ -11,11 +11,11 @@ import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 import { PEDService } from "../../../../services/pedService";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faL, faLock } from "@fortawesome/free-solid-svg-icons";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
 
 const CadastroPED = () => {
   const location = useLocation()
-  const {state} = location.state || {}
+  const {state} = location || {}
   const [modalidade, setModalidade] = useState(state ? state.serie_progressao ? 'Integrado' : 'ProEJA' : 'Integrado')
   const [cursos, setCursos] = useState([])
   const [disciplinas, setDisciplinas] = useState([])
@@ -80,7 +80,6 @@ const CadastroPED = () => {
   const trocaModalidade = (novoValor) => {
     if (!state) {
       setModalidade(novoValor);
-  
       if (novoValor === 'Integrado') {
         setFormData({
           aluno_id: '',
@@ -218,6 +217,14 @@ const CadastroPED = () => {
       const cursosPorModalidade = res.data.filter((curso) => curso.modalidade === modalidade)
 
       setCursos(cursosPorModalidade)
+
+      if (state) {
+        const index = cursosPorModalidade.findIndex(curso => curso.nome === state.curso)
+
+        setDisciplinas(cursosPorModalidade[index].disciplinas)
+        setTurmas(cursosPorModalidade[index].turmas)
+      }
+
     } catch (error) {
       console.log(error)
     }
@@ -256,6 +263,7 @@ const CadastroPED = () => {
   }
 
   useEffect(() => {
+    console.log(state)
     if (state) {
       fetchPED(state.id)
       setDadosFormEdicao(state)
@@ -286,7 +294,7 @@ const CadastroPED = () => {
     }
 
     fetchCursos()
-  }, [modalidade])
+  }, [modalidade, state])
 
   return (
     <>
@@ -720,20 +728,6 @@ const CadastroPED = () => {
         </label>
         <div className="containerBotoes" style={{display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', flexWrap: 'wrap'}}>
           <Button color="#006b3f" text={state ? 'Salvar Alterações' : 'Cadastrar'} tipo="submit" />
-          {
-            state ? (
-              <>
-                <Link to={'planoEstudos'}>
-                  <Button color="#006b3f" text='Plano de Estudos'/>
-                </Link>
-                <Link to={'formEnceramento'}>
-                  <Button color="#006b3f" text='Formulário de Encerramento'/>
-                </Link>
-              </>
-            ) : (
-              <></>
-            )
-          }
         </div>
       </FormContainer>
     </>

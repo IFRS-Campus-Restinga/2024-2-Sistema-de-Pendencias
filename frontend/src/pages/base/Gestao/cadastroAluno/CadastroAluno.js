@@ -1,5 +1,5 @@
 import "./CadastroAluno.css";
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { validarFormulario, validarCampo } from './validacoes';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,6 +9,7 @@ import Button from "../../../../components/Button/Button";
 import Input from '../../../../components/Input/Input'
 
 const CadastroAluno = () => {
+  const formRef = useRef()
   const [formData, setFormData] = useState({
     email: '',
     perfil: 'Aluno',
@@ -30,6 +31,9 @@ const CadastroAluno = () => {
           email: '',
           perfil: 'Aluno',
         });
+
+        formRef.current.reset()
+
         setErrors({}); // Limpar os erros também
 
         // Mostrar toast de sucesso
@@ -71,19 +75,21 @@ const CadastroAluno = () => {
   return (
     <>
       <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo='Cadastro Aluno' comprimento='60%'>
+      <FormContainer onSubmit={handleSubmit} titulo='Cadastro Aluno' comprimento='60%' ref={formRef}>
         {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
         <br />
         <div className="divCadastroAluno">
-          <label htmlFor="email" className="labelCadastroAluno">Email</label>
-          <Input
-            tipo='email'
-            valor={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            onBlur={() => handleBlur('email')}
-            textoAjuda="Email"
-            erro={errors.email}
-          />
+          <label htmlFor="email" className="labelCadastroAluno">Matrícula</label>
+            <span className="spanCadastroAluno">
+              <Input
+                tipo='text'
+                onChange={(e) => setFormData({ ...formData, email: `${e.target.value}@aluno.restinga.ifrs.edu.br`})}
+                onBlur={() => handleBlur('email')}
+                textoAjuda="Insira a matrícula do aluno"
+                erro={errors.email}
+              />
+              <p className="pCadastroAluno">@aluno.restinga.ifrs.edu.br</p>
+            </span>
           {errors.email && <p className="erros">{errors.email}</p>}
         </div>
         <div className="ajuste-button">

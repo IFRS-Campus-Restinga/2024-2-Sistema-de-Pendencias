@@ -58,12 +58,12 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
         # Obter as chaves primárias (IDs) das entidades relacionadas
-        aluno_id = validated_data.get('aluno_id', None).id
-        professor_ped_id = validated_data.get('professor_ped_id', None).id
-        professor_disciplina_id = validated_data.get('professor_disciplina_id', None).id
-        curso_id = validated_data.get('curso_id', None).id
-        disciplina_id = validated_data.get('disciplina_id', None).id
-        turma_origem_id = validated_data.get('turma_origem_id', None).id
+        aluno_id = validated_data.get('aluno_id', None)
+        professor_ped_id = validated_data.get('professor_ped_id', None)
+        professor_disciplina_id = validated_data.get('professor_disciplina_id', None)
+        curso_id = validated_data.get('curso_id', None)
+        disciplina_id = validated_data.get('disciplina_id', None)
+        turma_origem_id = validated_data.get('turma_origem_id', None)
 
         # Atualizar os campos com as chaves primárias
         print(hasattr(instance, 'aluno'))
@@ -94,7 +94,7 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
     
     def get_aluno(self, obj):
         if obj.aluno and hasattr(obj, 'aluno'):
-            return obj.aluno.nome or obj.aluno.email[:10]
+            return obj.aluno.nome or obj.aluno.email.split('@')[0]
         return None
     
     def get_professor_ped(self, obj):

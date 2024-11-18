@@ -34,7 +34,7 @@ def cadastrar_aluno(request):
 
         serializer = UsuarioBaseSerializer(data=data)
         # valida o serializador
-        if not serializer.is_valid(): raise Exception(f'{serializer.error_messages}')
+        if not serializer.is_valid(): raise Exception(f'{serializer.errors}')
 
         serializer.save()
         

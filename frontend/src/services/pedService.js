@@ -17,16 +17,8 @@ export const PEDService = {
     return res
   },
 
-  listarPorProfessor: async (professor) => {
-    const res = await api.get(`api/listar-ped/${professor}/`).catch((erro) => {
-      return erro
-    }) 
-
-    return res
-  },
-
   porId: async (pedId, modalidade) => {
-    const res = await api.get(`api/ped/${pedId}/${modalidade}`, {
+    const res = await api.get(`api/ped/${pedId}/${modalidade}/`, {
       params: {
         retornar_ids: true
       }
@@ -38,7 +30,7 @@ export const PEDService = {
   },
 
   listaEMI: async (professorId) => {
-    const res = await api.get(`api/ped-emi/?professorId=${professorId}`).catch((erro) => {
+    const res = await api.get(`api/ped-emi/?professorId=${professorId ?? ''}`).catch((erro) => {
       return erro
     })
 
@@ -46,7 +38,7 @@ export const PEDService = {
   },
 
   listaProEJA: async (professorId) => {
-    const res = await api.get(`api/ped-proeja/?professorId=${professorId}`).catch((erro) => {
+    const res = await api.get(`api/ped-proeja/?professorId=${professorId ?? ''}`).catch((erro) => {
       return erro
     })
 

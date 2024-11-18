@@ -17,6 +17,19 @@
     width: 100%;
 }
 
+.divTabela {
+    display: flex;
+    width: 100%;
+    background-color: #006b3f;
+    color: white;
+    padding: 10px;
+    justify-content: center;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
 .iconeAcoes {
     max-width: 15px;
     max-height: 15px;

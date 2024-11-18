@@ -49,7 +49,7 @@ def listar_disciplinas(request):
     Função que lista todas as disciplinas cadastradas.
     Retorna uma lista de disciplinas em formato JSON ou um erro.
     """
-    disciplinas = Disciplina.objects.all()
+    disciplinas = Disciplina.objects.all().order_by('nome')
     serializer = DisciplinaSerializer(disciplinas, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -63,26 +63,24 @@ const ListarServidor = () => {
     setIsActiveFiltro('');
     fetchServidores();
 
-    setOrdenacao({ coluna: '', ordem: 'asc' });
-
     fetchServidores();
   };
 
   const filtrarServidores = () => {
-    const servidoresFiltrados = servidores.filter(servidor => 
-      (!filtroGeral || 
-        (servidor.nome && servidor.nome.toLowerCase().includes(filtroGeral.toLowerCase())) ||
-        (servidor.matricula && servidor.matricula.includes(filtroGeral)) ||
-        (servidor.cpf && servidor.cpf.includes(filtroGeral)) ||
-        (servidor.email && servidor.email.includes(filtroGeral))
-      ) &&
-      (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
-      (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
-      (!grupoFiltro || servidor.grupo === grupoFiltro) &&
-      (!matriculaFiltro || (servidor.matricula && servidor.matricula.includes(matriculaFiltro))) &&
-      (!isActiveFiltro || (servidor.is_active && servidor.is_active.includes(isActiveFiltro)))
-    );
-    setServidoresFiltrados(servidoresFiltrados);
+      const servidoresFiltrados = servidores.filter(servidor => 
+        (!filtroGeral || 
+          (servidor.nome && servidor.nome.toLowerCase().includes(filtroGeral.toLowerCase())) ||
+          (servidor.matricula && servidor.matricula.includes(filtroGeral)) ||
+          (servidor.cpf && servidor.cpf.includes(filtroGeral)) ||
+          (servidor.email && servidor.email.includes(filtroGeral))
+        ) &&
+        (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
+        (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
+        (!grupoFiltro || servidor.grupo === grupoFiltro) &&
+        (!matriculaFiltro || (servidor.matricula && servidor.matricula.includes(matriculaFiltro))) &&
+        (!isActiveFiltro || (servidor.is_active && servidor.is_active.includes(isActiveFiltro)))
+      );
+      setServidoresFiltrados(servidoresFiltrados);
   };
 
   useEffect(() => {

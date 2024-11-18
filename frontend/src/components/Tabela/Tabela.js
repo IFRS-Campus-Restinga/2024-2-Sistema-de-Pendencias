@@ -108,7 +108,12 @@ const Tabela = ({listaFiltrada, fontSize}) => {
                                     {
                                         colunas.map((coluna, colIndex) => (
                                             coluna !== 'id' ? (
-                                                <td key={colIndex} className="colunaCorpoTabela">{item[coluna] || '-'}</td>
+                                                <td key={colIndex} className="colunaCorpoTabela">
+                                                    {typeof item[coluna] === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(item[coluna])
+                                                        ? item[coluna].split('-').reverse().join('/')
+                                                        : (item[coluna] || '-')
+                                                    }
+                                                </td>
                                             ) : (<></>)
                                         ))
                                     }

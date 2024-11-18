@@ -44,8 +44,10 @@ def cadastrar_PED_ProEJA(request):
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar | Professor])
-def listar_PED_EMI(request, professorId=None):
+def listar_PED_EMI(request):
     try:
+        professorId = request.GET.get('professorId')  # Captura o parâmetro de query da URL
+
         if  professorId:
             lista = PED_EMI.objects.filter(professor_ped=professorId)
         else:
@@ -59,8 +61,10 @@ def listar_PED_EMI(request, professorId=None):
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar | Professor])
-def listar_PED_ProEJA(request, professorId=None):
+def listar_PED_ProEJA(request):
     try:
+        professorId = request.GET.get('professorId')  # Captura o parâmetro de query da URL
+
         if professorId:
             lista = PED_ProEJA.objects.filter(professor_ped=professorId)
         else:
@@ -89,34 +93,19 @@ def por_id(request, pedId, modalidade):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    
-
-@api_view(['GET'])
-@permission_classes([Professor])
-def listar_por_professor(request, professor):
-    try:
-        ped_proeja = PED_ProEJA.objects.filter(professor_ped_proeja=professor)
-
-        ped_emi = PED_EMI.objects.filter(professor_ped_emi=professor)
-
-        serializer_proeja = PED_EMI_Serializer(ped_proeja)
-
-        serializer_emi = PED_EMI_Serializer(ped_emi)
-
-        return Response(serializer_emi.data + serializer_proeja.data, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
 def atualizar_EMI(request, pedId):
     try:
+
+        print(request.data)
         ped = get_object_or_404(PED_EMI, pk=pedId)
 
         serializer = PED_EMI_Serializer(ped, data=request.data)
 
-        if not serializer.is_valid(): raise Exception(serializer.error_messages)
+        if not serializer.is_valid(): raise Exception(serializer.errors)
 
         serializer.save()
 

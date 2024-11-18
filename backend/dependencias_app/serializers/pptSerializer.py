@@ -73,7 +73,7 @@ class PPTSerializer(serializers.ModelSerializer):
         return ppt
     
     def get_aluno(self, obj):
-        return obj.aluno.nome or obj.aluno.nome or obj.aluno.email[:10] if obj.aluno else None
+        return obj.aluno.nome or obj.aluno.email.split('@')[0] if obj.aluno else None
     
     def get_professor_ppt(self, obj):
         return obj.professor_ppt.nome or obj.professor_ppt.email if obj.professor_ppt else None

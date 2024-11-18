@@ -83,6 +83,8 @@ const CadastroCurso = () => {
 
     const erros = validarFormularioCurso(formData);
 
+    console.log(erros)
+
     if (Object.keys(erros).length !== 0) {
       setShowErrorMessage(true);
       setErrors(erros);
@@ -96,6 +98,8 @@ const CadastroCurso = () => {
           const errorMessage = response.data?.message || 'Erro desconhecido';
           throw new Error(errorMessage);
         }
+
+        setModalidade('Integrado')
 
         setFormData({
           nome: '',
@@ -116,8 +120,6 @@ const CadastroCurso = () => {
         });
 
         formRef.current.reset();
-
-        navigate('/cursos');  // Substitua '/cursos' pela rota da lista de cursos
 
       } catch (erro) {
         toast.error(erro.message, {

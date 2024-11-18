@@ -53,7 +53,7 @@
 
 /* Contêiner de Cadastro */
 .divCadastroDisciplina {
-    width: 60%;
+    width: 50%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -64,7 +64,7 @@
 }
 
 .divVincularDisciplina {
-    width: 40%;
+    width: 50%;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -91,10 +91,10 @@
 }
 
 .containerTabelaCadastroDisciplina {
-    max-height: 250px;
-    overflow-y: scroll;
+    max-height: 300px;
     margin-top: 15px;
     width: 100%;
+    overflow-y: scroll;
 }
 
 .cabecalhoDisciplinas {
@@ -115,7 +115,10 @@
 .containerDisciplinas {
     width: 100%;
     margin-top: 15px;
-    max-height: 250px;
+}
+
+.containerTabelaDisciplinas {
+    max-height: 300px;
     overflow-y: scroll;
 }
 
@@ -152,7 +155,7 @@
 .tabelaCadastroDisciplina {
     max-width: 100%;
     width: 100%;
-    max-height: 100%;
+    max-height: 300px;
     height: 100%;
     border-collapse: collapse;
 
@@ -162,6 +165,9 @@
 }
 
 .cabecalhoCadastroDisciplina {
+    position: sticky;
+    top: 0;
+
     th {
         padding: 7px;
         background-color: #006b3f;

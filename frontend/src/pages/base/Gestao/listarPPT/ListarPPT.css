@@ -1,12 +1,13 @@
-.formContainer {
-    width: 90%;
-}
-
 .sectionListarPPT {
     display: flex;
     width: 100%;
     padding: 5px;
     max-height: 50%;
+}
+
+.labelListarPPT {
+    font-weight: bold;
+    font-size: 15px;
 }
 
 .divListarPPT {
@@ -31,14 +32,13 @@
     overflow-x: scroll;
 }
 
-.statusOption{
-        width: 100%;
-        padding: 12px 20px;
-        border-radius: 8px;
-        border: 2px solid #ddd;
-        font-size: 16px;
-        color: #333;
-        background-color: #fff;
-        outline: none;
-        transition: border-color 0.3s ease, background-color 0.3s ease;
+.statusOption {
+    width: 100%;
+    padding: 5px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    outline: none;
+    margin-top: 7px;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
 }
