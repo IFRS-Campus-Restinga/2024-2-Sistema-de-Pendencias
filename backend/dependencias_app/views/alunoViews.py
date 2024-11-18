@@ -82,8 +82,40 @@ def get_aluno_infos (request, idAluno):
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)   
 
-# @api_view(['GET'])
-# def visualizar_alunos(request):
-#     alunos = Aluno.objects.all()
-#     serializer = AlunoSerializer(alunos, many=True)
-#     return Response(serializer.data)
+@api_view(['GET'])
+@permission_classes([GestaoEscolar]) 
+def listar_alunos(request):
+    try:
+        # Filtros adicionais
+        filtro_geral = request.GET.get('filtroGeral', None)
+        data_inicio = request.GET.get('data_inicio', None)
+        data_fim = request.GET.get('data_fim', None)
+
+        # Listando todos os alunos
+        alunos = UsuarioBase.objects.filter(grupo__name="Aluno")
+
+        # Filtro geral para nome, matrícula, CPF, e-mail
+        if filtro_geral:
+            alunos = alunos.filter(
+                Q(nome__icontains=filtro_geral) |
+                Q(aluno__matricula__icontains=filtro_geral) |
+                Q(aluno__cpf__icontains=filtro_geral) |
+                Q(email__icontains=filtro_geral)
+            )
+
+        # Filtro por intervalo de data
+        if data_inicio and data_fim:
+            alunos = alunos.filter(data_ingresso__range=(data_inicio, data_fim))
+
+        # Ordenação dos resultados
+        ordenar_por = request.GET.get('ordenar_por', None)
+        if ordenar_por in ['nome', 'email', 'matricula']:
+            alunos = alunos.order_by(ordenar_por)
+
+        # Serialização dos dados
+        alunos_serializer = UsuarioBaseSerializer(alunos, many=True)
+
+        return Response(alunos_serializer.data, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)

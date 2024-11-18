@@ -54,6 +54,7 @@ urlpatterns = [
     path('dados-aluno/<int:idAluno>/', get_aluno_infos),
     path('listar-servidores/', listar_servidores, name='listar_servidores'),
     path('usuarios/<str:param>/<str:grupo>', listar_por_parametro),
+    path('listar-alunos/', listar_alunos),
 
     # views de exclusão de usuários
     path('deletar-servidor/<int:idusuario>/', deletar_servidor, name='deletar_servidor'),

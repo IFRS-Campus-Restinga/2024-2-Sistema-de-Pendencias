@@ -18,4 +18,14 @@ export const alunoService = {
 
         return res
     },
+
+    listar: async () => {
+        try {
+            const res = await api.get('api/listar-alunos/');
+            return res;
+        } catch (erro) {
+            console.error("Erro ao listar alunos:", erro);
+            throw erro;
+        }
+    },
 };
