@@ -92,7 +92,7 @@ const CalendarioPage = () => {
     }, [eventoCriado, eventoAtualizado, eventoExcluido]);
 
     const handleEventClick = (event) => {
-        navigate(`/sessao/GestaoEscolar/1/calendario/evento/${event.id}`, { state: { evento: event } });
+        navigate(`/sessao/Gestão Escolar/1/calendario/evento/${event.id}`, { state: { evento: event } });
     };
 
     // Filtrar os eventos conforme a modalidade selecionada
@@ -148,7 +148,7 @@ const CalendarioPage = () => {
                             <li
                                 key={calendario.id}
                                 className="calendario-item"
-                                onClick={() => navigate(`/sessao/GestaoEscolar/1/calendarioAcademico/${calendario.id}/eventos`)}
+                                onClick={() => navigate(`/sessao/Gestão Escolar/1/calendarioAcademico/${calendario.id}/eventos`)}
                             >
                                 {calendario.titulo}
                             </li>
@@ -157,7 +157,7 @@ const CalendarioPage = () => {
                     <Button
                         tipo="button"
                         text="Novo calendário acadêmico"
-                        onClick={() => navigate("/sessao/GestaoEscolar/1/cadastroCalendarioAcademico")}
+                        onClick={() => navigate("/sessao/Gestão Escolar/1/cadastroCalendarioAcademico")}
                     />
                 </div>
             </div>

@@ -67,7 +67,7 @@ const EventoCalendarioPage = () => {
           : await eventoCalendarioService.create({ ...rest, data_inicio: dataInicio, data_fim: dataFim });
 
         if (response && (response.status === 200 || response.status === 201)) {
-          navigate("/sessao/GestaoEscolar/1/calendario", { state: { eventoAtualizado: !!idEvento } });
+          navigate("/sessao/Gestão Escolar/1/calendario", { state: { eventoAtualizado: !!idEvento } });
         } else {
           throw new Error("Falha ao obter ID do evento criado.");
         }
@@ -93,7 +93,7 @@ const EventoCalendarioPage = () => {
           autoClose: 3000
         });
 
-        navigate("/sessao/GestaoEscolar/1/calendario", { state: { eventoExcluido: true } });
+        navigate("/sessao/Gestão Escolar/1/calendario", { state: { eventoExcluido: true } });
       } catch (error) {
         console.error('Erro ao excluir evento:', error);
         toast.error("Falha ao excluir evento. Tente novamente.", {

@@ -45,7 +45,7 @@ const CadastroCalendarioAcademicoPage = () => {
           position: "bottom-center",
           autoClose: 3000
         });
-        navigate("/sessao/GestaoEscolar/1/calendario");
+        navigate("/sessao/Gestão Escolar/1/calendario");
       } catch (error) {
         console.error('Erro ao cadastrar calendário acadêmico:', error);
         toast.error("Erro ao cadastrar calendário acadêmico.", {
