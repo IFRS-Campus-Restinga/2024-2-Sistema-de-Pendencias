@@ -24,32 +24,55 @@ const CadastroPPT = () => {
   const [opcoesAlunos, setOpcoesAlunos] = useState([]);
   const [opcoesProfessores, setOpcoesProfessores] = useState([]);
   const [turmas, setTurmas] = useState([]);
-
   const [formData, setFormData] = useState({
-    aluno_id: '',
-    professor_disciplina_id: '',
-    professor_ppt_id: '',
-    curso_id: '',
-    disciplina_id: '',
-    turma_origem: '',
+    aluno: '',
+    professor_disciplina: '',
+    professor_ppt: '',
+    curso: '',
+    disciplina: '',
+    turma_atual: '',
     turma_progressao: '',
     observacao: '',
   });
+  const [controleInputs, setControleInputs] = useState({
+    aluno: '',
+    professor_disciplina: '',
+    professor_ppt: '',
+    curso: '',
+    disciplina: '',
+    turma_atual: '',
+    turma_progressao: '',
+    observacao: ''
+  })
+
+  const fetchPPT = async (pptId) => {
+    try {
+      const res = await  PPTService.getById(pptId)
+
+      if (res.status !== 200) throw new Error(res)
+
+      setFormData(res.data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (state) {
-      setFormData({
-        aluno_id: state.aluno,
-        professor_disciplina_id: state.professor_disciplina || '',
-        professor_ppt_id: state.professor_ppt || '',
-        curso_id: state.curso || '',
-        disciplina_id: state.disciplina || '',
-        turma_origem: state.turma_origem || '',
+      setControleInputs({
+        aluno: state.aluno,
+        professor_disciplina: state.professor_disciplina || '',
+        professor_ppt: state.professor_ppt || '',
+        curso: state.curso || '',
+        disciplina: state.disciplina || '',
+        turma_atual: state.turma_atual || '',
         turma_progressao: state.turma_progressao || '',
         observacao: state.observacao || '',
       });
+
+      fetchPPT(state.id)
     }
   }, [state]);
 
@@ -62,8 +85,8 @@ const CadastroPPT = () => {
 
     const erros = validarFormularioPPT(formData);
     const erroTurmas = validarTurmas(
-      turmas.find((turma) => formData.turma_origem_id === turma.id),
-      turmas.find((turma) => formData.turma_progressao_id === turma.id)
+      turmas.find((turma) => formData.turma_atual === turma.id),
+      turmas.find((turma) => formData.turma_progressao === turma.id)
     );
 
     if (Object.keys(erros).length !== 0 || erroTurmas) {

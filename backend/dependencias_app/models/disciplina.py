@@ -11,5 +11,5 @@ class Disciplina(BaseModel):
         abstract = False
 
     def __str__(self):
-        return f"{self.nome} - {self.carga_horaria} h"
+        return self.nome
 

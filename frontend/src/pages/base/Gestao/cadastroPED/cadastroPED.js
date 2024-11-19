@@ -24,12 +24,12 @@ const CadastroPED = () => {
   const [opcoesProfessores, setOpcoesProfessores] = useState([])
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    aluno_id: '',
-    professor_ped_id: '',
-    professor_disciplina_id: '',
-    curso_id: '',
-    disciplina_id: '',
-    turma_origem_id: '',
+    aluno: '',
+    professor_ped: '',
+    professor_disciplina: '',
+    curso: '',
+    disciplina: '',
+    turma_atual: '',
     serie_progressao: '',
     trimestre_recuperar: '',
     observacao: '',
@@ -41,7 +41,7 @@ const CadastroPED = () => {
     professor_disciplina: '',
     curso: '',
     disciplina: '',
-    turma_origem: '',
+    turma_atual: '',
     ano_semestre_reprov: '',
     serie_progressao: '',
     trimestre_recuperar: '',
@@ -82,12 +82,12 @@ const CadastroPED = () => {
       setModalidade(novoValor);
       if (novoValor === 'Integrado') {
         setFormData({
-          aluno_id: '',
-          professor_ped_id: '',
-          professor_disciplina_id: '',
-          curso_id: '',
-          disciplina_id: '',
-          turma_origem_id: '',
+          aluno: '',
+          professor_ped: '',
+          professor_disciplina: '',
+          curso: '',
+          disciplina: '',
+          turma_atual: '',
           serie_progressao: '',
           trimestre_recuperar: '',
           observacao: '',
@@ -99,18 +99,18 @@ const CadastroPED = () => {
           professor_disciplina: '',
           curso: '',
           disciplina: '',
-          turma_origem: '',
+          turma_atual: '',
           serie_progressao: '',
           trimestre_recuperar: '',
           observacao: '',
         })
       } else {
         setFormData({
-          aluno_id: '',
-          professor_ped_id: '',
-          professor_disciplina_id: '',
-          curso_id: '',
-          disciplina_id: '',
+          aluno: '',
+          professor_ped: '',
+          professor_disciplina: '',
+          curso: '',
+          disciplina: '',
           ano_semestre_reprov: '',
           observacao: ''
         })
@@ -136,7 +136,7 @@ const CadastroPED = () => {
     const erros = validarFormularioPED(formData, modalidade)
 
     if (modalidade === 'Integrado') {
-      const erroTurma = validarSerieTurma(formData.serie_progressao, turmas.find((turma) => turma.id === formData.turma_origem_id))
+      const erroTurma = validarSerieTurma(formData.serie_progressao, turmas.find((turma) => turma.id === formData.turma_atual))
 
       if (erroTurma) erros.turma_serie = erroTurma
     }
@@ -177,12 +177,12 @@ const CadastroPED = () => {
         });
 
         setFormData({
-          aluno_id: '',
-          professor_ped_id: '',
-          professor_disciplina_id: '',
-          curso_id: '',
-          disciplina_id: '',
-          turma_origem_id: '',
+          aluno: '',
+          professor_ped: '',
+          professor_disciplina: '',
+          curso: '',
+          disciplina: '',
+          turma_origem: '',
           serie_progressao: '',
           trimestre_recuperar: '',
           observacao: '',
@@ -269,12 +269,12 @@ const CadastroPED = () => {
       setDadosFormEdicao(state)
     } else {
       setFormData({
-        aluno_id: '',
-        professor_ped_id: '',
-        professor_disciplina_id: '',
-        curso_id: '',
-        disciplina_id: '',
-        turma_origem_id: '',
+        aluno: '',
+        professor_ped: '',
+        professor_disciplina: '',
+        curso: '',
+        disciplina: '',
+        turma_origem: '',
         serie_progressao: '',
         trimestre_recuperar: '',
         observacao: '',
@@ -335,7 +335,7 @@ const CadastroPED = () => {
           
                             const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || aluno.matricula|| aluno.email)
           
-                            if (aluno) setFormData({...formData, aluno_id: aluno.id})
+                            if (aluno) setFormData({...formData, aluno: aluno.id})
                           }
           
                         }}
@@ -371,7 +371,7 @@ const CadastroPED = () => {
           
                           const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
           
-                          if (professor) setFormData({...formData, professor_ped_id: professor.id})
+                          if (professor) setFormData({...formData, professor_ped: professor.id})
                         }
                       }}
                       erro={errors.professor_ped}
@@ -406,7 +406,7 @@ const CadastroPED = () => {
           
                           const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
           
-                          if (professor) setFormData({...formData, professor_disciplina_id: professor.id})
+                          if (professor) setFormData({...formData, professor_disciplina: professor.id})
                         }
                       }}
                       erro={errors.professor_disciplina}
@@ -445,16 +445,14 @@ const CadastroPED = () => {
                   <label className="labelCadastroPED">
                     Curso *
                     <select className={errors.curso ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="curso"
-                      value={dadosFormEdicao.curso}
-                      onChange={(e) => {
-                        setDadosFormEdicao({...dadosFormEdicao, curso: e.target.value})        
-                        
+                      value={formData.curso}
+                      onChange={(e) => {                        
                         const cursoId = e.target.value;
                         
                         const curso = cursos.find(curso => curso.id === Number(cursoId)); // Encontra o curso correspondente
                         
                         if (curso) {
-                          setFormData({...formData, curso_id: Number(e.target.value)})
+                          setFormData({...formData, curso: Number(e.target.value)})
                           setDisciplinas(curso.disciplinas);
                           setTurmas(curso.turmas)
                         }
@@ -475,10 +473,9 @@ const CadastroPED = () => {
                   <label className="labelCadastroPED">
                     Disciplina *
                     <select className={errors.disciplina ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
-                      value={dadosFormEdicao.disciplina}
+                      value={formData.disciplina}
                       onChange={(e) => {
-                        setDadosFormEdicao({...dadosFormEdicao, disciplina: e.target.value})        
-                        setFormData({...formData, disciplina_id: Number(e.target.value)})}}
+                        setFormData({...formData, disciplina: Number(e.target.value)})}}
                     >
                       {
                         !state ? (
@@ -498,9 +495,8 @@ const CadastroPED = () => {
                   Série da Progressão *
                   <select
                     className={errors.serie_progressao || errors.turma_serie ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
-                    value={dadosFormEdicao.serie_progressao}
+                    value={formData.serie_progressao}
                     onChange={(e) => {
-                      setDadosFormEdicao({...dadosFormEdicao, serie_progressao: e.target.value})        
                       setFormData({ ...formData, serie_progressao: e.target.value })
                     }}
                   >
@@ -520,11 +516,10 @@ const CadastroPED = () => {
                 <label className="labelCadastroPED">
                   Turma Origem *
                   <select
-                    className={errors.turma_origem || errors.turma_serie ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
-                    value={dadosFormEdicao.turma_origem}
+                    className={errors.turma_atual || errors.turma_serie ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
+                    value={formData.turma_atual}
                     onChange={(e) => {
-                      setDadosFormEdicao({...dadosFormEdicao, turma_origem: e.target.value})          
-                      setFormData({ ...formData, turma_origem_id: Number(e.target.value) })
+                      setFormData({ ...formData, turma_atual: Number(e.target.value) })
                     }}
                   >
                       {
@@ -562,7 +557,7 @@ const CadastroPED = () => {
     
                       const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || aluno.matricula || aluno.email)
     
-                      if (aluno) setFormData({...formData, aluno_id: aluno.id})
+                      if (aluno) setFormData({...formData, aluno: aluno.id})
                     }    
                   }}
                   erro={errors.aluno}
@@ -596,7 +591,7 @@ const CadastroPED = () => {
           
                           const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
           
-                          if (professor) setFormData({...formData, professor_ped_id: professor.id})
+                          if (professor) setFormData({...formData, professor_ped: professor.id})
                         }
                       }}
                       erro={errors.professor_ped}
@@ -630,7 +625,7 @@ const CadastroPED = () => {
       
                       const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
       
-                      if (professor) setFormData({...formData, professor_disciplina_id: professor.id})
+                      if (professor) setFormData({...formData, professor_disciplina: professor.id})
                     }
                   }}
                   erro={errors.professor_disciplina}
@@ -651,9 +646,8 @@ const CadastroPED = () => {
               <label className="labelCadastroPED">
                 Curso *
                 <select className={errors.curso ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="curso" 
-                    value={dadosFormEdicao.curso}
+                    value={formData.curso}
                     onChange={(e) => {
-                    setDadosFormEdicao({...dadosFormEdicao, curso: e.target.value})        
 
                     const cursoId = e.target.value;
                   
@@ -661,7 +655,7 @@ const CadastroPED = () => {
                     console.log(curso)
 
                     if (curso) {
-                      setFormData({...formData, curso_id: Number(e.target.value)})
+                      setFormData({...formData, curso: Number(e.target.value)})
                       setDisciplinas(curso.disciplinas);
                     }
                   }
@@ -681,10 +675,9 @@ const CadastroPED = () => {
               <label className="labelCadastroPED">
                 Disciplina *
                 <select className={errors.disciplina ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
-                  value={dadosFormEdicao.disciplina}
+                  value={formData.disciplina}
                   onChange={(e) => {
-                    setDadosFormEdicao({...dadosFormEdicao, disciplina: e.target.value})        
-                    setFormData({...formData, disciplina_id: Number(e.target.value)})}}
+                    setFormData({...formData, disciplina: Number(e.target.value)})}}
                 >
                   {
                     !state ? (

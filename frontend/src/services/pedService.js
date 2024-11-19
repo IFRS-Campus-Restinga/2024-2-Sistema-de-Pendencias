@@ -30,7 +30,12 @@ export const PEDService = {
   },
 
   listaEMI: async (professorId) => {
-    const res = await api.get(`api/ped-emi/?professorId=${professorId ?? ''}`).catch((erro) => {
+    const res = await api.get(`api/ped-emi/?professorId=${professorId ?? ''}`,{
+      params: {
+        incluir_dados: true
+      }
+    }
+    ).catch((erro) => {
       return erro
     })
 
@@ -38,7 +43,11 @@ export const PEDService = {
   },
 
   listaProEJA: async (professorId) => {
-    const res = await api.get(`api/ped-proeja/?professorId=${professorId ?? ''}`).catch((erro) => {
+    const res = await api.get(`api/ped-proeja/?professorId=${professorId ?? ''}`, {
+      params: {
+        incluir_dados: true
+      }
+    }).catch((erro) => {
       return erro
     })
 

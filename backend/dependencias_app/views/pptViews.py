@@ -1,13 +1,9 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from dependencias_app.serializers.pptSerializer import PPTSerializer
+from dependencias_app.serializers.pptSerializer import *
 from dependencias_app.models.ppt import PPT
 from dependencias_app.permissoes import GestaoEscolar
-from google_auth.models import UsuarioBase
-from dependencias_app.models.curso import Curso
-from dependencias_app.models.disciplina import Disciplina
-from dependencias_app.models.turma import Turma
 from django.shortcuts import *
 import logging
 
@@ -37,7 +33,7 @@ def listar_ppt(request):
     try:
         lista_ppt = PPT.objects.all()
 
-        serializer = PPTSerializer(lista_ppt, many=True)
+        serializer = PPTSerializer(lista_ppt, many=True, context={'request': request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
@@ -48,6 +44,7 @@ def listar_ppt(request):
 def listar_ppt_id(request, idPpt):
     try:
         ppt = PPT.objects.get(id=idPpt)
+
         serializer = PPTSerializer(ppt)
 
         return Response(serializer.data, status=status.HTTP_200_OK)

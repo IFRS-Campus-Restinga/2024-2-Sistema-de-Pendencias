@@ -12,4 +12,4 @@ class Turma(BaseModel):
         abstract = False
 
     def __str__(self):
-        return f'Turma {self.numero} - {self.curso.nome}'
+        return self.numero

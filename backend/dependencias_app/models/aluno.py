@@ -12,3 +12,5 @@ class Aluno(BaseModel):
 
     class Meta:
         abstract = False
+    
+    

@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from dependencias_app.models.pedEMI import PED_EMI
 from dependencias_app.models.pedProEJA import PED_ProEJA
-from dependencias_app.serializers.pedEMISerializer import PED_EMI_Serializer
-from dependencias_app.serializers.pedProEJASerializer import PED_ProEJA_Serializer
+from dependencias_app.serializers.pedEMISerializer import *
+from dependencias_app.serializers.pedProEJASerializer import *
 from dependencias_app.permissoes import *
 
 @api_view(['POST'])
@@ -16,7 +16,7 @@ def cadastrar_PED_EMI(request):
 
         serializer = PED_EMI_Serializer(data=data)
 
-        if not serializer.is_valid(): raise Exception(serializer.error_messages)
+        if not serializer.is_valid(): raise Exception(serializer.errors)
 
         serializer.save()
 
@@ -30,11 +30,9 @@ def cadastrar_PED_ProEJA(request):
     try:
         data = request.data
 
-        print(data)
-
         serializer = PED_ProEJA_Serializer(data=data)
 
-        if not serializer.is_valid(): raise Exception(serializer.error_messages)
+        if not serializer.is_valid(): raise Exception(serializer.errors)
 
         serializer.save()
 
@@ -53,7 +51,7 @@ def listar_PED_EMI(request):
         else:
             lista = PED_EMI.objects.all()
 
-        serializer = PED_EMI_Serializer(lista, many=True)
+        serializer = PED_EMI_Serializer(lista, many=True, context={'request': request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
@@ -70,7 +68,7 @@ def listar_PED_ProEJA(request):
         else:
             lista = PED_ProEJA.objects.all()
         
-        serializer = PED_ProEJA_Serializer(lista, many=True)
+        serializer = PED_ProEJA_Serializer(lista, many=True, context={'request': request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -84,11 +82,11 @@ def por_id(request, pedId, modalidade):
         if modalidade == 'Integrado':
             ped = get_object_or_404(PED_EMI, pk=pedId)
 
-            serializer = PED_EMI_Serializer(ped, context={'request': request})
+            serializer = PED_EMI_Serializer(ped)
         elif modalidade == 'ProEJA':
             ped = get_object_or_404(PED_ProEJA, pk=pedId)
 
-            serializer = PED_ProEJA_Serializer(ped, context={'request': request})
+            serializer = PED_ProEJA_Serializer(ped)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:

@@ -10,7 +10,11 @@ export const PPTService = {
   },
   
   list: async () => {
-    const res = await api.get('api/listar-ppt/').catch((erro) => {
+    const res = await api.get('api/listar-ppt/', {
+      params: {
+        incluir_dados: true
+      }
+    }).catch((erro) => {
         return erro
     })
 

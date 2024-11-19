@@ -17,7 +17,7 @@ class PED_EMI(Dependencia):
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, related_name='curso_ped_emi')
     trimestre_recuperar = models.CharField(null=False, blank=False, choices=TrimestreRec.choices, max_length=10)
     serie_progressao = models.CharField(null=False, blank=False, choices=SerieProgressao.choices, max_length=6)
-    turma_origem = models.ForeignKey(Turma, on_delete=models.DO_NOTHING)
+    turma_atual = models.ForeignKey(Turma, on_delete=models.DO_NOTHING)
     plano_estudos = models.OneToOneField(PlanoEstudos, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='plano_estudos_emi')
     form_encerramento = models.OneToOneField(FormEncerramento, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='form_encerramento_emi')
 

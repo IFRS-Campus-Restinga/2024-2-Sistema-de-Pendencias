@@ -42,5 +42,7 @@ class UsuarioBase(AbstractUser):
         verbose_name = 'Usuário Base'
 
     def __str__(self) -> str:
-        return f'{self.nome}\nEmail: {self.email}'
+        if (self.grupo.name == 'Aluno'): return self.nome or self.email.split('@')[0]
+        
+        return self.nome or self.email
 

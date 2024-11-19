@@ -6,7 +6,7 @@ from .curso import *
 from google_auth.models import UsuarioBase
 
 class PPT(Dependencia):
-    turma_origem = models.ForeignKey(Turma, on_delete=models.DO_NOTHING, related_name='turma_origem')
+    turma_atual = models.ForeignKey(Turma, on_delete=models.DO_NOTHING, related_name='turma_atual')
     turma_progressao = models.ForeignKey(Turma, on_delete=models.DO_NOTHING, related_name='turma_progressao')
 
     # sobrescrita dos related names dos campos chave estrangeira herdados de Dependencia

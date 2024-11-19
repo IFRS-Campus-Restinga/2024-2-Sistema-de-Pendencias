@@ -7,61 +7,37 @@ from dependencias_app.models.ppt import PPT
 
 class PPTSerializer(serializers.ModelSerializer):
     # variáveis de entrada do serializer (POST), recebe as chaves primárias das tabelas que se relacionam com ppt
-    aluno_id = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Aluno'))
-    professor_ppt_id = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
-    professor_disciplina_id = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
-    curso_id = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.filter(modalidade='Integrado'))
-    disciplina_id = serializers.PrimaryKeyRelatedField(queryset=Disciplina.objects.all())
-    turma_origem_id = serializers.PrimaryKeyRelatedField(queryset=Turma.objects.all())
-    turma_progressao_id = serializers.PrimaryKeyRelatedField(queryset=Turma.objects.all())
-
-    # variáveis de saída do serializer (GET), retorna um dado por tabela vinculada a ppt (nome/email, numero da turma etc)
-    aluno = serializers.SerializerMethodField()
-    professor_ppt = serializers.SerializerMethodField()
-    professor_disciplina = serializers.SerializerMethodField()
-    curso = serializers.SerializerMethodField()
-    disciplina = serializers.SerializerMethodField()
-    turma_origem = serializers.SerializerMethodField()
-    turma_progressao = serializers.SerializerMethodField()
+    aluno = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Aluno'))
+    professor_ppt = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
+    professor_disciplina = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
+    curso = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.filter(modalidade='Integrado'))
+    disciplina = serializers.PrimaryKeyRelatedField(queryset=Disciplina.objects.all())
+    turma_atual = serializers.PrimaryKeyRelatedField(queryset=Turma.objects.all())
+    turma_progressao = serializers.PrimaryKeyRelatedField(queryset=Turma.objects.all())
 
     class Meta:
         model = PPT
         fields = '__all__'
-    
-    def create(self, validated_data):
-        # Criamos a instância do PPT, agora usando as relações corretamente
-        ppt_instance = PPT.objects.create(
-            aluno=validated_data.pop('aluno_id', None),
-            professor_ppt=validated_data.pop('professor_ppt_id', None),
-            professor_disciplina=validated_data.pop('professor_disciplina_id', None),
-            curso=validated_data.pop('curso_id', None),
-            disciplina=validated_data.pop('disciplina_id', None),
-            turma_origem=validated_data.pop('turma_origem_id', None),
-            turma_progressao=validated_data.pop('turma_progressao_id', None),
-            **validated_data  # Preenche os outros campos do modelo
-        )
-        
-        return ppt_instance
 
     def validate(self, data):
-        curso = data.get('curso_id')
-        disciplina = data.get('disciplina_id')
-        turma_origem = data.get('turma_origem_id')
-        turma_progressao = data.get('turma_progressao_id')
+        curso = data.get('curso')
+        disciplina = data.get('disciplina')
+        turma_atual = data.get('turma_atual')
+        turma_progressao = data.get('turma_progressao')
 
         # Verifica se a disciplina está vinculada ao curso
         if not disciplina.cursos.filter(id=curso.id).exists():
             raise serializers.ValidationError("A disciplina não está vinculada ao curso fornecido.")
         
         # Verifica se as turmas pertencem ao curso
-        if turma_origem.curso.id != curso.id:
+        if turma_atual.curso.id != curso.id:
             raise serializers.ValidationError("A turma de origem não está vinculada ao curso fornecido.")
         
         if turma_progressao.curso.id != curso.id:
             raise serializers.ValidationError("A turma de progressão não está vinculada ao curso fornecido.")
         
         # Verifica se a turma de origem não é inferior à de progressão
-        if int(turma_origem.numero) < int(turma_progressao.numero):
+        if int(turma_atual.numero) < int(turma_progressao.numero):
             raise serializers.ValidationError("A turma de origem não pode ser inferior à turma de progressão.")
         
         return data
@@ -72,61 +48,23 @@ class PPTSerializer(serializers.ModelSerializer):
 
         return ppt
     
-    def get_aluno(self, obj):
-        return obj.aluno.nome or obj.aluno.email.split('@')[0] if obj.aluno else None
-    
-    def get_professor_ppt(self, obj):
-        return obj.professor_ppt.nome or obj.professor_ppt.email if obj.professor_ppt else None
-
-    def get_professor_ppt_id(self, obj):
-        return obj.professor_ppt.id if obj.professor_ppt else None
-    
-    def get_professor_disciplina(self, obj):
-        return obj.professor_disciplina.nome or obj.professor_disciplina.email if obj.professor_disciplina else None
-    
-    def get_professor_disciplina_id(self, obj):
-        return obj.professor_disciplina.id if obj.professor_disciplina else None
-    
-    def get_curso(self, obj):
-        return obj.curso.nome if obj.curso else None
-    
-    def get_curso_id(self, obj):
-        return obj.curso.id if obj.curso else None
-    
-    def get_disciplina(self, obj):
-        return obj.disciplina.nome if obj.disciplina else None
-    
-    def get_disciplina_id(self, obj):
-        return obj.disciplina.id if obj.disciplina else None
-    
-    def get_turma_origem(self, obj):
-        return obj.turma_origem.numero if obj.turma_origem else None
-    
-    def get_turma_origem_id(self, obj):
-        return obj.turma_origem.id if obj.turma_origem else None
-
-    def get_turma_progressao(self, obj):
-        return obj.turma_progressao.numero if obj.turma_progressao else None
-    
-    def get_turma_progressao_id(self, obj):
-        return obj.turma_progressao.id if obj.turma_progressao else None
-
     def to_representation(self, instance):
-        request = self.context.get('request')
-        retornar_ids = request and request.query_params.get('retornar_ids') == 'true'
-    
         representation = super().to_representation(instance)
-    
-        if retornar_ids:
-            # Substitui os nomes/valores pelas IDs das instâncias relacionadas
-            representation['aluno'] = instance.aluno.id if instance.aluno else None
-            representation['professor_disciplina'] = instance.professor_disciplina.id if instance.professor_disciplina else None
-            representation['professor_ped'] = instance.professor_ped.id if instance.professor_ped else None
-            representation['curso'] = instance.curso.id if instance.curso else None
-            representation['disciplina'] = instance.disciplina.id if instance.disciplina else None
-            representation['turma_origem'] = instance.turma_origem.id if instance.turma_origem else None
-        else:
-            for field in ['aluno_id', 'professor_ppt_id', 'professor_disciplina_id', 'curso_id', 'disciplina_id', 'turma_origem_id', 'turma_progressao_id', 'data_criacao']:
-                representation.pop(field, None)
+
+        # Verifica se a requisição pediu representação detalhada
+        request = self.context.get('request', None)
+        incluir_dados = request and request.query_params.get('incluir_dados')
+
+        if incluir_dados:
+            representation['aluno'] = str(instance.aluno)
+            representation['professor_disciplina'] = str(instance.professor_disciplina)
+            representation['professor_ppt'] = str(instance.professor_ppt)
+            representation['curso'] = str(instance.curso)
+            representation['disciplina'] = str(instance.disciplina)
+            representation['turma_atual'] = str(instance.turma_atual)
+            representation['turma_progressao'] = str(instance.turma_progressao)
             
+        representation.pop('data_criacao')
+
+
         return representation

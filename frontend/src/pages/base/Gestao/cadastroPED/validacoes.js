@@ -82,24 +82,24 @@ export const validarTrimestreRec = (trimestresRec) => {
 export const validarFormularioPED = (formData, modalidade) => {
     const erros = {};
 
-    const erroAluno = validarAluno(formData.aluno_id);
+    const erroAluno = validarAluno(formData.aluno);
     if (erroAluno) erros.aluno = erroAluno;
 
-    const erroProfessorPED = validarProfessor(formData.professor_ped_id);
+    const erroProfessorPED = validarProfessor(formData.professor_ped);
     if (erroProfessorPED) erros.professor_ped = erroProfessorPED;
 
-    const erroProfessorDisciplina = validarProfessor(formData.professor_disciplina_id);
+    const erroProfessorDisciplina = validarProfessor(formData.professor_disciplina);
     if (erroProfessorDisciplina) erros.professor_disciplina = erroProfessorDisciplina;
 
-    const erroCurso = validarCurso(formData.curso_id);
+    const erroCurso = validarCurso(formData.curso);
     if (erroCurso) erros.curso = erroCurso;
 
-    const erroDisciplina = validarDisciplina(formData.disciplina_id);
+    const erroDisciplina = validarDisciplina(formData.disciplina);
     if (erroDisciplina) erros.disciplina = erroDisciplina;
 
     if (modalidade === 'Integrado') {
-        const erroTurmaOrigem = validarTurmaOrigem(formData.turma_origem_id)
-        if (erroTurmaOrigem) erros.turma_origem = erroTurmaOrigem
+        const erroTurmaOrigem = validarTurmaOrigem(formData.turma_atual)
+        if (erroTurmaOrigem) erros.turma_atual = erroTurmaOrigem
 
         const erroSerieProgressao = validarSerieProgressao(formData.serie_progressao)
         if (erroSerieProgressao) erros.serie_progressao = erroSerieProgressao
