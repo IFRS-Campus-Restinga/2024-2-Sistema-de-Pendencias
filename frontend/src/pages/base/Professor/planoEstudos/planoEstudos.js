@@ -17,7 +17,7 @@ const PlanoEstudos = () => {
     forma_oferta: '',
     turno: '',
     parecer_pedagogico: '',
-    ano_progressao: '',  // Campo para o ano de progressão
+    periodo_letivo: '',  // Alterado para "periodo_letivo"
     pedId: pedId
   });
 
@@ -61,7 +61,7 @@ const PlanoEstudos = () => {
           forma_oferta: '',
           turno: '',
           parecer_pedagogico: '',
-          ano_progressao: '',  // Limpa o campo de ano progressão também
+          periodo_letivo: '',  // Limpa o campo de período letivo também
         });
 
         setErrors({}); // Limpar erros
@@ -120,18 +120,18 @@ const PlanoEstudos = () => {
             </label>
 
             <label className="labelCadastroPlanoEstudos">
-              Ano de Progressão *
+              Período Letivo *
               <input
                 type="number"
-                name="ano_progressao"
-                className={errors.ano_progressao ? 'errorInputCadastroPlanoEstudos' : 'inputCadastroPlanoEstudos'}
+                name="periodo_letivo"  // Alterado para "periodo_letivo"
+                className={errors.periodo_letivo ? 'errorInputCadastroPlanoEstudos' : 'inputCadastroPlanoEstudos'}
                 onChange={handleChange}
-                value={formData.ano_progressao}
-                placeholder="Digite o ano de progressão"
+                value={formData.periodo_letivo}  // Alterado para "periodo_letivo"
+                placeholder="Digite o período letivo"
                 min="1900"  // Ano mínimo
                 max={new Date().getFullYear()}  // Ano máximo
               />
-              {errors.ano_progressao && <p className="errorMessage">{errors.ano_progressao}</p>}
+              {errors.periodo_letivo && <p className="errorMessage">{errors.periodo_letivo}</p>}
             </label>
           </div>
         </section>
