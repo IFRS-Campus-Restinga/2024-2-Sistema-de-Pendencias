@@ -89,3 +89,12 @@
     background-color: #006b3f;
     color: white;
 }
+
+.checkboxTrimestreDesab+.labelTrimestreRec {
+    background-color: #797979;
+    border: none;
+    color: white;
+    /* Muda a cor da label para cinza */
+    cursor: not-allowed;
+    /* Também desabilita o cursor sobre a label */
+}

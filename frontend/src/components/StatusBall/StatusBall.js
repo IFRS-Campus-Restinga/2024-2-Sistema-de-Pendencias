@@ -9,6 +9,7 @@ const StatusBalls = ({ status, tipo }) => {
     // Atualiza o status quando a prop 'status' mudar
     useEffect(() => {
         setActiveStatus(status);
+        console.log(status)
     }, [status]);
 
     const listaProgresso = [1,2,3]
@@ -18,11 +19,11 @@ const StatusBalls = ({ status, tipo }) => {
         if (activeStatus === 'Finalizada') {
             return 'active'; // Se a tarefa está finalizada, todas as bolas ficam ativas
         }
-        if (activeStatus === 'Plano de Estudos Elaborado' && index < 3) {
-            return 'active'
-        }
-        if (activeStatus === 'Em andamento' && index < 2) {
+        if (activeStatus === 'Em Andamento' && index < 3) {
             return 'active'; // Se a tarefa está em andamento, bolas 1 e 2 ficam ativas
+        }
+        if (activeStatus === 'Plano de Estudos Elaborado' && index < 2) {
+            return 'active'
         }
         if (activeStatus === 'Criada' && index === 0) {
             return 'active'; // Se a tarefa foi criada, só a bola 1 fica ativa

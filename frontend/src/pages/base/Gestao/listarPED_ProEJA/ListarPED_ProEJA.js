@@ -87,7 +87,7 @@ const ListarPEDProEJA = () => {
                             <option className="optionListarPEDGestao" value='Criada'>Criada</option>
                             <option className="optionListarPEDGestao" value='Plano de Estudos Elaborado'>Plano de Estudos Elaborado</option>
                             <option className="optionListarPEDGestao" value='Finalizada'>Finalizada</option>
-                            <option className="optionListarPEDGestao" value='Desativada'>Desativada</option>
+                            <option className="optionListarPEDGestao" value='Desativado'>Desativado</option>
                         </select>
                     </label>
                     <label className="labelListarPEDGestao">

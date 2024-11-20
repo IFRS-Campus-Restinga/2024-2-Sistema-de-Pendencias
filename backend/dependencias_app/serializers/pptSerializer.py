@@ -1,9 +1,12 @@
 from rest_framework import serializers
+from datetime import datetime
+from django.utils import timezone
 from google_auth.models import UsuarioBase
 from dependencias_app.models.curso import Curso
 from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.turma import Turma
 from dependencias_app.models.ppt import PPT
+from dependencias_app.models.calendarioAcademico import CalendarioAcademico
 
 class PPTSerializer(serializers.ModelSerializer):
     # variáveis de entrada do serializer (POST), recebe as chaves primárias das tabelas que se relacionam com ppt
@@ -18,6 +21,21 @@ class PPTSerializer(serializers.ModelSerializer):
     class Meta:
         model = PPT
         fields = '__all__'
+    
+    def create(self, validated_data):
+        hoje = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)  # Hora ajustada para 00:00:00
+
+        calendario = CalendarioAcademico.objects.filter(data_inicio__gte=hoje, tipo_calendario='Integrado').order_by('data_inicio').first()
+
+        if calendario:
+            # Atualiza as datas de início e final com o calendário encontrado
+            validated_data['data_inicio'] = calendario.data_inicio.date()
+            validated_data['data_final'] = calendario.data_fim.date()
+
+        # Cria o objeto PPT com os dados validados
+        ppt = super().create(validated_data)
+
+        return ppt
 
     def validate(self, data):
         curso = data.get('curso')

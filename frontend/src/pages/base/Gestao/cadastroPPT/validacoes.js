@@ -67,26 +67,26 @@ export const validarDatas = (dataInicio, dataFim) => {
 export const validarFormularioPPT = (formData) => {
     const erros = {};
 
-    const erroAluno = validarAluno(formData.aluno_id);
+    const erroAluno = validarAluno(formData.aluno);
     if (erroAluno) erros.aluno = erroAluno;
 
-    const erroProfessorPPT = validarProfessor(formData.professor_ppt_id);
+    const erroProfessorPPT = validarProfessor(formData.professor_ppt);
     if (erroProfessorPPT) erros.professor_ppt = erroProfessorPPT;
     
-    const erroProfessorDisciplina = validarProfessor(formData.professor_disciplina_id);
+    const erroProfessorDisciplina = validarProfessor(formData.professor_disciplina);
     if (erroProfessorDisciplina) erros.professor_disciplina = erroProfessorDisciplina;
 
-    const erroCurso = validarCurso(formData.curso_id);
+    const erroCurso = validarCurso(formData.curso);
     if (erroCurso) erros.curso = erroCurso;
 
-    const erroDisciplina = validarDisciplina(formData.disciplina_id);
+    const erroDisciplina = validarDisciplina(formData.disciplina);
     if (erroDisciplina) erros.disciplina = erroDisciplina;
 
-    const erroTurmaOrigem = validarTurmaOrigem(formData.turma_origem_id);
-    if (erroTurmaOrigem) erros.turmaOrigem = erroTurmaOrigem
+    const erroTurmaOrigem = validarTurmaOrigem(formData.turma_atual);
+    if (erroTurmaOrigem) erros.turma_atual = erroTurmaOrigem
 
-    const erroTurmaProgressao = validarTurmaProgressao(formData.turma_progressao_id);
-    if (erroTurmaProgressao) erros.turmaProgressao = erroTurmaProgressao
+    const erroTurmaProgressao = validarTurmaProgressao(formData.turma_progressao);
+    if (erroTurmaProgressao) erros.turma_progressao = erroTurmaProgressao
 
     return erros;
 };

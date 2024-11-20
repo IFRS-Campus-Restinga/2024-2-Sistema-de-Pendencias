@@ -23,6 +23,7 @@ const CadastroPED = () => {
   const [opcoesAlunos, setOpcoesAlunos] = useState([])
   const [opcoesProfessores, setOpcoesProfessores] = useState([])
   const [errors, setErrors] = useState({});
+  const [desabilitado, setDesabilitado] = useState(false)
   const [formData, setFormData] = useState({
     aluno: '',
     professor_ped: '',
@@ -35,7 +36,7 @@ const CadastroPED = () => {
     observacao: '',
   });
 
-  const [dadosFormEdicao, setDadosFormEdicao] = useState({
+  const [controleInputs, setControleInputs] = useState({
     aluno: '',
     professor_ped: '',
     professor_disciplina: '',
@@ -70,7 +71,7 @@ const CadastroPED = () => {
         trimestre_recuperar: novoTrimestre.join(', '),
     });
 
-    setDadosFormEdicao({...dadosFormEdicao, trimestre_recuperar: novoTrimestre.join(', ')})
+    setControleInputs({...controleInputs, trimestre_recuperar: novoTrimestre.join(', ')})
   };
 
   const verificaTrimestres = (trimestre) => {
@@ -93,7 +94,7 @@ const CadastroPED = () => {
           observacao: '',
         })
   
-        setDadosFormEdicao({
+        setControleInputs({
           aluno: '',
           professor_ped: '',
           professor_disciplina: '',
@@ -115,7 +116,7 @@ const CadastroPED = () => {
           observacao: ''
         })
   
-        setDadosFormEdicao({
+        setControleInputs({
           aluno: '',
           professor_ped: '',
           professor_disciplina: '',
@@ -189,7 +190,7 @@ const CadastroPED = () => {
           ano_semestre_reprov: '',
         })
 
-        setDadosFormEdicao({
+        setControleInputs({
           aluno: '',
           curso: '',
           disciplina: '',
@@ -263,10 +264,10 @@ const CadastroPED = () => {
   }
 
   useEffect(() => {
-    console.log(state)
     if (state) {
       fetchPED(state.id)
-      setDadosFormEdicao(state)
+      setControleInputs(state)
+      setDesabilitado(true)
     } else {
       setFormData({
         aluno: '',
@@ -280,7 +281,7 @@ const CadastroPED = () => {
         observacao: '',
       })
 
-      setDadosFormEdicao({
+      setControleInputs({
         aluno: '',
         professor_ped: '',
         professor_disciplina: '',
@@ -323,9 +324,9 @@ const CadastroPED = () => {
                       <Input
                         tipo='text'
                         nome='aluno'
-                        valor={dadosFormEdicao.aluno}
+                        valor={controleInputs.aluno}
                         onChange={(e) => {
-                          setDadosFormEdicao({...dadosFormEdicao, aluno: e.target.value})
+                          setControleInputs({...controleInputs, aluno: e.target.value})
 
                           fetchAlunos(e)
                           
@@ -342,6 +343,7 @@ const CadastroPED = () => {
                         erro={errors.aluno}
                         textoAjuda='Insira nome ou matrícula do aluno'
                         lista={'opcoesAlunos'}
+                        desabilitado={desabilitado}
                       />
                   </label>
                   <datalist className="datalistCadastroPED" id="opcoesAlunos">
@@ -359,9 +361,9 @@ const CadastroPED = () => {
                     <Input
                       tipo='text'
                       nome='professor'
-                      valor={dadosFormEdicao.professor_ped}
+                      valor={controleInputs.professor_ped}
                       onChange={(e) => {
-                        setDadosFormEdicao({...dadosFormEdicao, professor_ped: e.target.value})
+                        setControleInputs({...controleInputs, professor_ped: e.target.value})
 
                         fetchProfessores(e)
                         
@@ -394,9 +396,9 @@ const CadastroPED = () => {
                     <Input
                       tipo='text'
                       nome='professor'
-                      valor={dadosFormEdicao.professor_disciplina}
+                      valor={controleInputs.professor_disciplina}
                       onChange={(e) => {
-                        setDadosFormEdicao({...dadosFormEdicao, professor_disciplina: e.target.value})
+                        setControleInputs({...controleInputs, professor_disciplina: e.target.value})
 
                         fetchProfessores(e)
                         
@@ -412,6 +414,7 @@ const CadastroPED = () => {
                       erro={errors.professor_disciplina}
                       textoAjuda='Insira o email ou nome do professor'
                       lista={'opcoesProfessores'}
+                      desabilitado={desabilitado}
                     />
                   </label>
                   <datalist className="datalistCadastroPED" id="opcoesProfessores">
@@ -430,11 +433,11 @@ const CadastroPED = () => {
                       Trimestres a Recuperar *
                       {errors.trimestre_recuperar ? <p style={{color: 'red', fontSize: '10px'}}>{errors.trimestre_recuperar}</p> : (<></>)}
                       <div className="divTrimestreRec">
-                        <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" checked={verificaTrimestres('1º')} value='1º' id="1" hidden/>
+                        <input className={desabilitado ? "checkboxTrimestreDesab" :"checkboxTrimestre"} onChange={handleTrimestreRec} type="checkbox" checked={verificaTrimestres('1º')} value='1º' id="1" hidden disabled={desabilitado}/>
                         <label className="labelTrimestreRec" htmlFor="1">1º Trimestre</label>
-                        <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" checked={verificaTrimestres('2º')} value='2º' id="2" hidden/>
+                        <input className={desabilitado ? "checkboxTrimestreDesab" :"checkboxTrimestre"} onChange={handleTrimestreRec} type="checkbox" checked={verificaTrimestres('2º')} value='2º' id="2" hidden disabled={desabilitado}/>
                         <label className="labelTrimestreRec" htmlFor="2">2º Trimestre</label>
-                        <input className="checkboxTrimestre" onChange={handleTrimestreRec} type="checkbox" checked={verificaTrimestres('3º')} value='3º' id='3' hidden/>
+                        <input className={desabilitado ? "checkboxTrimestreDesab" :"checkboxTrimestre"} onChange={handleTrimestreRec} type="checkbox" checked={verificaTrimestres('3º')} value='3º' id='3' hidden disabled={desabilitado}/>
                         <label className="labelTrimestreRec" htmlFor="3">3º Trimestre</label>
                       </div>
                     </label>
@@ -446,6 +449,7 @@ const CadastroPED = () => {
                     Curso *
                     <select className={errors.curso ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="curso"
                       value={formData.curso}
+                      disabled={desabilitado}
                       onChange={(e) => {                        
                         const cursoId = e.target.value;
                         
@@ -474,6 +478,7 @@ const CadastroPED = () => {
                     Disciplina *
                     <select className={errors.disciplina ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
                       value={formData.disciplina}
+                      disabled={desabilitado}
                       onChange={(e) => {
                         setFormData({...formData, disciplina: Number(e.target.value)})}}
                     >
@@ -499,6 +504,7 @@ const CadastroPED = () => {
                     onChange={(e) => {
                       setFormData({ ...formData, serie_progressao: e.target.value })
                     }}
+                    disabled={desabilitado}
                   >
                       {
                         !state ? (
@@ -521,6 +527,7 @@ const CadastroPED = () => {
                     onChange={(e) => {
                       setFormData({ ...formData, turma_atual: Number(e.target.value) })
                     }}
+                    disabled={desabilitado}
                   >
                       {
                         !state ? (
@@ -545,9 +552,9 @@ const CadastroPED = () => {
                 <Input
                   tipo='text'
                   nome='aluno'
-                  valor={dadosFormEdicao.aluno}
+                  valor={controleInputs.aluno}
                   onChange={(e) => {
-                    setDadosFormEdicao({...dadosFormEdicao, aluno: e.target.value})
+                    setControleInputs({...controleInputs, aluno: e.target.value})
 
                     fetchAlunos(e)
                     
@@ -563,6 +570,7 @@ const CadastroPED = () => {
                   erro={errors.aluno}
                   textoAjuda='Insira nome ou matrícula do aluno'
                   lista={'opcoesAlunos'}
+                  desabilitado={desabilitado}
                 />
               </label>
               <datalist className="datalistCadastroPED" id="opcoesAlunos">
@@ -580,9 +588,9 @@ const CadastroPED = () => {
                     <Input
                       tipo='text'
                       nome='professor'
-                      valor={dadosFormEdicao.professor_ped}
+                      valor={controleInputs.professor_ped}
                       onChange={(e) => {
-                        setDadosFormEdicao({...dadosFormEdicao, professor_ped: e.target.value})
+                        setControleInputs({...controleInputs, professor_ped: e.target.value})
                         fetchProfessores(e)
                         
                         if (opcoesProfessores) {
@@ -614,9 +622,9 @@ const CadastroPED = () => {
                 <Input
                   tipo='text'
                   nome='professor'
-                  valor={dadosFormEdicao.professor_disciplina}
+                  valor={controleInputs.professor_disciplina}
                   onChange={(e) => {
-                    setDadosFormEdicao({...formData, professor_disciplina: e.target.value})
+                    setControleInputs({...formData, professor_disciplina: e.target.value})
                     fetchProfessores(e)
                     
                     if (opcoesProfessores) {
@@ -631,6 +639,7 @@ const CadastroPED = () => {
                   erro={errors.professor_disciplina}
                   textoAjuda='Insira o email ou nome do professor'
                   lista={'opcoesProfessores'}
+                  desabilitado={desabilitado}
                 />
               </label>
               <datalist className="datalistCadastroPED" id="opcoesProfessores">
@@ -647,6 +656,7 @@ const CadastroPED = () => {
                 Curso *
                 <select className={errors.curso ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="curso" 
                     value={formData.curso}
+                    disabled={desabilitado}
                     onChange={(e) => {
 
                     const cursoId = e.target.value;
@@ -676,6 +686,7 @@ const CadastroPED = () => {
                 Disciplina *
                 <select className={errors.disciplina ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
                   value={formData.disciplina}
+                  disabled={desabilitado}
                   onChange={(e) => {
                     setFormData({...formData, disciplina: Number(e.target.value)})}}
                 >
@@ -695,12 +706,14 @@ const CadastroPED = () => {
                 Ano/Semestre de Reprovação *
                 <Input
                   type='text'
+                  disabled={desabilitado}
                   onChange={(e) => {
                     setFormData({...formData, ano_semestre_reprov: e.target.value})
                 }}
                   valor={formData.ano_semestre_reprov}
                   erro={errors.ano_semestre_reprov}
                   textoAjuda='Insira no formato Ano/Semestre - xxxx/x'
+                  desabilitado={desabilitado}
                 />
               </label>
             </>

@@ -32,7 +32,7 @@ export const PPTService = {
   editar: async (id, dadosAtualizados) => {
     try {
         const response = await api.put(`api/editar-ppt/${id}/`, dadosAtualizados); 
-        return response.data;
+        return response;
     } catch (error) {
         console.error('Erro ao editar PPT:', error);
         throw error; 

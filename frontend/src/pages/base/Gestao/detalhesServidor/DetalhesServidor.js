@@ -8,7 +8,7 @@ import FormContainer from '../../../../components/FormContainer/FormContainer';
 const DetalhesServidor = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { state } = location.state || {};  // Recupera o estado passado
+    const { state } = location || {};  // Recupera o estado passado
 
     if (!state) {
         return <div style={{margin: 'auto'}}>Nenhum servidor foi selecionado.</div>;

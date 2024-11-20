@@ -7,7 +7,7 @@ import StatusBalls from "../../../../components/StatusBall/StatusBall"
 
 const DetalhesPEDProfessor = () => {
     const location = useLocation()
-    const {state} = location.state || {}
+    const {state} = location || {}
 
     return (
         <FormContainer titulo={`Detalhes da PED - ${state.serie_progressao ? 'EMI' : 'ProEJA'}`} comprimento='90%'>

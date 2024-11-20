@@ -39,8 +39,15 @@ const Tabela = ({listaFiltrada, fontSize}) => {
         return tituloFormat.join(' ')
     }
 
+    const limitadorDeTexto = (texto, limitador) => {
+        if (typeof texto === 'string' && texto.length > limitador) {
+            return texto.substring(0, limitador) + '...';
+        }
+        return texto;
+    };
+
     const detalhesItem = (state) => {
-        redirect(`${state.id}`, {state: { state }})
+        redirect(`${state.id}`, {state})
     }
 
     useEffect(() => {
@@ -111,7 +118,7 @@ const Tabela = ({listaFiltrada, fontSize}) => {
                                                 <td key={colIndex} className="colunaCorpoTabela">
                                                     {typeof item[coluna] === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(item[coluna])
                                                         ? item[coluna].split('-').reverse().join('/')
-                                                        : (item[coluna] || '-')
+                                                        : (limitadorDeTexto(item[coluna] || '-', 35))
                                                     }
                                                 </td>
                                             ) : (<></>)

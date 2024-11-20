@@ -7,10 +7,10 @@ import Button from "../../../../components/Button/Button";
 import Modal from "../../../../components/Modal/Modal";
 
 const DetalhesPPT = () => {
-  const [status, setStatus] = useState("Em Andamento");
   const [detalhesPPT, setDetalhesPPT] = useState({});
   const { idPpt } = useParams();
   const location = useLocation();
+  const { state } = location
   const navigate = useNavigate();
 
   const [modalAberto, setModalAberto] = useState(false);
@@ -20,7 +20,6 @@ const DetalhesPPT = () => {
     try {
       const res = await PPTService.getById(idPpt);
       if (res.status !== 200) throw new Error(res.response?.data?.mensagem);
-      setDetalhesPPT(res.data);
       console.log(res.data);
     } catch (error) {
       console.error("Erro ao buscar detalhes da PPT:", error.message);
@@ -63,6 +62,8 @@ const DetalhesPPT = () => {
 
   useEffect(() => {
     fetchDetalhes();
+    setDetalhesPPT(state)
+    console.log(state)
   }, [idPpt]);
 
   return (
@@ -82,7 +83,7 @@ const DetalhesPPT = () => {
           <div className="info-item">
             <h3 className="h3-info">Matrícula:</h3>
             <span className="info-value">
-              {detalhesPPT.aluno?.split("@")[0] || "-"}
+              {detalhesPPT.aluno || "-"}
             </span>
           </div>
           <div className="info-item">
@@ -92,7 +93,7 @@ const DetalhesPPT = () => {
           <div className="info-item">
             <h3 className="h3-info">Turma:</h3>
             <span className="info-value">
-              {detalhesPPT.turma_origem || "-"}
+              {detalhesPPT.turma_atual || "-"}
             </span>
           </div>
           <div className="info-item">
