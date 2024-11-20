@@ -137,7 +137,7 @@ const PlanoEstudos = () => {
         </section>
 
         <section className="sectionCadastroPlanoEstudos">
-          <div className="divCadastroPlanoEstudos">
+          <div className="divCadastroPlanoEstudos textarea">
             <label className="labelCadastroPlanoEstudos">
               Parecer Pedagógico *
               <textarea
@@ -145,7 +145,6 @@ const PlanoEstudos = () => {
                 className={errors.parecer_pedagogico ? 'errorTextAreaCadastroPlanoEstudos' : 'textAreaCadastroPlanoEstudos'}
                 onChange={handleChange}
                 value={formData.parecer_pedagogico}
-                rows="3"
               />
               {errors.parecer_pedagogico && (
                 <p className="errorMessage">{errors.parecer_pedagogico}</p>
