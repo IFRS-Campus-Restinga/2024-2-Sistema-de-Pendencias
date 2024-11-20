@@ -1,55 +1,57 @@
+/* Estilo para a seção do formulário */
 .sectionCadastroPlanoEstudos {
   width: 100%;
   display: flex;
   align-items: flex-start;
   flex-wrap: wrap;
+  justify-content: space-between; /* Garante que os campos ocupem o espaço necessário */
+  gap: 20px; /* Espaçamento consistente entre os campos */
 }
 
+/* Div que envolve cada campo (Ajuste para que o parecer ocupe mais espaço) */
 .divCadastroPlanoEstudos {
-  width: 50%;
+  width: 48%; /* Ajuste a largura para garantir que os campos fiquem alinhados */
   padding: 10px;
   box-sizing: border-box;
-  min-width: 300px;
+  min-width: 280px; /* Largura mínima para os campos */
 }
 
+/* Div específica para o campo de "Parecer Pedagógico" */
+.divCadastroPlanoEstudos.textarea {
+  width: 100%; /* Permite que o campo de parecer ocupe toda a largura possível */
+}
+
+/* Largura e espaçamento dos campos */
 .labelCadastroPlanoEstudos {
   display: flex;
   flex-direction: column;
   font-size: 16px;
   font-weight: bold;
-  margin-top: 10px;
+  margin-bottom: 8px; /* Espaço entre o rótulo e o campo */
 }
 
-.selectCadastroPlanoEstudos {
+/* Estilo para os campos de input e select */
+.selectCadastroPlanoEstudos,
+.inputCadastroPlanoEstudos,
+.textAreaCadastroPlanoEstudos {
   font-size: 15px;
   border: 1px solid #ccc;
   padding: 8px 12px;
   border-radius: 8px;
-  margin-top: 5px;
+  margin-bottom: 12px; /* Espaço entre os campos */
   width: 100%;
   box-sizing: border-box;
 }
 
-.inputCadastroPlanoEstudos {
-  font-size: 15px;
-  border: 1px solid #ccc;
-  padding: 8px 12px;
-  border-radius: 8px;
-  margin-top: 5px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
+/* Estilo para o campo de texto de Parecer Pedagógico */
 .textAreaCadastroPlanoEstudos {
   font-family: Arial, Helvetica, sans-serif;
-  padding: 8px 12px;
-  margin-top: 7px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  width: 100%;
-  box-sizing: border-box;
+  height: 300px; /* Aumenta a altura do campo para parecer mais destacado */
+  overflow-y: auto; /* Permite rolagem vertical */
+  resize: none; /* Desativa o redimensionamento do campo */
 }
 
+/* Estilos para o foco nos campos */
 .textAreaCadastroPlanoEstudos:focus,
 .selectCadastroPlanoEstudos:focus,
 .inputCadastroPlanoEstudos:focus {
@@ -57,27 +59,23 @@
   outline: none;
 }
 
-.errorSelectCadastroPlanoEstudos {
-  border: 1px solid #e74c3c;
-}
-
-.errorInputCadastroPlanoEstudos {
-  border: 1px solid #e74c3c;
-}
-
+/* Estilos para os campos com erro */
+.errorSelectCadastroPlanoEstudos,
+.errorInputCadastroPlanoEstudos,
 .errorTextAreaCadastroPlanoEstudos {
   border: 1px solid #e74c3c;
 }
 
+/* Estilos para o foco nos campos com erro */
 .errorSelectCadastroPlanoEstudos:focus,
 .errorInputCadastroPlanoEstudos:focus,
 .errorTextAreaCadastroPlanoEstudos:focus {
   border-color: #e74c3c;
 }
 
+/* Estilo para a mensagem de erro */
 .errorMessage {
   color: #e74c3c;
   font-size: 12px;
   margin-top: 5px;
-  margin-bottom: 10px;
 }

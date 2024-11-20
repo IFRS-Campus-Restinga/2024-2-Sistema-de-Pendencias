@@ -56,12 +56,23 @@ const CalendarioPage = () => {
                 const response = await calendarioAcademicoService.listarCalendariosAcademicos();
                 setCalendarios(response.data);
             } catch (error) {
-                console.error("Erro ao buscar calendários acadêmicos:", error);
+                console.error("Erro ao buscar períodos letivos:", error);
             }
         };
 
         fetchEventos();
         fetchCalendarios();
+
+          if (location.state?.calendarioCriado) {
+            toast.success("Calendário Acadêmico criado com sucesso!", {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    style: { backgroundColor: '#28A745', color: '#fff' },
+                    progressStyle: { backgroundColor: '#fff' },
+            });
+
+            navigate(location.pathname, { replace: true });
+        }
 
         if (eventoCriado) {
             toast.success("Evento criado com sucesso!", {
@@ -85,11 +96,11 @@ const CalendarioPage = () => {
             toast.success("Evento excluído com sucesso!", {
                 position: "bottom-center",
                 autoClose: 3000,
-                style: { backgroundColor: '#28A745', color: '#fff' },
+                style: { backgroundColor: '#28a745', color: '#fff' },
                 progressStyle: { backgroundColor: '#fff' }
             });
         }
-    }, [eventoCriado, eventoAtualizado, eventoExcluido]);
+    }, [eventoCriado, eventoAtualizado, eventoExcluido, location.state, navigate]);
 
     const handleEventClick = (event) => {
         navigate(`/sessao/Gestão Escolar/1/calendario/evento/${event.id}`, { state: { evento: event } });
@@ -142,7 +153,7 @@ const CalendarioPage = () => {
                             stateHandler={trocaModalidade}
                         />
                     </div>
-                    <h3>Calendários Acadêmicos - {modalidade}</h3>
+                    <h3>Período Letivo - {modalidade}</h3>
                     <ul className="calendarios-list">
                         {filteredCalendarios.map(calendario => (
                             <li

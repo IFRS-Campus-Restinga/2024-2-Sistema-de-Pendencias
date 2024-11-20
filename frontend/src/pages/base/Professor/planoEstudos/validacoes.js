@@ -14,9 +14,9 @@ export const validarTurno = (turno) => {
 
 export const validarParecerPedagogico = (parecerPedagogico) => {
   if (!parecerPedagogico || parecerPedagogico.trim().length === 0) {
-    return 'Campo obrigatório';
+    return 'Campo obrigatório';  // Apenas verifica se o campo está vazio
   }
-  return null;
+  return null;  // Não há validação de limite de caracteres aqui
 };
 
 export const validarPeriodoLetivo = (periodoLetivo) => {
@@ -48,13 +48,13 @@ export const validarFormularioPlanoEstudos = (formData) => {
   const erroFormaOferta = validarFormaOferta(formData.forma_oferta);
   const erroTurno = validarTurno(formData.turno);
   const erroParecerPedagogico = validarParecerPedagogico(formData.parecer_pedagogico);
-  const erroPeriodoLetivo = validarPeriodoLetivo(formData.periodo_letivo);  // Alterado para validar "periodo_letivo"
+  const erroPeriodoLetivo = validarPeriodoLetivo(formData.periodo_letivo);  
 
   // Adiciona os erros ao objeto de erros
   if (erroFormaOferta) erros.forma_oferta = erroFormaOferta;
   if (erroTurno) erros.turno = erroTurno;
   if (erroParecerPedagogico) erros.parecer_pedagogico = erroParecerPedagogico;
-  if (erroPeriodoLetivo) erros.periodo_letivo = erroPeriodoLetivo;  // Alterado para "periodo_letivo"
+  if (erroPeriodoLetivo) erros.periodo_letivo = erroPeriodoLetivo;
 
   console.log('Erros encontrados na validação do formulário:', erros);
 

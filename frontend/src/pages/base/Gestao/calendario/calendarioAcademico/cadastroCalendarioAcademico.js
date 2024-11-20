@@ -14,7 +14,7 @@ const CadastroCalendarioAcademicoPage = () => {
     titulo: '',
     data_inicio: '',
     data_fim: '',
-    tipo_calendario: 'Integrado'
+    tipo_calendario: 'Integrado',
   });
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -35,36 +35,41 @@ const CadastroCalendarioAcademicoPage = () => {
     return Object.keys(validationErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      setShowErrorMessage(false);
-      try {
-        await calendarioAcademicoService.criarCalendarioAcademico(formData);
-        toast.success("Calendário Acadêmico criado com sucesso!", {
-          position: "bottom-center",
-          autoClose: 3000
-        });
-        navigate("/sessao/Gestão Escolar/1/calendario");
-      } catch (error) {
-        console.error('Erro ao cadastrar calendário acadêmico:', error);
-        toast.error("Erro ao cadastrar calendário acadêmico.", {
-          position: "bottom-center",
-          autoClose: 3000
-        });
-      }
-    } else {
-      setShowErrorMessage(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (validateForm()) {
+    setShowErrorMessage(false);
+    try {
+      const response = await calendarioAcademicoService.criarCalendarioAcademico(formData);
+
+      if (response.status !== 201) throw new Error(response.error);
+
+      // Redireciona para a página de calendário com o estado de sucesso
+      navigate("/sessao/Gestão Escolar/1/calendario", {
+        state: { calendarioCriado: true },
+      });
+    } catch (error) {
+      console.error('Erro ao cadastrar calendário acadêmico:', error);
+      toast.error("Já existe um período letivo para este tipo de calendário.", {
+        position: "bottom-center",
+        autoClose: 3000,
+        style: { backgroundColor: '#d11c28', color: '#fff' },
+        progressStyle: { backgroundColor: '#fff' },
+      });
     }
-  };
+  } else {
+    setShowErrorMessage(true);
+  }
+};
+
 
   return (
-    <div className='perfilContainer'>
+    <div className="perfilContainer">
       <ToastContainer />
       <FormContainer onSubmit={handleSubmit} titulo="Cadastro de Calendário Acadêmico">
         {showErrorMessage && <p style={{ color: 'red' }}>* Preencha todos os campos obrigatórios corretamente.</p>}
 
-        <label className='labelCustomizado'>Título
+        <label className="labelCustomizado">Título
           <input
             id="titulo"
             type="text"
@@ -104,7 +109,7 @@ const CadastroCalendarioAcademicoPage = () => {
         />
         {errors.data_fim && <p className="erros">{errors.data_fim}</p>}
 
-        <label className='labelCustomizado'>Tipo de Calendário
+        <label className="labelCustomizado">Tipo de Calendário
           <select
             id="tipo_calendario"
             name="tipo_calendario"
@@ -118,7 +123,7 @@ const CadastroCalendarioAcademicoPage = () => {
           {errors.tipo_calendario && <p className="erros">{errors.tipo_calendario}</p>}
         </label>
 
-        <Button tipo='submit' text='Cadastrar Calendário Acadêmico' />
+        <Button tipo="submit" text="Cadastrar Calendário Acadêmico" />
       </FormContainer>
     </div>
   );
