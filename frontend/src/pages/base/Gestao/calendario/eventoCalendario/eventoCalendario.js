@@ -51,38 +51,52 @@ const EventoCalendarioPage = () => {
     }
   }, [idEvento]);
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validarEvento(formData);
 
     if (Object.keys(validationErrors).length === 0) {
-      setShowErrorMessage(false);
-      try {
-        const { dia_todo, hora_inicio, hora_fim, ...rest } = formData;
-        const dataInicio = dia_todo ? `${rest.data_inicio}T00:00` : `${rest.data_inicio}T${hora_inicio}`;
-        const dataFim = dia_todo ? `${rest.data_fim}T00:00` : `${rest.data_fim}T${hora_fim}`;
+        setShowErrorMessage(false);
+        try {
+            const { dia_todo, hora_inicio, hora_fim, ...rest } = formData;
+            const dataInicio = dia_todo ? `${rest.data_inicio}T00:00` : `${rest.data_inicio}T${hora_inicio}`;
+            const dataFim = dia_todo ? `${rest.data_fim}T00:00` : `${rest.data_fim}T${hora_fim}`;
 
-        const response = idEvento
-          ? await eventoCalendarioService.update(idEvento, { ...rest, data_inicio: dataInicio, data_fim: dataFim })
-          : await eventoCalendarioService.create({ ...rest, data_inicio: dataInicio, data_fim: dataFim });
+            const response = idEvento
+                ? await eventoCalendarioService.update(idEvento, { ...rest, data_inicio: dataInicio, data_fim: dataFim })
+                : await eventoCalendarioService.create({ ...rest, data_inicio: dataInicio, data_fim: dataFim });
 
-        if (response && (response.status === 200 || response.status === 201)) {
-          navigate("/sessao/Gestão Escolar/1/calendario", { state: { eventoAtualizado: !!idEvento } });
-        } else {
-          throw new Error("Falha ao obter ID do evento criado.");
+            if (response && (response.status === 200 || response.status === 201)) {
+                // ADICIONADO: Passando estado para exibir mensagem de sucesso ao retornar à página de calendário
+                navigate("/sessao/Gestão Escolar/1/calendario", { state: { eventoCriado: !idEvento, eventoAtualizado: !!idEvento } });
+            } else {
+                throw new Error("Falha ao obter ID do evento criado.");
+            }
+        } catch (error) {
+            console.error('Erro ao salvar evento:', error);
+
+            if (error.response && error.response.data.mensagem === "Não existe um calendário acadêmico para este período.") {
+                toast.error("Não é possível cadastrar um evento fora de um período letivo válido.", {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    style: { backgroundColor: '#DC3545', color: '#fff', textAlign: 'center' },
+                    progressStyle: { backgroundColor: '#fff' }
+                });
+            } else {
+                toast.error("Falha ao salvar evento. Tente novamente.", {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    style: { backgroundColor: '#DC3545', color: '#fff', textAlign: 'center' },
+                    progressStyle: { backgroundColor: '#fff' }
+                });
+            }
         }
-      } catch (error) {
-        console.error('Erro ao salvar evento:', error);
-        toast.error("Falha ao salvar evento. Tente novamente.", {
-          position: "bottom-center",
-          autoClose: 3000
-        });
-      }
     } else {
-      setErrors(validationErrors);
-      setShowErrorMessage(true);
+        setErrors(validationErrors);
+        setShowErrorMessage(true);
     }
-  };
+};
+
 
   const handleDelete = async () => {
     if (window.confirm("Tem certeza que deseja excluir este evento?")) {
