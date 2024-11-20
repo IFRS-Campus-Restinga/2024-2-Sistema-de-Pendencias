@@ -63,6 +63,17 @@ const CalendarioPage = () => {
         fetchEventos();
         fetchCalendarios();
 
+          if (location.state?.calendarioCriado) {
+            toast.success("Calendário Acadêmico criado com sucesso!", {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    style: { backgroundColor: '#28A745', color: '#fff' },
+                    progressStyle: { backgroundColor: '#fff' },
+            });
+
+            navigate(location.pathname, { replace: true });
+        }
+
         if (eventoCriado) {
             toast.success("Evento criado com sucesso!", {
                 position: "bottom-center",
@@ -85,11 +96,11 @@ const CalendarioPage = () => {
             toast.success("Evento excluído com sucesso!", {
                 position: "bottom-center",
                 autoClose: 3000,
-                style: { backgroundColor: '#28A745', color: '#fff' },
+                style: { backgroundColor: '#28a745', color: '#fff' },
                 progressStyle: { backgroundColor: '#fff' }
             });
         }
-    }, [eventoCriado, eventoAtualizado, eventoExcluido]);
+    }, [eventoCriado, eventoAtualizado, eventoExcluido, location.state, navigate]);
 
     const handleEventClick = (event) => {
         navigate(`/sessao/Gestão Escolar/1/calendario/evento/${event.id}`, { state: { evento: event } });
