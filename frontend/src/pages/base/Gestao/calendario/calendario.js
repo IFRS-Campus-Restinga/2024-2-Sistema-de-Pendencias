@@ -56,7 +56,7 @@ const CalendarioPage = () => {
                 const response = await calendarioAcademicoService.listarCalendariosAcademicos();
                 setCalendarios(response.data);
             } catch (error) {
-                console.error("Erro ao buscar calendários acadêmicos:", error);
+                console.error("Erro ao buscar períodos letivos:", error);
             }
         };
 
@@ -142,7 +142,7 @@ const CalendarioPage = () => {
                             stateHandler={trocaModalidade}
                         />
                     </div>
-                    <h3>Calendários Acadêmicos - {modalidade}</h3>
+                    <h3>Período Letivo - {modalidade}</h3>
                     <ul className="calendarios-list">
                         {filteredCalendarios.map(calendario => (
                             <li
