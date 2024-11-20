@@ -25,6 +25,7 @@ import DetalhesServidor from './pages/base/Gestao/detalhesServidor/DetalhesServi
 import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
 import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
 import ListarAluno from './pages/base/Gestao/listarAluno/ListarAluno'
+import DetalhesAluno from './pages/base/Gestao/detalhesAluno/DetalhesAluno'
 
 // Filhos de Registro
 
@@ -170,6 +171,10 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/alunos',
                 element: <ListarAluno />
+            },
+            {
+                path: ':idUsuario/alunos/:idAluno',
+                element: <DetalhesAluno />
             },
 
         ]

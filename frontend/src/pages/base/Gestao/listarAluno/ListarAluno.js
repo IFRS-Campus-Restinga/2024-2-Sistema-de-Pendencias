@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './ListarAluno.css';
 import FormContainer from '../../../../components/FormContainer/FormContainer';
-import Button from "../../../../components/Button/Button";
 import Input from '../../../../components/Input/Input';
 import 'react-toastify/dist/ReactToastify.css';
 import { alunoService } from '../../../../services/alunoService';
-import { Link } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
 import { usuarioBaseService } from '../../../../services/usuarioBaseService';
 import Tabela from '../../../../components/Tabela/Tabela';
 import { useNavigate } from 'react-router-dom';
+import Lupa from "../../../../assets/lupa-branca.png";
+import X from "../../../../assets/x-branco.png";
 
 const ListarAluno = () => {
   const [alunos, setAlunos] = useState([]);
@@ -67,21 +66,24 @@ const ListarAluno = () => {
   };
 
   const filtrarAlunos = () => {
-    const alunosFiltrados = alunos.filter((aluno) =>
-      (!filtroGeral ||
-        (aluno.nome && aluno.nome.toLowerCase().includes(filtroGeral.toLowerCase())) ||
-        (aluno.matricula && aluno.matricula.includes(filtroGeral)) ||
-        (aluno.cpf && aluno.cpf.includes(filtroGeral)) ||
-        (aluno.email && aluno.email.includes(filtroGeral)) ||
-        (aluno.data_ingresso && new Date(aluno.data_ingresso).toLocaleDateString('pt-BR')).includes(filtroGeral)
-      ) &&
-      (!dataInicio || new Date(aluno.data_ingresso) >= new Date(dataInicio)) &&
-      (!grupoFiltro || aluno.grupo === grupoFiltro) &&
-      (!matriculaFiltro || (aluno.matricula && aluno.matricula.includes(matriculaFiltro))) &&
-      (!isActiveFiltro || (aluno.is_active && aluno.is_active.includes(isActiveFiltro)))
-    );
+    const alunosFiltrados = alunos.filter((aluno) => {
+      const filtroGeralAtende = !filtroGeral ||
+        Object.values(aluno).some((campo) =>
+          campo?.toString().toLowerCase().includes(filtroGeral.toLowerCase())
+        );
+
+      return (
+        filtroGeralAtende &&
+        (!dataInicio || new Date(aluno.data_ingresso) >= new Date(dataInicio)) &&
+        (!grupoFiltro || aluno.grupo === grupoFiltro) &&
+        (!matriculaFiltro || (aluno.matricula && aluno.matricula.includes(matriculaFiltro))) &&
+        (!isActiveFiltro || (aluno.is_active && aluno.is_active.includes(isActiveFiltro)))
+      );
+    });
+
     setAlunosFiltrados(alunosFiltrados);
   };
+
 
   useEffect(() => {
     fetchAlunos();
@@ -91,47 +93,31 @@ const ListarAluno = () => {
   return (
     <>
       <FormContainer titulo='Lista de Alunos' comprimento='90%'>
-        <section className='sectionListarAluno'>
-          <div className='divListarAluno'>
-            <span className="spanListarAluno">
-              <label className='labelListarAluno'>Filtrar por Dados Pessoais</label>
-              <Input
-                tipo='text'
-                valor={filtroGeral}
-                onChange={(e) => setFiltroGeral(e.target.value)}
-              />
-            </span>
-            
-          </div>
-          <div className='divListarAluno'>
-            <span className="spanFiltroPeriodo">
-              <span className='spanData'>
-                <label className='labelData'>Buscar por período de ingresso</label>
-                <Input
-                  valor={dataInicio}
-                  tipo='date'
-                  onChange={(e) => { setDataInicio(e.target.value) }}
-                />
-              </span>
-            </span>
-          </div>
-        </section>
-        <span className="containerButton">
-          <Button
-            text="Buscar"
-            onClick={filtrarAlunos}
-          />
-          <Button
-            text="Limpar campos"
-            onClick={limparBusca}
-            color="#4A4A4A"
-          />
-          <Link to={`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroAluno`}>
-            <Button
-              text='Adicionar novo'
+        <div className='containerListarAluno'>
+
+          <div class="buscar-bar">
+            <Input
+              tipo='search'
+              valor={filtroGeral}
+              onChange={(e) => setFiltroGeral(e.target.value)}
+              textoAjuda={'Buscar por nome, e-mail, grupo, status...'}
             />
-          </Link>
-        </span>
+            <img
+              className='iconesBuscar'
+              src={Lupa}
+              onClick={filtrarAlunos}
+              title='Buscar'
+            />
+            <img
+              className='iconesBuscar'
+              src={X}
+              onClick={limparBusca}
+              title='Limpar Busca'
+            />
+          </div>
+
+        </div>
+
         <div className='tabelaContainerListarAluno'>
           <Tabela listaFiltrada={alunosFiltrados} />
         </div>

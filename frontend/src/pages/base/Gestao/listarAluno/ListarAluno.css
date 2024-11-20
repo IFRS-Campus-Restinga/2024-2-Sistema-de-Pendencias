@@ -1,27 +1,40 @@
-.formContainer {
-    width: 90%;
-}
-
-.containerButton {
+.containerListarAluno {
     display: flex;
     justify-content: center;
-    margin-top: 45px;
+    align-items: center;
+    padding: 5px;
 }
 
-.tabelaContainerListarAluno {
-    width: 100%;
-    max-height: 250px;
-    overflow-y: scroll;
-    max-width: 100%;
-    overflow-x: scroll;
-}
-
-.spanListarAluno {
-    margin-top: 15px;
-    margin-bottom: 10px;
+.buscar-bar {
+    margin-top: 20px;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
-    align-self: center;
+    justify-content: center;
+    background-color: #006b3f;
+    border: 1px solid #006b3f;
+    border-radius: 8px;
+    padding: 5px 10px;
     width: 100%;
+    max-width: 400px;
+}
+
+.buscar-bar input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    outline: none;
+}
+
+.buscar-bar .iconeAcoes {
+    border-color: white;
+}
+
+.iconesBuscar {
+    max-width: 15px;
+    max-height: 15px;
+    margin-left: 10px;
+    cursor: pointer;
 }
