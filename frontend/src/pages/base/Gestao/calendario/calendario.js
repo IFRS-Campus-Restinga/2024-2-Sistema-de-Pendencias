@@ -216,11 +216,18 @@ const CalendarioPage = () => {
                                     </li>
                                 ))}
                             </ul>
-                            <Button
-                                tipo="button"
-                                text="Voltar"
-                                onClick={handleVoltarClick}
-                            />
+                            <div className="botoes-calendario-selecionado">
+                               <Button
+                                    tipo="button"
+                                    text="Voltar"
+                                    onClick={handleVoltarClick}
+                                />
+                                <Button
+                                    tipo="button"
+                                    text="Editar Período Letivo"
+                                    onClick={() => navigate(`/sessao/Gestão Escolar/1/editarCalendarioAcademico/${calendarioSelecionado.id}`)}
+                                />
+                            </div>
                         </>
                     )}
                 </div>
