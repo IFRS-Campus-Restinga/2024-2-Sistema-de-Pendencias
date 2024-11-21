@@ -33,7 +33,7 @@ const CalendarioPage = () => {
     const [modalidade, setModalidade] = useState('Integrado');
     const [calendarioSelecionado, setCalendarioSelecionado] = useState(null);
     const [eventosDoCalendario, setEventosDoCalendario] = useState([]); // Eventos do calendário selecionado
-    const { eventoCriado, eventoAtualizado, eventoExcluido } = location.state || {};
+    const { eventoCriado, eventoAtualizado, eventoExcluido, calendarioAtualizado } = location.state || {};
 
     useEffect(() => {
         const fetchEventos = async () => {
@@ -102,7 +102,15 @@ const CalendarioPage = () => {
                 progressStyle: { backgroundColor: '#fff' }
             });
         }
-    }, [eventoCriado, eventoAtualizado, eventoExcluido, location.state, navigate]);
+        if (calendarioAtualizado) {
+            toast.success("Período Letivo atualizado com sucesso!", {
+                position: "bottom-center",
+                autoClose: 3000,
+                style: { backgroundColor: '#28A745', color: '#fff' },
+                progressStyle: { backgroundColor: '#fff' }
+            });
+        }
+    }, [eventoCriado, eventoAtualizado, eventoExcluido, calendarioAtualizado, location.state, navigate]);
 
     const handleEventClick = (event) => {
         navigate(`/sessao/Gestão Escolar/1/calendario/evento/${event.id}`, { state: { evento: event } });
