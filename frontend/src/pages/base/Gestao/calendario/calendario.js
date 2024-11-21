@@ -30,7 +30,9 @@ const CalendarioPage = () => {
     const navigate = useNavigate();
     const [eventos, setEventos] = useState([]);
     const [calendarios, setCalendarios] = useState([]);
-    const [modalidade, setModalidade] = useState('Integrado'); // Estado para a modalidade do calendário
+    const [modalidade, setModalidade] = useState('Integrado');
+    const [calendarioSelecionado, setCalendarioSelecionado] = useState(null);
+    const [eventosDoCalendario, setEventosDoCalendario] = useState([]); // Eventos do calendário selecionado
     const { eventoCriado, eventoAtualizado, eventoExcluido } = location.state || {};
 
     useEffect(() => {
@@ -63,12 +65,12 @@ const CalendarioPage = () => {
         fetchEventos();
         fetchCalendarios();
 
-          if (location.state?.calendarioCriado) {
+        if (location.state?.calendarioCriado) {
             toast.success("Calendário Acadêmico criado com sucesso!", {
-                    position: "bottom-center",
-                    autoClose: 3000,
-                    style: { backgroundColor: '#28A745', color: '#fff' },
-                    progressStyle: { backgroundColor: '#fff' },
+                position: "bottom-center",
+                autoClose: 3000,
+                style: { backgroundColor: '#28A745', color: '#fff' },
+                progressStyle: { backgroundColor: '#fff' },
             });
 
             navigate(location.pathname, { replace: true });
@@ -106,12 +108,43 @@ const CalendarioPage = () => {
         navigate(`/sessao/Gestão Escolar/1/calendario/evento/${event.id}`, { state: { evento: event } });
     };
 
-    // Filtrar os eventos conforme a modalidade selecionada
-    const filteredEventos = eventos.filter(evento => evento.tipo_calendario === modalidade);
+    const handleCalendarioClick = async (calendario) => {
+        setCalendarioSelecionado(calendario);
+        try {
+            const response = await calendarioAcademicoService.listarEventosDoCalendario(calendario.id);
+            setEventosDoCalendario(response.data); // Atualiza os eventos relacionados ao calendário selecionado
+        } catch (error) {
+            console.error("Erro ao buscar eventos do calendário acadêmico:", error);
+            toast.error("Erro ao carregar eventos do calendário acadêmico.", {
+                position: "bottom-center",
+                autoClose: 3000,
+                style: { backgroundColor: '#DC3545', color: '#fff', textAlign: 'center' },
+                progressStyle: { backgroundColor: '#fff' }
+            });
+        }
+    };
+
+    const handleVoltarClick = () => {
+        setCalendarioSelecionado(null);
+        setEventosDoCalendario([]);
+    };
+
+    const filteredEventos = calendarioSelecionado
+        ? eventosDoCalendario.map(evento => ({
+            id: evento.id,
+            title: evento.titulo,
+            start: new Date(evento.data_inicio),
+            end: new Date(evento.data_fim),
+            allDay: false
+        }))
+        : eventos.filter(evento => evento.tipo_calendario === modalidade);
+
     const filteredCalendarios = calendarios.filter(calendario => calendario.tipo_calendario === modalidade);
 
     const trocaModalidade = (novoValor) => {
         setModalidade(novoValor);
+        setCalendarioSelecionado(null);
+        setEventosDoCalendario([]);
     };
 
     return (
@@ -153,23 +186,43 @@ const CalendarioPage = () => {
                             stateHandler={trocaModalidade}
                         />
                     </div>
-                    <h3>Período Letivo - {modalidade}</h3>
-                    <ul className="calendarios-list">
-                        {filteredCalendarios.map(calendario => (
-                            <li
-                                key={calendario.id}
-                                className="calendario-item"
-                                onClick={() => navigate(`/sessao/Gestão Escolar/1/calendarioAcademico/${calendario.id}/eventos`)}
-                            >
-                                {calendario.titulo}
-                            </li>
-                        ))}
-                    </ul>
-                    <Button
-                        tipo="button"
-                        text="Novo calendário acadêmico"
-                        onClick={() => navigate("/sessao/Gestão Escolar/1/cadastroCalendarioAcademico")}
-                    />
+                    {!calendarioSelecionado ? (
+                        <>
+                            <h3>Período Letivo - {modalidade}</h3>
+                            <ul className="calendarios-list">
+                                {filteredCalendarios.map(calendario => (
+                                    <li
+                                        key={calendario.id}
+                                        className="calendario-item"
+                                        onClick={() => handleCalendarioClick(calendario)}
+                                    >
+                                        {calendario.titulo}
+                                    </li>
+                                ))}
+                            </ul>
+                            <Button
+                                tipo="button"
+                                text="Novo Período Letivo"
+                                onClick={() => navigate("/sessao/Gestão Escolar/1/cadastroCalendarioAcademico")}
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <h3>Eventos - {calendarioSelecionado.titulo}</h3>
+                            <ul className="eventos-list">
+                                {eventosDoCalendario.map(evento => (
+                                    <li key={evento.id}>
+                                        {evento.titulo} - {new Date(evento.data_inicio).toLocaleDateString()} até {new Date(evento.data_fim).toLocaleDateString()}
+                                    </li>
+                                ))}
+                            </ul>
+                            <Button
+                                tipo="button"
+                                text="Voltar"
+                                onClick={handleVoltarClick}
+                            />
+                        </>
+                    )}
                 </div>
             </div>
         </FormContainer>
