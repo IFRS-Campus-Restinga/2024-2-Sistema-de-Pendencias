@@ -1,21 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import './ListarCurso.css';
-import Button from "../../../../components/Button/Button";
 import FormContainer from '../../../../components/FormContainer/FormContainer';
 import Input from '../../../../components/Input/Input';
 import Lupa from "../../../../assets/lupa.png"; // Ajuste o caminho conforme necessário
-import { ToastContainer } from 'react-toastify';
+import X from "../../../../assets/x-branco.png"; // Ajuste o caminho conforme necessário
+import Button from "../../../../components/Button/Button";  // Importe o componente Button
 import cursoService from '../../../../services/cursoService';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // Para decodificar o token e pegar o ID do usuário
 
 const ListarCursos = () => {
   const [cursos, setCursos] = useState([]);
   const [cursosFiltrados, setCursosFiltrados] = useState([]);
+  const [filtro, setFiltro] = useState(''); // Campo único de filtro
   const [ordenacao, setOrdenacao] = useState({ coluna: '', ordem: 'asc' });
-  const [nomeFiltro, setNomeFiltro] = useState('');
-  const [modalidadeFiltro, setModalidadeFiltro] = useState('');
-  const [turmaFiltro, setTurmaFiltro] = useState('');
 
   const navigate = useNavigate();
 
@@ -34,21 +32,24 @@ const ListarCursos = () => {
     fetchCursos();
   }, []);
 
-  // Filtra os cursos com base nos critérios
+  // Filtra os cursos com base no critério de busca
   const filtrarCursos = () => {
-    const cursosFiltrados = cursos.filter(curso =>
-      (!nomeFiltro || curso.nome.toLowerCase().includes(nomeFiltro.toLowerCase())) &&
-      (!modalidadeFiltro || curso.modalidade === modalidadeFiltro) &&
-      (!turmaFiltro || (curso.turmas && curso.turmas.some(turma => turma.numero.toLowerCase().includes(turmaFiltro.toLowerCase()))))
-    );
+    const cursosFiltrados = cursos.filter(curso => {
+      const filtroLower = filtro.toLowerCase(); // Transformando o filtro em minúsculas para comparação
+
+      // Verifica se algum campo contém a string filtrada (tanto texto quanto número)
+      return (
+        curso.nome.toLowerCase().includes(filtroLower) || 
+        curso.modalidade.toLowerCase().includes(filtroLower) ||
+        curso.carga_horaria.toString().includes(filtro)
+      );
+    });
     setCursosFiltrados(cursosFiltrados);
   };
 
-  // Limpa os filtros
+  // Limpa o filtro
   const limparBusca = () => {
-    setNomeFiltro('');
-    setModalidadeFiltro('');
-    setTurmaFiltro('');
+    setFiltro('');
     fetchCursos();
   };
 
@@ -71,13 +72,6 @@ const ListarCursos = () => {
     setOrdenacao({ coluna, ordem: novaOrdem });
   };
 
-  // Função para navegação de edição de curso
-  const handleEditCurso = (curso) => {
-    const usuarioId = jwtDecode(sessionStorage.getItem('token')).idUsuario;
-    // Navegar para o formulário de edição, passando o ID do curso
-    navigate(`/sessao/Gestão Escolar/${usuarioId}/cadastroCurso`, {state: {curso: curso}});
-  };
-
   // Usa useMemo para evitar refazer a filtragem e ordenação toda vez
   const cursosParaExibir = useMemo(() => {
     return cursosFiltrados;
@@ -85,40 +79,41 @@ const ListarCursos = () => {
 
   return (
     <>
-      <ToastContainer />
-      <FormContainer titulo='Lista de Cursos' comprimento='90%'>
-        <section className='sectionListarCursos'>
-          <div className='divListarCursos'>
-            <div className="filtrosContainer">
-              <span className="spanListarCursos">
-                <label className='labelListarCursos'>Filtrar por Nome do Curso</label>
-                <Input tipo='text' valor={nomeFiltro} onChange={(e) => setNomeFiltro(e.target.value)} />
-              </span>
-              <span className="spanListarCursos">
-                <label className='labelListarCursos'>Filtrar por Modalidade</label>
-                <select
-                  className='selectListarCursos'
-                  value={modalidadeFiltro}
-                  onChange={(e) => setModalidadeFiltro(e.target.value)}
-                >
-                  <option value="">Todos</option>
-                  <option value="Integrado">Integrado</option>
-                  <option value="ProEJA">ProEJA</option>
-                </select>
-              </span>
-            </div>
+      <FormContainer titulo='Lista de Cursos' comprimento='90%'> 
+
+        <div className='containerListarCursos'>
+          <div className="buscar-bar">
+            <Input
+              tipo='search'
+              valor={filtro}
+              onChange={(e) => setFiltro(e.target.value)}
+              textoAjuda={'Buscar por modalidade, curso ou carga horária...'}
+            />
+            <img
+              className='iconesBuscar'
+              src={Lupa}
+              onClick={filtrarCursos}
+              title='Buscar'
+            />
+            <img
+              className='iconesBuscar'
+              src={X}
+              onClick={limparBusca}
+              title='Limpar Busca'
+            />
           </div>
-          <div className='divListarCursos'>
-            <Button text="Buscar" onClick={filtrarCursos} />
-            <Button text="Limpar campos" onClick={limparBusca} color="#4A4A4A" />
-            <Button text='Adicionar Novo' onClick={() => navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroCurso`)} />
-          </div>
-        </section>
+          
+          {/* Botão de "Adicionar Novo" com navegação para a tela de cadastro de curso */}
+          <Button 
+            text="Adicionar Novo" 
+            onClick={() => navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroCurso`)} 
+          />
+        </div>
 
         <div className='tabelaContainerListarCursos'>
           <table className='tabelaListarCursos'>
-            <thead className='cabecalhoListarCursos'>
-              <tr className='linhaListarCursos'>
+            <thead>
+              <tr>
                 <th onClick={() => ordenarPorColuna('modalidade')}>Modalidade</th>
                 <th onClick={() => ordenarPorColuna('nome')}>Nome do Curso</th>
                 <th onClick={() => ordenarPorColuna('carga_horaria')}>Carga Horária</th>
@@ -135,10 +130,9 @@ const ListarCursos = () => {
                     <img
                       className='iconeAcoes'
                       src={Lupa}
-                      alt="Buscar"
-                      onClick={() => handleEditCurso(curso)} // Chama a função de edição
+                      alt="Editar"
+                      onClick={() => navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroCurso`, { state: { curso } })}
                       title="Editar"
-                      style={{ width: '16px', height: '16px' }}
                     />
                   </td>
                 </tr>
@@ -146,6 +140,7 @@ const ListarCursos = () => {
             </tbody>
           </table>
         </div>
+
       </FormContainer>
     </>
   );

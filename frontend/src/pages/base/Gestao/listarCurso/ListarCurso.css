@@ -176,3 +176,196 @@
     color: #006b3f;
     border-radius: 50%;
 }
+
+.containerListarCursos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+
+.buscar-bar {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #006b3f;
+    border: 1px solid #006b3f;
+    border-radius: 8px;
+    padding: 5px 10px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.buscar-bar input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    outline: none;
+}
+
+.buscar-bar .iconeAcoes {
+    border-color: white;
+}
+
+.iconesBuscar {
+    max-width: 15px;
+    max-height: 15px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.tabelaContainerListarCursos {
+    width: 100%;
+    margin-top: 20px;
+    overflow-y: scroll;
+}
+
+.tabelaListarCursos {
+    max-width: 100%;
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    thead {
+        width: 100%;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:nth-child(odd) {
+        background-color: white;
+    }
+
+    th {
+        cursor: pointer;
+        background-color: #006b3f;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 0;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        width: 25%;
+        height: fit-content;
+        min-width: min-content;
+        border: 1px solid #ddd;
+        text-align: center;
+        border-left: none;
+        border-right: none;
+        word-wrap: break-word;
+        padding: 7px;
+    }
+}
+
+.icone-container img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.containerListarCursos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+}
+
+.buscar-bar {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #006b3f;
+    border: 1px solid #006b3f;
+    border-radius: 8px;
+    padding: 5px 10px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.buscar-bar input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    outline: none;
+}
+
+.buscar-bar .iconeAcoes {
+    border-color: white;
+}
+
+.iconesBuscar {
+    max-width: 15px;
+    max-height: 15px;
+    margin-left: 10px;
+    cursor: pointer;
+    filter: brightness(0) invert(1); /* Lupa branca */
+}
+
+.tabelaContainerListarCursos {
+    width: 100%;
+    margin-top: 20px;
+    overflow-y: scroll;
+}
+
+.tabelaListarCursos {
+    max-width: 100%;
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+thead {
+    width: 100%;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:nth-child(odd) {
+    background-color: white;
+}
+
+th {
+    cursor: pointer;
+    background-color: #006b3f;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 0;
+    padding: 5px;
+}
+
+th, td {
+    width: 25%;
+    height: fit-content;
+    min-width: min-content;
+    border: 1px solid #ddd;
+    text-align: center;
+    border-left: none;
+    border-right: none;
+    word-wrap: break-word;
+    padding: 7px;
+}
+
+.icone-container img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
