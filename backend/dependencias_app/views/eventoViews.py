@@ -7,6 +7,9 @@ from dependencias_app.serializers.calendarioAcademicoSerializer import Calendari
 from dependencias_app.models.evento import Evento
 from dependencias_app.models.calendarioAcademico import CalendarioAcademico
 import logging
+from datetime import datetime
+from django.utils.timezone import make_aware
+
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +18,22 @@ def cadastrar_evento(request):
     logger.info('Dados do evento recebidos: %s', request.data)
     try:
         data = request.data
+
+        # Converter datas para objetos datetime com timezone (se necessário)
+        data_inicio = make_aware(datetime.fromisoformat(data.get("data_inicio")))
+        data_fim = make_aware(datetime.fromisoformat(data.get("data_fim")))
+
+        # Verificar se existe um calendário acadêmico para o período
+        if not CalendarioAcademico.objects.filter(
+            data_inicio__lte=data_inicio,
+            data_fim__gte=data_fim,
+            tipo_calendario=data.get("tipo_calendario")
+        ).exists():
+            return Response(
+                {"mensagem": "Não existe um calendário acadêmico para este período."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         serializer = EventoSerializer(data=data)
 
         # Validar dados do serializer
@@ -31,6 +50,8 @@ def cadastrar_evento(request):
     except Exception as e:
         logger.error('Erro ao criar evento: %s', str(e))
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
     
 
 @api_view(['GET'])
