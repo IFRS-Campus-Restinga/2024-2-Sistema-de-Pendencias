@@ -9,6 +9,8 @@ import Tabela from '../../../../components/Tabela/Tabela';
 import { useNavigate } from 'react-router-dom';
 import Lupa from "../../../../assets/lupa-branca.png";
 import X from "../../../../assets/x-branco.png";
+import { jwtDecode } from 'jwt-decode';
+import IconeAdicionar from "../../../../assets/icone-adicionar-usuario.png";
 
 const ListarAluno = () => {
   const [alunos, setAlunos] = useState([]);
@@ -115,7 +117,14 @@ const ListarAluno = () => {
               title='Limpar Busca'
             />
           </div>
-
+          <div className='adicionarAluno'>
+            <img
+              className='iconeAdicionar'
+              src={IconeAdicionar}
+              onClick={() => navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroAluno`)}
+              title='Cadastrar Aluno'
+            />
+          </div>
         </div>
 
         <div className='tabelaContainerListarAluno'>
