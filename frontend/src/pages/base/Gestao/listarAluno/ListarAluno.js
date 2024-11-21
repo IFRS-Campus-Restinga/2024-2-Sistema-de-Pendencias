@@ -95,9 +95,8 @@ const ListarAluno = () => {
   return (
     <>
       <FormContainer titulo='Lista de Alunos' comprimento='90%'>
-        <div className='containerListarAluno'>
-
-          <div class="buscar-bar">
+        <div className='containerBuscarAluno'>
+          <div class="buscaBarAluno">
             <Input
               tipo='search'
               valor={filtroGeral}
@@ -105,13 +104,13 @@ const ListarAluno = () => {
               textoAjuda={'Buscar por nome, e-mail, grupo, status...'}
             />
             <img
-              className='iconesBuscar'
+              className='iconesBuscarAluno'
               src={Lupa}
               onClick={filtrarAlunos}
               title='Buscar'
             />
             <img
-              className='iconesBuscar'
+              className='iconesBuscarAluno'
               src={X}
               onClick={limparBusca}
               title='Limpar Busca'
@@ -119,7 +118,7 @@ const ListarAluno = () => {
           </div>
           <div className='adicionarAluno'>
             <img
-              className='iconeAdicionar'
+              className='iconeAdicionarAluno'
               src={IconeAdicionar}
               onClick={() => navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroAluno`)}
               title='Cadastrar Aluno'

@@ -1,11 +1,11 @@
-.containerListarAluno {
+.containerBuscarAluno {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 5px;
 }
 
-.buscar-bar {
+.buscaBarAluno {
     margin-top: 20px;
     margin-bottom: 20px;
     display: flex;
@@ -19,7 +19,7 @@
     max-width: 400px;
 }
 
-.buscar-bar input {
+.buscaBarAluno input {
     flex: 1;
     background: none;
     border: none;
@@ -28,18 +28,18 @@
     outline: none;
 }
 
-.buscar-bar .iconeAcoes {
+.buscaBarAluno .iconeAcoes {
     border-color: white;
 }
 
-.iconesBuscar {
+.iconesBuscarAluno {
     max-width: 15px;
     max-height: 15px;
     margin-left: 10px;
     cursor: pointer;
 }
 
-.iconeAdicionar {
+.iconeAdicionarAluno {
     max-width: 40px;
     max-height: 40px;
     cursor: pointer;
