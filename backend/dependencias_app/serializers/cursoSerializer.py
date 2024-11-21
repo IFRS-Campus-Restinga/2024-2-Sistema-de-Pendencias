@@ -6,11 +6,12 @@ from google_auth.models import UsuarioBase
 from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
 from dependencias_app.serializers.disciplinaSerializer import DisciplinaSerializer
 from dependencias_app.serializers.turmaSerializer import TurmaSerializer
+from django.db import IntegrityError
 
 class CursoSerializer(serializers.ModelSerializer):
-    turmas = TurmaSerializer(many=True, read_only=True)  # Removido read_only=True
-    disciplinas = DisciplinaSerializer(many=True, read_only=True)  # Removido read_only=True
-    coordenador = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Coordenador'))  # Representação completa do coordenador
+    turmas = TurmaSerializer(many=True, required=False)
+    disciplinas = DisciplinaSerializer(many=True, required=False)
+    coordenador = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Coordenador')) 
 
     class Meta:
         model = Curso
@@ -25,15 +26,12 @@ class CursoSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        # Representação completa do coordenador
         if hasattr(instance, 'coordenador'):
             representation['coordenador'] = UsuarioBaseSerializer(instance.coordenador).data
 
-        # Adiciona dados das turmas
         if hasattr(instance, 'turmas'):
             representation['turmas'] = TurmaSerializer(instance.turmas.all(), many=True).data
 
-        # Adiciona dados das disciplinas
         if hasattr(instance, 'disciplinas'):
             representation['disciplinas'] = DisciplinaSerializer(instance.disciplinas.all().order_by('nome'), many=True).data
 
@@ -52,78 +50,136 @@ class CursoSerializer(serializers.ModelSerializer):
             )
         return value
 
+    # def create(self, validated_data):
+    #     """
+    #     Cria um curso e as turmas associadas.
+    #     """
+    #     turmas_data = validated_data.pop('turmas', [])
+    #     curso = Curso.objects.create(**validated_data)
+
+    #     # Criar as turmas associadas ao curso
+    #     for turma_data in turmas_data:
+    #         turma_data['curso'] = curso  # Garantir que a turma será associada ao curso
+    #         Turma.objects.create(**turma_data)
+
+    #     return curso
+
+    def create(self, validated_data):
+        """
+        Cria um curso e as turmas associadas.
+        Se a turma já existir (baseado no id), atualiza seu número.
+        Se não, cria uma nova turma.
+        """
+        turmas_data = validated_data.pop('turmas', [])
+        curso = Curso.objects.create(**validated_data)
+
+        # Para cada turma, verifica se ela já existe e atualiza o número, ou cria uma nova turma
+        for turma_data in turmas_data:
+            turma_id = turma_data.get('id', None)  # Verifica se há o 'id' da turma
+
+            if turma_id:
+                # Se o id da turma existir, tenta buscar essa turma no banco
+                try:
+                    turma = Turma.objects.get(id=turma_id, curso=curso)  # Busca a turma existente para esse curso
+                    turma.numero = turma_data.get('numero', turma.numero)  # Atualiza o número da turma
+                    turma.save()  # Salva a turma
+                except Turma.DoesNotExist:
+                    raise serializers.ValidationError(f"Turma com id {turma_id} não encontrada ou não associada ao curso.")
+            else:
+                # Caso o id não exista, cria uma nova turma associada ao curso
+                turma_data['curso'] = curso
+                Turma.objects.create(**turma_data)
+
+        return curso
+    
+    # def update(self, instance, validated_data):
+    #     """
+    #     Atualiza o curso e as turmas associadas.
+    #     """
+    #     turmas_data = validated_data.pop('turmas', [])
+
+    #     # Atualiza os campos do curso
+    #     instance.nome = validated_data.get('nome', instance.nome)
+    #     instance.modalidade = validated_data.get('modalidade', instance.modalidade)
+    #     instance.carga_horaria = validated_data.get('carga_horaria', instance.carga_horaria)
+    #     instance.coordenador = validated_data.get('coordenador', instance.coordenador)
+    #     instance.save()
+
+    #     # Excluir turmas associadas de forma controlada
+    #     for turma in instance.turmas.all():
+    #         try:
+    #             turma.delete()  # Deleta a turma uma a uma
+    #         except IntegrityError:
+    #             pass  # Tratar exceção ou logar o erro conforme necessário
+
+    #     # Atualiza ou cria novas turmas associadas
+    #     for turma_data in turmas_data:
+    #         turma_id = turma_data.get('id', None)
+
+    #         if turma_id:
+    #             try:
+    #                 turma = Turma.objects.get(id=turma_id, curso=instance)
+    #                 turma.numero = turma_data.get('numero', turma.numero)
+    #                 turma.save()
+    #             except Turma.DoesNotExist:
+    #                 raise serializers.ValidationError(f"Turma com id {turma_id} não encontrada ou não associada ao curso.")
+    #         else:
+    #             turma_data['curso'] = instance
+    #             Turma.objects.create(**turma_data)
+
+    #     return instance
+
+
     def update(self, instance, validated_data):
         """
-        Atualiza os campos simples do curso, além das turmas e disciplinas associadas.
+        Atualiza o curso e as turmas associadas.
         """
-        # Atualizar campos simples do curso
+        # Print para ver o que chegou no validated_data
+        print("Validated Data:", validated_data)
+
+        turmas_data = validated_data.pop('turmas', [])
+
+        # Print para ver a instância do curso
+        print("Instance before update:", instance)
+
+        # Atualiza os campos do curso
         instance.nome = validated_data.get('nome', instance.nome)
         instance.modalidade = validated_data.get('modalidade', instance.modalidade)
         instance.carga_horaria = validated_data.get('carga_horaria', instance.carga_horaria)
         instance.coordenador = validated_data.get('coordenador', instance.coordenador)
         instance.save()
 
-        # Atualizar turmas e disciplinas
-        self._update_turmas(instance, validated_data.get('turmas', []))
-        self._update_disciplinas(instance, validated_data.get('disciplinas', []))
+        # Excluir turmas associadas de forma controlada
+        for turma in instance.turmas.all():
+            try:
+                turma.delete()  # Deleta a turma uma a uma
+            except IntegrityError:
+                pass  # Tratar exceção ou logar o erro conforme necessário
+
+        # Atualiza ou cria novas turmas associadas
+        for turma_data in turmas_data:
+            turma_id = turma_data.get('id', None)
+
+            # Print para verificar os dados das turmas
+            print("Turma Data:", turma_data)
+
+            if turma_id:
+                try:
+                    turma = Turma.objects.get(id=turma_id, curso=instance)
+                    turma.numero = turma_data.get('numero', turma.numero)
+                    turma.save()
+                except Turma.DoesNotExist:
+                    raise serializers.ValidationError(f"Turma com id {turma_id} não encontrada ou não associada ao curso.")
+            else:
+                turma_data['curso'] = instance
+                Turma.objects.create(**turma_data)
+
+        # Print para ver o estado final da instância
+        print("Instance after update:", instance)
 
         return instance
 
-    def _update_turmas(self, instance, turmas_data):
-        """
-        Atualiza ou cria turmas para o curso.
-        """
-        turma_ids = []
-        for turma_data in turmas_data:
-            turma_data = turma_data.copy()  # Faz uma cópia para evitar modificar o dicionário original
 
-            # Adiciona a referência ao curso
-            if 'curso' not in turma_data:
-                turma_data['curso'] = instance  # Garante que o campo 'curso' esteja presente
-
-            turma_id = turma_data.get('id')
-            if turma_id:
-                # Se a turma já existe, atualiza
-                turma = Turma.objects.filter(id=turma_id, curso=instance).first()
-                if turma:
-                    turma.numero = turma_data.get('numero', turma.numero)
-                    turma.save()
-                    turma_ids.append(turma.id)
-            else:
-                # Se a turma não existe, cria uma nova turma associada ao curso
-                new_turma = Turma.objects.create(**turma_data)
-                turma_ids.append(new_turma.id)
-
-        # Remover turmas que não foram enviadas
-        Turma.objects.filter(curso=instance).exclude(id__in=turma_ids).delete()
-
-    def _update_disciplinas(self, instance, disciplinas_data):
-        """
-        Atualiza ou cria disciplinas para o curso.
-        """
-        disciplina_ids = []
-        for disciplina_data in disciplinas_data:
-            disciplina_data = disciplina_data.copy()  # Faz uma cópia para evitar modificar o dicionário original
-
-            # Adiciona a referência ao curso
-            if 'curso' not in disciplina_data:
-                disciplina_data['curso'] = instance  # Garante que o campo 'curso' esteja presente
-
-            disciplina_id = disciplina_data.get('id')
-            if disciplina_id:
-                # Se a disciplina já existe, atualiza
-                disciplina = Disciplina.objects.filter(id=disciplina_id, curso=instance).first()
-                if disciplina:
-                    disciplina.nome = disciplina_data.get('nome', disciplina.nome)
-                    disciplina.save()
-                    disciplina_ids.append(disciplina.id)
-            else:
-                # Se a disciplina não existe, cria uma nova disciplina associada ao curso
-                new_disciplina = Disciplina.objects.create(**disciplina_data)
-                disciplina_ids.append(new_disciplina.id)
-
-        # Remover disciplinas que não foram enviadas
-        Disciplina.objects.filter(curso=instance).exclude(id__in=disciplina_ids).delete()
 
 
 
