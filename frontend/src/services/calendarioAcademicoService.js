@@ -29,6 +29,26 @@ export const calendarioAcademicoService  = {
             console.error("Erro ao listar eventos do calendário acadêmico:", error);
             throw error;
         }
+    },
+
+    obterCalendarioAcademico: async (idCalendario) => {
+    try {
+      const res = await api.get(`/api/obter-calendario-academico/${idCalendario}/`);
+      return res;
+    } catch (error) {
+      console.error("Erro ao obter calendário acadêmico:", error);
+      throw error;
     }
+  },
+
+  atualizarCalendarioAcademico: async (idCalendario, params) => {
+    try {
+      const res = await api.put(`/api/atualizar-calendario-academico/${idCalendario}/`, params);
+      return res;
+    } catch (error) {
+      console.error("Erro ao atualizar calendário acadêmico:", error);
+      throw error;
+    }
+  },
 
 };

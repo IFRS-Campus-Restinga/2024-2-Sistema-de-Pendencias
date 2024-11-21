@@ -109,6 +109,10 @@ const router = createBrowserRouter([
                 element: <CadastroCalendarioAcademicoPage />
             },
             {
+                path: ':idUsuario/editarCalendarioAcademico/:idCalendario',
+                element: <CadastroCalendarioAcademicoPage />
+            },
+            {
                 path: ':idUsuario/listarCalendariosAcademicos',
                 element: <ListarCalendariosAcademicosPage />
             },

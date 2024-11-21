@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { calendarioAcademicoService } from '../../../../../services/calendarioAcademicoService';
@@ -10,6 +10,7 @@ import './cadastroCalendarioAcademico.css';
 
 const CadastroCalendarioAcademicoPage = () => {
   const navigate = useNavigate();
+  const { idCalendario } = useParams(); // Verifica se há um ID para edição
   const [formData, setFormData] = useState({
     titulo: '',
     data_inicio: '',
@@ -18,6 +19,29 @@ const CadastroCalendarioAcademicoPage = () => {
   });
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
+
+  // Carrega os dados existentes se estiver no modo de edição
+  useEffect(() => {
+    if (idCalendario) {
+      calendarioAcademicoService.obterCalendarioAcademico(idCalendario)
+        .then((response) => {
+          const calendario = response.data;
+          setFormData({
+            titulo: calendario.titulo || '',
+            data_inicio: calendario.data_inicio ? calendario.data_inicio.split('T')[0] : '',
+            data_fim: calendario.data_fim ? calendario.data_fim.split('T')[0] : '',
+            tipo_calendario: calendario.tipo_calendario || 'Integrado',
+          });
+        })
+        .catch((error) => {
+          console.error('Erro ao carregar calendário acadêmico:', error);
+          toast.error("Erro ao carregar os dados do calendário acadêmico.", {
+            position: "bottom-center",
+            autoClose: 3000,
+          });
+        });
+    }
+  }, [idCalendario]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,38 +59,42 @@ const CadastroCalendarioAcademicoPage = () => {
     return Object.keys(validationErrors).length === 0;
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (validateForm()) {
-    setShowErrorMessage(false);
-    try {
-      const response = await calendarioAcademicoService.criarCalendarioAcademico(formData);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      setShowErrorMessage(false);
+      try {
+        const response = idCalendario
+          ? await calendarioAcademicoService.atualizarCalendarioAcademico(idCalendario, formData)
+          : await calendarioAcademicoService.criarCalendarioAcademico(formData);
 
-      if (response.status !== 201) throw new Error(response.error);
+        if (![200, 201].includes(response.status)) throw new Error(response.error);
 
-      // Redireciona para a página de calendário com o estado de sucesso
-      navigate("/sessao/Gestão Escolar/1/calendario", {
-        state: { calendarioCriado: true },
-      });
-    } catch (error) {
-      console.error('Erro ao cadastrar calendário acadêmico:', error);
-      toast.error("Já existe um período letivo para este tipo de calendário.", {
-        position: "bottom-center",
-        autoClose: 3000,
-        style: { backgroundColor: '#d11c28', color: '#fff' },
-        progressStyle: { backgroundColor: '#fff' },
-      });
+        navigate("/sessao/Gestão Escolar/1/calendario", {
+          state: {
+            calendarioCriado: !idCalendario,
+            calendarioAtualizado: !!idCalendario,
+            mensagemSucesso: idCalendario ? "Período Letivo atualizado com sucesso!" : "Período Letivo cadastrado com sucesso!",
+          },
+        });
+      } catch (error) {
+        console.error('Erro ao salvar calendário acadêmico:', error);
+        toast.error("Já existe um período letivo para este tipo de calendário.", {
+          position: "bottom-center",
+          autoClose: 3000,
+          style: { backgroundColor: '#d11c28', color: '#fff' },
+          progressStyle: { backgroundColor: '#fff' },
+        });
+      }
+    } else {
+      setShowErrorMessage(true);
     }
-  } else {
-    setShowErrorMessage(true);
-  }
-};
-
+  };
 
   return (
     <div className="perfilContainer">
       <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo="Cadastro de Calendário Acadêmico">
+      <FormContainer onSubmit={handleSubmit} titulo={idCalendario ? "Editar Calendário Acadêmico" : "Cadastro de Calendário Acadêmico"}>
         {showErrorMessage && <p style={{ color: 'red' }}>* Preencha todos os campos obrigatórios corretamente.</p>}
 
         <label className="labelCustomizado">Título
@@ -89,7 +117,7 @@ const handleSubmit = async (e) => {
           name="data_inicio"
           value={formData.data_inicio}
           onChange={handleDataInicioChange}
-          onFocus={(e) => e.target.showPicker()} // Abre o seletor de data ao focar no campo
+          onFocus={(e) => e.target.showPicker()}
           className={errors.data_inicio ? 'inputErro' : ''}
           required
         />
@@ -103,7 +131,7 @@ const handleSubmit = async (e) => {
           value={formData.data_fim}
           min={formData.data_inicio || undefined}
           onChange={handleChange}
-          onFocus={(e) => e.target.showPicker()} // Abre o seletor de data ao focar no campo
+          onFocus={(e) => e.target.showPicker()}
           className={errors.data_fim ? 'inputErro' : ''}
           required
         />
@@ -123,7 +151,7 @@ const handleSubmit = async (e) => {
           {errors.tipo_calendario && <p className="erros">{errors.tipo_calendario}</p>}
         </label>
 
-        <Button tipo="submit" text="Cadastrar Calendário Acadêmico" />
+        <Button tipo="submit" text={idCalendario ? "Salvar Alterações" : "Cadastrar Periodo Letivo"} />
       </FormContainer>
     </div>
   );

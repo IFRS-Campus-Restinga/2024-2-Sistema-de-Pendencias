@@ -152,4 +152,34 @@ def listar_eventos_do_calendario_academico(request, id_pacote):
     except CalendarioAcademico.DoesNotExist:
         return Response({"mensagem": "Pacote não encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
+@api_view(['PUT'])
+def atualizar_calendario_academico(request, id_calendario):
+    try:
+        calendario = CalendarioAcademico.objects.get(id=id_calendario)
+        serializer = CalendarioAcademicoSerializer(calendario, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            logger.info('Calendário acadêmico atualizado com sucesso: %s', serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        logger.error('Erro de validação na atualização do calendário acadêmico: %s', serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except CalendarioAcademico.DoesNotExist:
+        logger.error('Calendário acadêmico não encontrado para atualização: ID %s', id_calendario)
+        return Response({'mensagem': 'Calendário acadêmico não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error('Erro ao atualizar calendário acadêmico: %s', str(e))
+        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def obter_calendario_academico(request, id_calendario):
+    try:
+        calendario = CalendarioAcademico.objects.get(id=id_calendario)
+        serializer = CalendarioAcademicoSerializer(calendario)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except CalendarioAcademico.DoesNotExist:
+        logger.error('Calendário acadêmico não encontrado: ID %s', id_calendario)
+        return Response({'mensagem': 'Calendário acadêmico não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error('Erro ao obter calendário acadêmico: %s', str(e))
+        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
