@@ -28,8 +28,8 @@ const CadastroCalendarioAcademicoPage = () => {
           const calendario = response.data;
           setFormData({
             titulo: calendario.titulo || '',
-            data_inicio: calendario.data_inicio || '',
-            data_fim: calendario.data_fim || '',
+            data_inicio: calendario.data_inicio ? calendario.data_inicio.split('T')[0] : '',
+            data_fim: calendario.data_fim ? calendario.data_fim.split('T')[0] : '',
             tipo_calendario: calendario.tipo_calendario || 'Integrado',
           });
         })
