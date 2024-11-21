@@ -48,7 +48,10 @@ urlpatterns = [
     path('cadastrar-calendario-academico/', cadastrar_calendario_academico, name='cadastrar_calendario_academico'),
     path('listar-calendarios-academicos/', listar_calendarios_academicos, name='listar_calendarios_academicos'),
     path('calendario-academico/<int:id_pacote>/eventos/', listar_eventos_do_calendario_academico, name='listar_eventos_do_calendario_academico'),
-    
+    path('atualizar-calendario-academico/<int:id_calendario>/', atualizar_calendario_academico, name='atualizar_calendario_academico'),
+    path('obter-calendario-academico/<int:id_calendario>/', obter_calendario_academico, name='obter_calendario_academico'),
+
+
     # views de lista de usuários
     path('usuario/<int:idUsuario>/', get_infos_usuario),
     path('dados-aluno/<int:idAluno>/', get_aluno_infos),
