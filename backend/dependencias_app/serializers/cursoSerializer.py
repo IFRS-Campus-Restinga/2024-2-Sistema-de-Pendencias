@@ -50,19 +50,7 @@ class CursoSerializer(serializers.ModelSerializer):
             )
         return value
 
-    # def create(self, validated_data):
-    #     """
-    #     Cria um curso e as turmas associadas.
-    #     """
-    #     turmas_data = validated_data.pop('turmas', [])
-    #     curso = Curso.objects.create(**validated_data)
-
-    #     # Criar as turmas associadas ao curso
-    #     for turma_data in turmas_data:
-    #         turma_data['curso'] = curso  # Garantir que a turma será associada ao curso
-    #         Turma.objects.create(**turma_data)
-
-    #     return curso
+   
 
     def create(self, validated_data):
         """
@@ -92,11 +80,18 @@ class CursoSerializer(serializers.ModelSerializer):
 
         return curso
     
+
     # def update(self, instance, validated_data):
     #     """
     #     Atualiza o curso e as turmas associadas.
     #     """
+    #     # Print para ver o que chegou no validated_data
+    #     print("Validated Data:", validated_data)
+
     #     turmas_data = validated_data.pop('turmas', [])
+
+    #     # Print para ver a instância do curso
+    #     print("Instance before update:", instance)
 
     #     # Atualiza os campos do curso
     #     instance.nome = validated_data.get('nome', instance.nome)
@@ -105,42 +100,22 @@ class CursoSerializer(serializers.ModelSerializer):
     #     instance.coordenador = validated_data.get('coordenador', instance.coordenador)
     #     instance.save()
 
-    #     # Excluir turmas associadas de forma controlada
-    #     for turma in instance.turmas.all():
-    #         try:
-    #             turma.delete()  # Deleta a turma uma a uma
-    #         except IntegrityError:
-    #             pass  # Tratar exceção ou logar o erro conforme necessário
-
-    #     # Atualiza ou cria novas turmas associadas
     #     for turma_data in turmas_data:
     #         turma_id = turma_data.get('id', None)
 
-    #         if turma_id:
-    #             try:
-    #                 turma = Turma.objects.get(id=turma_id, curso=instance)
-    #                 turma.numero = turma_data.get('numero', turma.numero)
-    #                 turma.save()
-    #             except Turma.DoesNotExist:
-    #                 raise serializers.ValidationError(f"Turma com id {turma_id} não encontrada ou não associada ao curso.")
-    #         else:
-    #             turma_data['curso'] = instance
-    #             Turma.objects.create(**turma_data)
+    #         # Print para verificar os dados das turmas
+    #         print("Turma Data:", turma_data)
+
+    #     # Print para ver o estado final da instância
+    #     print("Instance after update:", instance)
 
     #     return instance
-
 
     def update(self, instance, validated_data):
         """
         Atualiza o curso e as turmas associadas.
         """
-        # Print para ver o que chegou no validated_data
-        print("Validated Data:", validated_data)
-
-        turmas_data = validated_data.pop('turmas', [])
-
-        # Print para ver a instância do curso
-        print("Instance before update:", instance)
+        turmas_data = validated_data.pop('turmas', [])  # Pega as turmas associadas
 
         # Atualiza os campos do curso
         instance.nome = validated_data.get('nome', instance.nome)
@@ -149,21 +124,12 @@ class CursoSerializer(serializers.ModelSerializer):
         instance.coordenador = validated_data.get('coordenador', instance.coordenador)
         instance.save()
 
-        # Excluir turmas associadas de forma controlada
-        for turma in instance.turmas.all():
-            try:
-                turma.delete()  # Deleta a turma uma a uma
-            except IntegrityError:
-                pass  # Tratar exceção ou logar o erro conforme necessário
-
-        # Atualiza ou cria novas turmas associadas
+        # Agora lidamos com as turmas associadas
         for turma_data in turmas_data:
             turma_id = turma_data.get('id', None)
 
-            # Print para verificar os dados das turmas
-            print("Turma Data:", turma_data)
-
             if turma_id:
+                # Se a turma já existe, atualize-a
                 try:
                     turma = Turma.objects.get(id=turma_id, curso=instance)
                     turma.numero = turma_data.get('numero', turma.numero)
@@ -171,13 +137,12 @@ class CursoSerializer(serializers.ModelSerializer):
                 except Turma.DoesNotExist:
                     raise serializers.ValidationError(f"Turma com id {turma_id} não encontrada ou não associada ao curso.")
             else:
+                # Se a turma não tem id, cria uma nova
                 turma_data['curso'] = instance
                 Turma.objects.create(**turma_data)
 
-        # Print para ver o estado final da instância
-        print("Instance after update:", instance)
-
         return instance
+
 
 
 
