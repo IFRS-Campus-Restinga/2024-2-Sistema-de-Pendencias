@@ -22,17 +22,20 @@ const ListarPPT = () => {
         console.log(formData);
         const dependenciasFiltradas = listaPPT.filter(ppt =>
             (formData.termoBusca === '' || 
-                (ppt.curso && ppt.curso?.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
-                (ppt.disciplina && ppt.disciplina?.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
-                (ppt.aluno && ppt.aluno?.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
+                (ppt.curso && ppt.curso.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
+                (ppt.disciplina && ppt.disciplina.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
+                (ppt.aluno && ppt.aluno.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
                 (ppt.aluno?.email && ppt.aluno.email.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
-                (ppt.professor && ppt.professor?.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
+                (ppt.professor && ppt.professor.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
                 (ppt.professor?.email && ppt.professor.email.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
                 (ppt.turmaOrigem && ppt.turmaOrigem.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
-                (ppt.turmaProgressao && ppt.turmaProgressao.toLowerCase().includes(formData.termoBusca.toLowerCase()))) &&
-    
+                (ppt.turmaProgressao && ppt.turmaProgressao.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
+                (ppt.status && ppt.status.toLowerCase().includes(formData.termoBusca.toLowerCase()))
+            ) &&
+            
             (formData.status === '' || 
-                (ppt.status && ppt.status?.toLowerCase().trim().includes(formData.status.toLowerCase().trim())))
+                (ppt.status && ppt.status.toLowerCase().includes(formData.status.toLowerCase()))
+            )
         );
     
         setDependenciasFiltradas(dependenciasFiltradas);
