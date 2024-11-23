@@ -54,3 +54,9 @@
 .labelStatusPED {
     margin: auto;
 }
+
+.buttons-ped{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}

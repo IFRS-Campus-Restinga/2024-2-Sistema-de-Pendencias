@@ -1,134 +1,197 @@
-import { Link, useLocation } from "react-router-dom"
-import FormContainer from "../../../../components/FormContainer/FormContainer"
-import './DetalhesPEDProfessor.css'
-import Button from "../../../../components/Button/Button"
-import StatusBalls from "../../../../components/StatusBall/StatusBall"
-
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
+import FormContainer from "../../../../components/FormContainer/FormContainer";
+import "./DetalhesPEDProfessor.css";
+import Button from "../../../../components/Button/Button";
+import StatusBalls from "../../../../components/StatusBall/StatusBall";
+import Modal from "../../../../components/Modal/Modal";
+import { PEDService } from "../../../../services/pedService";
 
 const DetalhesPEDProfessor = () => {
-    const location = useLocation()
-    const {state} = location || {}
+  const [detalhesPED, setDetalhesPED] = useState({});
+  const { pedId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { state } = location || {};
 
-    return (
-        <FormContainer titulo={`Detalhes da PED - ${state.serie_progressao ? 'EMI' : 'ProEJA'}`} comprimento='90%'>
-            {
-                state.serie_progressao ? (
-                    <>
-                        <label className="labelCabecalhoDetalhesPED">
-                            <span className="spanDetalhesPED">
-                                Aluno -
-                                <p className="pDetalhesPED">{state.aluno}</p>
-                            </span>
-                            <label className="labelStatusPED">
-                                Andamento da PED
-                            </label>
-                        </label>
-                        <section className="sectionDetalhesPED">
-                            <div className="divDetalhesPED">
-                                <label className="labelDetalhesPED">
-                                    Docente responsável pela progressão
-                                    <p className="pDetalhesPED">{state.professor_ped}</p>
-                                </label>
-                                <label className="labelDetalhesPED">
-                                    Docente que ministrou a disciplina
-                                    <p className="pDetalhesPED">{state.professor_disciplina}</p>
-                                </label>
-                                <label className="labelDetalhesPED">
-                                    Curso
-                                    <p className="pDetalhesPED">{state.curso}</p>
-                                </label>
-                                <label className="labelDetalhesPED">
-                                    Disciplina
-                                    <p className="pDetalhesPED">{state.disciplina}</p>
-                                </label>
-                                <label className="labelDetalhesPED">
-                                    Trimestres a Recuperar
-                                    <p className="pDetalhesPED">{state.trimestre_recuperar}</p>
-                                </label>
-                                <label className="labelDetalhesPED">
-                                    Série da Progressão
-                                    <p className="pDetalhesPED">{state.serie_progressao}</p>
-                                </label>
-                                <label className="labelDetalhesPED">
-                                    Turma de Origem
-                                    <p className="pDetalhesPED">{state.turma_origem}</p>
-                                </label>
-                            </div>
-                            <div className="divStatusPED">
-                                <StatusBalls status={state.status} tipo={'PED'}/>
-                                <span className="spanDetalhesPED">
-                                    <Link to={'planoEstudos'}>
-                                        <Button text='Plano de Estudos'/>
-                                    </Link>
-                                    <Link to={'cadastrar-form-encerramento'}>
-                                        <Button text='Formulário de Encerramento'/>
-                                    </Link>
-                                </span>
-                            </div>
-                        </section>
-                    </>
-                ) : (
-                    <>
-                        <label className="labelCabecalhoDetalhesPED">
-                            <span className="spanDetalhesPED">
-                                Aluno -
-                                <p className="pDetalhesPED">{state.aluno}</p>
-                            </span>
-                            <label className="labelStatusPED">
-                                Andamento da PED
-                            </label>
-                        </label>
-                        <section className="sectionDetalhesPED">
-                            <div className="divDetalhesPED">
+  const [modalAberto, setModalAberto] = useState(false);
 
-                                <label className="labelDetalhesPED">
-                                    Docente responsável pela progressão
-                                    <p className="pDetalhesPED">{state.professor_ped}</p>
-                                </label>
-                                <label className="labelDetalhesPED">
-                                    Docente que ministrou a disciplina
-                                    <p className="pDetalhesPED">{state.professor_disciplina}</p>
-                                </label>
-                                <label className="labelDetalhesPED">
-                                    Curso
-                                    <p className="pDetalhesPED">{state.curso}</p>
-                                </label>
-                                <label className="labelDetalhesPED">
-                                    Disciplina
-                                    <p className="pDetalhesPED">{state.disciplina}</p>
-                                </label>
-                                <label className="labelDetalhesPED">
-                                    Ano/Semestre de Reprovação
-                                    <p className="pDetalhesPED">{state.ano_semestre_reprov}</p>
-                                </label>
-                            </div>
-                            <div className="divStatusPED">
-                                <StatusBalls status={state.status} tipo={'PED'}/>
-                                <span className="spanDetalhesPED">
-                                    <Link to={'planoEstudos'}>
-                                        <Button text='Plano de Estudos'/>
-                                    </Link>
-                                    <Link to={'cadastrar-form-encerramento'}>
-                                        <Button text='Formulário de Encerramento'/>
-                                    </Link>
-                                </span>
-                            </div>
-                        </section>
-                    </>
-                )
-            }
+  const abrirModal = () => setModalAberto(true);
+  const fecharModal = () => setModalAberto(false);
 
-            <label className="labelDetalhesPED">
-                Observação
-                <p className="pDetalhesPED">{state.observacao}</p>
-            </label>
+  const fetchDetalhes = async () => {
+    try {
+      const res = await PEDService.porId(pedId, "EMI");
+      if (res.status !== 200) throw new Error(res.response?.data?.mensagem);
+      setDetalhesPED(res.data);
+      console.log(res.data);
+    } catch (error) {
+      console.error("Erro ao buscar detalhes da PED:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (state) {
+      setDetalhesPED(state); // Usar o 'state' se estiver disponível
+    } else {
+      fetchDetalhes(); // Caso contrário, buscar os dados da PED pelo ID
+    }
+  }, [pedId, state]);
+
+  const handleDesativarClick = async () => {
+    try {
+      const updatedDetalhes = { ...detalhesPED, status: "Desativado"};
+      const modalidade = state.serie_progressao ? 'EMI' : 'ProEJA';
+      const res = await PEDService.desativar(pedId, updatedDetalhes, modalidade);
+      if (!res) throw new Error(res.response?.data?.mensagem);
+      setDetalhesPED(updatedDetalhes);
+      console.log("PED desativada com sucesso:", updatedDetalhes);
+      fecharModal();
+    } catch (error) {
+      console.error("Erro ao desativar PED:", error.message);
+    }
+  };
+
+  // Garantir que o 'state' tenha valores válidos antes de acessar
+  if (!state) {
+    return <div>Carregando detalhes...</div>; // Mostrar um carregamento enquanto os dados não estão disponíveis
+  }
+
+  return (
+    <FormContainer
+      titulo={`Detalhes da PED - ${state.serie_progressao ? "EMI" : "ProEJA"}`}
+      comprimento="90%"
+    >
+      {state.serie_progressao ? (
+        <>
+          <label className="labelCabecalhoDetalhesPED">
             <span className="spanDetalhesPED">
-                <Link to={'editar'} state={state}>
-                    <Button text={"Editar PED"}/>
-                </Link>
+              Aluno -<p className="pDetalhesPED">{state.aluno}</p>
             </span>
-        </FormContainer>
-    )
-}
+            <label className="labelStatusPED">Andamento da PED</label>
+          </label>
+          <section className="sectionDetalhesPED">
+            <div className="divDetalhesPED">
+              <label className="labelDetalhesPED">
+                Docente responsável pela progressão
+                <p className="pDetalhesPED">{state.professor_ped}</p>
+              </label>
+              <label className="labelDetalhesPED">
+                Docente que ministrou a disciplina
+                <p className="pDetalhesPED">{state.professor_disciplina}</p>
+              </label>
+              <label className="labelDetalhesPED">
+                Curso
+                <p className="pDetalhesPED">{state.curso}</p>
+              </label>
+              <label className="labelDetalhesPED">
+                Disciplina
+                <p className="pDetalhesPED">{state.disciplina}</p>
+              </label>
+              <label className="labelDetalhesPED">
+                Trimestres a Recuperar
+                <p className="pDetalhesPED">{state.trimestre_recuperar}</p>
+              </label>
+              <label className="labelDetalhesPED">
+                Série da Progressão
+                <p className="pDetalhesPED">{state.serie_progressao}</p>
+              </label>
+              <label className="labelDetalhesPED">
+                Turma de Origem
+                <p className="pDetalhesPED">{state.turma_origem}</p>
+              </label>
+            </div>
+            <div className="divStatusPED">
+              <StatusBalls status={detalhesPED.status} tipo={"PED"} />
+              <span className="spanDetalhesPED">
+                <Link to={"planoEstudos"}>
+                  <Button text="Plano de Estudos" />
+                </Link>
+                <Link to={"cadastrar-form-encerramento"}>
+                  <Button text="Formulário de Encerramento" />
+                </Link>
+              </span>
+            </div>
+          </section>
+        </>
+      ) : (
+        <>
+          <label className="labelCabecalhoDetalhesPED">
+            <span className="spanDetalhesPED">
+              Aluno -<p className="pDetalhesPED">{state.aluno}</p>
+            </span>
+            <label className="labelStatusPED">Andamento da PED</label>
+          </label>
+          <section className="sectionDetalhesPED">
+            <div className="divDetalhesPED">
+              <label className="labelDetalhesPED">
+                Docente responsável pela progressão
+                <p className="pDetalhesPED">{state.professor_ped}</p>
+              </label>
+              <label className="labelDetalhesPED">
+                Docente que ministrou a disciplina
+                <p className="pDetalhesPED">{state.professor_disciplina}</p>
+              </label>
+              <label className="labelDetalhesPED">
+                Curso
+                <p className="pDetalhesPED">{state.curso}</p>
+              </label>
+              <label className="labelDetalhesPED">
+                Disciplina
+                <p className="pDetalhesPED">{state.disciplina}</p>
+              </label>
+              <label className="labelDetalhesPED">
+                Ano/Semestre de Reprovação
+                <p className="pDetalhesPED">{state.ano_semestre_reprov}</p>
+              </label>
+            </div>
+            <div className="divStatusPED">
+              <StatusBalls status={detalhesPED.status} tipo={"PED"} />
+              <span className="spanDetalhesPED">
+                <Link to={"planoEstudos"}>
+                  <Button text="Plano de Estudos" />
+                </Link>
+                <Link to={"cadastrar-form-encerramento"}>
+                  <Button text="Formulário de Encerramento" />
+                </Link>
+              </span>
+            </div>
+          </section>
+        </>
+      )}
 
-export default DetalhesPEDProfessor
+      <label className="labelDetalhesPED">
+        Observação
+        <p className="pDetalhesPED">{state.observacao}</p>
+      </label>
+      <span className="spanDetalhesPED">
+  <div className="buttons-ped">
+    {detalhesPED.status !== "Desativado" && (
+      <>
+        <Link to={"editar"} state={detalhesPED}>
+          <Button text={"Editar PED"} />
+        </Link>
+        <Button
+          text="Desativar PED"
+          color={"red"}
+          onClick={abrirModal}
+        />
+      </>
+    )}
+  </div>
+</span>
+
+      <Modal
+        estaAberto={modalAberto}
+        aoFechar={fecharModal}
+        mensagem="Você tem certeza que deseja desativar a PED?"
+        textoCancelar="Não"
+        textoOk="Desativar"
+        colorButton={"red"}
+        onClick={handleDesativarClick}
+      />
+    </FormContainer>
+  );
+};
+
+export default DetalhesPEDProfessor;

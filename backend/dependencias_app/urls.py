@@ -84,6 +84,7 @@ urlpatterns = [
     path('ped/<int:pedId>/<str:modalidade>/', por_id),
     #path('cadastrar-plano-estudos/', cadastrar_plano_estudos),
     path('cadastrar-plano-estudos/<int:pedId>/', cadastrar_plano_estudos),
+    path('desativar-ped/<int:pedId>/<str:modalidade>/', desativar_PED),
 
 
     #views para atividades da ped

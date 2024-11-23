@@ -45,6 +45,13 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
 
         return validated_data 
     
+    
+    def set_disabled(self, ped):
+        ped.status = 'Desativado'
+        ped.save()
+
+        return ped
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
