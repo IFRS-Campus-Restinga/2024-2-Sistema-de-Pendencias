@@ -36,7 +36,13 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
 
         if not disciplina.cursos.filter(id=curso.id).exists(): raise serializers.ValidationError("Disciplina não vinculada ao curso da PED")
 
-        return validated_data   
+        return validated_data
+    
+    def set_disabled(self, ped):
+        ped.status = 'Desativado'
+        ped.save()
+
+        return ped
      
     def to_representation(self, instance):
         representation = super().to_representation(instance)

@@ -128,17 +128,8 @@ const DetalhesPEDProfessor = () => {
                 )
             }
 
-            <label className="labelDetalhesPED">
-                Observação
-                <p className="pDetalhesPED">{state.observacao}</p>
-            </label>
-            <span className="spanDetalhesPED">
-                <Link to={'editar'} state={state}>
-                    <Button text={"Editar PED"}/>
-                </Link>
-            </span>
         </FormContainer>
-    )
-}
+    );
+};
 
-export default DetalhesPEDProfessor
+export default DetalhesPEDProfessor;
