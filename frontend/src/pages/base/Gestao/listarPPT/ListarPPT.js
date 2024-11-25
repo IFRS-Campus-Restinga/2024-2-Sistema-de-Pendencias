@@ -1,48 +1,46 @@
-import { useEffect, useState } from 'react'
-import './ListarPPT.css'
-import { PPTService } from '../../../../services/emiPptService'
-import FormContainer from '../../../../components/FormContainer/FormContainer'
-import Input from '../../../../components/Input/Input'
-import Button from '../../../../components/Button/Button'
-import { Link, useNavigate } from 'react-router-dom'
-import { jwtDecode } from 'jwt-decode'
-import Tabela from '../../../../components/Tabela/Tabela'
+import { useEffect, useState } from 'react';
+import './ListarPPT.css';
+import { PPTService } from '../../../../services/emiPptService';
+import FormContainer from '../../../../components/FormContainer/FormContainer';
+import Input from '../../../../components/Input/Input';
+import Button from '../../../../components/Button/Button';
+import { Link, useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import Tabela from '../../../../components/Tabela/Tabela';
 
 const ListarPPT = () => {
     const navegar = useNavigate();
     const [listaPPT, setListaPPT] = useState([]);
     const [dependenciasFiltradas, setDependenciasFiltradas] = useState([]);
     const [formData, setFormData] = useState({
-        curso: '',
-        disciplina: '',
+        termoBusca: '',
         status: '',
-        aluno: '',
-        professor: '',
-        turmaOrigem: '',
-        turmaProgressao: '',
-        situacao: '',
-        dataInicio: '',
-        dataFim: ''
     });
-    const statusFilter = ['Desativado', 'Criada', 'Em Andamento', 'Finalizada']
+    const statusFilter = ['Desativado', 'Criada', 'Em Andamento', 'Finalizada'];
 
     const filtrarDependencias = () => {
         console.log(formData);
         const dependenciasFiltradas = listaPPT.filter(ppt =>
-            (formData.curso === '' || 
-                (ppt.curso && ppt.curso?.toLowerCase().trim().includes(formData.curso.toLowerCase().trim()))) &&
-    
-            (formData.disciplina === '' || 
-                (ppt.disciplina && ppt.disciplina?.toLowerCase().trim().includes(formData.disciplina.toLowerCase().trim()))) &&
-    
+            (formData.termoBusca === '' || 
+                (ppt.curso && ppt.curso.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
+                (ppt.disciplina && ppt.disciplina.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
+                (ppt.aluno && ppt.aluno.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
+                (ppt.aluno?.email && ppt.aluno.email.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
+                (ppt.professor && ppt.professor.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
+                (ppt.professor?.email && ppt.professor.email.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
+                (ppt.turmaOrigem && ppt.turmaOrigem.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
+                (ppt.turmaProgressao && ppt.turmaProgressao.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
+                (ppt.status && ppt.status.toLowerCase().includes(formData.termoBusca.toLowerCase()))
+            ) &&
+            
             (formData.status === '' || 
-                (ppt.status && ppt.status?.toLowerCase().trim().includes(formData.status.toLowerCase().trim())))
+                (ppt.status && ppt.status.toLowerCase().includes(formData.status.toLowerCase()))
+            )
         );
     
         setDependenciasFiltradas(dependenciasFiltradas);
     };
-    
-    
+
     const fetchPPT = async () => {
         try {
             const res = await PPTService.list();
@@ -56,7 +54,6 @@ const ListarPPT = () => {
         }
     };
 
-    // Função para abrir detalhes da PPT
     const detalhesPpt = async (id) => {
         try {
             console.log("id:", id);
@@ -66,7 +63,6 @@ const ListarPPT = () => {
         }
     };
 
-    // Fetch inicial quando o componente for carregado
     useEffect(() => {
         fetchPPT();
     }, []);
@@ -77,36 +73,27 @@ const ListarPPT = () => {
                 <section className='sectionListarPPT'>
                     <div className='divListarPPT'>
                         <label className='labelListarPPT'>
-                            Buscar Curso
+                            Buscar
                             <Input
                                 tipo='text'
-                                onChange={(e) => setFormData(prevData => ({ ...prevData, curso: e.target.value }))}
-                                valor={formData.curso}
+                                onChange={(e) => setFormData(prevData => ({ ...prevData, termoBusca: e.target.value }))}
+                                valor={formData.termoBusca}
                             />
                         </label>
                     </div>
 
                     <div className='divListarPPT'>
                         <label className='labelListarPPT'>
-                            Buscar Disciplina
-                            <Input
-                                tipo='text'
-                                onChange={(e) => setFormData(prevData => ({ ...prevData, disciplina: e.target.value }))}
-                                valor={formData.disciplina}
-                            />
-                        </label>
-                    </div>
-
-                    <div className='divListarPPT'>
-                        <label className='labelListarPPT'>
-                            Buscar status
-                            <select className='statusOption' onChange={(e) => setFormData(prevData => ({ ...prevData, status: e.target.value }))}>
-                                <option className="statusOption" value=''>Selecione um status</option>
-                                {
-                                    statusFilter.map((status) => (
-                                        <option className="statusOption" value={status}>{status}</option>
-                                    ))
-                                }
+                            Buscar Status
+                            <select 
+                                className='statusOption' 
+                                onChange={(e) => setFormData(prevData => ({ ...prevData, status: e.target.value }))}
+                                value={formData.status} 
+                            >
+                                <option value=''>Selecione um status</option>
+                                {statusFilter.map((status) => (
+                                    <option key={status} value={status}>{status}</option>
+                                ))}
                             </select>
                         </label>
                     </div>

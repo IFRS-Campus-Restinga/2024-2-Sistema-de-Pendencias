@@ -59,6 +59,35 @@ const atividadeService = {
       throw error;
     }
   },
+
+  adicionarPlanoAtividades: async (pedTipo, pedId, formData) => {
+    try {
+      const response = await api.post(
+        `api/adicionar-plano-atividades/${pedTipo}/${pedId}/`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao adicionar plano de atividades:', error);
+      throw error;
+    }
+  },
+
+  buscarPlanoAtividades: async function (pedTipo, pedId) {
+    try {
+      const response = await api.get(`api/ped/${pedTipo}/${pedId}/plano-atividades/`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar plano de atividades:', error);
+      throw error;
+    }
+  },
+  
 };
 
 export default atividadeService;

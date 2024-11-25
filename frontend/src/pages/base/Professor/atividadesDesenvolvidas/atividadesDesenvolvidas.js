@@ -19,6 +19,8 @@ const AtividadesDesenvolvidas = () => {
   const [loading, setLoading] = useState(true);
   const [notaInput, setNotaInput] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [planoAtividades, setPlanoAtividades] = useState(null);
+  let [planoUrl, setPlanoUrl] = useState(null);
 
   const { pedTipo, pedId } = useParams();
 
@@ -46,6 +48,29 @@ const AtividadesDesenvolvidas = () => {
       setLoading(false);
     }
   };
+
+
+  const handleAnexarPlanoAtividades = async () => {
+    try {
+      if (!planoAtividades) {
+        toast.error('Selecione um arquivo antes de anexar.');
+        return;
+      }
+      const formData = new FormData();
+      formData.append('plano_atividades', planoAtividades);
+      console.log(planoAtividades);
+  
+      await atividadeService.adicionarPlanoAtividades(pedTipo, pedId, formData);
+      toast.success('Plano de atividades anexado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao anexar plano de atividades:', error);
+      toast.error('Erro ao anexar plano de atividades!');
+    }
+  };
+
+
+
+  
 
   // Carregar atividades e dados do aluno ao montar o componente
   useEffect(() => {
@@ -130,22 +155,31 @@ const confirmSaveNotaFinal = async () => {
             </tbody>
           </table>
         </div>
+        <div className="plano-atividades">
+
+            <div className='container-botao-anexar'>
+            <strong>Plano de atividades:</strong>
+              <Input className="input-arquivo"
+                type="file"
+                onChange={(e) => setPlanoAtividades(e.target.files[0])}
+              />
+            <Button text="Anexar" onClick={handleAnexarPlanoAtividades} />
+            </div>
+        </div>
         <div className="nota-final">
-        <label>
-          <strong>Nota Final:</strong>
+          <p>Nota Final:</p>
           <Input
             type="number"
             value={notaInput}
             onChange={handleNotaInput}
             placeholder="Informe a nota final"
           />
-        </label>
-        <Button text="Finalizar" onClick={handleSaveNotaFinal} />
+          <Button text="Finalizar" onClick={handleSaveNotaFinal} />
       </div>
 
       {showModal && (
         <div className="modal">
-          <p>Tem certeza de que deseja salvar a nota final?</p>
+          <p>Tem certeza de que deseja salvar a nota final e finalizar a PED?</p>
           <Button text="Confirmar" onClick={confirmSaveNotaFinal} />
           <Button text="Cancelar" onClick={() => setShowModal(false)} />
         </div>

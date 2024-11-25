@@ -18,7 +18,7 @@ export const PEDService = {
   },
 
   porId: async (pedId, modalidade) => {
-    const res = await api.get(`api/ped/${pedId}/${modalidade}/`, {
+    const res = await api.get(`api/ped/${pedId}/${modalidade}`, {
       params: {
         retornar_ids: true
       }
@@ -68,5 +68,15 @@ export const PEDService = {
     })
 
     return res
+  },
+
+  desativar: async (id, dados, modalidade) => {
+    try {
+      const response = await api.post(`api/desativar-ped/${id}/${modalidade}/`, dados);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao desativar PED:', error);
+      throw error;
+    }
   }
 }

@@ -22,9 +22,9 @@ const StatusBalls = ({ status, tipo }) => {
         if (activeStatus === 'Em Andamento' && index < 3) {
             return 'active'; // Se a tarefa está em andamento, bolas 1 e 2 ficam ativas
         }
-        if (activeStatus === 'Plano de Estudos Elaborado' && index < 2) {
-            return 'active'
-        }
+        // if (activeStatus === 'Plano de Estudos Elaborado' && index < 2) {
+        //     return 'active'
+        // }
         if (activeStatus === 'Criada' && index === 0) {
             return 'active'; // Se a tarefa foi criada, só a bola 1 fica ativa
         }
@@ -44,7 +44,7 @@ const StatusBalls = ({ status, tipo }) => {
                     <div style={{width: '17px', height: '17px', borderRadius: '50%', backgroundColor: getStatusClass(1) ? '#009e55' : 'white', border: '1px solid #ccc'}}/>
                     <div style={{width: '20px', height: '20px', borderRadius: '50%', backgroundColor: getStatusClass(1) ? '#006b3f' : 'white', border: '1px solid #ccc'}}/>
                 </div>
-                <div className={`status-ball ${getStatusClass(1)}`}>
+                {/* <div className={`status-ball ${getStatusClass(1)}`}>
                     <FontAwesomeIcon icon={faBookOpenReader} style={{ fontSize: "20px" }} />
                     <div className="status-text">Plano de Estudos Elaborado</div>
                 </div>
@@ -52,7 +52,7 @@ const StatusBalls = ({ status, tipo }) => {
                     <div style={{width: '14px', height: '14px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#00b36b' : 'white', border: '1px solid #ccc'}}/>
                     <div style={{width: '17px', height: '17px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#009e55' : 'white', border: '1px solid #ccc'}}/>
                     <div style={{width: '20px', height: '20px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#006b3f' : 'white', border: '1px solid #ccc'}}/>
-                </div>
+                </div> */}
                 {/* Bola 2: Em andamento */}
                 <div className={`status-ball ${getStatusClass(2)}`}>
                     <FontAwesomeIcon icon={faSpinner} spin style={{ fontSize: "20px" }} />

@@ -85,6 +85,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
+MEDIA_URL = '/media/'  # URL pública para acessar os arquivos
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Diretório local onde os arquivos serão armazenados
+
+
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 

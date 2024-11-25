@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path
 from dependencias_app.views.usuarioBaseViews import *
 from dependencias_app.views.gestaoEscolarViews import *
@@ -84,6 +86,7 @@ urlpatterns = [
     path('ped/<int:pedId>/<str:modalidade>/', por_id),
     #path('cadastrar-plano-estudos/', cadastrar_plano_estudos),
     path('cadastrar-plano-estudos/<int:pedId>/', cadastrar_plano_estudos),
+    path('desativar-ped/<int:pedId>/<str:modalidade>/', desativar_PED),
 
 
     #views para atividades da ped
@@ -92,7 +95,12 @@ urlpatterns = [
     path('adicionar-atividades/<str:ped_tipo>/<int:ped_id>/', adicionar_atividade, name='adicionar_atividades'),
     path('detalhes-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', detalhes_atividade, name='detalhes_atividade'),
     path('editar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', editar_atividade, name='editar_atividade'),
+    path('adicionar-plano-atividades/<str:ped_tipo>/<int:ped_id>/', adicionar_plano_atividades, name='adicionar_plano_atividades'),
+    #path('ped/<str:ped_tipo>/<int:ped_id>/plano-atividades/', obter_plano_atividades, name='obter_plano_atividades'),
 
     #view editar servidor
     path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),
     ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
