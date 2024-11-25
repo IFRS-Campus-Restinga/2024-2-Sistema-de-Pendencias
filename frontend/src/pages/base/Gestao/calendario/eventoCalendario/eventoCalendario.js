@@ -10,7 +10,7 @@ import FormContainer from "../../../../../components/FormContainer/FormContainer
 
 const EventoCalendarioPage = () => {
   const navigate = useNavigate();
-  const { idEvento } = useParams(); // Identifica o ID do evento pela URL
+  const { idEvento } = useParams();
   const [formData, setFormData] = useState({
     titulo: '',
     descricao: '',
@@ -25,7 +25,6 @@ const EventoCalendarioPage = () => {
   const [showErrorMessage, setShowErrorMessage] = useState(false);
 
   useEffect(() => {
-    // Carrega os dados do evento se estivermos em modo de edição
     if (idEvento) {
       eventoCalendarioService.getEventoById(idEvento)
         .then(response => {
@@ -51,52 +50,38 @@ const EventoCalendarioPage = () => {
     }
   }, [idEvento]);
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validarEvento(formData);
 
     if (Object.keys(validationErrors).length === 0) {
-        setShowErrorMessage(false);
-        try {
-            const { dia_todo, hora_inicio, hora_fim, ...rest } = formData;
-            const dataInicio = dia_todo ? `${rest.data_inicio}T00:00` : `${rest.data_inicio}T${hora_inicio}`;
-            const dataFim = dia_todo ? `${rest.data_fim}T00:00` : `${rest.data_fim}T${hora_fim}`;
+      setShowErrorMessage(false);
+      try {
+        const { dia_todo, hora_inicio, hora_fim, ...rest } = formData;
+        const dataInicio = dia_todo ? `${rest.data_inicio}T00:00` : `${rest.data_inicio}T${hora_inicio}`;
+        const dataFim = dia_todo ? `${rest.data_fim}T00:00` : `${rest.data_fim}T${hora_fim}`;
 
-            const response = idEvento
-                ? await eventoCalendarioService.update(idEvento, { ...rest, data_inicio: dataInicio, data_fim: dataFim })
-                : await eventoCalendarioService.create({ ...rest, data_inicio: dataInicio, data_fim: dataFim });
+        const response = idEvento
+          ? await eventoCalendarioService.update(idEvento, { ...rest, data_inicio: dataInicio, data_fim: dataFim })
+          : await eventoCalendarioService.create({ ...rest, data_inicio: dataInicio, data_fim: dataFim });
 
-            if (response && (response.status === 200 || response.status === 201)) {
-                // ADICIONADO: Passando estado para exibir mensagem de sucesso ao retornar à página de calendário
-                navigate("/sessao/Gestão Escolar/1/calendario", { state: { eventoCriado: !idEvento, eventoAtualizado: !!idEvento } });
-            } else {
-                throw new Error("Falha ao obter ID do evento criado.");
-            }
-        } catch (error) {
-            console.error('Erro ao salvar evento:', error);
-
-            if (error.response && error.response.data.mensagem === "Não existe um calendário acadêmico para este período.") {
-                toast.error("Não é possível cadastrar um evento fora de um período letivo válido.", {
-                    position: "bottom-center",
-                    autoClose: 3000,
-                    style: { backgroundColor: '#DC3545', color: '#fff', textAlign: 'center' },
-                    progressStyle: { backgroundColor: '#fff' }
-                });
-            } else {
-                toast.error("Falha ao salvar evento. Tente novamente.", {
-                    position: "bottom-center",
-                    autoClose: 3000,
-                    style: { backgroundColor: '#DC3545', color: '#fff', textAlign: 'center' },
-                    progressStyle: { backgroundColor: '#fff' }
-                });
-            }
+        if (response && (response.status === 200 || response.status === 201)) {
+          navigate("/sessao/Gestão Escolar/1/calendario", { state: { eventoCriado: !idEvento, eventoAtualizado: !!idEvento } });
+        } else {
+          throw new Error("Falha ao obter ID do evento criado.");
         }
+      } catch (error) {
+        console.error('Erro ao salvar evento:', error);
+        toast.error("Falha ao salvar evento. Tente novamente.", {
+          position: "bottom-center",
+          autoClose: 3000
+        });
+      }
     } else {
-        setErrors(validationErrors);
-        setShowErrorMessage(true);
+      setErrors(validationErrors);
+      setShowErrorMessage(true);
     }
-};
-
+  };
 
   const handleDelete = async () => {
     if (window.confirm("Tem certeza que deseja excluir este evento?")) {
@@ -120,7 +105,17 @@ const handleSubmit = async (e) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+    if (name === "data_inicio") {
+      setFormData((prevState) => {
+        if (prevState.data_fim && prevState.data_fim < value) {
+          return { ...prevState, data_inicio: value, data_fim: value };
+        }
+        return { ...prevState, data_inicio: value };
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const toggleDiaTodo = () => {
@@ -158,10 +153,20 @@ const handleSubmit = async (e) => {
 
         <label className='labelCustomizado'>Data Início
           <input
+            id="data_inicio"
             type="date"
             name="data_inicio"
             value={formData.data_inicio}
-            onChange={handleChange}
+            onChange={(e) => {
+              handleChange(e);
+              const novaDataInicio = e.target.value;
+              setFormData((prevState) => {
+                if (prevState.data_fim && prevState.data_fim < novaDataInicio) {
+                  return { ...prevState, data_fim: novaDataInicio };
+                }
+                return prevState;
+              });
+            }}
             style={{ borderColor: errors.data_inicio ? 'red' : '' }}
           />
           {errors.data_inicio && <p className="erros">{errors.data_inicio}</p>}
@@ -182,10 +187,12 @@ const handleSubmit = async (e) => {
 
         <label className='labelCustomizado'>Data Fim
           <input
+            id="data_fim"
             type="date"
             name="data_fim"
             value={formData.data_fim}
             onChange={handleChange}
+            min={formData.data_inicio || new Date().toISOString().split('T')[0]} // Define o limite mínimo
             style={{ borderColor: errors.data_fim ? 'red' : '' }}
           />
           {errors.data_fim && <p className="erros">{errors.data_fim}</p>}
@@ -229,11 +236,7 @@ const handleSubmit = async (e) => {
         </label>
 
         <Button tipo='submit' text='Salvar Evento' />
-
-        {/* Botão de exclusão aparece somente no modo de edição */}
-        {idEvento && (
-          <Button tipo='button' text='Excluir Evento' onClick={handleDelete} />
-        )}
+        {idEvento && <Button tipo='button' text='Excluir Evento' onClick={handleDelete} />}
       </FormContainer>
     </div>
   );
