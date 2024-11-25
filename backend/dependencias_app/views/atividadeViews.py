@@ -1,3 +1,5 @@
+import logging
+from django.http import FileResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -6,6 +8,7 @@ from dependencias_app.models.pedEMI import PED_EMI
 from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.serializers.atividadeSerializer import *
 from dependencias_app.permissoes import Professor
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 @api_view(['GET'])
@@ -183,3 +186,112 @@ def editar_atividade(request, ped_tipo, ped_id, atividade_id):
     
     except Exception as e:
         return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['POST'])
+@permission_classes([Professor])
+def adicionar_plano_atividades(request, ped_tipo, ped_id):
+    parser_classes = (MultiPartParser, FormParser)
+
+    try:
+        if ped_tipo == "emi":
+            ped = PED_EMI.objects.filter(id=ped_id).first()
+            if not ped:
+                return Response({"erro": "PED EMI não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+            if ped.professor_ped != request.user:
+                return Response({"erro": "Acesso não autorizado"}, status=status.HTTP_403_FORBIDDEN)
+
+            plano_atividades = request.FILES.get('plano_atividades')
+            if plano_atividades:
+                if plano_atividades.content_type != 'application/pdf':
+                    return Response({"erro": "O arquivo não é um PDF"}, status=status.HTTP_400_BAD_REQUEST)
+
+                if plano_atividades.size > 5 * 1024 * 1024:  # 5MB
+                    return Response({"erro": "O arquivo é muito grande. O tamanho máximo permitido é 5MB."}, status=status.HTTP_400_BAD_REQUEST)
+
+                try:
+                    # Verificar se já existe um plano de atividades
+                    if ped.plano_atividades:
+                        ped.plano_atividades.delete()  # Excluir o plano anterior, se existir
+
+                    # Atualizar ou criar o novo plano de atividades
+                    ped.plano_atividades = plano_atividades
+                    ped.save()
+
+                    return Response({"mensagem": "Plano de atividades salvo com sucesso"}, status=status.HTTP_201_CREATED)
+
+                except Exception as e:
+                    return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            else:
+                return Response({"erro": "Plano de atividades não anexado"}, status=status.HTTP_400_BAD_REQUEST)
+
+        elif ped_tipo == "proeja":
+            ped = PED_ProEJA.objects.filter(id=ped_id).first()
+            if not ped:
+                return Response({"erro": "PED ProEJA não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+            if ped.professor_ped != request.user:
+                return Response({"erro": "Acesso não autorizado"}, status=status.HTTP_403_FORBIDDEN)
+
+            plano_atividades = request.FILES.get('plano_atividades')
+            if plano_atividades:
+                if plano_atividades.content_type != 'application/pdf':
+                    return Response({"erro": "O arquivo não é um PDF"}, status=status.HTTP_400_BAD_REQUEST)
+
+                if plano_atividades.size > 5 * 1024 * 1024:  # 5MB
+                    return Response({"erro": "O arquivo é muito grande. O tamanho máximo permitido é 5MB."}, status=status.HTTP_400_BAD_REQUEST)
+
+                try:
+                    # Verificar se já existe um plano de atividades
+                    if ped.plano_atividades:
+                        ped.plano_atividades.delete()  # Excluir o plano anterior, se existir
+
+                    # Atualizar ou criar o novo plano de atividades
+                    ped.plano_atividades = plano_atividades
+                    ped.save()
+
+                    return Response({"mensagem": "Plano de atividades salvo com sucesso"}, status=status.HTTP_201_CREATED)
+
+                except Exception as e:
+                    return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            else:
+                return Response({"erro": "Plano de atividades não anexado"}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+""" @api_view(['GET'])
+@permission_classes([Professor])
+def obter_plano_atividades(request, ped_tipo, ped_id):
+    try:
+        # Verifica se o tipo de PED é "emi" ou "proeja"
+        if ped_tipo == "emi":
+            ped = PED_EMI.objects.filter(id=ped_id).first()
+        elif ped_tipo == "proeja":
+            ped = PED_ProEJA.objects.filter(id=ped_id).first()
+        else:
+            return Response({"erro": "Tipo de PED inválido."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verifica se o PED foi encontrado
+        if not ped:
+            return Response({"erro": "PED não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Verifica se o professor logado é o responsável pelo PED
+        if ped.professor_ped != request.user:
+            return Response({"erro": "Acesso não autorizado."}, status=status.HTTP_403_FORBIDDEN)
+
+        # Verifica se há um plano de atividades anexado ao PED
+        if not ped.plano_atividades:
+            return Response({"erro": "Plano de atividades não anexado."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Retorna o plano de atividades como um arquivo PDF
+        print(f"CAMINHO DO ARQUIVO: {ped.plano_atividades.path}")
+        response = FileResponse(ped.plano_atividades, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="plano_atividades_{ped_id}.pdf"'
+        return response
+
+    except Exception as e:
+        return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) """

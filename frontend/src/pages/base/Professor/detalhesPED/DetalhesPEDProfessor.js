@@ -2,11 +2,15 @@ import { Link, useLocation } from "react-router-dom"
 import FormContainer from "../../../../components/FormContainer/FormContainer"
 import './DetalhesPEDProfessor.css'
 import Button from "../../../../components/Button/Button"
+import { useParams } from "react-router-dom"
 import StatusBalls from "../../../../components/StatusBall/StatusBall"
+import { jwtDecode } from 'jwt-decode';
 
 
 const DetalhesPEDProfessor = () => {
     const location = useLocation()
+    const usuarioId = jwtDecode(sessionStorage.getItem('token')).idUsuario;
+    const {pedId } = useParams();
     const {state} = location || {}
 
     return (
@@ -63,6 +67,9 @@ const DetalhesPEDProfessor = () => {
                                     <Link to={'cadastrar-form-encerramento'}>
                                         <Button text='Formulário de Encerramento'/>
                                     </Link>
+                                    <Link to={`/sessao/Professor/${usuarioId}/atividades/emi/${pedId}`}>
+                                        <Button text='Atividades'/>
+                                    </Link>
                                 </span>
                             </div>
                         </section>
@@ -110,6 +117,9 @@ const DetalhesPEDProfessor = () => {
                                     </Link>
                                     <Link to={'cadastrar-form-encerramento'}>
                                         <Button text='Formulário de Encerramento'/>
+                                    </Link>
+                                    <Link to={`/sessao/Professor/${usuarioId}/atividades/proeja/${pedId}`}>
+                                        <Button text='Atividades'/>
                                     </Link>
                                 </span>
                             </div>

@@ -16,7 +16,8 @@ const AdicionarAtividade = () => {
     titulo: '',
     descricao: '',
     data_de_entrega: '',
-    nota: ''
+    nota: '',
+    observacoes: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -40,7 +41,8 @@ const AdicionarAtividade = () => {
           titulo: response.titulo,
           descricao: response.descricao,
           data_de_entrega: response.data_de_entrega,
-          nota: response.nota || ''
+          nota: response.nota || '',
+          observacoes: response.observacoes
         });
       } else {
         toast.error('Atividade não encontrada', {
@@ -171,7 +173,7 @@ const AdicionarAtividade = () => {
         <div className="form-group">
           <label htmlFor="data_de_entrega" className="labelCadastroAluno">Data de Entrega</label>
           <Input
-            tipo="date"
+            type='date'
             valor={formData.data_de_entrega}
             onChange={(e) => setFormData({ ...formData, data_de_entrega: e.target.value })}
             onBlur={() => handleBlur('data_de_entrega')}
@@ -188,6 +190,19 @@ const AdicionarAtividade = () => {
               tipo="number"
               valor={formData.nota}
               onChange={(e) => setFormData({ ...formData, nota: e.target.value })}
+            />
+          </div>
+        )}
+
+        {/* Campo Observações (apenas na edição) */}
+        {atividadeId && (
+          <div className="form-group">
+            <label htmlFor="observacoes" className="labelCadastroAluno">Observações</label>
+            <Input
+              tipo="textarea"
+              valor={formData.observacoes}
+              onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
+              multiline
             />
           </div>
         )}

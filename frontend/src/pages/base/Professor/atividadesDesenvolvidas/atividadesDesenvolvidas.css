@@ -4,7 +4,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-top: 15px;
+    margin-bottom: 2px;
   }
   
   .info-aluno {
@@ -55,15 +56,47 @@
       background-color: white;
     }
     
+    .plano-atividades {
+      margin-top: 20px;
+    }
+
+    .container-botao-anexar {
+      display: flex;
+      align-items: center;
+    }
+
+    .container-botao-anexar strong{
+      margin-right: 10px;
+    }
+    
+    .container-botao-anexar input[type="file"] {
+      margin-right: 10px;
+      width: 35%;
+    }
+    
     /* Nota Final */
     .nota-final {
+      display: flex;
+      align-items: center;
       margin-top: 20px;
       font-size: 16px;
       font-weight: bold;
     }
     
     .nota-final p {
-      margin: 5px 0;
+      margin-right: 10px;
+    }
+
+    .nota-final input {
+      margin-left: 2px;
+      margin-right: 4px;
+      width: 10%;
+    }
+
+    .modal{
+      margin-top: 20px;
+      left: 35%;
+
     }
     
     /* Responsividade */

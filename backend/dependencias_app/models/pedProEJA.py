@@ -5,6 +5,7 @@ from google_auth.models import UsuarioBase
 from django.db import models
 from .planoEstudos import PlanoEstudos
 from .formEncerramento import FormEncerramento
+from django.core.validators import FileExtensionValidator
 
 class PED_ProEJA(Dependencia):
     aluno = models.ForeignKey(UsuarioBase, on_delete=models.DO_NOTHING, related_name='aluno_ped_proeja')
@@ -15,7 +16,7 @@ class PED_ProEJA(Dependencia):
     ano_semestre_reprov = models.CharField(null=False, blank=False, max_length=6)
     plano_estudos = models.ForeignKey(PlanoEstudos, blank=True, null=True, on_delete=models.DO_NOTHING, related_name='plano_estudos_PROEJA')
     form_encerramento = models.ForeignKey(FormEncerramento, blank=True, null=True, on_delete=models.DO_NOTHING, related_name='form_encerramento_PROEJA')
-
+    plano_atividades = models.FileField(upload_to='plano_atividades/', null=True, blank=True, validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
      # sobrescrita dos related names dos campos chave estrangeira herdados de Dependencia
 
     class Meta:

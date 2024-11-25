@@ -10,6 +10,7 @@ class Atividade(BaseModel):
     nota = models.FloatField(default=0)
     data_criacao = models.DateTimeField(auto_now_add=True)
     data_de_entrega = models.DateField()
+    observacoes = models.TextField(max_length=255, null=True, blank=True)
 
     class Meta:
         abstract = True

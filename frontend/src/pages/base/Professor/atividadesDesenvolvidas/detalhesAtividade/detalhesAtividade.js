@@ -49,6 +49,7 @@ const handleEditar = () => {
                 <p className='detalhe-atividade'><strong>Descrição:</strong> {atividade?.descricao || 'Descrição não disponível'}</p>
                 <p className='detalhe-atividade'><strong>Data de Entrega:</strong> {atividade?.data_de_entrega || '-'}</p>
                 <p className='detalhe-atividade'><strong>Nota:</strong> {atividade?.nota || 'Não atribuída'}</p>
+                <p className='detalhe-atividade'><strong>Observações:</strong> {atividade?.observacoes || 'Observação não disponível'}</p>
                 <Button tipo="button" text="Editar Atividade" onClick={handleEditar} />
             </FormContainer>
     );
