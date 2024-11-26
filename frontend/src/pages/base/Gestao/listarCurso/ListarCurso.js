@@ -2,12 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import './ListarCurso.css';
 import FormContainer from '../../../../components/FormContainer/FormContainer';
 import Input from '../../../../components/Input/Input';
-import Lupa from "../../../../assets/lupa-branca.png";
+import Lupa from "../../../../assets/lupa.png";
 import X from "../../../../assets/x-branco.png";
 import cursoService from '../../../../services/cursoService';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Para decodificar o token e pegar o ID do usuário
 import AdicionarCurso from "../../../../assets/adicionar-livro.png";
+import LupaBranca from "../../../../assets/lupa-branca.png";
 
 const ListarCursos = () => {
   const [cursos, setCursos] = useState([]);
@@ -100,7 +101,7 @@ const ListarCursos = () => {
             />
             <img
               className='iconesBuscarCurso'
-              src={Lupa}
+              src={LupaBranca}
               onClick={filtrarCursos}
               title='Buscar'
             />
