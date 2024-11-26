@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ListarServidor.css';
 import FormContainer from '../../../../components/FormContainer/FormContainer'
-import Button from "../../../../components/Button/Button";
 import Input from '../../../../components/Input/Input';
 import 'react-toastify/dist/ReactToastify.css';
 import servidorService from '../../../../services/servidorService';
@@ -19,19 +18,13 @@ const ListarServidor = () => {
   const [servidores, setServidores] = useState([]);
   const [servidoresFiltrados, setServidoresFiltrados] = useState([]);
   const [grupos, setGrupos] = useState([])
-  const [ordenacao, setOrdenacao] = useState({ coluna: '', ordem: 'asc' });
   const [grupoFiltro, setGrupoFiltro] = useState('');
   const [filtroGeral, setFiltroGeral] = useState('');
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
   const [isActiveFiltro, setIsActiveFiltro] = useState('');
   const [matriculaFiltro, setMatriculaFiltro] = useState('');
-
   const navigate = useNavigate();
-
-  const handleClick = (servidor) => {
-    navigate(`${servidor.id}/detalhesServidor`, { state: { servidor } });
-  };
 
   const fetchServidores = async () => {
     try {
@@ -68,23 +61,28 @@ const ListarServidor = () => {
     fetchServidores();
   };
 
+  const removeAcentos = (str) => 
+    str?.normalize("NFD").replace(/[\u0300-\u036f]/g, "") || "";
+
   const filtrarServidores = () => {
     const servidoresFiltrados = servidores.filter((servidor) => {
       const filtroGeralAtende = !filtroGeral ||
         Object.values(servidor).some((campo) =>
-          campo?.toString().toLowerCase().includes(filtroGeral.toLowerCase())
+          removeAcentos(campo?.toString().toLowerCase()).includes(
+            removeAcentos(filtroGeral.toLowerCase())
+          )
         );
-
+  
       return (
         filtroGeralAtende &&
         (!dataInicio || new Date(servidor.data_ingresso) >= new Date(dataInicio)) &&
         (!dataFim || new Date(servidor.data_ingresso) <= new Date(dataFim)) &&
-        (!grupoFiltro || servidor.grupo === grupoFiltro) &&
+        (!grupoFiltro || removeAcentos(servidor.grupo).toLowerCase() === removeAcentos(grupoFiltro).toLowerCase()) &&
         (!matriculaFiltro || (servidor.matricula && servidor.matricula.includes(matriculaFiltro))) &&
         (!isActiveFiltro || (servidor.is_active && servidor.is_active.includes(isActiveFiltro)))
       );
     });
-
+  
     setServidoresFiltrados(servidoresFiltrados);
   };
 
@@ -95,7 +93,11 @@ const ListarServidor = () => {
 
   return (
     <>
-      <FormContainer titulo='Lista de Servidores' comprimento='90%'>
+      <FormContainer titulo='Lista de Servidores' comprimento='90%'
+      onSubmit={(e) => {
+        e.preventDefault();
+        filtrarServidores();
+      }}>
         <div className='containerBuscarServidor'>
           <div class="buscaBarServidor">
             <Input

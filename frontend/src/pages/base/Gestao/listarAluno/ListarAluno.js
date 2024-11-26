@@ -67,25 +67,29 @@ const ListarAluno = () => {
     fetchAlunos();
   };
 
+  const removeAcentos = (str) =>
+    str?.normalize("NFD").replace(/[\u0300-\u036f]/g, "") || "";
+  
   const filtrarAlunos = () => {
     const alunosFiltrados = alunos.filter((aluno) => {
       const filtroGeralAtende = !filtroGeral ||
         Object.values(aluno).some((campo) =>
-          campo?.toString().toLowerCase().includes(filtroGeral.toLowerCase())
+          removeAcentos(campo?.toString().toLowerCase()).includes(
+            removeAcentos(filtroGeral.toLowerCase())
+          )
         );
-
+  
       return (
         filtroGeralAtende &&
         (!dataInicio || new Date(aluno.data_ingresso) >= new Date(dataInicio)) &&
-        (!grupoFiltro || aluno.grupo === grupoFiltro) &&
+        (!grupoFiltro || removeAcentos(aluno.grupo).toLowerCase() === removeAcentos(grupoFiltro).toLowerCase()) &&
         (!matriculaFiltro || (aluno.matricula && aluno.matricula.includes(matriculaFiltro))) &&
         (!isActiveFiltro || (aluno.is_active && aluno.is_active.includes(isActiveFiltro)))
       );
     });
-
+  
     setAlunosFiltrados(alunosFiltrados);
   };
-
 
   useEffect(() => {
     fetchAlunos();
@@ -94,7 +98,11 @@ const ListarAluno = () => {
 
   return (
     <>
-      <FormContainer titulo='Lista de Alunos' comprimento='90%'>
+      <FormContainer titulo='Lista de Alunos' comprimento='90%'
+        onSubmit={(e) => {
+          e.preventDefault();
+          filtrarAlunos();
+        }}>
         <div className='containerBuscarAluno'>
           <div class="buscaBarAluno">
             <Input
