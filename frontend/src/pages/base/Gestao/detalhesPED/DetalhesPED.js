@@ -1,12 +1,59 @@
-import { Link, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import "./DetalhesPED.css";
 import Button from "../../../../components/Button/Button";
 import StatusBalls from "../../../../components/StatusBall/StatusBall";
+import Modal from "../../../../components/Modal/Modal";
+import { PEDService } from "../../../../services/pedService";
 
 const DetalhesPED = () => {
+  const [detalhesPED, setDetalhesPED] = useState({});
+  const { pedId } = useParams();
   const location = useLocation();
   const { state } = location || {};
+
+  const [modalAberto, setModalAberto] = useState(false);
+
+  const abrirModal = () => setModalAberto(true);
+  const fecharModal = () => setModalAberto(false);
+
+  const fetchDetalhes = async () => {
+    try {
+      const res = await PEDService.porId(pedId, "EMI");
+      if (res.status !== 200) throw new Error(res.response?.data?.mensagem);
+      setDetalhesPED(res.data);
+      console.log(res.data);
+    } catch (error) {
+      console.error("Erro ao buscar detalhes da PED:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (state) {
+      setDetalhesPED(state); // Usar o 'state' se estiver disponível
+    } else {
+      fetchDetalhes(); // Caso contrário, buscar os dados da PED pelo ID
+    }
+  }, [pedId, state]);
+
+  const handleDesativarClick = async () => {
+    try {
+      const updatedDetalhes = { ...detalhesPED, status: "Desativado" };
+      const modalidade = state.serie_progressao ? "EMI" : "ProEJA";
+      const res = await PEDService.desativar(
+        pedId,
+        updatedDetalhes,
+        modalidade
+      );
+      if (!res) throw new Error(res.response?.data?.mensagem);
+      setDetalhesPED(updatedDetalhes);
+      console.log("PED desativada com sucesso:", updatedDetalhes);
+      fecharModal();
+    } catch (error) {
+      console.error("Erro ao desativar PED:", error.message);
+    }
+  };
 
   return (
     <FormContainer
@@ -48,12 +95,12 @@ const DetalhesPED = () => {
                 <p className="pDetalhesPED">{state.serie_progressao}</p>
               </label>
               <label className="labelDetalhesPED">
-                Turma de Origem
-                <p className="pDetalhesPED">{state.turma_origem}</p>
+                Turma Atual
+                <p className="pDetalhesPED">{state.turma_atual}</p>
               </label>
             </div>
             <div className="divStatusPED">
-              <StatusBalls status={state.status} tipo={"PED"} />
+              <StatusBalls status={detalhesPED.status} />
               <span className="spanDetalhesPED">
                 <Link to={"planoEstudos"}>
                   <Button text="Plano de Estudos" />
@@ -97,7 +144,7 @@ const DetalhesPED = () => {
               </label>
             </div>
             <div className="divStatusPED">
-              <StatusBalls status={state.status} tipo={"PED"} />
+              <StatusBalls status={detalhesPED.status} tipo={"PED"} />
               <span className="spanDetalhesPED">
                 <Link to={"planoEstudos"}>
                   <Button text="Plano de Estudos" />
@@ -116,10 +163,25 @@ const DetalhesPED = () => {
         <p className="pDetalhesPED">{state.observacao}</p>
       </label>
       <span className="spanDetalhesPED">
-        <Link to={"editar"} state={state}>
-          <Button text={"Editar PED"} />
-        </Link>
+        {detalhesPED.status !== "Desativado" && (
+          <>
+            <Link to={"editar"} state={detalhesPED}>
+              <Button text={"Editar PED"} />
+            </Link>
+            <Button text="Desativar PED" color={"red"} onClick={abrirModal} />
+          </>
+        )}
       </span>
+
+      <Modal
+        estaAberto={modalAberto}
+        aoFechar={fecharModal}
+        mensagem="Você tem certeza que deseja desativar a PED?"
+        textoCancelar="Não"
+        textoOk="Desativar"
+        colorButton={"red"}
+        onClick={handleDesativarClick}
+      />
     </FormContainer>
   );
 };
