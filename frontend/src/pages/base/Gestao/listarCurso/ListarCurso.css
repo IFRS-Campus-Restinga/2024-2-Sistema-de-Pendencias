@@ -266,16 +266,9 @@
     }
 }
 
-.icone-container img {
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    margin: 0 10px;
-}
-
 .containerListarCursos {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: 5px;
 }
@@ -307,12 +300,11 @@
     border-color: white;
 }
 
-.iconesBuscar {
+.iconesBuscarCurso {
     max-width: 15px;
     max-height: 15px;
     margin-left: 10px;
     cursor: pointer;
-    filter: brightness(0) invert(1); /* Lupa branca */
 }
 
 .tabelaContainerListarCursos {
@@ -350,7 +342,8 @@ th {
     padding: 5px;
 }
 
-th, td {
+th,
+td {
     width: 25%;
     height: fit-content;
     min-width: min-content;
@@ -362,10 +355,12 @@ th, td {
     padding: 7px;
 }
 
-.icone-container img {
-    width: 24px;
-    height: 24px;
+.iconeAdicionarCurso {
+    max-width: 40px;
+    max-height: 40px;
     cursor: pointer;
-    margin: 0 10px;
+    margin-bottom: 10px;
+    color: #006b3f;
+    margin-left: 15px;
+    margin-top: 10px;
 }
-

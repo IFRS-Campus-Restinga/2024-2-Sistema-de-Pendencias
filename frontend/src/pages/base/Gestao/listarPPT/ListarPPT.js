@@ -7,39 +7,22 @@ import Button from '../../../../components/Button/Button';
 import { Link, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import Tabela from '../../../../components/Tabela/Tabela';
+import X from "../../../../assets/x-branco.png";
+import Lupa from "../../../../assets/lupa-branca.png";
+import AdicionarPPT from "../../../../assets/adicionar-livro.png";
 
 const ListarPPT = () => {
     const navegar = useNavigate();
     const [listaPPT, setListaPPT] = useState([]);
     const [dependenciasFiltradas, setDependenciasFiltradas] = useState([]);
-    const [formData, setFormData] = useState({
-        termoBusca: '',
-        status: '',
-    });
-    const statusFilter = ['Desativado', 'Criada', 'Em Andamento', 'Finalizada'];
+    const [filtroGeral, setFiltroGeral] = useState('');
+    const [dataInicio, setDataInicio] = useState('');
+    const [dataFim, setDataFim] = useState('');
+    const [status, setStatus] = useState('');
+    const [situacao, setSituacao] = useState('');
 
-    const filtrarDependencias = () => {
-        console.log(formData);
-        const dependenciasFiltradas = listaPPT.filter(ppt =>
-            (formData.termoBusca === '' || 
-                (ppt.curso && ppt.curso.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
-                (ppt.disciplina && ppt.disciplina.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
-                (ppt.aluno && ppt.aluno.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
-                (ppt.aluno?.email && ppt.aluno.email.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
-                (ppt.professor && ppt.professor.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
-                (ppt.professor?.email && ppt.professor.email.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
-                (ppt.turmaOrigem && ppt.turmaOrigem.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
-                (ppt.turmaProgressao && ppt.turmaProgressao.toLowerCase().includes(formData.termoBusca.toLowerCase())) ||
-                (ppt.status && ppt.status.toLowerCase().includes(formData.termoBusca.toLowerCase()))
-            ) &&
-            
-            (formData.status === '' || 
-                (ppt.status && ppt.status.toLowerCase().includes(formData.status.toLowerCase()))
-            )
-        );
-    
-        setDependenciasFiltradas(dependenciasFiltradas);
-    };
+    const navigate = useNavigate();
+
 
     const fetchPPT = async () => {
         try {
@@ -54,13 +37,37 @@ const ListarPPT = () => {
         }
     };
 
-    const detalhesPpt = async (id) => {
-        try {
-            console.log("id:", id);
-            navegar(`/sessao/GestaoEscolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/detalhesPPT/${id}`);
-        } catch (error) {
-            console.error('Erro ao abrir detalhes: ', error);
-        }
+    const limparBusca = () => {
+        setDataInicio('');
+        setDataFim('');
+        setFiltroGeral('');
+        setStatus('');
+        setSituacao('');
+    };
+
+    const removeAcentos = (str) =>
+        str?.normalize("NFD").replace(/[\u0300-\u036f]/g, "") || "";
+
+    const filtrarPPT = () => {
+        const dependenciasFiltradas = listaPPT.filter((ppt) => {
+            const filtroGeralAtende = !filtroGeral ||
+                // serve para passar por cada elemento da dependencia
+                Object.values(ppt).some((campo) =>
+                    removeAcentos(campo?.toString().toLowerCase()).includes(
+                        removeAcentos(filtroGeral.toLowerCase())
+                    )
+                );
+
+            return (
+                filtroGeralAtende &&
+                (!dataInicio || new Date(ppt.data_inicio) >= new Date(dataInicio)) &&
+                (!dataFim || new Date(ppt.data_final) <= new Date(dataFim)) &&
+                (!status || removeAcentos(ppt.status).toLowerCase() === removeAcentos(status).toLowerCase()) &&
+                (!situacao || removeAcentos(ppt.situacao).toLowerCase() === removeAcentos(situacao).toLowerCase())
+            );
+        });
+
+        setDependenciasFiltradas(dependenciasFiltradas);
     };
 
     useEffect(() => {
@@ -69,51 +76,41 @@ const ListarPPT = () => {
 
     return (
         <>
-            <FormContainer titulo='Lista de PPT' comprimento='90%'>
-                <section className='sectionListarPPT'>
-                    <div className='divListarPPT'>
-                        <label className='labelListarPPT'>
-                            Buscar
-                            <Input
-                                tipo='text'
-                                onChange={(e) => setFormData(prevData => ({ ...prevData, termoBusca: e.target.value }))}
-                                valor={formData.termoBusca}
-                            />
-                        </label>
-                    </div>
-
-                    <div className='divListarPPT'>
-                        <label className='labelListarPPT'>
-                            Buscar Status
-                            <select 
-                                className='statusOption' 
-                                onChange={(e) => setFormData(prevData => ({ ...prevData, status: e.target.value }))}
-                                value={formData.status} 
-                            >
-                                <option value=''>Selecione um status</option>
-                                {statusFilter.map((status) => (
-                                    <option key={status} value={status}>{status}</option>
-                                ))}
-                            </select>
-                        </label>
-                    </div>
-                </section>
-
-                <span className='containerButton'>
-                    <Button
-                        text='Buscar'
-                        onClick={filtrarDependencias}
-                    />
-                    <Button
-                        text='Limpar Campos'
-                        color="#4A4A4A"
-                    />
-                    <Link to={`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroPPT`}>
-                        <Button
-                            text='Adicionar nova'
+            <FormContainer titulo='Lista de PPT' comprimento='90%'
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    filtrarPPT();
+                }}>
+                <div className='containerBuscarPPT'>
+                    <div class="buscaBarPPT">
+                        <Input
+                            tipo='search'
+                            valor={filtroGeral}
+                            onChange={(e) => setFiltroGeral(e.target.value)}
+                            textoAjuda={'Buscar por aluno, professor, status, curso...'}
                         />
-                    </Link>
-                </span>
+                        <img
+                            className='iconesBuscarPPT'
+                            src={Lupa}
+                            onClick={filtrarPPT}
+                            title='Buscar'
+                        />
+                        <img
+                            className='iconesBuscarPPT'
+                            src={X}
+                            onClick={limparBusca}
+                            title='Limpar Busca'
+                        />
+                    </div>
+                    <div className='adicionarServidor'>
+                        <img
+                            className='iconeAdicionarPPT'
+                            src={AdicionarPPT}
+                            onClick={() => navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroPPT`)}
+                            title='Cadastrar PPT'
+                        />
+                    </div>
+                </div>
                 <Tabela listaFiltrada={dependenciasFiltradas} fontSize='10px' />
             </FormContainer>
         </>

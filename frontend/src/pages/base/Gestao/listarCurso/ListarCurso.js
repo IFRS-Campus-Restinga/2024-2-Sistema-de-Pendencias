@@ -2,12 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import './ListarCurso.css';
 import FormContainer from '../../../../components/FormContainer/FormContainer';
 import Input from '../../../../components/Input/Input';
-import Lupa from "../../../../assets/lupa.png"; // Ajuste o caminho conforme necessário
-import X from "../../../../assets/x-branco.png"; // Ajuste o caminho conforme necessário
-import Button from "../../../../components/Button/Button";  // Importe o componente Button
+import Lupa from "../../../../assets/lupa-branca.png";
+import X from "../../../../assets/x-branco.png";
 import cursoService from '../../../../services/cursoService';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Para decodificar o token e pegar o ID do usuário
+import AdicionarCurso from "../../../../assets/adicionar-livro.png";
 
 const ListarCursos = () => {
   const [cursos, setCursos] = useState([]);
@@ -32,20 +32,25 @@ const ListarCursos = () => {
     fetchCursos();
   }, []);
 
-  // Filtra os cursos com base no critério de busca
+  
+  // Função para remover acentos (para o filtro buscar tudo)
+  const removeAcentos = (str) =>
+    str?.normalize("NFD").replace(/[\u0300-\u036f]/g, "") || "";
+  
   const filtrarCursos = () => {
-    const cursosFiltrados = cursos.filter(curso => {
-      const filtroLower = filtro.toLowerCase(); // Transformando o filtro em minúsculas para comparação
-
-      // Verifica se algum campo contém a string filtrada (tanto texto quanto número)
+    const cursosFiltrados = cursos.filter((curso) => {
+      const filtroNormalizado = removeAcentos(filtro.toLowerCase());
+      
       return (
-        curso.nome.toLowerCase().includes(filtroLower) || 
-        curso.modalidade.toLowerCase().includes(filtroLower) ||
+        removeAcentos(curso.nome.toLowerCase()).includes(filtroNormalizado) ||
+        removeAcentos(curso.modalidade.toLowerCase()).includes(filtroNormalizado) ||
         curso.carga_horaria.toString().includes(filtro)
       );
     });
+  
     setCursosFiltrados(cursosFiltrados);
   };
+  
 
   // Limpa o filtro
   const limparBusca = () => {
@@ -61,8 +66,8 @@ const ListarCursos = () => {
       let valorA = a[coluna] || '-';
       let valorB = b[coluna] || '-';
       if (typeof valorA === 'string' && typeof valorB === 'string') {
-        return novaOrdem === 'asc' 
-          ? valorA.localeCompare(valorB) 
+        return novaOrdem === 'asc'
+          ? valorA.localeCompare(valorB)
           : valorB.localeCompare(valorA);
       }
       return valorA < valorB ? (novaOrdem === 'asc' ? -1 : 1) : (valorA > valorB ? (novaOrdem === 'asc' ? 1 : -1) : 0);
@@ -79,7 +84,11 @@ const ListarCursos = () => {
 
   return (
     <>
-      <FormContainer titulo='Lista de Cursos' comprimento='90%'> 
+      <FormContainer titulo='Lista de Cursos' comprimento='90%'
+        onSubmit={(e) => {
+          e.preventDefault();
+          filtrarCursos();
+        }}>
 
         <div className='containerListarCursos'>
           <div className="buscar-bar">
@@ -90,24 +99,26 @@ const ListarCursos = () => {
               textoAjuda={'Buscar por modalidade, curso ou carga horária...'}
             />
             <img
-              className='iconesBuscar'
+              className='iconesBuscarCurso'
               src={Lupa}
               onClick={filtrarCursos}
               title='Buscar'
             />
             <img
-              className='iconesBuscar'
+              className='iconesBuscarCurso'
               src={X}
               onClick={limparBusca}
               title='Limpar Busca'
             />
           </div>
-          
-          {/* Botão de "Adicionar Novo" com navegação para a tela de cadastro de curso */}
-          <Button 
-            text="Adicionar Novo" 
-            onClick={() => navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroCurso`)} 
-          />
+          <div className='adicionarCurso'>
+            <img
+              className='iconeAdicionarCurso'
+              src={AdicionarCurso}
+              onClick={() => navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroCurso`)}
+              title='Cadastrar Curso'
+            />
+          </div>
         </div>
 
         <div className='tabelaContainerListarCursos'>

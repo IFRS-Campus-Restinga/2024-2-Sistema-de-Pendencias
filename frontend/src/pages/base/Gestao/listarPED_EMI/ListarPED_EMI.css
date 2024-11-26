@@ -1,0 +1,51 @@
+
+.containerBuscarPED {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+  }
+  
+  .buscaBarPED {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #006b3f;
+    border: 1px solid #006b3f;
+    border-radius: 8px;
+    padding: 5px 10px;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .buscaBarPED input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    outline: none;
+  }
+  
+  .buscaBarPED .iconeAcoes {
+    border-color: white;
+  }
+  
+  .iconesBuscarPED {
+    max-width: 15px;
+    max-height: 15px;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  
+  .iconeAdicionarPED {
+    max-width: 40px;
+    max-height: 40px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    color: #006b3f;
+    margin-left: 15px;
+    margin-top: 10px;
+  }

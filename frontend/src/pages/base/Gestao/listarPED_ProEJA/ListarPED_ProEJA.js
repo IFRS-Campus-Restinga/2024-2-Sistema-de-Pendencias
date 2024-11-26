@@ -5,19 +5,18 @@ import Input from "../../../../components/Input/Input"
 import Button from '../../../../components/Button/Button'
 import { PEDService } from "../../../../services/pedService"
 import './ListarPED_ProEJA.css'
-
+import X from "../../../../assets/x-branco.png";
+import Lupa from "../../../../assets/lupa-branca.png";
 
 
 const ListarPEDProEJA = () => {
     const [listaPED_ProEJA, setListaPED_ProEJA] = useState([])
     const [listaFiltrada, setListaFiltrada] = useState([])
-    const [filtro, setFiltro] = useState({
-        filtroGeral: '',
-        dataInicio: '',
-        dataFinal: '',
-        status: '',
-        situacao: ''
-    })
+    const [filtroGeral, setFiltroGeral] = useState('');
+    const [dataInicio, setDataInicio] = useState('');
+    const [dataFim, setDataFim] = useState('');
+    const [status, setStatus] = useState('');
+    const [situacao, setSituacao] = useState('');
 
     const fetchPED_ProEJA = async () => {
         try {
@@ -32,98 +31,72 @@ const ListarPEDProEJA = () => {
         }
     }
 
-    const filtrarPEDs = () => {
-        const PEDsFiltradas = listaPED_ProEJA.filter((ped) =>
-            (!filtro.filtroGeral || 
-              (ped.aluno && ped.aluno.toLowerCase().includes(filtro.filtroGeral.toLowerCase())) ||
-              (ped.professor_ped && ped.professor_ped.toLowerCase().includes(filtro.filtroGeral.toLowerCase())) ||
-              (ped.professor_disciplina && ped.professor_disciplina.toLowerCase().includes(filtro.filtroGeral.toLowerCase())) ||
-              (ped.curso && ped.curso.toLowerCase().includes(filtro.filtroGeral.toLowerCase())) ||
-              (ped.disciplina && ped.disciplina.toLowerCase().includes(filtro.filtroGeral.toLowerCase()))
-            ) &&
-            (!filtro.dataInicio || new Date(ped.data_inicio) >= new Date(filtro.dataInicio)) &&
-            (!filtro.dataFinal || new Date(ped.data_final) <= new Date(filtro.dataFinal)) &&
-            (!filtro.status || ped.status === filtro.status) &&
-            (!filtro.situacao || ped.situacao === filtro.situacao)
-          );
-
-          console.log(PEDsFiltradas)
-          setListaFiltrada(PEDsFiltradas);
+    const limparBusca = () => {
+        setDataInicio('');
+        setDataFim('');
+        setFiltroGeral('');
+        setStatus('');
+        setSituacao('');
     };
 
-    const limparBusca = () => {
-        setFiltro({
-            filtroGeral: '',
-            dataInicio: '',
-            dataFinal: '',
-            status: '',
-            situacao: ''
-        })
-    }
+    const removeAcentos = (str) =>
+        str?.normalize("NFD").replace(/[\u0300-\u036f]/g, "") || "";
+
+    const filtrarPEDs = () => {
+        const PEDsFiltradas = listaPED_ProEJA.filter((ped) => {
+            const filtroGeralAtende = !filtroGeral ||
+                Object.values(ped).some((campo) =>
+                    removeAcentos(campo?.toString().toLowerCase()).includes(
+                        removeAcentos(filtroGeral.toLowerCase())
+                    )
+                );
+
+            return (
+                filtroGeralAtende &&
+                (!dataInicio || new Date(ped.data_inicio) >= new Date(dataInicio)) &&
+                (!dataFim || new Date(ped.data_final) <= new Date(dataFim)) &&
+                (!status || removeAcentos(ped.status).toLowerCase() === removeAcentos(status).toLowerCase()) &&
+                (!situacao || removeAcentos(ped.situacao).toLowerCase() === removeAcentos(situacao).toLowerCase())
+            );
+        });
+
+        setListaFiltrada(PEDsFiltradas);
+    };
 
     useEffect(() => {
         fetchPED_ProEJA()
-    },[filtro])
+    }, [])
 
+    return (
+        <FormContainer titulo='Dependências - ProEJA' comprimento='95%'
+            onSubmit={(e) => {
+                e.preventDefault();
+                filtrarPEDs();
+            }}>
+            <div className='containerBuscarPED'>
+                <div class="buscaBarPED">
+                    <Input
+                        tipo='search'
+                        valor={filtroGeral}
+                        onChange={(e) => setFiltroGeral(e.target.value)}
+                        textoAjuda={'Buscar por aluno, professor, status, curso...'}
+                    />
+                    <img
+                        className='iconesBuscarPED'
+                        src={Lupa}
+                        onClick={filtrarPEDs}
+                        title='Buscar'
+                    />
+                    <img
+                        className='iconesBuscarPED'
+                        src={X}
+                        onClick={limparBusca}
+                        title='Limpar Busca'
+                    />
+                </div>
+            </div>
 
-    return(
-        <FormContainer titulo='Dependências - ProEJA' comprimento='95%'>
-            <section className="sectionListarPEDGestao">
-                <div className="divListarPEDGestao">
-                    <label className="labelListarPEDGestao">
-                        Buscar
-                        <Input
-                            textoAjuda={'Digite qualquer valor'}
-                            onChange={(e) => {setFiltro({...filtro, filtroGeral: e.target.value})}}
-                            valor={filtro.filtroGeral}
-                        />
-                    </label>
-                    <label className="labelListarPEDGestao">
-                        Status
-                        <select className="selectListarPEDGestao" value={filtro.status} onChange={(e) => {
-                            setFiltro({...filtro, status: e.target.value})
-                        }}>
-                            <option className="optionListarPEDGestao" value=''>Todos</option>
-                            <option className="optionListarPEDGestao" value='Criada'>Criada</option>
-                            <option className="optionListarPEDGestao" value='Plano de Estudos Elaborado'>Plano de Estudos Elaborado</option>
-                            <option className="optionListarPEDGestao" value='Finalizada'>Finalizada</option>
-                            <option className="optionListarPEDGestao" value='Desativado'>Desativado</option>
-                        </select>
-                    </label>
-                    <label className="labelListarPEDGestao">
-                        Situação
-                        <select className="selectListarPEDGestao" value={filtro.situacao} onChange={(e) => {
-                            setFiltro({...filtro, situacao: e.target.value})
-                        }}>
-                            <option className="optionListarPEDGestao" value=''>Todos</option>
-                            <option className="optionListarPEDGestao" value='Aprovado'>Aprovado</option>
-                            <option className="optionListarPEDGestao" value='Em Avaliação'>Em Avaliação</option>
-                            <option className="optionListarPEDGestao" value='Reprovado'>Reprovado</option>
-                        </select>
-                    </label>
-                </div>
-                <div className="divListarPEDGestao">
-                    <label className="labelListarPEDGestao">
-                        Data Início
-                        <Input
-                            type='date'
-                            onChange={(e) => {setFiltro({...filtro, dataInicio: e.target.value})}}
-                        />
-                    </label>
-                    <label className="labelListarPEDGestao">
-                        Data Final
-                        <Input
-                            type='date'
-                            onChange={(e) => {setFiltro({...filtro, dataFinal: e.target.value})}}
-                        />
-                    </label>
-                    <span className="spanListarPEDGestao">
-                        <Button text='Buscar' onClick={filtrarPEDs}/>
-                        <Button text='Limpar campos' onClick={limparBusca} color="#4A4A4A"/>
-                    </span>
-                </div>
-            </section>
-            <Tabela listaFiltrada={listaFiltrada} fontSize={'10px'}/>
+            <Tabela listaFiltrada={listaFiltrada} fontSize={'10px'} />
         </FormContainer>
     )
 }
