@@ -156,13 +156,58 @@ def listar_eventos_do_calendario_academico(request, id_pacote):
 def atualizar_calendario_academico(request, id_calendario):
     try:
         calendario = CalendarioAcademico.objects.get(id=id_calendario)
+
+        # Converter datas do request para objetos datetime
+        novo_inicio = request.data.get("data_inicio")
+        novo_fim = request.data.get("data_fim")
+
+        if novo_inicio and novo_fim:
+            novo_inicio = make_aware(datetime.fromisoformat(novo_inicio))
+            novo_fim = make_aware(datetime.fromisoformat(novo_fim))
+        else:
+            return Response(
+                {"mensagem": "Datas inválidas ou ausentes."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Verificar se o período foi reduzido
+        if novo_inicio > calendario.data_inicio or novo_fim < calendario.data_fim:
+            # Identificar eventos fora do novo intervalo
+            eventos_fora = Evento.objects.filter(
+                tipo_calendario=calendario.tipo_calendario
+            ).filter(
+                data_inicio__lt=novo_inicio
+            ) | Evento.objects.filter(
+                tipo_calendario=calendario.tipo_calendario,
+                data_fim__gt=novo_fim
+            )
+
+            if eventos_fora.exists():
+                # Retornar os eventos conflitantes
+                eventos_detalhes = [
+                    {"id": evento.id, "titulo": evento.titulo, "data_inicio": evento.data_inicio,
+                     "data_fim": evento.data_fim}
+                    for evento in eventos_fora
+                ]
+                logger.error('Existem eventos fora do novo intervalo do período letivo.')
+                return Response(
+                    {
+                        "mensagem": "Existem eventos fora do novo intervalo do período letivo.",
+                        "eventos_conflitantes": eventos_detalhes
+                    },
+                    status=status.HTTP_409_CONFLICT
+                )
+
+        # Atualizar o calendário acadêmico
         serializer = CalendarioAcademicoSerializer(calendario, data=request.data)
         if serializer.is_valid():
             serializer.save()
             logger.info('Calendário acadêmico atualizado com sucesso: %s', serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
+
         logger.error('Erro de validação na atualização do calendário acadêmico: %s', serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     except CalendarioAcademico.DoesNotExist:
         logger.error('Calendário acadêmico não encontrado para atualização: ID %s', id_calendario)
         return Response({'mensagem': 'Calendário acadêmico não encontrado'}, status=status.HTTP_404_NOT_FOUND)

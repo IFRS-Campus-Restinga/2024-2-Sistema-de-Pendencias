@@ -74,17 +74,38 @@ const CadastroCalendarioAcademicoPage = () => {
           state: {
             calendarioCriado: !idCalendario,
             calendarioAtualizado: !!idCalendario,
-            mensagemSucesso: idCalendario ? "Período Letivo atualizado com sucesso!" : "Período Letivo cadastrado com sucesso!",
+            mensagemSucesso: idCalendario
+              ? "Período Letivo atualizado com sucesso!"
+              : "Período Letivo cadastrado com sucesso!",
           },
         });
       } catch (error) {
         console.error('Erro ao salvar calendário acadêmico:', error);
-        toast.error("Já existe um período letivo para este tipo de calendário.", {
-          position: "bottom-center",
-          autoClose: 3000,
-          style: { backgroundColor: '#d11c28', color: '#fff' },
-          progressStyle: { backgroundColor: '#fff' },
-        });
+
+        // Verifica o código de erro retornado
+        if (error.response && error.response.status === 500) {
+          toast.error("Já existe um período letivo para este tipo de calendário.", {
+            position: "bottom-center",
+            autoClose: 3000,
+            style: { backgroundColor: '#d11c28', color: '#fff' },
+            progressStyle: { backgroundColor: '#fff' },
+          });
+        } else if (error.response && error.response.status === 409) {
+          toast.error("ERRO: Existem eventos fora do novo período selecionado! Verifique os eventos neste intervalo de tempo.", {
+            position: "bottom-center",
+            autoClose: 3000,
+            style: { backgroundColor: '#d11c28', color: '#fff' },
+            progressStyle: { backgroundColor: '#fff' },
+          });
+        } else {
+          // Erro genérico
+          toast.error("Falha ao salvar calendário acadêmico. Tente novamente.", {
+            position: "bottom-center",
+            autoClose: 3000,
+            style: { backgroundColor: '#d11c28', color: '#fff' },
+            progressStyle: { backgroundColor: '#fff' },
+          });
+        }
       }
     } else {
       setShowErrorMessage(true);
