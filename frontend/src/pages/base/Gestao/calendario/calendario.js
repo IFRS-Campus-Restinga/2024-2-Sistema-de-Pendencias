@@ -116,21 +116,29 @@ const CalendarioPage = () => {
         navigate(`/sessao/Gestão Escolar/1/calendario/evento/${event.id}`, { state: { evento: event } });
     };
 
-    const handleCalendarioClick = async (calendario) => {
-        setCalendarioSelecionado(calendario);
-        try {
-            const response = await calendarioAcademicoService.listarEventosDoCalendario(calendario.id);
-            setEventosDoCalendario(response.data); // Atualiza os eventos relacionados ao calendário selecionado
-        } catch (error) {
-            console.error("Erro ao buscar eventos do calendário acadêmico:", error);
-            toast.error("Erro ao carregar eventos do calendário acadêmico.", {
-                position: "bottom-center",
-                autoClose: 3000,
-                style: { backgroundColor: '#DC3545', color: '#fff', textAlign: 'center' },
-                progressStyle: { backgroundColor: '#fff' }
-            });
-        }
-    };
+const handleCalendarioClick = async (calendario) => {
+    setCalendarioSelecionado(calendario);
+    try {
+        const response = await calendarioAcademicoService.listarEventosDoCalendario(calendario.id);
+        const eventosOrdenados = response.data.sort((a, b) => {
+            const dataAtual = new Date(); // Data atual
+            const dataA = new Date(a.data_inicio);
+            const dataB = new Date(b.data_inicio);
+
+            // Ordenação pela proximidade da data atual
+            return dataA - dataAtual - (dataB - dataAtual);
+        });
+        setEventosDoCalendario(eventosOrdenados); // Atualiza os eventos ordenados
+    } catch (error) {
+        console.error("Erro ao buscar eventos do calendário acadêmico:", error);
+        toast.error("Erro ao carregar eventos do calendário acadêmico.", {
+            position: "bottom-center",
+            autoClose: 3000,
+            style: { backgroundColor: '#DC3545', color: '#fff', textAlign: 'center' },
+            progressStyle: { backgroundColor: '#fff' }
+        });
+    }
+};
 
     const handleVoltarClick = () => {
         setCalendarioSelecionado(null);
