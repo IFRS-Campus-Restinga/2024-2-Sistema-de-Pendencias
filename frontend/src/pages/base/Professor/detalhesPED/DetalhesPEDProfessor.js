@@ -4,7 +4,6 @@ import FormContainer from "../../../../components/FormContainer/FormContainer";
 import "./DetalhesPEDProfessor.css";
 import Button from "../../../../components/Button/Button";
 import StatusBalls from "../../../../components/StatusBall/StatusBall";
-import Modal from "../../../../components/Modal/Modal";
 import { PEDService } from "../../../../services/pedService";
 
 const DetalhesPEDProfessor = () => {
@@ -14,10 +13,6 @@ const DetalhesPEDProfessor = () => {
   const location = useLocation();
   const { state } = location || {};
 
-  const [modalAberto, setModalAberto] = useState(false);
-
-  const abrirModal = () => setModalAberto(true);
-  const fecharModal = () => setModalAberto(false);
 
   const fetchDetalhes = async () => {
     try {
@@ -38,23 +33,6 @@ const DetalhesPEDProfessor = () => {
     }
   }, [pedId, state]);
 
-  const handleDesativarClick = async () => {
-    try {
-      const updatedDetalhes = { ...detalhesPED, status: "Desativado" };
-      const modalidade = state.serie_progressao ? "EMI" : "ProEJA";
-      const res = await PEDService.desativar(
-        pedId,
-        updatedDetalhes,
-        modalidade
-      );
-      if (!res) throw new Error(res.response?.data?.mensagem);
-      setDetalhesPED(updatedDetalhes);
-      console.log("PED desativada com sucesso:", updatedDetalhes);
-      fecharModal();
-    } catch (error) {
-      console.error("Erro ao desativar PED:", error.message);
-    }
-  };
 
   // Garantir que o 'state' tenha valores válidos antes de acessar
   if (!state) {
@@ -106,7 +84,7 @@ const DetalhesPEDProfessor = () => {
               </label>
             </div>
             <div className="divStatusPED">
-              <StatusBalls status={detalhesPED.status} tipo={"PED"} />
+              <StatusBalls status={state.status} tipo={"PED"} />
               <span className="spanDetalhesPED">
                 <Link to={"planoEstudos"}>
                   <Button text="Plano de Estudos" />
@@ -150,7 +128,7 @@ const DetalhesPEDProfessor = () => {
               </label>
             </div>
             <div className="divStatusPED">
-              <StatusBalls status={detalhesPED.status} tipo={"PED"} />
+              <StatusBalls status={state.status} tipo={"PED"} />
               <span className="spanDetalhesPED">
                 <Link to={"planoEstudos"}>
                   <Button text="Plano de Estudos" />
@@ -170,26 +148,13 @@ const DetalhesPEDProfessor = () => {
       </label>
       <span className="spanDetalhesPED">
         <div className="buttons-ped">
-          {detalhesPED.status !== "Desativado" && (
             <>
               <Link to={"editar"} state={detalhesPED}>
                 <Button text={"Editar PED"} />
               </Link>
-              <Button text="Desativar PED" color={"red"} onClick={abrirModal} />
             </>
-          )}
         </div>
       </span>
-
-      <Modal
-        estaAberto={modalAberto}
-        aoFechar={fecharModal}
-        mensagem="Você tem certeza que deseja desativar a PED?"
-        textoCancelar="Não"
-        textoOk="Desativar"
-        colorButton={"red"}
-        onClick={handleDesativarClick}
-      />
     </FormContainer>
   );
 };
