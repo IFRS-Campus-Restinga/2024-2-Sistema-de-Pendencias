@@ -18,7 +18,6 @@ import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
 import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendario/eventoCalendario"
 import CadastroCalendarioAcademicoPage from './pages/base/Gestao/calendario/calendarioAcademico/cadastroCalendarioAcademico'
 import ListarCalendariosAcademicosPage from './pages/base/Gestao/calendario/calendarioAcademico/listaCalendariosAcademicos'
-import ListarEventosDoCalendarioPage from './pages/base/Gestao/calendario/calendarioAcademico/listaEventosCalendarioAcademico'
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 import DetalhesServidor from './pages/base/Gestao/detalhesServidor/DetalhesServidor'
@@ -115,10 +114,6 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/listarCalendariosAcademicos',
                 element: <ListarCalendariosAcademicosPage />
-            },
-            {
-                path: ':idUsuario/calendarioAcademico/:idCalendario/eventos',
-                element: <ListarEventosDoCalendarioPage />
             },
             {
                 path: ':idUsuario/servidores/:idServidor',
