@@ -48,12 +48,12 @@ const DetalhesPED = () => {
                 <p className="pDetalhesPED">{state.serie_progressao}</p>
               </label>
               <label className="labelDetalhesPED">
-                Turma de Origem
-                <p className="pDetalhesPED">{state.turma_origem}</p>
+                Turma Atual
+                <p className="pDetalhesPED">{state.turma_atual}</p>
               </label>
             </div>
             <div className="divStatusPED">
-              <StatusBalls status={state.status} tipo={"PED"} />
+              <StatusBalls status={state.status}/>
               <span className="spanDetalhesPED">
                 <Link to={"planoEstudos"}>
                   <Button text="Plano de Estudos" />
