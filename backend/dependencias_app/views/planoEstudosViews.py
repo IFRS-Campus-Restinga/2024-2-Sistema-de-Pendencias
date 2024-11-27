@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import *
 from rest_framework.response import Response
 from rest_framework import status
+from dependencias_app.models.planoEstudos import PlanoEstudos
 from dependencias_app.models.pedEMI import PED_EMI
 from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.serializers.planoEstudosSerializer import PlanoEstudos_Serializer
@@ -83,3 +84,24 @@ def cadastrar_plano_estudos(request, pedId):
     except Exception as e:
         logger.error("Erro ao cadastrar Plano de Estudo Dirigido: %s", str(e))
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['GET'])
+def detalhes_planoEstudos(request, ped_id):
+    try:
+        # Buscar o plano de estudos pelo ID
+        plano_estudos = PlanoEstudos.objects.get(pk=ped_id)
+        
+        # Serializando os dados do plano de estudos
+        plano_estudos_serializer = PlanoEstudos_Serializer(plano_estudos)
+
+        # Retorna os dados do plano de estudos com status 200 OK
+        return Response(plano_estudos_serializer.data, status=status.HTTP_200_OK)
+
+    except PlanoEstudos.DoesNotExist:
+        # Caso o plano de estudos não seja encontrado, retorna 404
+        return Response({'mensagem': 'Plano de estudos não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        # Caso ocorra qualquer outro erro, retorna um erro genérico
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
