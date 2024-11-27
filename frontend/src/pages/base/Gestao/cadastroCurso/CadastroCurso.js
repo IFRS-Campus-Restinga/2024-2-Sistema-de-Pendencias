@@ -30,7 +30,7 @@ const CadastroCurso = () => {
 
   const [dadosFormEdicao, setDadosFormEdicao] = useState({
     coordenador: '',
-  })
+  });
 
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -47,7 +47,7 @@ const CadastroCurso = () => {
       });
       setDadosFormEdicao({
         coordenador: curso.coordenador.email
-      })
+      });
     }
   }, [curso]);
 
@@ -83,7 +83,7 @@ const CadastroCurso = () => {
 
     const erros = validarFormularioCurso(formData);
 
-    console.log(erros)
+    console.log(erros);
 
     if (Object.keys(erros).length !== 0) {
       setShowErrorMessage(true);
@@ -99,8 +99,7 @@ const CadastroCurso = () => {
           throw new Error(errorMessage);
         }
 
-        setModalidade('Integrado')
-
+        // Resetar o estado do formulário para valores iniciais
         setFormData({
           nome: '',
           carga_horaria: '',
@@ -108,10 +107,18 @@ const CadastroCurso = () => {
           coordenador: '',
           turmas: []
         });
-
+        
+        // Resetar erros e mensagens de erro
         setErrors({});
         setShowErrorMessage(false);
 
+        // Se houver campos adicionais de edição (como coordenador), resetar também
+        setDadosFormEdicao({ coordenador: '' });
+
+        // Resetar o formRef (isso limpa os inputs visuais)
+        formRef.current.reset();
+
+        // Exibir mensagem de sucesso
         toast.success(curso ? "Curso editado com sucesso!" : "Curso cadastrado com sucesso!", {
           position: "bottom-center",
           autoClose: 3000,
@@ -119,8 +126,8 @@ const CadastroCurso = () => {
           progressStyle: { backgroundColor: '#fff' }
         });
 
-        formRef.current.reset();
-
+        // Navegar de volta para a página de cursos ou outra ação desejada
+        // navigate('/cursos');  // Se você quiser redirecionar após sucesso
       } catch (erro) {
         toast.error(erro.message, {
           position: "bottom-center",
@@ -147,10 +154,12 @@ const CadastroCurso = () => {
 
   // Função para adicionar uma nova turma
   const addTurma = () => {
-    setFormData((prevData) => ({
-      ...prevData,
-      turmas: [...prevData.turmas, { numero: '' }],  // Adiciona uma turma vazia
-    }));
+    if (!curso) {  // Adiciona turmas apenas se não for uma edição de curso
+      setFormData((prevData) => ({
+        ...prevData,
+        turmas: [...prevData.turmas, { numero: '' }],  // Adiciona uma turma vazia
+      }));
+    }
   };
 
   // Função para manipular mudança nos números das turmas
@@ -210,16 +219,16 @@ const CadastroCurso = () => {
               nome='coordenador'
               valor={dadosFormEdicao.coordenador}
               onChange={(e) => {
-                setDadosFormEdicao({...dadosFormEdicao, coordenador: e.target.value})
-                fetchCoordenadores(e)
+                setDadosFormEdicao({...dadosFormEdicao, coordenador: e.target.value});
+                fetchCoordenadores(e);
                 
                 if (opcoesCoordenadores) {
-                  const param = e.target.value
-                  console.log(e.target.value)
+                  const param = e.target.value;
+                  console.log(e.target.value);
 
-                  const coordenador = opcoesCoordenadores.find((coordenador) => param === coordenador.nome || coordenador.matricula|| coordenador.email)
+                  const coordenador = opcoesCoordenadores.find((coordenador) => param === coordenador.nome || coordenador.matricula || coordenador.email);
 
-                  if (coordenador) setFormData({...formData, coordenador: coordenador.id})
+                  if (coordenador) setFormData({...formData, coordenador: coordenador.id});
                 }
 
               }}
@@ -235,20 +244,22 @@ const CadastroCurso = () => {
                 value={coordenador.email}>
                   {coordenador.email}
               </option>
-            ))) : (<option>Nenhum aluno encontrado</option>)
+            ))) : (<option>Nenhum coordenador encontrado</option>)
           }
         </datalist>
         {errors.coordenador && <p className="error">{errors.coordenador}</p>}
 
         {modalidade === 'Integrado' && (
           <div className="add-turma">
-            <button type="button" onClick={addTurma} className="add-button">
-              <FontAwesomeIcon
-                icon={faPlusCircle}
-                style={{ color: "#006b3f", cursor: "pointer", fontSize: "24px" }}
-              />
-              <span className="labelCadastroCurso" style={{ color: "black" }}>Adicionar Turma</span>
-            </button>
+            {!curso && (  // Apenas mostra o botão de adicionar turma se não for um curso editado
+              <button type="button" onClick={addTurma} className="add-button">
+                <FontAwesomeIcon
+                  icon={faPlusCircle}
+                  style={{ color: "#006b3f", cursor: "pointer", fontSize: "24px" }}
+                />
+                <span className="labelCadastroCurso" style={{ color: "black" }}>Adicionar Turma</span>
+              </button>
+            )}
             {formData.turmas.length > 0 && (
               <div className="turmas-lista">
                 <table className="tabelaCadastroCurso">

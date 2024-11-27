@@ -17,7 +17,6 @@ const PlanoEstudos = () => {
     forma_oferta: '',
     turno: '',
     parecer_pedagogico: '',
-    periodo_letivo: '',  // Alterado para "periodo_letivo"
     pedId: pedId
   });
 
@@ -61,7 +60,6 @@ const PlanoEstudos = () => {
           forma_oferta: '',
           turno: '',
           parecer_pedagogico: '',
-          periodo_letivo: '',  // Limpa o campo de período letivo também
         });
 
         setErrors({}); // Limpar erros
@@ -117,21 +115,6 @@ const PlanoEstudos = () => {
                 ))}
               </select>
               {errors.turno && <p className="errorMessage">{errors.turno}</p>}
-            </label>
-
-            <label className="labelCadastroPlanoEstudos">
-              Período Letivo *
-              <input
-                type="number"
-                name="periodo_letivo"  // Alterado para "periodo_letivo"
-                className={errors.periodo_letivo ? 'errorInputCadastroPlanoEstudos' : 'inputCadastroPlanoEstudos'}
-                onChange={handleChange}
-                value={formData.periodo_letivo}  // Alterado para "periodo_letivo"
-                placeholder="Digite o período letivo"
-                min="1900"  // Ano mínimo
-                max={new Date().getFullYear()}  // Ano máximo
-              />
-              {errors.periodo_letivo && <p className="errorMessage">{errors.periodo_letivo}</p>}
             </label>
           </div>
         </section>
