@@ -5,10 +5,12 @@ import "./DetalhesPEDProfessor.css";
 import Button from "../../../../components/Button/Button";
 import StatusBalls from "../../../../components/StatusBall/StatusBall";
 import { PEDService } from "../../../../services/pedService";
+import { jwtDecode } from 'jwt-decode';
 
 const DetalhesPEDProfessor = () => {
   const [detalhesPED, setDetalhesPED] = useState({});
   const { pedId } = useParams();
+  const usuarioId = jwtDecode(sessionStorage.getItem('token')).idUsuario;
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = location || {};
@@ -92,6 +94,9 @@ const DetalhesPEDProfessor = () => {
                 <Link to={"cadastrar-form-encerramento"}>
                   <Button text="Formulário de Encerramento" />
                 </Link>
+                <Link to={`/sessao/Professor/${usuarioId}/atividades/emi/${pedId}`}>
+                  <Button text='Atividades'/>
+                </Link>
               </span>
             </div>
           </section>
@@ -135,6 +140,9 @@ const DetalhesPEDProfessor = () => {
                 </Link>
                 <Link to={"cadastrar-form-encerramento"}>
                   <Button text="Formulário de Encerramento" />
+                </Link>
+                <Link to={`/sessao/Professor/${usuarioId}/atividades/proeja/${pedId}`}>
+                  <Button text='Atividades'/>
                 </Link>
               </span>
             </div>
