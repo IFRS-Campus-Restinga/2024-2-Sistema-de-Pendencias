@@ -1,6 +1,12 @@
 .sectionDetalhesPED {
     width: 100%;
     display: flex;
+    justify-content: flex-start;
+}
+
+.sectionDetalhesPEDEMI{
+    max-width: 100%;
+    display: flex;
 }
 
 .divDetalhesPED {
@@ -19,6 +25,19 @@
     margin-top: 10px;
     border-radius: 10px;
     padding: 10px;
+}
+
+.divStatusPEDEMI {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-left: 300px;
+    width: 900px;
+    background-color: #f1f1f1;
+    margin-top: 10px;
+    border-radius: 10px;
+    padding: 10px;
+    max-height: 400px;
 }
 
 .labelDetalhesPED {
@@ -54,4 +73,9 @@
 
 .labelStatusPED {
     margin: auto;
+}
+
+.buttons-ped{
+    display: flex;
+    flex-direction: row;
 }
