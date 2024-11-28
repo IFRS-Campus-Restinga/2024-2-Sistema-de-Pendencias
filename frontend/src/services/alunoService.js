@@ -28,4 +28,17 @@ export const alunoService = {
             throw erro;
         }
     },
+
+    listarPedsAluno: async () => {
+        try {
+            const token = localStorage.getItem("token"); // Obtém o token armazenado
+            const headers = { Authorization: `Bearer ${token}` }; // Configura o cabeçalho com o token
+            const res = await api.get('api/aluno/peds/', { headers }); // Corrigido o caminho
+            return res;
+        } catch (erro) {
+            console.error("Erro ao listar PEDS do aluno:", erro);
+            throw erro;
+        }
+    },
+
 };

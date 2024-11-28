@@ -126,22 +126,16 @@ def listar_alunos(request):
 
 
 @api_view(['GET'])
-@permission_classes([Aluno])
 def listar_peds_aluno(request):
     try:
-        # Obtém o aluno logado
-        aluno = request.user
+        usuario_logado = request.user
 
-        # Filtra as PEDs associadas ao aluno logado
-        peds_emi = PED_EMI.objects.filter(aluno=aluno).order_by(
-            '-data_criacao')  # Exemplo: Ordenação por data mais recente
-        peds_proeja = PED_ProEJA.objects.filter(aluno=aluno).order_by('-data_criacao')
+        peds_emi = PED_EMI.objects.filter(aluno=usuario_logado).order_by('-data_criacao')
+        peds_proeja = PED_ProEJA.objects.filter(aluno=usuario_logado).order_by('-data_criacao')
 
-        # Serializa as PEDs
         peds_emi_serializer = PED_EMI_Serializer(peds_emi, many=True, context={"request": request})
         peds_proeja_serializer = PED_ProEJA_Serializer(peds_proeja, many=True, context={"request": request})
 
-        # Combina os resultados
         dados_peds = {
             "ped_emi": peds_emi_serializer.data,
             "ped_proeja": peds_proeja_serializer.data,
@@ -149,7 +143,14 @@ def listar_peds_aluno(request):
 
         return Response(dados_peds, status=status.HTTP_200_OK)
 
+    except Aluno.DoesNotExist:
+        logger.error("Nenhum aluno associado ao usuário logado.")
+        return Response(
+            {"erro": "Nenhum aluno associado ao usuário logado."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
     except Exception as e:
+        logger.error("Erro ao listar PEDs do aluno: %s", str(e))
         return Response(
             {"erro": "Erro ao listar PEDs do aluno", "detalhes": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
