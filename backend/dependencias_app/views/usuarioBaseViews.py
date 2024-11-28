@@ -15,7 +15,7 @@ def get_infos_usuario (request, idUsuario):
     try:        
         usuario = get_object_or_404(UsuarioBase, pk=int(idUsuario))
 
-        serializer = UsuarioBaseSerializer(usuario)
+        serializer = UsuarioBaseSerializer(usuario, context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
     except Exception as e:

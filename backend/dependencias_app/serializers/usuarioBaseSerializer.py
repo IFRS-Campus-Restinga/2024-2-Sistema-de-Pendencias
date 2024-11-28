@@ -52,6 +52,7 @@ class UsuarioBaseSerializer(serializers.ModelSerializer):
 
         if retorno == 'listar':
             fields_to_check = ['cpf', 'matricula', 'data_nascimento', 'telefone']
+
             for field in fields_to_check:
                 if representation.get(field) is None:
                     representation.pop(field)
@@ -66,4 +67,5 @@ class UsuarioBaseSerializer(serializers.ModelSerializer):
 
         
         representation['grupo'] = instance.grupo.name if instance.grupo else None
+
         return representation

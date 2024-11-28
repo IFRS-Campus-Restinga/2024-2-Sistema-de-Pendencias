@@ -21,7 +21,11 @@ export const alunoService = {
 
     listar: async () => {
         try {
-            const res = await api.get('api/listar-alunos/');
+            const res = await api.get('api/listar-alunos/', {
+                params: {
+                    retorno: 'listar'
+                }
+            });
             return res;
         } catch (erro) {
             console.error("Erro ao listar alunos:", erro);
