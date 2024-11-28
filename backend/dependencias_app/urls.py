@@ -40,6 +40,9 @@ urlpatterns = [
     # views de disciplinas
     path('cadastrar-disciplina/', cadastrar_disciplina),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
+    path('disciplina/<int:disciplinaId>/', buscar_disciplina),
+    path('disciplina/vincular/<int:disciplinaId>/<int:cursoId>/', vincular_disciplina),
+    path('disciplina/desvincular/<int:disciplinaId>/<int:cursoId>/', desvincular_disciplina),
 
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),
@@ -100,8 +103,9 @@ urlpatterns = [
     path('adicionar-atividades/<str:ped_tipo>/<int:ped_id>/', adicionar_atividade, name='adicionar_atividades'),
     path('detalhes-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', detalhes_atividade, name='detalhes_atividade'),
     path('editar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', editar_atividade, name='editar_atividade'),
+    path('deletar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', delete_atividade, name='deletar_atividade'),
     path('adicionar-plano-atividades/<str:ped_tipo>/<int:ped_id>/', adicionar_plano_atividades, name='adicionar_plano_atividades'),
-    #path('ped/<str:ped_tipo>/<int:ped_id>/plano-atividades/', obter_plano_atividades, name='obter_plano_atividades'),
+
 
     #view editar servidor
     path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),

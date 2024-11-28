@@ -53,7 +53,11 @@ const servidorService = {
     },
 
     listar: async () => {
-        const res = await api.get('/api/listar-servidores/').catch((erro) => {
+        const res = await api.get('/api/listar-servidores/', {
+            params: {
+                retorno: 'listar'
+            }
+        }).catch((erro) => {
             return erro
         })
 

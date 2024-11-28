@@ -60,6 +60,17 @@ const atividadeService = {
     }
   },
 
+
+  deletarAtividade: async (pedTipo, pedId, atividadeId) => {
+    try {
+      const response = await api.delete(`api/deletar-atividade/${pedTipo}/${pedId}/${atividadeId}/`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao deletar atividade:', error);
+      throw error;
+    }
+  },
+
   adicionarPlanoAtividades: async (pedTipo, pedId, formData) => {
     try {
       const response = await api.post(

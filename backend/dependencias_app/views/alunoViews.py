@@ -117,7 +117,7 @@ def listar_alunos(request):
             alunos = alunos.order_by(ordenar_por)
 
         # Serialização dos dados
-        alunos_serializer = UsuarioBaseSerializer(alunos, many=True)
+        alunos_serializer = UsuarioBaseSerializer(alunos, many=True, context={'request': request})
 
         return Response(alunos_serializer.data, status=status.HTTP_200_OK)
     

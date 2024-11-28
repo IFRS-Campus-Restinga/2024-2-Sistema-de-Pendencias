@@ -263,35 +263,33 @@ def adicionar_plano_atividades(request, ped_tipo, ped_id):
         return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
-""" @api_view(['GET'])
+@api_view(['DELETE'])
 @permission_classes([Professor])
-def obter_plano_atividades(request, ped_tipo, ped_id):
+def delete_atividade(request, ped_tipo, ped_id, atividade_id):
     try:
-        # Verifica se o tipo de PED é "emi" ou "proeja"
-        if ped_tipo == "emi":
-            ped = PED_EMI.objects.filter(id=ped_id).first()
-        elif ped_tipo == "proeja":
-            ped = PED_ProEJA.objects.filter(id=ped_id).first()
-        else:
+        # Verifica se o tipo de ped é valido
+        if ped_tipo not in ['emi', 'proeja']:
             return Response({"erro": "Tipo de PED inválido."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Verifica se o PED foi encontrado
-        if not ped:
-            return Response({"erro": "PED não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        # Retorna atividade baseado no ped_tipo e atividade_id
+        if ped_tipo == "emi":
+            atividade = Atividade_EMI.objects.filter(id=atividade_id).first()
+        elif ped_tipo == "proeja":
+            atividade = Atividade_ProEJA.objects.filter(id=atividade_id).first()
 
-        # Verifica se o professor logado é o responsável pelo PED
+        # Verifica se a atividade existe
+        if not atividade:
+            return Response({"erro": "Atividade não encontrada."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Verifica se o professor logado é o responsável pelo PED da atividade
+        ped = atividade.ped_emi if ped_tipo == "emi" else atividade.ped_proeja
         if ped.professor_ped != request.user:
             return Response({"erro": "Acesso não autorizado."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Verifica se há um plano de atividades anexado ao PED
-        if not ped.plano_atividades:
-            return Response({"erro": "Plano de atividades não anexado."}, status=status.HTTP_404_NOT_FOUND)
+        # Deleta a atividade
+        atividade.delete()
 
-        # Retorna o plano de atividades como um arquivo PDF
-        print(f"CAMINHO DO ARQUIVO: {ped.plano_atividades.path}")
-        response = FileResponse(ped.plano_atividades, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="plano_atividades_{ped_id}.pdf"'
-        return response
+        return Response({"mensagem": "Atividade deletada com sucesso."}, status=status.HTTP_200_OK)
 
     except Exception as e:
-        return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) """
+        return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
