@@ -4,12 +4,16 @@ from rest_framework import status
 # importa permissão com outro nome para não conflitar com o model Aluno
 from dependencias_app.permissoes import Aluno as AlunoPermissao
 #  importa as outras permissões
-from dependencias_app.permissoes import GestaoEscolar, RegistroEscolar, Coordenador, Professor
+from dependencias_app.permissoes import GestaoEscolar, RegistroEscolar, Coordenador, Professor, Aluno
 # importa a classe que permite mais de uma perfil acessar a mesma view
 from dependencias_app.permissoes import Or
 from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
 from dependencias_app.serializers.alunoSerializer import AlunoSerializer
 from dependencias_app.models.aluno import Aluno
+from dependencias_app.models.pedEMI import PED_EMI
+from dependencias_app.models.pedProEJA import PED_ProEJA
+from dependencias_app.serializers.pedEMISerializer import PED_EMI_Serializer
+from dependencias_app.serializers.pedProEJASerializer import PED_ProEJA_Serializer
 from google_auth.models import UsuarioBase
 from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
@@ -119,3 +123,34 @@ def listar_alunos(request):
     
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([Aluno])
+def listar_peds_aluno(request):
+    try:
+        # Obtém o aluno logado
+        aluno = request.user
+
+        # Filtra as PEDs associadas ao aluno logado
+        peds_emi = PED_EMI.objects.filter(aluno=aluno).order_by(
+            '-data_criacao')  # Exemplo: Ordenação por data mais recente
+        peds_proeja = PED_ProEJA.objects.filter(aluno=aluno).order_by('-data_criacao')
+
+        # Serializa as PEDs
+        peds_emi_serializer = PED_EMI_Serializer(peds_emi, many=True, context={"request": request})
+        peds_proeja_serializer = PED_ProEJA_Serializer(peds_proeja, many=True, context={"request": request})
+
+        # Combina os resultados
+        dados_peds = {
+            "ped_emi": peds_emi_serializer.data,
+            "ped_proeja": peds_proeja_serializer.data,
+        }
+
+        return Response(dados_peds, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response(
+            {"erro": "Erro ao listar PEDs do aluno", "detalhes": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
