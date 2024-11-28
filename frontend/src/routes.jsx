@@ -29,7 +29,8 @@ import ListarAluno from './pages/base/Gestao/listarAluno/ListarAluno'
 import DetalhesAluno from './pages/base/Gestao/detalhesAluno/DetalhesAluno'
 
 // Filhos de Registro
-
+import HomeRegistro from './pages/base/Registro/home/homeRegistro'
+import ListarPPTRegistro from './pages/base/Registro/listarPPT/listarPPT'
 // Filhos de Coordenador
 
 // Filhos de Professor
@@ -51,6 +52,7 @@ import ListarPEDEMI from './pages/base/Gestao/listarPED_EMI/ListarPED_EMI'
 import ListarPEDProEJA from './pages/base/Gestao/listarPED_ProEJA/ListarPED_ProEJA'
 import ListarPEDProEJAProfessor from './pages/base/Professor/listarPED_ProEJAProfessor/ListarPED_ProEJAProfessor'
 import DetalhesCurso from './pages/base/Gestao/detalhesCurso/DetalhesCurso'
+
 
 const router = createBrowserRouter([
     {
@@ -199,7 +201,16 @@ const router = createBrowserRouter([
     {
         path: '/sessao/Registro Escolar/',
         element: <BaseRegistro />,
-        // adicionar abaixo, as children de registro
+        children: [
+            {
+                path: ':idUsuario/',
+                element: <HomeRegistro />
+            },
+            {
+                path: ':idUsuario/listarPPTregistro',
+                element: <ListarPPTRegistro />
+            }
+        ]
     },
     // Rotas de Coordenador
     {
