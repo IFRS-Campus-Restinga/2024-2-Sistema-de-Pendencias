@@ -11,11 +11,11 @@ export const cursoService = {
         }
     },
 
-    list: async () => {
+    list: async (retorno) => {
         try {
             const response = await api.get(`/api/listar-cursos/`, {
                 params: {
-                    retorno: 'lista'
+                    retorno
                 }
             });
             return response;
@@ -36,8 +36,12 @@ export const cursoService = {
         }
     },
 
-    porModalidade: async (modalidade) => {
-        const res = await api.get(`api/listar-cursos/${modalidade}`).catch((erro) => {
+    porModalidade: async (modalidade, retorno) => {
+        const res = await api.get(`api/listar-cursos/${modalidade}`,{
+            params: {
+                retorno
+            }
+        }).catch((erro) => {
             return erro
         })
 
@@ -55,9 +59,13 @@ export const cursoService = {
     },
 
     // Método para obter um curso pelo ID
-    getCursoById: async (id) => {
+    getCursoById: async (curso_id,retorno) => {
         try {
-            const res = await api.get(`api/cursos/${id}/`); // Endpoint para pegar curso por ID
+            const res = await api.get(`api/cursos/${curso_id}/`, {
+                params: {
+                    retorno
+                }
+            }); // Endpoint para pegar curso por ID
             return res;
         } catch (erro) {
             console.error("Erro ao buscar curso:", erro);

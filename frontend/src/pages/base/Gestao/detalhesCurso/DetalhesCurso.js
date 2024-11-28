@@ -1,12 +1,9 @@
-import { useLocation, useSearchParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import FormContainer from '../../../../components/FormContainer/FormContainer'
 import './DetalhesCurso.css'
-import { compareAsc } from 'date-fns'
 import { useEffect, useState } from 'react'
 import cursoService from '../../../../services/cursoService'
-import Tabela from '../../../../components/Tabela/Tabela'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+
 
 
 const DetalhesCurso = () => {
@@ -64,13 +61,15 @@ const DetalhesCurso = () => {
                         state.modalidade === 'Integrado' ? (
                             <label className='labelDetalhesCurso'>
                                 Turmas
-                                <p className='pDetalhesCurso'>
-                                    {
-                                        turmas.map((turma) => (
-                                            `${turma.numero}, `
-                                        ))
-                                    }
-                                </p>
+                                    <span className='spanDetalhesCurso'>
+                                        {
+                                            turmas.map((turma) => (
+                                                <p className='containerTurmas'>
+                                                {turma.numero}
+                                                </p>
+                                            ))
+                                        }
+                                    </span>
                             </label>
                         ) : (
                             <></>
@@ -78,14 +77,12 @@ const DetalhesCurso = () => {
                     }
                 </div>
                 <div className='divDetalhesCurso'>
-                    <p className='usoTabela'>Para remover uma disciplina deste curso, basta clicar na lixeira na respectiva linha</p>
                     <div className="containerTabelaDetalhesCurso">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Nome</th>
                                     <th>Carga Horária</th>
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -94,7 +91,6 @@ const DetalhesCurso = () => {
                                         <tr>
                                             <td>{disciplina.nome}</td>
                                             <td>{disciplina.carga_horaria}</td>
-                                            <td className='acoesTabela'><FontAwesomeIcon  icon={faTrash} color='red'/></td>
                                         </tr>
                                     ))
                                 }

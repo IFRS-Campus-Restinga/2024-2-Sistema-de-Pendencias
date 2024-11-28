@@ -14,9 +14,14 @@ class DisciplinaSerializer(serializers.ModelSerializer):
         return formDisciplina
     
     def to_representation(self, instance):
+        from dependencias_app.serializers.cursoSerializer import CursoSerializer
         representation = super().to_representation(instance)
 
-        if hasattr(instance, 'cursos'):
-            representation['cursos'] = ", ".join([curso.nome for curso in instance.cursos.all()])
+        request = self.context.get('request', None)
+        retorno = request and request.query_params.get('retorno')
+
+        if retorno == 'lista':
+            if hasattr(instance, 'cursos'):
+                representation['cursos'] = ", ".join([curso.nome for curso in instance.cursos.all()])
 
         return representation

@@ -116,7 +116,7 @@ const CadastroPPT = () => {
 
   const fetchCursos = async () => {
     try {
-      const res = await cursoService.porModalidade("Integrado");
+      const res = await cursoService.porModalidade("Integrado", 'dependencia');
       
       setCursos(res.data);
 

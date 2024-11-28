@@ -52,6 +52,7 @@ import ListarPEDEMI from './pages/base/Gestao/listarPED_EMI/ListarPED_EMI'
 import ListarPEDProEJA from './pages/base/Gestao/listarPED_ProEJA/ListarPED_ProEJA'
 import ListarPEDProEJAProfessor from './pages/base/Professor/listarPED_ProEJAProfessor/ListarPED_ProEJAProfessor'
 import DetalhesCurso from './pages/base/Gestao/detalhesCurso/DetalhesCurso'
+import EditarDisciplina from './pages/base/Gestao/editarDisciplina/EditarDisciplina'
 
 
 const router = createBrowserRouter([
@@ -107,6 +108,10 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/disciplinas',
                 element: <ListarDisciplina />
+            },
+            {
+                path: ':idUsuario/disciplinas/:idDisciplina/editar',
+                element: <EditarDisciplina />
             },
             {
                 path: ':idUsuario/eventoCalendario',

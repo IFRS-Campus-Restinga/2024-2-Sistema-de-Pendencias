@@ -213,7 +213,7 @@ const CadastroPED = () => {
 
   const fetchCursos = async () => {
     try {
-      const res = await cursoService.list()
+      const res = await cursoService.list('dependencia')
 
       const cursosPorModalidade = res.data.filter((curso) => curso.modalidade === modalidade)
 

@@ -13,7 +13,6 @@ import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 
 const CadastroDisciplina = () => {
   const formRef = useRef()
-  const [opcoesProfessores, setOpcoesProfessores] = useState([])
   const [cursos, setCursos] = useState([]);
   const [errors, setErrors] = useState({});
   const [disciplinas, setDisciplinas] = useState([]);

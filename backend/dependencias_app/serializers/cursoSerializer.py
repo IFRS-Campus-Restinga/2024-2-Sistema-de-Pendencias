@@ -7,6 +7,7 @@ from dependencias_app.serializers.turmaSerializer import TurmaSerializer
 
 class CursoSerializer(serializers.ModelSerializer):
     turmas = TurmaSerializer(many=True, read_only=True)
+    disciplinas = DisciplinaSerializer(many=True, read_only=True)
     coordenador = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Coordenador')) 
 
     class Meta:
@@ -30,8 +31,9 @@ class CursoSerializer(serializers.ModelSerializer):
                 representation['coordenador'] = str(instance.coordenador)
 
             representation.pop('turmas')
+            representation.pop('disciplinas')
 
-        else:
+        elif retorno == 'dependencia':
             if hasattr(instance, 'turmas'):
                 # Aqui, você usa o Serializador de Turma para representar as turmas corretamente
                 representation['turmas'] = TurmaSerializer(instance.turmas.all(), many=True).data

@@ -40,6 +40,9 @@ urlpatterns = [
     # views de disciplinas
     path('cadastrar-disciplina/', cadastrar_disciplina),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
+    path('disciplina/<int:disciplinaId>/', buscar_disciplina),
+    path('disciplina/vincular/<int:disciplinaId>/<int:cursoId>/', vincular_disciplina),
+    path('disciplina/desvincular/<int:disciplinaId>/<int:cursoId>/', desvincular_disciplina),
 
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),

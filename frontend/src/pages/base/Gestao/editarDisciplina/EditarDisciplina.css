@@ -1,0 +1,20 @@
+.labelEditarDisciplina {
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+}
+
+.divEditarDisciplina {
+    width: 100%;
+    display: flex;
+}
+
+.containerTabelaEditarDisciplina {
+    margin: 15px;
+    width: 50%;
+}
+
+.sectionEditarDisciplina {
+    display: flex;
+    width: 100%;
+}

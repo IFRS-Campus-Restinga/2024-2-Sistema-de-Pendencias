@@ -24,6 +24,20 @@
     word-break: break-all;
 }
 
+.spanDetalhesCurso {
+    width: 100%;
+    display: flex;
+    margin-left: 10px;
+}
+
+.containerTurmas {
+    background-color: #ccc;
+    border-radius: 5px;
+    color: black;
+    padding: 5px;
+    margin: 5px;
+}
+
 .containerTabelaDetalhesCurso {
     max-height: 300px;
     overflow-y: scroll;

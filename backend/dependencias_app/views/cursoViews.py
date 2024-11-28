@@ -76,7 +76,8 @@ def listar_turmas_por_curso(request, curso_id):
 def obter_curso(request, curso_id):
     try:
         curso = Curso.objects.get(id=curso_id)  # Buscando o curso pelo ID
-        serializer = CursoSerializer(curso)  # Serializando o curso encontrado
+        serializer = CursoSerializer(curso, context={'request': request})  # Serializando o curso encontrado
+        
         return Response(serializer.data, status=status.HTTP_200_OK)  # Retorna os dados do curso em formato JSON com status 200 OK
     except Curso.DoesNotExist:
         logger.error('Curso não encontrado: ID %s', curso_id)

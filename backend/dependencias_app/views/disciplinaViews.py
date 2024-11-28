@@ -6,9 +6,10 @@ from rest_framework.response import Response
 from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.curso import Curso
 from dependencias_app.serializers.disciplinaSerializer import DisciplinaSerializer
-from dependencias_app.utils.error_handler import handle_view_errors
+from dependencias_app.serializers.cursoSerializer import CursoSerializer
 
 @api_view(['POST'])
+@permission_classes([GestaoEscolar])
 def cadastrar_disciplina(request):
     curso_id = request.data.get('curso', None)
     disciplinas = request.data.get('disciplinas', None)
@@ -40,34 +41,58 @@ def cadastrar_disciplina(request):
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
 @api_view(['GET'])
-@handle_view_errors
+@permission_classes([GestaoEscolar])
 def listar_disciplinas(request):
     """
     Função que lista todas as disciplinas cadastradas.
     Retorna uma lista de disciplinas em formato JSON ou um erro.
     """
     disciplinas = Disciplina.objects.all().order_by('nome')
-    serializer = DisciplinaSerializer(disciplinas, many=True)
+    serializer = DisciplinaSerializer(disciplinas, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-@handle_view_errors
-def buscar_disciplina(request, id):
-    """
-    Tenta buscar a Disciplina pelo ID.
-    Retorna um JSON com os campos da Disciplina buscada ou erro.
-    """
-    disciplina = get_object_or_404(Disciplina, id=id)
+@permission_classes([GestaoEscolar])
+def buscar_disciplina(request, disciplinaId):
+    disciplina = get_object_or_404(Disciplina, pk=disciplinaId)
 
-    return Response({
+    disciplina_serializer = DisciplinaSerializer(disciplina)
 
-        'id': disciplina.id,
-        'nome': disciplina.name,
-        'carga_horaria': disciplina.carga_horaria,
-        'curso': disciplina.curso.nome
+    cursos = Curso.objects.all().exclude(id__in=disciplina.cursos.values_list('id', flat=True))
+    cursos_vinculados = Curso.objects.filter(id__in=disciplina.cursos.values_list('id', flat=True))
 
-    }, status=status.HTTP_200_OK)
+    curso_serializer = CursoSerializer(cursos, many=True)
+    curso_vinculados_serializer = CursoSerializer(cursos_vinculados, many=True)
 
+    return Response({'disciplina':disciplina_serializer.data, 'cursos': curso_serializer.data, 'cursos_vinculados': curso_vinculados_serializer.data}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([GestaoEscolar])
+def vincular_disciplina(request, disciplinaId, cursoId):
+    try:
+        disciplina = get_object_or_404(Disciplina, pk=disciplinaId)
+        curso = get_object_or_404(Curso, pk=cursoId)
+
+        disciplina.cursos.add(curso)
+
+        serializer = DisciplinaSerializer(disciplina)
+        
+        return Response(serializer.data ,status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+@permission_classes([GestaoEscolar])
+def desvincular_disciplina(request, disciplinaId, cursoId):
+    try:
+        disciplina = get_object_or_404(Disciplina, pk=disciplinaId)
+        curso = get_object_or_404(Curso, pk=cursoId)
+
+        disciplina.cursos.remove(curso)
+
+        serializer = DisciplinaSerializer(disciplina)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
