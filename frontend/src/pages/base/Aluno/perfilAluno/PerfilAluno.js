@@ -84,14 +84,16 @@ const PerfilAluno = () => {
             })
 
             setFormData({
-                cpf: res.data.infos_aluno.cpf,
-                data_nascimento: res.data.infos_aluno.data_nascimento,
-                matricula: res.data.infos_aluno.matricula || res.data.email.substring(0, 10),
-                telefone: res.data.infos_aluno.telefone,
+                cpf: res.data.cpf,
+                data_nascimento: res.data.data_nascimento,
+                matricula: res.data.matricula || res.data.email.substring(0, 10),
+                telefone: res.data.telefone,
                 usuario: jwtDecode(sessionStorage.getItem('token')).idUsuario
             })
 
-            setDesabilitado(res.data.primeiro_login)
+            console.log(res.data)
+
+            setDesabilitado(!res.data.primeiro_login)
 
         } catch (erro) {
             console.error('Erro ao obter dados do usuário: ', erro)
@@ -129,13 +131,13 @@ const PerfilAluno = () => {
                         valor={formData.matricula || ''}
                         erro={erros.matricula}
                         alinharCentro={true}
-                        desabilitado={desabilitado}
+                        desabilitado={true}
                     />
                     {erros.matricula ? <p className='erro'>{erros.matricula}</p> : <></>}
                 </label>
                 <label className='labelPerfilAluno'> Data de Nascimento
                     <Input
-                        tipo='date'
+                        type='date'
                         onChange={(e) => setFormData(prevData => ({ ...prevData, data_nascimento: e.target.value }))}
                         valor={formData.data_nascimento || ''}
                         erro={erros.data_nascimento}
