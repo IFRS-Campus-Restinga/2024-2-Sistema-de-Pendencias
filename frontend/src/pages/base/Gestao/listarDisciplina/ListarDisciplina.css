@@ -1,11 +1,11 @@
-.containerBuscarCurso {
+.containerBuscarDisciplina {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 5px;
 }
 
-.buscaBarCurso {
+.buscaBarDisciplina {
     margin-top: 20px;
     margin-bottom: 20px;
     display: flex;
@@ -19,7 +19,7 @@
     max-width: 400px;
 }
 
-.buscaBarCurso input {
+.buscaBarDisciplina input {
     flex: 1;
     background: none;
     border: none;
@@ -28,18 +28,18 @@
     outline: none;
 }
 
-.buscaBarCurso .iconeAcoes {
+.buscaBarDisciplina .iconeAcoes {
     border-color: white;
 }
 
-.iconesBuscarCurso {
+.iconesBuscarDisciplina {
     max-width: 15px;
     max-height: 15px;
     margin-left: 10px;
     cursor: pointer;
 }
 
-.iconeAdicionarCurso {
+.iconeAdicionarDisciplina {
     max-width: 40px;
     max-height: 40px;
     cursor: pointer;

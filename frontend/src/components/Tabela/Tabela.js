@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import Ordenar from "../../assets/ordenar-branco.png";
 import Lupa from "../../assets/lupa.png";
+import Editar from '../../assets/icone-editar.png'
+import Excluir from '../../assets/lixeira.png'
 import './Tabela.css'
 import { useNavigate } from "react-router-dom";
 
@@ -46,15 +48,13 @@ const Tabela = ({listaFiltrada, fontSize}) => {
         return texto;
     };
 
-    const detalhesItem = (state) => {
-        redirect(`${state.id}`, {state})
-    }
-
     useEffect(() => {
         if (listaFiltrada.length > 0) {
             const modeloColunas = listaFiltrada.reduce((maior, atual) => {
                 return (Object.keys(atual).length > Object.keys(maior).length) ? atual : maior;
               }, {});
+
+              console.log(listaFiltrada)
 
             setListaOrdenada(listaFiltrada);
             setColunas(Object.keys(modeloColunas));
@@ -125,12 +125,29 @@ const Tabela = ({listaFiltrada, fontSize}) => {
                                         ))
                                     }
                                     <td className="colunaCorpoTabela">
-                                    <img 
-                                        className='iconeAcoes'
-                                        src={Lupa} 
-                                        alt="Visualizar" 
-                                        onClick={() => detalhesItem(item)}
-                                        title="Visualizar"/>
+                                        <div className="acoes">
+
+                                            <img 
+                                                className='iconeAcoes'
+                                                src={Lupa} 
+                                                alt="Visualizar" 
+                                                onClick={() => redirect(`${item.id}`, {state: item})}
+                                                title="Visualizar"
+                                            />
+                                            <img
+                                                className='iconeAcoes'
+                                                src={Editar} 
+                                                alt="Editar" 
+                                                onClick={() => redirect(`${item.id}/editar`, {state: item})}
+                                                title="Visualizar"
+                                            />
+                                            <img
+                                                className='iconeAcoes'
+                                                src={Excluir} 
+                                                alt="Excluir" 
+                                                title="Visualizar"
+                                            />
+                                        </div>
                                     </td>
                                 </tr>
                             ))

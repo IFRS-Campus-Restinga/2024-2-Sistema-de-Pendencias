@@ -18,43 +18,33 @@ logger = logging.getLogger(__name__)
 def cadastrar_curso(request):
     # Extraímos os dados da requisição
     data = request.data
-    turmas = data.pop('turmas', [])  # Remove 'turmas' do payload (não será mais processado aqui)
-    modalidade = data.get('modalidade', None)
+    turmas = data.pop('turmas', [])
 
-    print("Dados do curso:", data)
-    print("Turmas recebidas:", turmas)
+    serializer_curso = CursoSerializer(data=data)
 
-    # Criar o serializer do curso
-    serializer = CursoSerializer(data=data)
+    if not serializer_curso.is_valid(): return Response(serializer_curso.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    if serializer.is_valid():
-        curso = serializer.save()  # Cria o curso
-        print(f"Curso {curso.id} criado com sucesso!")
+    # cria o curso
+    serializer_curso.save()
 
-        # Se houver turmas associadas, crie e associe ao curso
-        if turmas:
-            for turma_data in turmas:
-                turma_data['curso'] = curso  # Associa o curso à turma
-                Turma.objects.create(**turma_data)  # Cria a turma associada
-                print(f"Turma criada com sucesso para o curso {curso.id}")
+    print(serializer_curso)
 
-        # Verificar se a modalidade é 'Integrado' e garantir que tenha turmas associadas
-        if modalidade == 'Integrado' and not turmas:
-            return Response({'detail': 'O curso da modalidade integrado deve ter turmas vinculadas.'},
-                             status=status.HTTP_400_BAD_REQUEST)
+    for turma in turmas:
+        turma['curso'] = serializer_curso.instance.id
 
-        return Response({'id': curso.id, 'message': 'Curso cadastrado com sucesso!'}, status=status.HTTP_201_CREATED)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer_turma = TurmaSerializer(data=turma)
 
+        if not serializer_turma.is_valid(): return Response(serializer_turma.errors, status=status.HTTP_400_BAD_REQUEST)
+        # cria as turmas após validar os dados
+        serializer_turma.save()
+    return Response({'message': 'Curso cadastrado com sucesso!'}, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
 @handle_view_errors
 def listar_cursos(request):
     cursos = Curso.objects.all()  # Obtém todos os cursos
-    serializer = CursoSerializer(cursos, many=True)  # Serializa os cursos
+    serializer = CursoSerializer(cursos, many=True, context={'request': request})  # Serializa os cursos
     return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar])
@@ -94,60 +84,6 @@ def obter_curso(request, curso_id):
     except Exception as e:
         logger.error('Erro ao obter curso: %s', str(e))
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  # Retorna erro 500 para qualquer outro tipo de erro  
-   
-# @api_view(['PUT'])
-# @permission_classes([GestaoEscolar])
-# def atualizar_curso(request, curso_id):
-#     # Extraímos os dados da requisição
-#     turmas = request.data.get('turmas', [])  # Pega as turmas enviadas
-#     modalidade = request.data.get('modalidade', None)
-
-#     try:
-#         curso = Curso.objects.get(id=curso_id)  # Busca o curso pelo ID
-#     except Curso.DoesNotExist:
-#         return Response({'message': 'Curso não encontrado'}, status=status.HTTP_404_NOT_FOUND)
-
-#     # Atualiza o curso com os dados recebidos
-#     serializer = CursoSerializer(curso, data=request.data, partial=True)  # partial=True permite atualizar apenas campos específicos
-
-#     if serializer.is_valid():
-#         updated_curso = serializer.save()  # Atualiza o curso
-
-#         # Agora lidamos com a atualização das turmas associadas
-#         if turmas:
-#             # Para cada turma, vamos verificar se ela precisa ser atualizada, criada ou removida
-#             existing_turmas_ids = [turma_data.get('id') for turma_data in turmas if turma_data.get('id') is not None]
-
-#             # 1. Atualizar ou criar turmas
-#             for turma_data in turmas:
-#                 turma_id = turma_data.get('id', None)  # Se o id da turma estiver presente
-
-#                 if turma_id:
-#                     # Se a turma já existe, atualize-a
-#                     try:
-#                         turma = Turma.objects.get(id=turma_id, curso=updated_curso)  # Busca a turma associada ao curso
-#                         turma.numero = turma_data.get('numero', turma.numero)  # Atualiza o número da turma
-#                         turma.save()  # Salva a turma
-#                     except Turma.DoesNotExist:
-#                         return Response(
-#                             {'message': f"Turma com id {turma_id} não encontrada ou não associada ao curso."},
-#                             status=status.HTTP_404_NOT_FOUND
-#                         )
-#                 else:
-#                     # Se a turma não tem id, cria uma nova
-#                     turma_data['curso'] = updated_curso  # Associa a turma ao curso
-#                     Turma.objects.create(**turma_data)  # Cria a nova turma
-
-#             # 2. Remover turmas que não estão mais no payload
-#             turmas_to_remove = updated_curso.turmas.exclude(id__in=existing_turmas_ids)
-#             turmas_to_remove.delete()  # Exclui as turmas que não estão mais associadas ao curso
-
-#         # Retorna a resposta de sucesso
-#         return Response({'id': updated_curso.id, 'message': 'Curso atualizado com sucesso!'}, status=status.HTTP_200_OK)
-
-#     else:
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['PUT'])
 @permission_classes([GestaoEscolar])
