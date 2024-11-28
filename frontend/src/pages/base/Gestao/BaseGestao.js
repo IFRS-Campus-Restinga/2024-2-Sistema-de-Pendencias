@@ -89,7 +89,7 @@ const BaseGestao = () => {
         },
         {
         name: "Disciplinas",
-        link: `${homeUrl}/cadastroDisciplina`
+        link: `${homeUrl}/disciplinas`
         },
         ]}
         icone={<FontAwesomeIcon icon={faClipboardList}  color='black' size="xl"/>}

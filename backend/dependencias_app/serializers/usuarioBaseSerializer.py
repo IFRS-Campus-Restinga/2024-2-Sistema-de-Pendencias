@@ -47,19 +47,25 @@ class UsuarioBaseSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        fields_to_check = ['cpf', 'matricula', 'data_nascimento', 'telefone']
-        for field in fields_to_check:
-            if representation.get(field) is None:
-                representation.pop(field)
-        
-        representation.pop('primeiro_login')
-        representation.pop('is_active')
+        request = self.context.get('request', None)
+        retorno = request and request.query_params.get('retorno')
 
-        if instance.is_active:
-            representation['ativo'] = 'Ativo'
-        else:
-            representation['ativo'] = 'Inativo'
+        if retorno == 'listar':
+            fields_to_check = ['cpf', 'matricula', 'data_nascimento', 'telefone']
+
+            for field in fields_to_check:
+                if representation.get(field) is None:
+                    representation.pop(field)
+            
+            representation.pop('primeiro_login')
+            representation.pop('is_active')
+
+            if instance.is_active:
+                representation['ativo'] = 'Ativo'
+            else:
+                representation['ativo'] = 'Inativo'
 
         
         representation['grupo'] = instance.grupo.name if instance.grupo else None
+
         return representation

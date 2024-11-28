@@ -1,0 +1,96 @@
+.sectionListarPPT {
+    display: flex;
+    width: 100%;
+    padding: 5px;
+    max-height: 50%;
+}
+
+.labelListarPPT {
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.divListarPPT {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    padding: 5px;
+}
+
+.containerButton {
+    display: flex;
+    justify-content: center;
+    margin-top: 45px;
+}
+
+.containerTabelaListarPPT {
+    width: 100%;
+    max-height: 250px;
+    overflow-y: scroll;
+    max-width: 100%;
+    overflow-x: scroll;
+}
+
+.statusOption {
+    width: 100%;
+    padding: 5px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    outline: none;
+    margin-top: 7px;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+
+.containerBuscarPPT {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+  }
+  
+  .buscaBarPPT {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #006b3f;
+    border: 1px solid #006b3f;
+    border-radius: 8px;
+    padding: 5px 10px;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .buscaBarPPT input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    outline: none;
+  }
+  
+  .buscaBarPPT .iconeAcoes {
+    border-color: white;
+  }
+  
+  .iconesBuscarPPT {
+    max-width: 15px;
+    max-height: 15px;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  
+  .iconeAdicionarPPT {
+    max-width: 40px;
+    max-height: 40px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    color: #006b3f;
+    margin-left: 15px;
+    margin-top: 10px;
+  }

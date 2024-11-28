@@ -19,6 +19,7 @@ import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendari
 import CadastroCalendarioAcademicoPage from './pages/base/Gestao/calendario/calendarioAcademico/cadastroCalendarioAcademico'
 import ListarCalendariosAcademicosPage from './pages/base/Gestao/calendario/calendarioAcademico/listaCalendariosAcademicos'
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
+import ListarDisciplina from './pages/base/Gestao/listarDisciplina/ListarDisciplina'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 import DetalhesServidor from './pages/base/Gestao/detalhesServidor/DetalhesServidor'
 import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
@@ -28,7 +29,8 @@ import ListarAluno from './pages/base/Gestao/listarAluno/ListarAluno'
 import DetalhesAluno from './pages/base/Gestao/detalhesAluno/DetalhesAluno'
 
 // Filhos de Registro
-
+import HomeRegistro from './pages/base/Registro/home/homeRegistro'
+import ListarPPTRegistro from './pages/base/Registro/listarPPT/listarPPT'
 // Filhos de Coordenador
 
 // Filhos de Professor
@@ -40,6 +42,7 @@ import AtividadesDesenvolvidas from './pages/base/Professor/atividadesDesenvolvi
 import AdicionarAtividade from './pages/base/Professor/atividadesDesenvolvidas/adicionarAtividade/adicionarAtividade'
 import DetalhesAtividade from './pages/base/Professor/atividadesDesenvolvidas/detalhesAtividade/detalhesAtividade'
 import DetalhesPEDProfessor from './pages/base/Professor/detalhesPED/DetalhesPEDProfessor'
+import DetalhesPlanoEstudos from './pages/base/Professor/detalhesPlanoEstudos/DetalhesPlanoEstudos'
 
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
@@ -48,6 +51,8 @@ import ListarPPT from './pages/base/Gestao/listarPPT/ListarPPT'
 import ListarPEDEMI from './pages/base/Gestao/listarPED_EMI/ListarPED_EMI'
 import ListarPEDProEJA from './pages/base/Gestao/listarPED_ProEJA/ListarPED_ProEJA'
 import ListarPEDProEJAProfessor from './pages/base/Professor/listarPED_ProEJAProfessor/ListarPED_ProEJAProfessor'
+import DetalhesCurso from './pages/base/Gestao/detalhesCurso/DetalhesCurso'
+
 
 const router = createBrowserRouter([
     {
@@ -90,6 +95,18 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/cursos',
                 element: <ListarCurso />
+            },
+            {
+                path: ':idUsuario/cursos/:idCurso',
+                element: <DetalhesCurso />
+            },
+            {
+                path: ':idUsuario/cursos/:idCurso/editar',
+                element: <CadastroCurso />
+            },
+            {
+                path: ':idUsuario/disciplinas',
+                element: <ListarDisciplina />
             },
             {
                 path: ':idUsuario/eventoCalendario',
@@ -140,7 +157,7 @@ const router = createBrowserRouter([
                 element: <DetalhesPPT />
             },
             {
-                path: ':idUsuario/ppts/:idPpt/editarPPT',
+                path: ':idUsuario/ppts/:idPpt/editar',
                 element: <CadastroPPT />
             },
             {
@@ -164,7 +181,7 @@ const router = createBrowserRouter([
                 element: <PlanoEstudos />
             },
             {
-                path: ':idUsuario/servidores/:idServidor/editarServidor',
+                path: ':idUsuario/servidores/:idServidor/editar',
                 element: <CadastroServidor />
             },
             {
@@ -184,7 +201,16 @@ const router = createBrowserRouter([
     {
         path: '/sessao/Registro Escolar/',
         element: <BaseRegistro />,
-        // adicionar abaixo, as children de registro
+        children: [
+            {
+                path: ':idUsuario/',
+                element: <HomeRegistro />
+            },
+            {
+                path: ':idUsuario/listarPPTregistro',
+                element: <ListarPPTRegistro />
+            }
+        ]
     },
     // Rotas de Coordenador
     {
@@ -218,6 +244,10 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/peds-emi/:pedId',
                 element: <DetalhesPEDProfessor />
+            },
+            {
+                path: ':idUsuario/peds-emi/:pedId/detalhesPlanoEstudos',
+                element: <DetalhesPlanoEstudos />
             },
             {
                 path: ':idUsuario/peds-proeja/:pedId',

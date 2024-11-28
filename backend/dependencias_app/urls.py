@@ -87,7 +87,11 @@ urlpatterns = [
     #path('cadastrar-plano-estudos/', cadastrar_plano_estudos),
     path('cadastrar-plano-estudos/<int:pedId>/', cadastrar_plano_estudos),
     path('desativar-ped/<int:pedId>/<str:modalidade>/', desativar_PED),
+    path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
 
+    #path('detalhes-planoEstudos/<str:ped_tipo>/<int:ped_id>/<int:ped_id>/', detalhes_planoEstudos, name='detalhes_planoEstudos'),
+    # urls.py
+    path('detalhes-planoEstudos/<int:ped_id>/', detalhes_planoEstudos, name='detalhes_planoEstudos'),
 
     #views para atividades da ped
     path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),

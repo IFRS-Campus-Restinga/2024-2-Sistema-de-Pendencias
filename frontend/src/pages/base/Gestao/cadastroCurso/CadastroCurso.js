@@ -16,9 +16,9 @@ const CadastroCurso = () => {
   const formRef = useRef();
   const navigate = useNavigate();
   const location = useLocation();
-  const { curso } = location.state || {};  // Pegando o cursoId se presente
+  const { state } = location || {};  // Pegando o cursoId se presente
 
-  const [modalidade, setModalidade] = useState(curso ? curso.modalidade : 'Integrado');
+  const [modalidade, setModalidade] = useState(state ? state.modalidade : 'Integrado');
   const [opcoesCoordenadores, setOpcoesCoordenadores] = useState([]);
   const [formData, setFormData] = useState({
     nome: '',
@@ -34,22 +34,6 @@ const CadastroCurso = () => {
 
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
-
-  useEffect(() => {
-    if (curso) {
-      setModalidade(curso.modalidade);
-      setFormData({
-        modalidade: curso.modalidade,
-        nome: curso.nome,
-        carga_horaria: curso.carga_horaria,
-        coordenador: curso.coordenador.id,  // Garantindo que o coordenador seja um valor simples
-        turmas: curso.turmas || []  // Garantir que turmas seja um array
-      });
-      setDadosFormEdicao({
-        coordenador: curso.coordenador.email
-      });
-    }
-  }, [curso]);
 
   const trocaModalidade = (novoValor) => {
     setModalidade(novoValor);
@@ -83,15 +67,13 @@ const CadastroCurso = () => {
 
     const erros = validarFormularioCurso(formData);
 
-    console.log(erros);
-
     if (Object.keys(erros).length !== 0) {
       setShowErrorMessage(true);
       setErrors(erros);
     } else {
       try {
-        const response = curso 
-          ? await cursoService.update(curso.id, formData)  // Atualiza curso se estiver editando
+        const response = state 
+          ? await cursoService.update(state.id, formData)  // Atualiza curso se estiver editando
           : await cursoService.create(formData);  // Cria curso se for um novo
 
         if (response.status !== 200 && response.status !== 201) {
@@ -112,14 +94,7 @@ const CadastroCurso = () => {
         setErrors({});
         setShowErrorMessage(false);
 
-        // Se houver campos adicionais de edição (como coordenador), resetar também
-        setDadosFormEdicao({ coordenador: '' });
-
-        // Resetar o formRef (isso limpa os inputs visuais)
-        formRef.current.reset();
-
-        // Exibir mensagem de sucesso
-        toast.success(curso ? "Curso editado com sucesso!" : "Curso cadastrado com sucesso!", {
+        toast.success(state ? "Curso editado com sucesso!" : "Curso cadastrado com sucesso!", {
           position: "bottom-center",
           autoClose: 3000,
           style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
@@ -154,12 +129,10 @@ const CadastroCurso = () => {
 
   // Função para adicionar uma nova turma
   const addTurma = () => {
-    if (!curso) {  // Adiciona turmas apenas se não for uma edição de curso
-      setFormData((prevData) => ({
-        ...prevData,
-        turmas: [...prevData.turmas, { numero: '' }],  // Adiciona uma turma vazia
-      }));
-    }
+    setFormData((prevData) => ({
+      ...prevData,
+      turmas: [...prevData.turmas, { numero: ''}],  // Adiciona uma turma vazia
+    }));
   };
 
   // Função para manipular mudança nos números das turmas
@@ -176,10 +149,27 @@ const CadastroCurso = () => {
     setFormData((prevData) => ({ ...prevData, turmas: updatedTurmas }));
   };
 
+  const fetchCurso = async () => {
+    try {
+      const res = await cursoService.getCursoById(state.id)
+
+      if (res.status !== 200) throw new Error(res)
+
+      setFormData(res.data)
+      setDadosFormEdicao({...dadosFormEdicao, coordenador: state.coordenador})
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    if (state) fetchCurso()
+  }, [state])
+
   return (
     <>
       <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo={curso ? 'Editar Curso' : 'Cadastrar Curso'} comprimento='70%' ref={formRef}>
+      <FormContainer onSubmit={handleSubmit} titulo={state ? 'Editar Curso' : 'Cadastrar Curso'} comprimento='70%' ref={formRef}>
         {showErrorMessage && <p className="error">* Preencha os campos obrigatórios</p>}
 
         <div className="modalidade-container">
@@ -251,7 +241,7 @@ const CadastroCurso = () => {
 
         {modalidade === 'Integrado' && (
           <div className="add-turma">
-            {!curso && (  // Apenas mostra o botão de adicionar turma se não for um curso editado
+            {!state && (  // Apenas mostra o botão de adicionar turma se não for um curso editado
               <button type="button" onClick={addTurma} className="add-button">
                 <FontAwesomeIcon
                   icon={faPlusCircle}
@@ -280,11 +270,7 @@ const CadastroCurso = () => {
                             textoAjuda='Ex.: 2023/1 ou 211'
                           />
                         </td>
-                        <td>
-                          <button
-                            className="botaoRemoverTurma"
-                            onClick={() => removeTurma(index)}
-                          >
+                        <td onClick={() => removeTurma(index)}>
                             <FontAwesomeIcon
                               icon={faTrash}
                               style={{
@@ -293,7 +279,6 @@ const CadastroCurso = () => {
                                 cursor: "pointer"
                               }}
                             />
-                          </button>
                         </td>
                       </tr>
                     ))}
@@ -304,7 +289,7 @@ const CadastroCurso = () => {
           </div>
         )}
 
-        <Button tipo='submit' text={curso ? 'Salvar Alterações' : 'Cadastrar Curso'} />
+        <Button tipo='submit' text={state ? 'Salvar Alterações' : 'Cadastrar Curso'} />
       </FormContainer>
     </>
   );

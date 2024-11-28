@@ -147,7 +147,8 @@
 }
 
 .checkboxDisciplina:checked+.linhaTabelaDisciplina {
-    background-color: #bdbdbd;
+    background-color: #006b3f;
+    color: white;
     /* Estilo quando o checkbox estiver marcado */
 }
 

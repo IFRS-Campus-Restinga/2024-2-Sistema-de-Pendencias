@@ -58,7 +58,7 @@ const DetalhesPED = () => {
   return (
     <FormContainer
       titulo={`Detalhes da PED - ${state.serie_progressao ? "EMI" : "ProEJA"}`}
-      comprimento="90%"
+      comprimento="60%"
     >
       {state.serie_progressao ? (
         <>
@@ -68,7 +68,7 @@ const DetalhesPED = () => {
             </span>
             <label className="labelStatusPED">Andamento da PED</label>
           </label>
-          <section className="sectionDetalhesPED">
+          <section className="sectionDetalhesPEDEMI">
             <div className="divDetalhesPED">
               <label className="labelDetalhesPED">
                 Docente responsável pela progressão
@@ -99,7 +99,7 @@ const DetalhesPED = () => {
                 <p className="pDetalhesPED">{state.turma_atual}</p>
               </label>
             </div>
-            <div className="divStatusPED">
+            <div className="divStatusPEDEMI">
               <StatusBalls status={detalhesPED.status} />
               <span className="spanDetalhesPED">
                 <Link to={"planoEstudos"}>
@@ -162,6 +162,7 @@ const DetalhesPED = () => {
         Observação
         <p className="pDetalhesPED">{state.observacao}</p>
       </label>
+      <div className="buttons-ped">
       <span className="spanDetalhesPED">
         {detalhesPED.status !== "Desativado" && (
           <>
@@ -172,6 +173,7 @@ const DetalhesPED = () => {
           </>
         )}
       </span>
+      </div>
 
       <Modal
         estaAberto={modalAberto}

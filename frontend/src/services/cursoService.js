@@ -13,7 +13,11 @@ export const cursoService = {
 
     list: async () => {
         try {
-            const response = await api.get(`/api/listar-cursos/`);
+            const response = await api.get(`/api/listar-cursos/`, {
+                params: {
+                    retorno: 'lista'
+                }
+            });
             return response;
         } catch (error) {
             console.error('Erro ao listar cursos:', error);

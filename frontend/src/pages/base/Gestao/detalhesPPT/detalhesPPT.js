@@ -10,7 +10,7 @@ const DetalhesPPT = () => {
   const [detalhesPPT, setDetalhesPPT] = useState({});
   const { idPpt } = useParams();
   const location = useLocation();
-  const { state } = location
+  const { state } = location;
   const navigate = useNavigate();
 
   const [modalAberto, setModalAberto] = useState(false);
@@ -42,7 +42,6 @@ const DetalhesPPT = () => {
       },
     });
   };
-  
 
   const handleDesativarClick = async () => {
     try {
@@ -62,8 +61,8 @@ const DetalhesPPT = () => {
 
   useEffect(() => {
     fetchDetalhes();
-    setDetalhesPPT(state)
-    console.log(state)
+    setDetalhesPPT(state);
+    console.log(state);
   }, [idPpt]);
 
   return (
@@ -76,15 +75,12 @@ const DetalhesPPT = () => {
         <div className="green-bar">
           <h2>Andamento da PPT</h2>
         </div>
-
-        <StatusBalls status={detalhesPPT.status} />
+        <div className="mainContent">
 
         <div className="infos">
           <div className="info-item">
             <h3 className="h3-info">Matrícula:</h3>
-            <span className="info-value">
-              {detalhesPPT.aluno || "-"}
-            </span>
+            <span className="info-value">{detalhesPPT.aluno || "-"}</span>
           </div>
           <div className="info-item">
             <h3 className="h3-info">Curso:</h3>
@@ -92,9 +88,7 @@ const DetalhesPPT = () => {
           </div>
           <div className="info-item">
             <h3 className="h3-info">Turma:</h3>
-            <span className="info-value">
-              {detalhesPPT.turma_atual || "-"}
-            </span>
+            <span className="info-value">{detalhesPPT.turma_atual || "-"}</span>
           </div>
           <div className="info-item">
             <h3 className="h3-info">Turma da PPT:</h3>
@@ -120,6 +114,10 @@ const DetalhesPPT = () => {
               disabled
             />
           </div>
+        </div>
+        <div className="statusPPT">
+          <StatusBalls status={detalhesPPT.status} />
+        </div>
         </div>
       </div>
 
