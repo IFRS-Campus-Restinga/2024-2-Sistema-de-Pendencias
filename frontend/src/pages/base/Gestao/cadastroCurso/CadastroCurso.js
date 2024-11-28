@@ -241,7 +241,7 @@ const CadastroCurso = () => {
 
         {modalidade === 'Integrado' && (
           <div className="add-turma">
-            {!curso && (  // Apenas mostra o botão de adicionar turma se não for um curso editado
+            {!state && (  // Apenas mostra o botão de adicionar turma se não for um curso editado
               <button type="button" onClick={addTurma} className="add-button">
                 <FontAwesomeIcon
                   icon={faPlusCircle}
