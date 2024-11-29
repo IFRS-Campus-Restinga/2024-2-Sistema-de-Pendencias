@@ -44,6 +44,7 @@ import DetalhesAtividade from './pages/base/Professor/atividadesDesenvolvidas/de
 import DetalhesPEDProfessor from './pages/base/Professor/detalhesPED/DetalhesPEDProfessor'
 import DetalhesPlanoEstudos from './pages/base/Professor/detalhesPlanoEstudos/DetalhesPlanoEstudos'
 
+
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
@@ -250,10 +251,7 @@ const router = createBrowserRouter([
                 path: ':idUsuario/peds-emi/:pedId',
                 element: <DetalhesPEDProfessor />
             },
-            {
-                path: ':idUsuario/peds-emi/:pedId/detalhesPlanoEstudos',
-                element: <DetalhesPlanoEstudos />
-            },
+            
             {
                 path: ':idUsuario/peds-proeja/:pedId',
                 element: <DetalhesPEDProfessor />
@@ -266,6 +264,11 @@ const router = createBrowserRouter([
                 path: ':idUsuario/peds-proeja/:pedId/planoEstudos',
                 element: <PlanoEstudos />
             },
+            {
+                path: ':idUsuario/peds-emi/:pedId/planoEstudos/:pedId/detalhes',
+                element: <DetalhesPlanoEstudos />
+            },
+              
             {
                 path: ':idUsuario/atividades/:pedTipo/:pedId',
                 element: <AtividadesDesenvolvidas />

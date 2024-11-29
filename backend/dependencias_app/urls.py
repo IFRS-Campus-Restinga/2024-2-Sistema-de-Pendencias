@@ -93,9 +93,14 @@ urlpatterns = [
     path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
     path('aluno/peds/', listar_peds_aluno, name='listar_peds_aluno'),
 
-    #path('detalhes-planoEstudos/<str:ped_tipo>/<int:ped_id>/<int:ped_id>/', detalhes_planoEstudos, name='detalhes_planoEstudos'),
-    # urls.py
-    path('detalhes-planoEstudos/<int:ped_id>/', detalhes_planoEstudos, name='detalhes_planoEstudos'),
+    
+
+    path('detalhes-plano-estudos/<int:ped_id>/', detalhes_plano_estudos, name='detalhes_plano_estudos'),
+
+
+
+
+
 
     #views para atividades da ped
     path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),

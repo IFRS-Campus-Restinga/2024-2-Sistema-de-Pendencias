@@ -1,29 +1,23 @@
 import { api } from "../config/axiosConfig";
-import DetalhesPlanoEstudos from "../pages/base/Professor/detalhesPlanoEstudos/DetalhesPlanoEstudos";
 
 export const PlanoEstudosService = {
   create: async (formData) => {
     const { pedId } = formData; // Extrai pedId do formData
     return api.post(`/api/cadastrar-plano-estudos/${pedId}/`, formData); // Inclui pedId na URL
   },
+ 
 
-// Método para visualizar os detalhes do plano de estudos
-DetalhesPlanoEstudos: async (pedId) => {
-  try {
-    // Fazendo a requisição para o backend para buscar os detalhes do plano de estudos
-    const res = await api.get(`/api/detalhes-planoEstudos/${pedId}/`);
-    return res.data;  // Retorna os dados da resposta caso a requisição seja bem-sucedida
-  } catch (erro) {
-    // Trata o erro e retorna uma resposta clara de falha
-    console.error(`Erro ao visualizar plano de estudos com ID ${pedId}:`, erro);
-    return {
-      sucesso: false,
-      mensagem: erro.response?.data?.mensagem || 'Erro ao tentar visualizar o plano de estudos.',
-      status: erro.response?.status || 500
-    };
+  buscarPlanoEstudo: async (pedId) => {
+    try {
+      const response = await api.get(`api/detalhes-plano-estudos/${pedId}/`);  // A URL está correta
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao buscar detalhes do plano de estudos:", error);
+      throw error;
+    }
   }
-}
 };
+  
 
 
 // import { api } from "../config/axiosConfig";
