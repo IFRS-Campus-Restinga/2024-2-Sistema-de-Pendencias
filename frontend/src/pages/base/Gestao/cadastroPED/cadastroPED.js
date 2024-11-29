@@ -12,6 +12,7 @@ import { PEDService } from "../../../../services/pedService";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
+import { calendarioAcademicoService } from "../../../../services/calendarioAcademicoService";
 
 const CadastroPED = () => {
   const location = useLocation()
@@ -22,6 +23,7 @@ const CadastroPED = () => {
   const [turmas, setTurmas] = useState([])
   const [opcoesAlunos, setOpcoesAlunos] = useState([])
   const [opcoesProfessores, setOpcoesProfessores] = useState([])
+  const [opcoesCalendarios, setOpcoesCalendarios] = useState([])
   const [errors, setErrors] = useState({});
   const [desabilitado, setDesabilitado] = useState(false)
   const [formData, setFormData] = useState({
@@ -81,6 +83,7 @@ const CadastroPED = () => {
   const trocaModalidade = (novoValor) => {
     if (!state) {
       setModalidade(novoValor);
+      const calendariosFiltrados = opcoesCalendarios.filter((calendario) => calendario.tipo_calendario === novoValor)
       if (novoValor === 'Integrado') {
         setFormData({
           aluno: '',
@@ -263,6 +266,22 @@ const CadastroPED = () => {
     }
   }
 
+  const fetchCalendarios = async (e) => {
+    try {
+      const res = await calendarioAcademicoService.listarCalendariosAcademicos()
+
+      if (res.status !== 200) throw new Error(res)
+
+      console.log(res.data)
+
+      const calendariosFiltrados = res.data.filter((calendario) => calendario.tipo_calendario === modalidade)
+
+      setOpcoesCalendarios(calendariosFiltrados)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   useEffect(() => {
     if (state) {
       fetchPED(state.id)
@@ -295,6 +314,7 @@ const CadastroPED = () => {
     }
 
     fetchCursos()
+    fetchCalendarios()
   }, [modalidade, state])
 
   return (
@@ -441,6 +461,35 @@ const CadastroPED = () => {
                         <label className="labelTrimestreRec" htmlFor="3">3º Trimestre</label>
                       </div>
                     </label>
+                    <label className="labelCadastroPED">
+                    Período Letivo *
+                    <select className={errors.periodo_letivo ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="periodo_letivo"
+                      value={formData.periodo_letivo}
+                      disabled={desabilitado}
+                      onChange={(e) => {                        
+                        const periodo_letivoId = e.target.value;
+                        
+                        const periodo_letivo = opcoesCalendarios.find(periodo_letivo => periodo_letivo.id === Number(periodo_letivoId)); // Encontra o periodo_letivo correspondente
+                        
+                        if (periodo_letivo) {
+                          setFormData({...formData, periodo_letivo: Number(e.target.value)})
+                          setDisciplinas(periodo_letivo.disciplinas);
+                          setTurmas(periodo_letivo.turmas)
+                        }
+                      }
+                    }>
+                      {
+                        !state ? (
+                          <option className="optionCadastroPED" value=''>{'Selecione um período letivo'}</option>
+                        ) : (<></>)
+                      }
+                      {
+                        opcoesCalendarios.map((calendario, index) => (
+                          <option className="optionCadastroPED" value={calendario.id} key={index}>{calendario.titulo}</option>
+                        ))
+                      }
+                    </select>
+                    </label>
                 </div>
               </section>
               <section className="sectionCadastroPED">
@@ -488,7 +537,7 @@ const CadastroPED = () => {
                         ) : (<></>)
                       }
                       {
-                        disciplinas.map((disciplina, index) => (
+                        disciplinas?.map((disciplina, index) => (
                           <option className="optionCadastroPED" value={disciplina.id} key={index}>{disciplina.nome}</option>
                         ))
                       }
@@ -520,7 +569,7 @@ const CadastroPED = () => {
                   {errors.turma_serie ? <p style={{color: 'red', fontSize: '10px'}}>{errors.turma_serie}</p> : <></>}
                 </label>
                 <label className="labelCadastroPED">
-                  Turma Origem *
+                  Turma Atual *
                   <select
                     className={errors.turma_atual || errors.turma_serie ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
                     value={formData.turma_atual}
@@ -535,7 +584,7 @@ const CadastroPED = () => {
                         ) : (<></>)
                       }
                       {
-                        turmas.map((turma, index) => (
+                        turmas?.map((turma, index) => (
                           <option className="optionCadastroPED" value={turma.id} key={index}>{turma.numero}</option>
                         ))
                       }
@@ -715,6 +764,35 @@ const CadastroPED = () => {
                   textoAjuda='Insira no formato Ano/Semestre - xxxx/x'
                   desabilitado={desabilitado}
                 />
+              </label>
+              <label className="labelCadastroPED">
+                    Período Letivo *
+                    <select className={errors.periodo_letivo ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="periodo_letivo"
+                      value={formData.periodo_letivo}
+                      disabled={desabilitado}
+                      onChange={(e) => {                        
+                        const periodo_letivoId = e.target.value;
+                        
+                        const periodo_letivo = opcoesCalendarios.find(periodo_letivo => periodo_letivo.id === Number(periodo_letivoId)); // Encontra o periodo_letivo correspondente
+                        
+                        if (periodo_letivo) {
+                          setFormData({...formData, periodo_letivo: Number(e.target.value)})
+                          setDisciplinas(periodo_letivo.disciplinas);
+                          setTurmas(periodo_letivo.turmas)
+                        }
+                      }
+                    }>
+                      {
+                        !state ? (
+                          <option className="optionCadastroPED" value=''>{'Selecione um período letivo'}</option>
+                        ) : (<></>)
+                      }
+                      {
+                        opcoesCalendarios.map((calendario, index) => (
+                          <option className="optionCadastroPED" value={calendario.id} key={index}>{calendario.titulo}</option>
+                        ))
+                      }
+                    </select>
               </label>
             </>
           )

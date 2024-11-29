@@ -6,6 +6,7 @@ from .curso import Curso
 from .turma import Turma
 from .formEncerramento import FormEncerramento
 from .planoEstudos import PlanoEstudos
+from .calendarioAcademico import CalendarioAcademico
 from dependencias_app.enums.trimestreRec import TrimestreRec
 from dependencias_app.enums.serieProgressao import SerieProgressao
 from django.core.validators import FileExtensionValidator
@@ -19,6 +20,7 @@ class PED_EMI(Dependencia):
     trimestre_recuperar = models.CharField(null=False, blank=False, choices=TrimestreRec.choices, max_length=10)
     serie_progressao = models.CharField(null=False, blank=False, choices=SerieProgressao.choices, max_length=6)
     turma_atual = models.ForeignKey(Turma, on_delete=models.DO_NOTHING)
+    periodo_letivo = models.ForeignKey(CalendarioAcademico, on_delete=models.DO_NOTHING, related_name='periodo_letivo_emi')
     plano_estudos = models.OneToOneField(PlanoEstudos, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='plano_estudos_emi')
     form_encerramento = models.OneToOneField(FormEncerramento, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='form_encerramento_emi')
     plano_atividades = models.FileField(upload_to='plano_atividades/', null=True, blank=True, validators=[FileExtensionValidator(allowed_extensions=['pdf'])])

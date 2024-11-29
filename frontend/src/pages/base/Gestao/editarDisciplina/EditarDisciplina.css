@@ -7,6 +7,7 @@
 .divEditarDisciplina {
     width: 100%;
     display: flex;
+    justify-content: space-between;
 }
 
 .containerTabelaEditarDisciplina {
@@ -17,4 +18,8 @@
 .sectionEditarDisciplina {
     display: flex;
     width: 100%;
+}
+
+.pEditarDisciplina {
+    margin: auto;
 }

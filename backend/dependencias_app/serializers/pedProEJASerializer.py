@@ -3,11 +3,8 @@ from google_auth.models import UsuarioBase
 from dependencias_app.models.curso import Curso
 from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.pedProEJA import PED_ProEJA
-from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
-from dependencias_app.serializers.cursoSerializer import CursoSerializer
-from dependencias_app.serializers.disciplinaSerializer import DisciplinaSerializer
-from dependencias_app.serializers.planoEstudosSerializer import PlanoEstudos_Serializer
-from dependencias_app.serializers.formEncerramentoSerializer import FormEncerramentoSerializer
+from dependencias_app.models.calendarioAcademico import CalendarioAcademico
+
 
 class PED_ProEJA_Serializer(serializers.ModelSerializer):
     # variáveis de entrada do serializer (POST), recebe as chaves primárias para vincular as tabelas
@@ -15,6 +12,7 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
     professor_disciplina = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
     professor_ped = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
     curso = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.filter(modalidade='ProEJA'))
+    periodo_letivo = serializers.PrimaryKeyRelatedField(queryset=CalendarioAcademico.objects.filter(tipo_calendario='ProEJA'))
     disciplina = serializers.PrimaryKeyRelatedField(queryset=Disciplina.objects.all())
 
     class Meta:
@@ -57,6 +55,7 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
             representation['professor_ped'] = str(instance.professor_ped)
             representation['curso'] = str(instance.curso)
             representation['disciplina'] = str(instance.disciplina)
+            representation['periodo_letivo'] = instance.periodo_letivo.titulo
             
         representation.pop('data_criacao')
         representation.pop('plano_estudos')

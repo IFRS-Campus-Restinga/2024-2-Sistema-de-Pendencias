@@ -125,15 +125,18 @@ const EditarDisciplina = () => {
                             <thead>
                                 <tr>
                                     <th>Cursos</th>
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {
                                     cursos.map((curso) => (
                                         <tr onClick={() => vincularCurso(curso)}>
-                                            <td>{curso.nome}</td>
-                                            <td><FontAwesomeIcon icon={faAnglesRight}/></td>
+                                            <td>
+                                                <div className="divEditarDisciplina">
+                                                    <p className="pEditarDisciplina">{curso.nome}</p>
+                                                    <FontAwesomeIcon icon={faAnglesRight}/>
+                                                </div>
+                                            </td>
                                         </tr>
                                     ))
                                 }
@@ -144,16 +147,19 @@ const EditarDisciplina = () => {
                         <table>
                             <thead>
                                 <tr>
-                                    <th></th>
                                     <th>Cursos da Disciplina</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {
                                     cursosVinculados.map((curso) => (
-                                        <tr onClick={() => desvincularCurso(curso)}>
-                                            <td><FontAwesomeIcon icon={faAnglesLeft}/></td>
-                                            <td>{curso.nome}</td>
+                                        <tr onClick={() => desvincularCurso(curso)} className="trEditarDisciplina">
+                                            <td>
+                                            <div className="divEditarDisciplina">
+                                                    <FontAwesomeIcon icon={faAnglesLeft}/>
+                                                    <p className="pEditarDisciplina">{curso.nome}</p>
+                                                </div>
+                                            </td>
                                         </tr>
                                     ))
                                 }
