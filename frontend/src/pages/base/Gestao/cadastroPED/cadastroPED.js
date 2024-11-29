@@ -569,7 +569,7 @@ const CadastroPED = () => {
                   {errors.turma_serie ? <p style={{color: 'red', fontSize: '10px'}}>{errors.turma_serie}</p> : <></>}
                 </label>
                 <label className="labelCadastroPED">
-                  Turma Origem *
+                  Turma Atual *
                   <select
                     className={errors.turma_atual || errors.turma_serie ? 'errorSelectCadastroPED' : 'selectCadastroPED'}
                     value={formData.turma_atual}
