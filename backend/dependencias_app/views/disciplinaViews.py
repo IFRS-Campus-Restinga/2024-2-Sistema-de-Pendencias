@@ -69,30 +69,16 @@ def buscar_disciplina(request, disciplinaId):
 
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
-def vincular_disciplina(request, disciplinaId, cursoId):
+def editar_disciplina(request, disciplinaId):
     try:
         disciplina = get_object_or_404(Disciplina, pk=disciplinaId)
-        curso = get_object_or_404(Curso, pk=cursoId)
 
-        disciplina.cursos.add(curso)
+        serializer = DisciplinaSerializer(disciplina, data=request.data)
 
-        serializer = DisciplinaSerializer(disciplina)
+        if not serializer.is_valid(): raise Exception(serializer.errors)
+
+        serializer.save()
         
         return Response(serializer.data ,status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    
-@api_view(['POST'])
-@permission_classes([GestaoEscolar])
-def desvincular_disciplina(request, disciplinaId, cursoId):
-    try:
-        disciplina = get_object_or_404(Disciplina, pk=disciplinaId)
-        curso = get_object_or_404(Curso, pk=cursoId)
-
-        disciplina.cursos.remove(curso)
-
-        serializer = DisciplinaSerializer(disciplina)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)

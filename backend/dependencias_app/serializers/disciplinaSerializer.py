@@ -1,7 +1,10 @@
 from rest_framework import serializers
 from dependencias_app.models.disciplina import Disciplina
+from dependencias_app.models.curso import Curso
 
 class DisciplinaSerializer(serializers.ModelSerializer):
+    cursos = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.all(), many=True)
+
     class Meta:
         model = Disciplina
         fields = '__all__'
@@ -13,8 +16,19 @@ class DisciplinaSerializer(serializers.ModelSerializer):
         formDisciplina.save()
         return formDisciplina
     
+    def update(self, instance, validated_data):
+        cursos_data = validated_data.pop('cursos', None)
+
+        # Atualiza outros campos normalmente
+        instance = super().update(instance, validated_data)
+
+        if cursos_data is not None:
+            # Define os cursos relacionados diretamente
+            instance.cursos.set(cursos_data)
+
+        return instance
+
     def to_representation(self, instance):
-        from dependencias_app.serializers.cursoSerializer import CursoSerializer
         representation = super().to_representation(instance)
 
         request = self.context.get('request', None)

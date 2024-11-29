@@ -1,4 +1,5 @@
 import { api } from "../config/axiosConfig"
+import EditarDisciplina from "../pages/base/Gestao/editarDisciplina/EditarDisciplina"
 
 export const disciplinaService = {
   create: async (params) => {
@@ -29,16 +30,8 @@ export const disciplinaService = {
     return res
   },
 
-  vincular: async (disciplinaId, cursoId) => {
-    const res = await api.post(`api/disciplina/vincular/${disciplinaId}/${cursoId}/`).catch((erro) => {
-      return erro
-    })
-
-    return res
-  },
-
-  desvincular: async (disciplinaId, cursoId) => {
-    const res = await api.post(`api/disciplina/desvincular/${disciplinaId}/${cursoId}/`).catch((erro) => {
+  editar: async (params, disciplinaId) => {
+    const res = await api.post(`api/disciplina/editar/${disciplinaId}/`, params).catch((erro) => {
       return erro
     })
 
