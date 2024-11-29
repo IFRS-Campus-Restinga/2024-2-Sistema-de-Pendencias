@@ -53,8 +53,6 @@ const CadastroDisciplina = () => {
     e.preventDefault();
 
     const erros = validarFormularioDisciplina(formData)
-
-
     
     if(erros.curso === '' && erros.novasDisciplinas.some((erro) => Object.keys(erro).length !== 0)) {
       setErrors(erros)

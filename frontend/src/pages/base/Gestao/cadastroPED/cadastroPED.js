@@ -243,7 +243,7 @@ const CadastroPED = () => {
 
   const fetchPED = async (pedId) => {
     try {
-      const res = await PEDService.porId(pedId, modalidade)
+      const res = await PEDService.porId(pedId, modalidade, true)
 
       if (res.status !== 200) throw new Error(res)
 
