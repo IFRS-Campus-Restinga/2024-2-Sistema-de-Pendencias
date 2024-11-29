@@ -3,11 +3,12 @@ import FormContainer from "../../../../components/FormContainer/FormContainer"
 import { useEffect, useState } from "react"
 import { disciplinaService } from "../../../../services/disciplinaService"
 import Input from "../../../../components/Input/Input"
-import cursoService from "../../../../services/cursoService"
 import './EditarDisciplina.css'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faAnglesRight, faAnglesLeft } from "@fortawesome/free-solid-svg-icons"
 import Button from "../../../../components/Button/Button"
+import { validarFormEditarDisciplina } from "./validacoes"
+import {ToastContainer, toast} from 'react-toastify'
 
 const EditarDisciplina = () => {
     const location = useLocation()
@@ -21,34 +22,62 @@ const EditarDisciplina = () => {
         cursos: []
     })
 
-    const handleSubmit = () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault()
 
-    }
+        const erros = validarFormEditarDisciplina(formData)
 
-    const desvincularCurso = async (cursoId) => {
-        setFormData({...formData, cursos: formData.cursos.append(cursoId)})
-        try {
-            const res = await disciplinaService.desvincular(state.id, cursoId)
+        if (Object.keys(erros).length !== 0) setErrors(erros)
+        else {
+            try {
+                const res = await disciplinaService.editar(formData, state.id)
 
-            if (res.status !== 200) throw new Error(res)
+                if (res.status !== 200) throw new Error(res)
 
-            fetchDisciplina()
-        } catch (error) {
-            console.error(error)
+                setFormData({
+                    nome: '',
+                    carga_horaria: '',
+                    cursos: []
+                })
+
+                toast.success("Disciplinas cadastradas e vinculadas ao curso com sucesso!", {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
+                    progressStyle: { backgroundColor: '#fff' }
+                });
+
+            } catch (error) {
+                console.error(error)
+
+                toast.error('Erro ao cadastrar curso, tente novamente', {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    style: { backgroundColor: '#d11c28', color: '#fff', textAlign: 'center' },
+                    progressStyle: { backgroundColor: '#fff' }
+                  });
+            }
         }
+
     }
 
-    const vincularCurso = async (cursoId) => {
-        try {
-            const res = await disciplinaService.vincular(state.id, cursoId)
-
-            if (res.status !== 200) throw new Error(res)
-
-            fetchDisciplina()
-        } catch (error) {
-            console.error(error)
-        }
-    }
+    const desvincularCurso = async (curso) => {
+        setFormData({
+            ...formData,
+            cursos: formData.cursos.filter((id) => id !== curso.id),
+        });
+        setCursos([...cursos, curso]);
+        setCursosVinculados(cursosVinculados.filter((c) => c.id !== curso.id));
+    };
+    
+    const vincularCurso = async (curso) => {
+        setFormData({
+            ...formData,
+            cursos: [...formData.cursos, curso.id],
+        });
+        setCursosVinculados([...cursosVinculados, curso]);
+        setCursos(cursos.filter((c) => c.id !== curso.id));
+    };
 
     const fetchDisciplina = async () => {
         try {
@@ -69,69 +98,72 @@ const EditarDisciplina = () => {
     },[])
 
     return (
-        <FormContainer titulo={'Editar Disciplina'} onSubmit={handleSubmit}>
-            <label className="labelEditarDisciplina">
-                Nome
-                <Input
-                    type='text'
-                    valor={formData.nome}
-                    onChange={(e) => setFormData({...formData, nome: e.target.value})}
-                    erro={errors.nome}
-                />
-            </label>
-            <label className="labelEditarDisciplina">
-                Carga Horária
-                <Input
-                    type='text'
-                    valor={formData.carga_horaria}
-                    onChange={(e) => setFormData({...formData, nome: e.target.value})}
-                    erro={errors.carga_horaria}
-                />
-            </label>
-            <section className="sectionEditarDisciplina">
-                <div className="containerTabelaEditarDisciplina">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Cursos</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                cursos.map((curso) => (
-                                    <tr onClick={() => vincularCurso(curso.id)}>
-                                        <td>{curso.nome}</td>
-                                        <td><FontAwesomeIcon icon={faAnglesRight}/></td>
-                                    </tr>
-                                ))
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <div className="containerTabelaEditarDisciplina">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Cursos da Disciplina</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                cursosVinculados.map((curso) => (
-                                    <tr onClick={() => desvincularCurso(curso.id)}>
-                                        <td><FontAwesomeIcon icon={faAnglesLeft}/></td>
-                                        <td>{curso.nome}</td>
-                                    </tr>
-                                ))
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-            <Button text={'Salvar Alterações'}/>
-        </FormContainer>
+        <>
+            <ToastContainer/>
+            <FormContainer titulo={'Editar Disciplina'} onSubmit={handleSubmit}>
+                <label className="labelEditarDisciplina">
+                    Nome
+                    <Input
+                        type='text'
+                        valor={formData.nome}
+                        onChange={(e) => setFormData({...formData, nome: e.target.value})}
+                        erro={errors.nome}
+                    />
+                </label>
+                <label className="labelEditarDisciplina">
+                    Carga Horária
+                    <Input
+                        type='text'
+                        valor={formData.carga_horaria}
+                        onChange={(e) => setFormData({...formData, carga_horaria: e.target.value})}
+                        erro={errors.carga_horaria}
+                    />
+                </label>
+                <section className="sectionEditarDisciplina">
+                    <div className="containerTabelaEditarDisciplina">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cursos</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    cursos.map((curso) => (
+                                        <tr onClick={() => vincularCurso(curso)}>
+                                            <td>{curso.nome}</td>
+                                            <td><FontAwesomeIcon icon={faAnglesRight}/></td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="containerTabelaEditarDisciplina">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Cursos da Disciplina</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    cursosVinculados.map((curso) => (
+                                        <tr onClick={() => desvincularCurso(curso)}>
+                                            <td><FontAwesomeIcon icon={faAnglesLeft}/></td>
+                                            <td>{curso.nome}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                <Button text={'Salvar Alterações'} tipo={'submit'}/>
+            </FormContainer>
+        </>
     )
 }
 
