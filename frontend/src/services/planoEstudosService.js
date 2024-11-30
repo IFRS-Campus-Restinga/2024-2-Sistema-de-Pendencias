@@ -15,9 +15,20 @@ export const PlanoEstudosService = {
       console.error("Erro ao buscar detalhes do plano de estudos:", error);
       throw error;
     }
+  },
+
+  // No seu service
+update: async (pedId, formData) => {
+  try {
+      const response = await api.put(`/api/atualizar-plano-estudos/${pedId}/`, formData); 
+      return response.data;
+  } catch (error) {
+      console.error("Erro ao atualizar plano de estudos:", error);
+      throw error;
   }
+}
 };
-  
+
 
 
 // import { api } from "../config/axiosConfig";

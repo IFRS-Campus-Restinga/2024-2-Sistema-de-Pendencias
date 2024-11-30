@@ -9,6 +9,7 @@ from dependencias_app.serializers.planoEstudosSerializer import PlanoEstudos_Ser
 from dependencias_app.permissoes import *
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 # @api_view(['POST'])
@@ -109,4 +110,31 @@ def detalhes_plano_estudos(request, ped_id):
         # Captura qualquer outra exceção inesperada
         return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+@api_view(['PUT'])
+@permission_classes([GestaoEscolar | Professor])
+def atualizar_plano_estudos(request, ped_id):
+    try:
+        # Log para ver o ped_id recebido
+        print(f"ID do plano de estudos: {ped_id}")
+
+        # Busca o plano de estudos pelo ID
+        plano_estudo = PlanoEstudos.objects.filter(id=ped_id).first()
+
+        # Caso o plano de estudos não exista
+        if not plano_estudo:
+            return Response({"erro": "Plano de estudos não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Aqui você pode processar a atualização
+        # Exemplo: Atualizando dados do plano de estudo
+        serializer = PlanoEstudos_Serializer(plano_estudo, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()  # Salva as atualizações no banco de dados
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    except Exception as e:
+        return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

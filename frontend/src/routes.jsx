@@ -268,7 +268,10 @@ const router = createBrowserRouter([
                 path: ':idUsuario/peds-emi/:pedId/planoEstudos/:pedId/detalhes',
                 element: <DetalhesPlanoEstudos />
             },
-              
+            {
+                path: ':idUsuario/planoEstudos/:pedId/editar',
+                element: <PlanoEstudos />
+            },  
             {
                 path: ':idUsuario/atividades/:pedTipo/:pedId',
                 element: <AtividadesDesenvolvidas />

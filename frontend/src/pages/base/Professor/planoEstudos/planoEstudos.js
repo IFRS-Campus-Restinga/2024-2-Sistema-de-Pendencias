@@ -1,26 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Button from "../../../../components/Button/Button";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 import "./planoEstudos.css";
 import { PlanoEstudosService } from "../../../../services/planoEstudosService";
 import { validarFormularioPlanoEstudos } from "./validacoes";
-import { useParams } from "react-router-dom";
 
-const Turnos = ['Manhã', 'Tarde', 'Noite', 'Integral'];
-const FormaOferta = ['Presencial', 'EAD', 'Híbrido'];
+const Turnos = ["Manhã", "Tarde", "Noite", "Integral"];
+const FormaOferta = ["Presencial", "EAD", "Híbrido"];
 
 const PlanoEstudos = () => {
-  const { pedId } = useParams();  // ID do plano de estudos
-  const [errors, setErrors] = useState({});
+  const { pedId } = useParams(); // ID do plano de estudos
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { state } = location || {}; // Para verificar se estamos editando ou criando
+
   const [formData, setFormData] = useState({
-    forma_oferta: '',
-    turno: '',
-    parecer_pedagogico: '',
-    pedId: pedId
+    forma_oferta: "",
+    turno: "",
+    parecer_pedagogico: "",
+    pedId: pedId || "",
   });
 
-  // Função para atualizar o estado do formData com os valores dos inputs
+  const [errors, setErrors] = useState({});
+
+  // Buscar os dados do plano de estudos se estiver editando
+  useEffect(() => {
+    const fetchPlanoEstudo = async () => {
+      if (state?.isEditing && pedId) {
+        try {
+          const response = await PlanoEstudosService.buscarPlanoEstudo(pedId);
+          setFormData({
+            forma_oferta: response.forma_oferta || "",
+            turno: response.turno || "",
+            parecer_pedagogico: response.parecer_pedagogico || "",
+            pedId: pedId,
+          });
+        } catch (error) {
+          console.error("Erro ao buscar detalhes do plano de estudos", error);
+        }
+      }
+    };
+
+    fetchPlanoEstudo();
+  }, [state, pedId]);
+
+  // Atualizar os valores do formulário
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -29,42 +55,52 @@ const PlanoEstudos = () => {
     }));
   };
 
-  // Função para tratar o envio do formulário
+  // Enviar o formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log('Form data before validation:', formData);
-
-    // Validação do formulário
     const erros = validarFormularioPlanoEstudos(formData);
 
     if (Object.keys(erros).length > 0) {
-      setErrors(erros); // Exibir erros apenas se existirem
-      console.log('Exibindo erros no formulário:', erros);
+      setErrors(erros);
     } else {
       try {
-        // Enviar dados para o serviço
-        const res = await PlanoEstudosService.create(formData);
+        let response;
+        if (state?.isEditing) {
+          response = await PlanoEstudosService.update(pedId, formData);
+        } else {
+          response = await PlanoEstudosService.create(formData);
+        }
 
-        if (res.status !== 201) throw new Error(res.response.data.mensagem);
+        if (response.status !== 200 && response.status !== 201) {
+          throw new Error(response.response.data.mensagem);
+        }
 
-        toast.success("Plano de estudos cadastrado com sucesso!", {
-          position: "bottom-center",
-          autoClose: 3000,
-          style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
-          progressStyle: { backgroundColor: '#fff' },
-        });
+        toast.success(
+          state?.isEditing
+            ? "Plano de estudos editado com sucesso!"
+            : "Plano de estudos cadastrado com sucesso!",
+          {
+            position: "bottom-center",
+            autoClose: 3000,
+            style: {
+              backgroundColor: "#28A745",
+              color: "#fff",
+              textAlign: "center",
+            },
+            progressStyle: { backgroundColor: "#fff" },
+          }
+        );
 
-        // Limpar formulário após sucesso
-        setFormData({
-          forma_oferta: '',
-          turno: '',
-          parecer_pedagogico: '',
-        });
-
-        setErrors({}); // Limpar erros
+        // Redirecionar após o sucesso
+        navigate(`/sessao/Professor/${pedId}/detalhes`);
       } catch (error) {
-        console.error('Erro ao cadastrar plano de estudos: ', error);
+        console.error(
+          state?.isEditing
+            ? "Erro ao editar o plano de estudos"
+            : "Erro ao cadastrar o plano de estudos",
+          error
+        );
       }
     }
   };
@@ -72,9 +108,12 @@ const PlanoEstudos = () => {
   return (
     <>
       <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo="Cadastro Plano de Estudos">
+      <FormContainer
+        onSubmit={handleSubmit}
+        titulo={state?.isEditing ? "Editar Plano de Estudos" : "Cadastrar Plano de Estudos"}
+      >
         {Object.keys(errors).length > 0 && (
-          <p style={{ color: 'red' }}>*Preencha os campos obrigatórios</p>
+          <p style={{ color: "red" }}>*Preencha os campos obrigatórios</p>
         )}
 
         <section className="sectionCadastroPlanoEstudos">
@@ -83,7 +122,11 @@ const PlanoEstudos = () => {
               Forma de Oferta *
               <select
                 name="forma_oferta"
-                className={errors.forma_oferta ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
+                className={
+                  errors.forma_oferta
+                    ? "errorSelectCadastroPlanoEstudos"
+                    : "selectCadastroPlanoEstudos"
+                }
                 onChange={handleChange}
                 value={formData.forma_oferta}
               >
@@ -103,7 +146,11 @@ const PlanoEstudos = () => {
               Turno *
               <select
                 name="turno"
-                className={errors.turno ? 'errorSelectCadastroPlanoEstudos' : 'selectCadastroPlanoEstudos'}
+                className={
+                  errors.turno
+                    ? "errorSelectCadastroPlanoEstudos"
+                    : "selectCadastroPlanoEstudos"
+                }
                 onChange={handleChange}
                 value={formData.turno}
               >
@@ -114,7 +161,9 @@ const PlanoEstudos = () => {
                   </option>
                 ))}
               </select>
-              {errors.turno && <p className="errorMessage">{errors.turno}</p>}
+              {errors.turno && (
+                <p className="errorMessage">{errors.turno}</p>
+              )}
             </label>
           </div>
         </section>
@@ -125,7 +174,11 @@ const PlanoEstudos = () => {
               Parecer Pedagógico *
               <textarea
                 name="parecer_pedagogico"
-                className={errors.parecer_pedagogico ? 'errorTextAreaCadastroPlanoEstudos' : 'textAreaCadastroPlanoEstudos'}
+                className={
+                  errors.parecer_pedagogico
+                    ? "errorTextAreaCadastroPlanoEstudos"
+                    : "textAreaCadastroPlanoEstudos"
+                }
                 onChange={handleChange}
                 value={formData.parecer_pedagogico}
               />
@@ -136,7 +189,7 @@ const PlanoEstudos = () => {
           </div>
         </section>
 
-        <Button tipo="submit" text="Cadastrar" />
+        <Button tipo="submit" text={state?.isEditing ? "Salvar Alterações" : "Cadastrar"} />
       </FormContainer>
     </>
   );
