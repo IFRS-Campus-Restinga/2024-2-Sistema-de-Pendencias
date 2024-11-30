@@ -5,8 +5,9 @@ import Editar from '../../assets/icone-editar.png'
 import Excluir from '../../assets/lixeira.png'
 import './Tabela.css'
 import { useNavigate } from "react-router-dom";
+import Button from "../Button/Button";
 
-const Tabela = ({listaFiltrada, fontSize}) => {
+const Tabela = ({listaFiltrada, fontSize, acaoCustom, funcaoCustom}) => {
     const [ordenacao, setOrdenacao] = useState({coluna: '', ordem: 'asc'})
     const [listaOrdenada, setListaOrdenada] = useState([])
     const [colunas, setColunas] = useState([])
@@ -125,29 +126,37 @@ const Tabela = ({listaFiltrada, fontSize}) => {
                                         ))
                                     }
                                     <td className="colunaCorpoTabela">
-                                        <div className="acoes">
-
-                                            <img 
-                                                className='iconeAcoes'
-                                                src={Lupa} 
-                                                alt="Visualizar" 
-                                                onClick={() => redirect(`${item.id}`, {state: item})}
-                                                title="Visualizar"
-                                            />
-                                            <img
-                                                className='iconeAcoes'
-                                                src={Editar} 
-                                                alt="Editar" 
-                                                onClick={() => redirect(`${item.id}/editar`, {state: item})}
-                                                title="Visualizar"
-                                            />
-                                            <img
-                                                className='iconeAcoes'
-                                                src={Excluir} 
-                                                alt="Excluir" 
-                                                title="Visualizar"
-                                            />
-                                        </div>
+                                        {
+                                            acaoCustom ? (
+                                                <Button 
+                                                    text={acaoCustom}
+                                                    onClick={() => funcaoCustom(item)}
+                                                />
+                                            ) : (
+                                                <div className="acoes">
+                                                    <img 
+                                                        className='iconeAcoes'
+                                                        src={Lupa} 
+                                                        alt="Visualizar" 
+                                                        onClick={() => redirect(`${item.id}`, {state: item})}
+                                                        title="Visualizar"
+                                                    />
+                                                    <img
+                                                        className='iconeAcoes'
+                                                        src={Editar} 
+                                                        alt="Editar" 
+                                                        onClick={() => redirect(`${item.id}/editar`, {state: item})}
+                                                        title="Visualizar"
+                                                    />
+                                                    <img
+                                                        className='iconeAcoes'
+                                                        src={Excluir} 
+                                                        alt="Excluir" 
+                                                        title="Visualizar"
+                                                    />
+                                                </div>
+                                            )
+                                        }
                                     </td>
                                 </tr>
                             ))
