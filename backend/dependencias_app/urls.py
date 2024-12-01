@@ -40,6 +40,8 @@ urlpatterns = [
     # views de disciplinas
     path('cadastrar-disciplina/', cadastrar_disciplina),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
+    path('disciplina/<int:disciplinaId>/', buscar_disciplina),
+    path('disciplina/editar/<int:disciplinaId>/', editar_disciplina),
 
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),
@@ -90,10 +92,17 @@ urlpatterns = [
     path('cadastrar-plano-estudos/<int:pedId>/', cadastrar_plano_estudos),
     path('desativar-ped/<int:pedId>/<str:modalidade>/', desativar_PED),
     path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
+    path('aluno/peds/', listar_peds_aluno, name='listar_peds_aluno'),
 
-    #path('detalhes-planoEstudos/<str:ped_tipo>/<int:ped_id>/<int:ped_id>/', detalhes_planoEstudos, name='detalhes_planoEstudos'),
-    # urls.py
-    path('detalhes-planoEstudos/<int:ped_id>/', detalhes_planoEstudos, name='detalhes_planoEstudos'),
+    
+
+    path('detalhes-plano-estudos/<int:ped_id>/', detalhes_plano_estudos, name='detalhes_plano_estudos'),
+    path('api/atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
+    
+
+
+
+
 
     #views para atividades da ped
     path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),
@@ -101,8 +110,9 @@ urlpatterns = [
     path('adicionar-atividades/<str:ped_tipo>/<int:ped_id>/', adicionar_atividade, name='adicionar_atividades'),
     path('detalhes-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', detalhes_atividade, name='detalhes_atividade'),
     path('editar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', editar_atividade, name='editar_atividade'),
+    path('deletar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', delete_atividade, name='deletar_atividade'),
     path('adicionar-plano-atividades/<str:ped_tipo>/<int:ped_id>/', adicionar_plano_atividades, name='adicionar_plano_atividades'),
-    #path('ped/<str:ped_tipo>/<int:ped_id>/plano-atividades/', obter_plano_atividades, name='obter_plano_atividades'),
+
 
     #view editar servidor
     path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),

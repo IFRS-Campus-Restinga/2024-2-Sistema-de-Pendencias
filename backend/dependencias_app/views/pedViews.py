@@ -75,22 +75,48 @@ def listar_PED_ProEJA(request):
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+# @api_view(['GET'])
+# @permission_classes([GestaoEscolar | Professor])
+# def por_id(request, pedId, modalidade):
+#     try:
+#         if modalidade == 'Integrado' or modalidade == 'EMI':
+#             ped = get_object_or_404(PED_EMI, pk=pedId)
+
+#             serializer = PED_EMI_Serializer(ped)
+#         elif modalidade == 'ProEJA':
+#             ped = get_object_or_404(PED_ProEJA, pk=pedId)
+
+#             serializer = PED_ProEJA_Serializer(ped)
+
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#     except Exception as e:
+#         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
 @permission_classes([GestaoEscolar | Professor])
 def por_id(request, pedId, modalidade):
     try:
-        if modalidade == 'Integrado' or modalidade == 'EMI':
+        if modalidade == 'Integrado':
             ped = get_object_or_404(PED_EMI, pk=pedId)
-
             serializer = PED_EMI_Serializer(ped)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
         elif modalidade == 'ProEJA':
             ped = get_object_or_404(PED_ProEJA, pk=pedId)
-
             serializer = PED_ProEJA_Serializer(ped)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # Caso a modalidade não seja reconhecida
+        return Response(
+            {'mensagem': "Modalidade inválida. Use 'Integrado' ou 'ProEJA'."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 
 
 @api_view(['POST'])

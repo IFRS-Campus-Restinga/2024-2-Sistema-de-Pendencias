@@ -13,7 +13,6 @@ import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 
 const CadastroDisciplina = () => {
   const formRef = useRef()
-  const [opcoesProfessores, setOpcoesProfessores] = useState([])
   const [cursos, setCursos] = useState([]);
   const [errors, setErrors] = useState({});
   const [disciplinas, setDisciplinas] = useState([]);
@@ -54,8 +53,6 @@ const CadastroDisciplina = () => {
     e.preventDefault();
 
     const erros = validarFormularioDisciplina(formData)
-
-
     
     if(erros.curso === '' && erros.novasDisciplinas.some((erro) => Object.keys(erro).length !== 0)) {
       setErrors(erros)

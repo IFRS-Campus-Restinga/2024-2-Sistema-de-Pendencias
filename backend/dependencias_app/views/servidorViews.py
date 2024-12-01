@@ -33,7 +33,7 @@ def listar_servidores(request):
             servidores = servidores.order_by(ordenar_por)
 
         # Serialização dos dados
-        servidores_serializer = UsuarioBaseSerializer(servidores, many=True)
+        servidores_serializer = UsuarioBaseSerializer(servidores, many=True, context={'request': request})
 
         return Response(servidores_serializer.data, status=status.HTTP_200_OK)
     except Exception as e:

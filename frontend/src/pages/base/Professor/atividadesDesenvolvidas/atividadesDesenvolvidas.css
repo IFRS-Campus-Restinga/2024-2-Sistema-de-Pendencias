@@ -93,8 +93,11 @@
       width: 10%;
     }
 
-    .modal{
+    .modal-atividades{
       margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     
     /* Responsividade */

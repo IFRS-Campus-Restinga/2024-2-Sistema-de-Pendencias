@@ -17,10 +17,10 @@ export const PEDService = {
     return res
   },
 
-  porId: async (pedId, modalidade) => {
+  porId: async (pedId, modalidade, retornar_ids) => {
     const res = await api.get(`api/ped/${pedId}/${modalidade}`, {
       params: {
-        retornar_ids: true
+        retornar_ids
       }
     }).catch((erro) => {
       return erro

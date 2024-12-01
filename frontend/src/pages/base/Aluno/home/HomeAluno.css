@@ -1,0 +1,171 @@
+.homeAlunoContainer {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.homeAlunoContainer h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+}
+
+.pedsContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.pedsAno {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pedsAno h3 {
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.pedsCards {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.pedCard {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    position: relative;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.pedCard h4 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.pedCard p {
+    font-size: 14px;
+    color: #555;
+    margin: 5px 0;
+}
+
+.pedCard .status {
+    position: absolute;
+    top: 20px;
+    right: 15px;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 12px;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold;
+    z-index: 1;
+}
+
+.pedCard.criada .status {
+    background-color: #007bff;
+}
+
+.pedCard.finalizada .status {
+    background-color: #28a745;
+}
+
+.pedCard.em-andamento .status {
+    background-color: #fde455;
+    color: #000;
+}
+
+.pedCard.desativado .status {
+    background-color: #d6d6d6;
+    color: #333;
+}
+
+.emptyCard {
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    background-color: #f4f4f4;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    font-size: 14px;
+    font-style: italic;
+    text-align: center;
+    padding: 10px;
+}
+
+.filterArrowContainer {
+    display: flex;
+    justify-content: space-between; /* Filtro à esquerda e setas à direita */
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.filterContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filterOptions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filterOption {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.filterOption input[type="checkbox"] {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.arrowContainer {
+    display: flex;
+    gap: 10px;
+}
+
+.arrowButton {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.arrowButton:hover {
+    background-color: #0056b3;
+}
+
+.arrowButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}

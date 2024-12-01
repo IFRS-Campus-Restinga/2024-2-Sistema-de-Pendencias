@@ -44,6 +44,7 @@ import DetalhesAtividade from './pages/base/Professor/atividadesDesenvolvidas/de
 import DetalhesPEDProfessor from './pages/base/Professor/detalhesPED/DetalhesPEDProfessor'
 import DetalhesPlanoEstudos from './pages/base/Professor/detalhesPlanoEstudos/DetalhesPlanoEstudos'
 
+
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
@@ -52,6 +53,7 @@ import ListarPEDEMI from './pages/base/Gestao/listarPED_EMI/ListarPED_EMI'
 import ListarPEDProEJA from './pages/base/Gestao/listarPED_ProEJA/ListarPED_ProEJA'
 import ListarPEDProEJAProfessor from './pages/base/Professor/listarPED_ProEJAProfessor/ListarPED_ProEJAProfessor'
 import DetalhesCurso from './pages/base/Gestao/detalhesCurso/DetalhesCurso'
+import EditarDisciplina from './pages/base/Gestao/editarDisciplina/EditarDisciplina'
 
 
 const router = createBrowserRouter([
@@ -107,6 +109,10 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/disciplinas',
                 element: <ListarDisciplina />
+            },
+            {
+                path: ':idUsuario/disciplinas/:idDisciplina/editar',
+                element: <EditarDisciplina />
             },
             {
                 path: ':idUsuario/eventoCalendario',
@@ -245,10 +251,7 @@ const router = createBrowserRouter([
                 path: ':idUsuario/peds-emi/:pedId',
                 element: <DetalhesPEDProfessor />
             },
-            {
-                path: ':idUsuario/peds-emi/:pedId/detalhesPlanoEstudos',
-                element: <DetalhesPlanoEstudos />
-            },
+            
             {
                 path: ':idUsuario/peds-proeja/:pedId',
                 element: <DetalhesPEDProfessor />
@@ -261,6 +264,14 @@ const router = createBrowserRouter([
                 path: ':idUsuario/peds-proeja/:pedId/planoEstudos',
                 element: <PlanoEstudos />
             },
+            {
+                path: ':idUsuario/peds-emi/:pedId/planoEstudos/:pedId/detalhes',
+                element: <DetalhesPlanoEstudos />
+            },
+            {
+                path: ':idUsuario/planoEstudos/:pedId/editar',
+                element: <PlanoEstudos />
+            },  
             {
                 path: ':idUsuario/atividades/:pedTipo/:pedId',
                 element: <AtividadesDesenvolvidas />
