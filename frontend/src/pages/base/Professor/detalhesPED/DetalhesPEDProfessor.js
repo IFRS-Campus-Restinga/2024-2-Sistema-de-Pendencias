@@ -89,13 +89,16 @@ const DetalhesPEDProfessor = () => {
               <StatusBalls status={state.status} tipo={"PED"} />
               <span className="spanDetalhesPED">
                 <Link to={"planoEstudos"}>
-                  <Button text="Plano de Estudos" />
+                  <Button text="Cadastrar Plano de Estudos" />
                 </Link>
                 <Link to={"cadastrar-form-encerramento"}>
                   <Button text="Formulário de Encerramento" />
                 </Link>
                 <Link to={`/sessao/Professor/${usuarioId}/atividades/emi/${pedId}`}>
                   <Button text='Atividades'/>
+                </Link>
+                <Link to={`/sessao/Professor/${usuarioId}/peds-emi/${pedId}/planoEstudos/${detalhesPED.id}/detalhes`}>
+                  <Button text='Ver Plano de Estudos'/>
                 </Link>
               </span>
             </div>
