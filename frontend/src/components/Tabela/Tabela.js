@@ -14,6 +14,7 @@ const Tabela = ({
   showInProgressButton,
   onChangeStatus,
   textButtonInProgress,
+  mostrarBotoesExcluirEditar = true,
 }) => {
   const [ordenacao, setOrdenacao] = useState({ coluna: "", ordem: "asc" });
   const [listaOrdenada, setListaOrdenada] = useState([]);
@@ -54,10 +55,10 @@ const Tabela = ({
           ? -1
           : 1
         : valorA > valorB
-        ? novaOrdem === "asc"
-          ? 1
-          : -1
-        : 0;
+          ? novaOrdem === "asc"
+            ? 1
+            : -1
+          : 0;
     });
 
     setListaOrdenada(lista);
@@ -169,7 +170,7 @@ const Tabela = ({
                 coluna !== "id" ? (
                   <td key={colIndex} className="colunaCorpoTabela">
                     {typeof item[coluna] === "string" &&
-                    /^\d{4}-\d{2}-\d{2}$/.test(item[coluna])
+                      /^\d{4}-\d{2}-\d{2}$/.test(item[coluna])
                       ? item[coluna].split("-").reverse().join("/")
                       : limitadorDeTexto(item[coluna] || "-", 35)}
                   </td>
@@ -186,32 +187,36 @@ const Tabela = ({
                     onClick={() => redirect(`${item.id}`, { state: item })}
                     title="Visualizar"
                   />
-                  <img
-                    className="iconeAcoes"
-                    src={Editar}
-                    alt="Editar"
-                    onClick={() =>
-                      redirect(`${item.id}/editar`, { state: item })
-                    }
-                    title="Visualizar"
-                  />
-                  <img
-                    className="iconeAcoes"
-                    src={Excluir}
-                    alt="Excluir"
-                    title="Visualizar"
-                  />
-
-                  {showInProgressButton && item.status != 'Em Andamento' && (
-                    <img
+                  {mostrarBotoesExcluirEditar && (
+                    <>
+                      <img
                         className="iconeAcoes"
-                        src={Check}
-                        alt="Alterar para 'Em Andamento'"
-                        onClick={() => abrirModal(item)}
-                        title="Alterar para 'Em Andamento'"
-                    />
+                        src={Editar}
+                        alt="Editar"
+                        onClick={() =>
+                          redirect(`${item.id}/editar`, { state: item })
+                        }
+                        title="Visualizar"
+                      />
+                      <img
+                        className="iconeAcoes"
+                        src={Excluir}
+                        alt="Excluir"
+                        title="Visualizar"
+                      />
+                    </>
                   )}
-                </div>
+
+                      {showInProgressButton && item.status != 'Em Andamento' && (
+                        <img
+                          className="iconeAcoes"
+                          src={Check}
+                          alt="Alterar para 'Em Andamento'"
+                          onClick={() => abrirModal(item)}
+                          title="Alterar para 'Em Andamento'"
+                        />
+                      )}
+                    </div>
               </td>
             </tr>
           ))}
