@@ -21,15 +21,15 @@ class UsuarioBaseSerializer(serializers.ModelSerializer):
         return formUsuarioBase
     
     def get_cpf(self, obj):
-        if obj.grupo and obj.grupo.name == 'Professor' and hasattr(obj, 'professor'):
-            return obj.professor.cpf
+        if obj.grupo and obj.grupo.name == 'Professor' and obj.grupo.name == 'Coordenador' and hasattr(obj, 'professor' or 'coordenador'):
+            return obj.professor.cpf or obj.coordenador.cpf
         elif obj.grupo and obj.grupo.name == 'Aluno' and hasattr(obj, 'aluno'):
             return obj.aluno.cpf
         return None
 
     def get_matricula(self, obj):
-        if obj.grupo and obj.grupo.name == 'Professor' and hasattr(obj, 'professor'):
-            return obj.professor.matricula
+        if obj.grupo and obj.grupo.name == 'Professor' and obj.grupo.name == 'Coordenador' and hasattr(obj, 'professor' or 'coordenador'):
+            return obj.professor.matricula or obj.coordenador.matricula
         elif obj.grupo and obj.grupo.name == 'Aluno' and hasattr(obj, 'aluno'):
             return obj.aluno.matricula
         return None
