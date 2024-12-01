@@ -13,6 +13,7 @@ from dependencias_app.models.planoEstudos import PlanoEstudos
 from dependencias_app.models.formEncerramento import FormEncerramento
 from google_auth.models import UsuarioBase
 from dependencias_app.models.atividade import *
+from dependencias_app.models.coordenador import *
 
 
 admin.site.register(Aluno)
@@ -30,3 +31,4 @@ admin.site.register(PlanoEstudos)
 admin.site.register(FormEncerramento)
 admin.site.register(Atividade_EMI)
 admin.site.register(Atividade_ProEJA)
+admin.site.register(Coordenador)

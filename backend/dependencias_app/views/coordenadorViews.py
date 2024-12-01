@@ -1,11 +1,15 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
 from django.contrib.auth.models import Group
 from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
 from google_auth.models import UsuarioBase
+from dependencias_app.serializers.coordenadorSerializer import CoordenadorSerializer
+from dependencias_app.permissoes import *
+from dependencias_app.models.coordenador import Coordenador
 
 @api_view(['POST'])
+@permission_classes([GestaoEscolar])
 def cadastrarCoordenador(request):
     try:
         name = request.data.get('grupo', None)
@@ -34,6 +38,7 @@ def cadastrarCoordenador(request):
     
 
 @api_view(['GET'])
+@permission_classes([GestaoEscolar])
 def listarCoordenadores(request):
     try:
         # Filtro por data de ingresso
@@ -53,5 +58,28 @@ def listarCoordenadores(request):
         # Serialização dos dados
         serializer = UsuarioBaseSerializer(coordenadores, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([GestaoEscolar | Coordenador])
+def infos_adicionais_coordenador (request):
+    try:
+        # Obter o ID do usuário enviado na requisição
+        id = request.data.get('usuario', None)
+        usuario = UsuarioBase.objects.get(pk=id)  # Busca o coordenador pelo ID do usuário
+
+        # Atualizar os dados do coordenador
+        serializer_coordenador = CoordenadorSerializer(data=request.data)
+
+        if serializer_coordenador.is_valid():
+            serializer_coordenador.save()
+            return Response(serializer_coordenador.data, status=status.HTTP_201_CREATED)
+        else:
+            print(serializer_coordenador.errors)  # Adicione esta linha para depuração
+            raise Exception(serializer_coordenador.errors)  # Levanta um erro se a validação falhar
+
+    except usuario.DoesNotExist:
+        return Response({'mensagem': 'Coordenador não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)

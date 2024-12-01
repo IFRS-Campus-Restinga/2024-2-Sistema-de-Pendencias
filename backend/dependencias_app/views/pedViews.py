@@ -41,7 +41,7 @@ def cadastrar_PED_ProEJA(request):
         return Response({'mensagem: ': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([GestaoEscolar | Professor])
+@permission_classes([GestaoEscolar | Professor | Coordenador])
 def listar_PED_EMI(request):
     try:
         professorId = request.GET.get('professorId')  # Captura o parâmetro de query da URL
@@ -58,7 +58,7 @@ def listar_PED_EMI(request):
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([GestaoEscolar | Professor])
+@permission_classes([GestaoEscolar | Professor | Coordenador])
 def listar_PED_ProEJA(request):
     try:
         professorId = request.GET.get('professorId')  # Captura o parâmetro de query da URL
@@ -93,7 +93,7 @@ def listar_PED_ProEJA(request):
 #         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([GestaoEscolar | Professor])
+@permission_classes([GestaoEscolar | Professor | Coordenador])
 def por_id(request, pedId, modalidade):
     try:
         if modalidade == 'Integrado':
