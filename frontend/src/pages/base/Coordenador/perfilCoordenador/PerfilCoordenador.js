@@ -10,7 +10,6 @@ import { validarFormulario } from './validacoes'
 import { usuarioBaseService } from '../../../../services/usuarioBaseService'
 import servidorService from '../../../../services/servidorService'
 
-
 const PerfilCoordenador = () => {
     const {idUsuario} = useParams()
     const redirect = useNavigate()
@@ -70,7 +69,7 @@ const PerfilCoordenador = () => {
         }
     }
 
-    const fetchProfessor = async () => {
+    const fetchCoordenador = async () => {
         try {
             const res = await usuarioBaseService.get(idUsuario)
 
@@ -93,7 +92,7 @@ const PerfilCoordenador = () => {
     }
 
     useEffect(() => {
-        fetchProfessor()
+        fetchCoordenador()
     },[])
 
     return (
@@ -115,7 +114,7 @@ const PerfilCoordenador = () => {
                     />
                     {erros.cpf ? <p className='erro'>{erros.cpf}</p> : <></>}
                 </label>
-                <label className='labelPerfilProfessor'> Matrícula
+                <label className='labelPerfilCoordenador'> Matrícula
                     <Input
                         tipo='text'
                         onChange={(e) => setFormData(prevData => ({ ...prevData, matricula: e.target.value }))}
