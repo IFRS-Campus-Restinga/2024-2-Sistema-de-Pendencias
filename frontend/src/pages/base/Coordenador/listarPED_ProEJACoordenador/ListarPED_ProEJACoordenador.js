@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react"
 import FormContainer from "../../../../components/FormContainer/FormContainer"
 import Tabela from "../../../../components/Tabela/Tabela"
-import { PEDService } from "../../../../services/pedService"
 import Input from "../../../../components/Input/Input"
+import { PEDService } from "../../../../services/pedService"
+import './ListarPED_ProEJACoordenador.css'
 import X from "../../../../assets/x-branco.png";
 import Lupa from "../../../../assets/lupa-branca.png";
-import './ListarPED_EMIProfessor.css'
 
-
-const ListarPEDEMIProfessor = () => {
-    const [listaPED_EMI, setListaPED_EMI] = useState([])
+const ListarPEDProEJACoordenador = () => {
+    const [listaPED_ProEJA, setListaPED_ProEJA] = useState([])
     const [listaFiltrada, setListaFiltrada] = useState([])
     const [filtroGeral, setFiltroGeral] = useState('');
     const [dataInicio, setDataInicio] = useState('');
@@ -17,13 +16,13 @@ const ListarPEDEMIProfessor = () => {
     const [status, setStatus] = useState('');
     const [situacao, setSituacao] = useState('');
 
-    const fetchPED_EMI = async () => {
+    const fetchPED_ProEJA = async () => {
         try {
-            const res = await PEDService.listaEMI()
+            const res = await PEDService.listaProEJA()
 
             if (res.status !== 200) throw new Error(res)
 
-            setListaPED_EMI(res.data)
+            setListaPED_ProEJA(res.data)
             setListaFiltrada(res.data)
         } catch (error) {
             console.error(error)
@@ -42,7 +41,7 @@ const ListarPEDEMIProfessor = () => {
         str?.normalize("NFD").replace(/[\u0300-\u036f]/g, "") || "";
 
     const filtrarPEDs = () => {
-        const PEDsFiltradas = listaPED_EMI.filter((ped) => {
+        const PEDsFiltradas = listaPED_ProEJA.filter((ped) => {
             const filtroGeralAtende = !filtroGeral ||
                 Object.values(ped).some((campo) =>
                     removeAcentos(campo?.toString().toLowerCase()).includes(
@@ -63,11 +62,11 @@ const ListarPEDEMIProfessor = () => {
     };
 
     useEffect(() => {
-        fetchPED_EMI()
+        fetchPED_ProEJA()
     }, [])
 
     return (
-        <FormContainer titulo='Minhas PEDs - EMI' comprimento='95%'
+        <FormContainer titulo='Minhas PEDs - ProEJA' comprimento='95%'
             onSubmit={(e) => {
                 e.preventDefault();
                 filtrarPEDs();
@@ -94,9 +93,10 @@ const ListarPEDEMIProfessor = () => {
                     />
                 </div>
             </div>
-            <Tabela listaFiltrada={listaFiltrada} fontSize={'10px'} />
+
+            <Tabela listaFiltrada={listaFiltrada} fontSize={'10px'} mostrarBotoesExcluirEditar={false} />
         </FormContainer>
     )
 }
 
-export default ListarPEDEMIProfessor
+export default ListarPEDProEJACoordenador

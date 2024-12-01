@@ -5,10 +5,10 @@ import { PEDService } from "../../../../services/pedService"
 import Input from "../../../../components/Input/Input"
 import X from "../../../../assets/x-branco.png";
 import Lupa from "../../../../assets/lupa-branca.png";
-import './ListarPED_EMIProfessor.css'
+import './ListarPED_EMICoordenador.css'
 
 
-const ListarPEDEMIProfessor = () => {
+const ListarPEDEMICoordenador = () => {
     const [listaPED_EMI, setListaPED_EMI] = useState([])
     const [listaFiltrada, setListaFiltrada] = useState([])
     const [filtroGeral, setFiltroGeral] = useState('');
@@ -94,9 +94,9 @@ const ListarPEDEMIProfessor = () => {
                     />
                 </div>
             </div>
-            <Tabela listaFiltrada={listaFiltrada} fontSize={'10px'} />
+            <Tabela listaFiltrada={listaFiltrada} fontSize={'10px'} mostrarBotoesExcluirEditar={false}/>
         </FormContainer>
     )
 }
 
-export default ListarPEDEMIProfessor
+export default ListarPEDEMICoordenador
