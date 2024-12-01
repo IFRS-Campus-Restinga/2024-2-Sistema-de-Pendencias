@@ -60,8 +60,8 @@ class PPTSerializer(serializers.ModelSerializer):
         
         return data
     
-    def set_disabled(self, ppt):
-        ppt.status = 'Desativado'
+    def set_status(self, ppt, status):
+        ppt.status = status
         ppt.save()
 
         return ppt

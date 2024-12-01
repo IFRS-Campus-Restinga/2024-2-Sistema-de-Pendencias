@@ -21,6 +21,18 @@ export const PPTService = {
     return res
   },
 
+  listRegistro: async () => {
+    const res = await api.get('api/listar-ppt-registro/', {
+      params: {
+        incluir_dados: true
+      }
+    }).catch((erro) => {
+        return erro
+    })
+
+    return res
+  },
+
   getById: async (id) => {
     const res = await api.get('api/listar-ppt/'+id+'/').catch((erro) => {
       return erro
@@ -47,6 +59,16 @@ export const PPTService = {
       console.error('Erro ao desativar PPT:', error);
       throw error;
     }
-  }
+  },
+
+  em_andamento: async (id, dados) => {
+    try {
+      const response = await api.post(`api/ppt-em-andamento/${id}/`, dados);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao alterar status do PPT:', error);
+      throw error;
+    }
+  },
 
 }

@@ -3,13 +3,10 @@ import './listarPPT.css';
 import { PPTService } from '../../../../services/emiPptService';
 import FormContainer from '../../../../components/FormContainer/FormContainer';
 import Input from '../../../../components/Input/Input';
-import Button from '../../../../components/Button/Button';
-import { Link, useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 import Tabela from '../../../../components/Tabela/Tabela';
 import X from "../../../../assets/x-branco.png";
 import Lupa from "../../../../assets/lupa-branca.png";
-import AdicionarPPT from "../../../../assets/adicionar-livro.png";
 
 const ListarPPTRegistro = () => {
     const navegar = useNavigate();
@@ -26,7 +23,7 @@ const ListarPPTRegistro = () => {
 
     const fetchPPT = async () => {
         try {
-            const res = await PPTService.list();
+            const res = await PPTService.listRegistro();
 
             if (res.status !== 200) throw new Error(res.response.data.mensagem);
 
@@ -70,6 +67,18 @@ const ListarPPTRegistro = () => {
         setDependenciasFiltradas(dependenciasFiltradas);
     };
 
+    const alterarStatusPpt = async (ppt) => {
+        try {
+            const updatedDetalhes = { ...ppt, status: "Em Andamento" };
+            const res = await PPTService.em_andamento(ppt.id, updatedDetalhes);
+            if (!res) throw new Error(res.response?.data?.mensagem);
+            console.log("PPT alterada com sucesso:", updatedDetalhes);
+            fetchPPT();
+        } catch (error) {
+            console.log("Erro ao alterar status do PPT: ", error);
+        }
+    };
+
     useEffect(() => {
         fetchPPT();
     }, []);
@@ -81,9 +90,6 @@ const ListarPPTRegistro = () => {
                     e.preventDefault();
                     filtrarPPT();
                 }}>
-                    <div>
-                        <h1>lorem ipsummmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm</h1>
-                    </div>
                 <div className='containerBuscarPPT'>
                     <div class="buscaBarPPT">
                         <Input
@@ -106,7 +112,7 @@ const ListarPPTRegistro = () => {
                         />
                     </div>
                 </div>
-                <Tabela listaFiltrada={dependenciasFiltradas} fontSize='10px' />
+                <Tabela listaFiltrada={dependenciasFiltradas} fontSize='10px' showInProgressButton={true} textButtonInProgress={"Alterar status"} onChangeStatus={alterarStatusPpt}/>
             </FormContainer>
         </>
     );

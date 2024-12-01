@@ -70,9 +70,11 @@ urlpatterns = [
     # view de PPT
     path('cadastrar-ppt/', cadastrar_ppt),
     path('listar-ppt/', listar_ppt),
+    path('listar-ppt-registro/', listar_ppt_registro),
     path('listar-ppt/<int:idPpt>/', listar_ppt_id),
     path('editar-ppt/<int:idPpt>/', editar_ppt),
     path('desativar-ppt/<int:idPpt>/', desativar_ppt),
+    path('ppt-em-andamento/<int:idPpt>/', ppt_em_andamento),
     
     # views de PED
     path('cadastrarPED-EMI/', cadastrar_PED_EMI),
