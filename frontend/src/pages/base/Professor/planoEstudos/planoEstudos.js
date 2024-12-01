@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import Button from "../../../../components/Button/Button";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import { ToastContainer, toast } from "react-toastify";
@@ -12,7 +12,6 @@ const FormaOferta = ["Presencial", "EAD", "Híbrido"];
 
 const PlanoEstudos = () => {
   const { pedId } = useParams(); // ID do plano de estudos
-  const navigate = useNavigate();
   const location = useLocation();
   const { state } = location || {}; // Para verificar se estamos editando ou criando
 
@@ -76,6 +75,7 @@ const PlanoEstudos = () => {
           throw new Error(response.response.data.mensagem);
         }
 
+        // Exibir toast de sucesso
         toast.success(
           state?.isEditing
             ? "Plano de estudos editado com sucesso!"
@@ -92,8 +92,14 @@ const PlanoEstudos = () => {
           }
         );
 
-        // Redirecionar após o sucesso
-        navigate(`/sessao/Professor/${pedId}/detalhes`);
+        // Limpar campos do formulário após o sucesso
+        setFormData({
+          forma_oferta: "",
+          turno: "",
+          parecer_pedagogico: "",
+          pedId: "",
+        });
+        setErrors({}); // Limpa os erros
       } catch (error) {
         console.error(
           state?.isEditing

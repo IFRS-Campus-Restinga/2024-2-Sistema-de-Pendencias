@@ -100,7 +100,7 @@ urlpatterns = [
     
 
     path('detalhes-plano-estudos/<int:ped_id>/', detalhes_plano_estudos, name='detalhes_plano_estudos'),
-    path('api/atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
+    path('atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
     
 
 
