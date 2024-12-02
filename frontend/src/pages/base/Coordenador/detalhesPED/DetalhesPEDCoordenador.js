@@ -1,24 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
-import "./DetalhesPED.css";
+import "./DetalhesPEDCoordenador.css";
 import Button from "../../../../components/Button/Button";
 import StatusBalls from "../../../../components/StatusBall/StatusBall";
-import Modal from "../../../../components/Modal/Modal";
 import { PEDService } from "../../../../services/pedService";
 import { jwtDecode } from 'jwt-decode';
 
-const DetalhesPED = () => {
+const DetalhesPEDCoordenador = () => {
   const [detalhesPED, setDetalhesPED] = useState({});
   const { pedId } = useParams();
   const usuarioId = jwtDecode(sessionStorage.getItem('token')).idUsuario;
   const location = useLocation();
   const { state } = location || {};
-
-  const [modalAberto, setModalAberto] = useState(false);
-
-  const abrirModal = () => setModalAberto(true);
-  const fecharModal = () => setModalAberto(false);
 
   const fetchDetalhes = async () => {
     try {
@@ -39,28 +33,16 @@ const DetalhesPED = () => {
     }
   }, [pedId, state]);
 
-  const handleDesativarClick = async () => {
-    try {
-      const updatedDetalhes = { ...detalhesPED, status: "Desativado" };
-      const modalidade = state.serie_progressao ? "EMI" : "ProEJA";
-      const res = await PEDService.desativar(
-        pedId,
-        updatedDetalhes,
-        modalidade
-      );
-      if (!res) throw new Error(res.response?.data?.mensagem);
-      setDetalhesPED(updatedDetalhes);
-      console.log("PED desativada com sucesso:", updatedDetalhes);
-      fecharModal();
-    } catch (error) {
-      console.error("Erro ao desativar PED:", error.message);
-    }
-  };
+
+  // Garantir que o 'state' tenha valores válidos antes de acessar
+  if (!state) {
+    return <div>Carregando detalhes...</div>; // Mostrar um carregamento enquanto os dados não estão disponíveis
+  }
 
   return (
     <FormContainer
       titulo={`Detalhes da PED - ${state.serie_progressao ? "EMI" : "ProEJA"}`}
-      comprimento="60%"
+      comprimento="90%"
     >
       {state.serie_progressao ? (
         <>
@@ -70,7 +52,7 @@ const DetalhesPED = () => {
             </span>
             <label className="labelStatusPED">Andamento da PED</label>
           </label>
-          <section className="sectionDetalhesPEDEMI">
+          <section className="sectionDetalhesPED">
             <div className="divDetalhesPED">
               <label className="labelDetalhesPED">
                 Docente responsável pela progressão
@@ -97,23 +79,12 @@ const DetalhesPED = () => {
                 <p className="pDetalhesPED">{state.serie_progressao}</p>
               </label>
               <label className="labelDetalhesPED">
-                Turma Atual
-                <p className="pDetalhesPED">{state.turma_atual}</p>
+                Turma de Origem
+                <p className="pDetalhesPED">{state.turma_origem}</p>
               </label>
             </div>
-            <div className="divStatusPEDEMI">
-              <StatusBalls status={detalhesPED.status} />
-              <span className="spanDetalhesPED">
-                <Link to={"planoEstudos"}>
-                  <Button text="Plano de Estudos" />
-                </Link>
-                <Link to={"cadastrar-form-encerramento"}>
-                  <Button text="Formulário de Encerramento" />
-                </Link>
-                <Link to={`/sessao/Gestão Escolar/${usuarioId}/atividades/emi/${pedId}`}>
-                  <Button text='Atividades'/>
-                </Link>
-              </span>
+            <div className="divStatusPED">
+              <StatusBalls status={state.status} tipo={"PED"} />
             </div>
           </section>
         </>
@@ -149,18 +120,8 @@ const DetalhesPED = () => {
               </label>
             </div>
             <div className="divStatusPED">
-              <StatusBalls status={detalhesPED.status} tipo={"PED"} />
-              <span className="spanDetalhesPED">
-                <Link to={"planoEstudos"}>
-                  <Button text="Plano de Estudos" />
-                </Link>
-                <Link to={"cadastrar-form-encerramento"}>
-                  <Button text="Formulário de Encerramento" />
-                </Link>
-                <Link to={`/sessao/Gestão Escolar/${usuarioId}/atividades/proeja/${pedId}`}>
-                  <Button text='Atividades'/>
-                </Link>
-              </span>
+              <StatusBalls status={state.status} tipo={"PED"} />
+              
             </div>
           </section>
         </>
@@ -170,30 +131,9 @@ const DetalhesPED = () => {
         Observação
         <p className="pDetalhesPED">{state.observacao}</p>
       </label>
-      <div className="buttons-ped">
-      <span className="spanDetalhesPED">
-        {detalhesPED.status !== "Desativado" && (
-          <>
-            <Link to={"editar"} state={detalhesPED}>
-              <Button text={"Editar PED"} />
-            </Link>
-            <Button text="Desativar PED" color={"red"} onClick={abrirModal} />
-          </>
-        )}
-      </span>
-      </div>
-
-      <Modal
-        estaAberto={modalAberto}
-        aoFechar={fecharModal}
-        mensagem="Você tem certeza que deseja desativar a PED?"
-        textoCancelar="Não"
-        textoOk="Desativar"
-        colorButton={"red"}
-        onClick={handleDesativarClick}
-      />
+     
     </FormContainer>
   );
 };
 
-export default DetalhesPED;
+export default DetalhesPEDCoordenador;

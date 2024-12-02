@@ -27,6 +27,7 @@ urlpatterns = [
     path('dados-adicionais-aluno/', infos_adicionais_aluno),
     path('dados-adicionais-professor/', infos_adicionais_professor),
     path('listar-grupos/', listar_grupos),
+    path('dados-adicionais-coordenador/', infos_adicionais_coordenador),
 
     # views de curso
     # curso já manipula turmas por vínculo, por isso turmas não necessitam de uma view própria
@@ -72,9 +73,11 @@ urlpatterns = [
     # view de PPT
     path('cadastrar-ppt/', cadastrar_ppt),
     path('listar-ppt/', listar_ppt),
+    path('listar-ppt-registro/', listar_ppt_registro),
     path('listar-ppt/<int:idPpt>/', listar_ppt_id),
     path('editar-ppt/<int:idPpt>/', editar_ppt),
     path('desativar-ppt/<int:idPpt>/', desativar_ppt),
+    path('ppt-em-andamento/<int:idPpt>/', ppt_em_andamento),
     
     # views de PED
     path('cadastrarPED-EMI/', cadastrar_PED_EMI),
@@ -91,11 +94,13 @@ urlpatterns = [
     path('desativar-ped/<int:pedId>/<str:modalidade>/', desativar_PED),
     path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
     path('aluno/peds/', listar_peds_aluno, name='listar_peds_aluno'),
+    path('ped-emi/<int:coordenadorId>/', listar_PED_EMI),
+    path('ped-proeja/<int:coordenadorId>/', listar_PED_ProEJA),
 
     
 
     path('detalhes-plano-estudos/<int:ped_id>/', detalhes_plano_estudos, name='detalhes_plano_estudos'),
-    path('api/atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
+    path('atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
     
 
 
@@ -110,7 +115,7 @@ urlpatterns = [
     path('editar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', editar_atividade, name='editar_atividade'),
     path('deletar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', delete_atividade, name='deletar_atividade'),
     path('adicionar-plano-atividades/<str:ped_tipo>/<int:ped_id>/', adicionar_plano_atividades, name='adicionar_plano_atividades'),
-
+    path('exibir_nota_final/<str:ped_tipo>/<int:ped_id>/', exibir_nota_final, name='exibir_nota_final'),
 
     #view editar servidor
     path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),

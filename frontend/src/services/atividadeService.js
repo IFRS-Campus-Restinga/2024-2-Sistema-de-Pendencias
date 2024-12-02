@@ -98,6 +98,16 @@ const atividadeService = {
       throw error;
     }
   },
+
+  exibirNotaFinal: async (pedTipo, pedId) => {
+    try {
+      const response = await api.get(`api/exibir_nota_final/${pedTipo}/${pedId}/`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao exibir nota final:', error);
+      throw error;
+    }
+  },
   
 };
 

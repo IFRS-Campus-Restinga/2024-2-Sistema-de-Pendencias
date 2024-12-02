@@ -27,11 +27,18 @@ import DetalhesPED from './pages/base/Gestao/detalhesPED/DetalhesPED'
 import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
 import ListarAluno from './pages/base/Gestao/listarAluno/ListarAluno'
 import DetalhesAluno from './pages/base/Gestao/detalhesAluno/DetalhesAluno'
+import AtividadesDesenvolvidasGestao from './pages/base/Gestao/atividadesDesenvolvidasGestao/atividadesDesenvolvidas'
+import DetalhesAtividadeGestao from './pages/base/Gestao/atividadesDesenvolvidasGestao/detalhesAtividade/detalhesAtividade'
 
 // Filhos de Registro
 import HomeRegistro from './pages/base/Registro/home/homeRegistro'
 import ListarPPTRegistro from './pages/base/Registro/listarPPT/listarPPT'
 // Filhos de Coordenador
+import HomeCoordenador from './pages/base/Coordenador/home/HomeCoordenador'
+import PerfilCoordenador from './pages/base/Coordenador/perfilCoordenador/PerfilCoordenador'
+import ListarPEDEMICoordenador from './pages/base/Coordenador/listarPED_EMI/ListarPED_EMICoordenador'
+import ListarPEDProEJACoordenador from './pages/base/Coordenador/listarPED_ProEJACoordenador/ListarPED_ProEJACoordenador'
+import DetalhesPEDCoordenador from './pages/base/Coordenador/detalhesPED/DetalhesPEDCoordenador'
 
 // Filhos de Professor
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
@@ -198,6 +205,15 @@ const router = createBrowserRouter([
                 path: ':idUsuario/alunos/:idAluno',
                 element: <DetalhesAluno />
             },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId',
+                element: <AtividadesDesenvolvidasGestao />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId/detalhes/:atividadeId',
+                element: <DetalhesAtividadeGestao />
+            },
+
 
         ]
         // Adicionar outros caminhos que vão derivar da tela de home após autenticação
@@ -223,6 +239,33 @@ const router = createBrowserRouter([
         path: '/sessao/Coordenador/',
         element: <BaseCoordenador />,
         // adicionar abaixo, as children de coordenador
+        children: [
+            {
+                path: ':idUsuario/',
+                element: <HomeCoordenador />
+            },
+            {
+                path: ':idUsuario/perfil/',
+                element: <PerfilCoordenador />
+            },
+            {
+                path: ':idUsuario/peds-emi/',
+                element: <ListarPEDEMICoordenador />
+            },
+            {
+                path: ':idUsuario/peds-proeja/',
+                element: <ListarPEDProEJACoordenador />
+            },
+            {
+                path: ':idUsuario/peds-emi/:pedId',
+                element: <DetalhesPEDCoordenador />
+            },
+            {
+                path: ':idUsuario/peds-proeja/:pedId',
+                element: <DetalhesPEDCoordenador />
+            },
+            
+        ]
     },
     // Rotas de Professor
     {

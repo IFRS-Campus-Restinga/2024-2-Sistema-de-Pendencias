@@ -37,19 +37,25 @@ const AdicionarAtividade = () => {
     try {
       const response = await atividadeService.buscarAtividade(pedTipo, pedId, atividadeId);
       if (response) {
+        const converterParaISO = (data) => {
+          if (!data) return "";
+          const [dia, mes, ano] = data.split("/");
+          return `${ano}-${mes}-${dia}`; // Formato ISO
+        };
+  
         setFormData({
           titulo: response.titulo,
           descricao: response.descricao,
-          data_de_entrega: response.data_de_entrega,
+          data_de_entrega: converterParaISO(response.data_de_entrega),
           nota: response.nota || '',
-          observacoes: response.observacoes
+          observacoes: response.observacoes,
         });
       } else {
         toast.error('Atividade não encontrada', {
           position: 'bottom-center',
           autoClose: 3000,
           style: { backgroundColor: '#d11c28', color: '#fff' },
-          progressStyle: { backgroundColor: '#fff' }
+          progressStyle: { backgroundColor: '#fff' },
         });
       }
     } catch (error) {
@@ -58,7 +64,7 @@ const AdicionarAtividade = () => {
         position: 'bottom-center',
         autoClose: 3000,
         style: { backgroundColor: '#d11c28', color: '#fff' },
-        progressStyle: { backgroundColor: '#fff' }
+        progressStyle: { backgroundColor: '#fff' },
       });
     }
   };

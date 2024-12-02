@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import Button from "../../../../components/Button/Button";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./planoEstudos.css";
 import { PlanoEstudosService } from "../../../../services/planoEstudosService";
 import { validarFormularioPlanoEstudos } from "./validacoes";
@@ -12,9 +13,8 @@ const FormaOferta = ["Presencial", "EAD", "Híbrido"];
 
 const PlanoEstudos = () => {
   const { pedId } = useParams(); // ID do plano de estudos
-  const navigate = useNavigate();
   const location = useLocation();
-  const { state } = location || {}; // Para verificar se estamos editando ou criando
+  const { state } = location || {}; // Verifica se estamos editando ou criando
 
   const [formData, setFormData] = useState({
     forma_oferta: "",
@@ -25,7 +25,7 @@ const PlanoEstudos = () => {
 
   const [errors, setErrors] = useState({});
 
-  // Buscar os dados do plano de estudos se estiver editando
+  // Busca os dados do plano de estudos caso esteja editando
   useEffect(() => {
     const fetchPlanoEstudo = async () => {
       if (state?.isEditing && pedId) {
@@ -46,7 +46,7 @@ const PlanoEstudos = () => {
     fetchPlanoEstudo();
   }, [state, pedId]);
 
-  // Atualizar os valores do formulário
+  // Atualiza os valores do formulário
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -55,7 +55,7 @@ const PlanoEstudos = () => {
     }));
   };
 
-  // Enviar o formulário
+  // Submete o formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -76,6 +76,7 @@ const PlanoEstudos = () => {
           throw new Error(response.response.data.mensagem);
         }
 
+        // Exibe toast de sucesso
         toast.success(
           state?.isEditing
             ? "Plano de estudos editado com sucesso!"
@@ -92,14 +93,23 @@ const PlanoEstudos = () => {
           }
         );
 
-        // Redirecionar após o sucesso
-        navigate(`/sessao/Professor/${pedId}/detalhes`);
+        // Limpa os campos do formulário após sucesso
+        setFormData({
+          forma_oferta: "",
+          turno: "",
+          parecer_pedagogico: "",
+          pedId: "",
+        });
+        setErrors({}); // Limpa os erros
       } catch (error) {
         console.error(
           state?.isEditing
             ? "Erro ao editar o plano de estudos"
             : "Erro ao cadastrar o plano de estudos",
           error
+        );
+        toast.error(
+          "Ocorreu um erro ao processar a solicitação. Tente novamente mais tarde."
         );
       }
     }

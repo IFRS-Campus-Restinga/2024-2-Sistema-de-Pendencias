@@ -7,40 +7,35 @@ from dependencias_app.models.atividade import *
 from dependencias_app.models.pedEMI import PED_EMI
 from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.serializers.atividadeSerializer import *
-from dependencias_app.permissoes import Professor
+from dependencias_app.permissoes import Professor, GestaoEscolar, Coordenador
 from rest_framework.parsers import MultiPartParser, FormParser
+from dependencias_app.enums.situacaoDependencia import SituacaoDependencia
+from dependencias_app.enums.statusDependencia import StatusDependencia
 
 
 @api_view(['GET'])
-@permission_classes([Professor])
+@permission_classes([Professor | GestaoEscolar | Coordenador])
 def listar_atividades(request, ped_tipo, ped_id):
     if ped_tipo == "emi":
         ped = PED_EMI.objects.filter(id=ped_id).first()
         if not ped:
             return Response({"erro": "PED EMI não encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        
-        # Checa se o professor logado é o responsável pela PED
+
         if ped.professor_ped != request.user:
             return Response({"erro": "Acesso não autorizado"}, status=status.HTTP_403_FORBIDDEN)
-        
-        atividades = Atividade_EMI.objects.filter(ped_emi=ped)
-        for atividade in atividades:
-            atividade.aluno = ped.aluno  # Adiciona o aluno do PED à atividade
 
+        atividades = Atividade_EMI.objects.filter(ped_emi=ped)
         serializer = Atividade_EMI_Serializer(atividades, many=True)
 
     elif ped_tipo == "proeja":
         ped = PED_ProEJA.objects.filter(id=ped_id).first()
         if not ped:
             return Response({"erro": "PED ProEJA não encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        
+
         if ped.professor_ped != request.user:
             return Response({"erro": "Acesso não autorizado"}, status=status.HTTP_403_FORBIDDEN)
-        
-        atividades = Atividade_ProEJA.objects.filter(ped_proeja=ped)
-        for atividade in atividades:
-            atividade.aluno = ped.aluno  # Adiciona o aluno do PED à atividade
 
+        atividades = Atividade_ProEJA.objects.filter(ped_proeja=ped)
         serializer = Atividade_ProEJA_Serializer(atividades, many=True)
 
     else:
@@ -71,11 +66,56 @@ def atualizar_nota_final(request, ped_tipo, ped_id):
             return Response({"erro": "Acesso não autorizado."}, status=status.HTTP_403_FORBIDDEN)
 
         ped.nota_final = nota_final
+        if nota_final >= 7:
+            ped.situacao = SituacaoDependencia.APROVADO
+        else:
+            ped.situacao = SituacaoDependencia.REPROVADO
+        ped.status = StatusDependencia.FINALIZADO
         ped.save()
 
         return Response({"nota_final": ped.nota_final}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([Professor | GestaoEscolar | Coordenador])
+def exibir_nota_final(request, ped_tipo, ped_id):
+    try:
+        if ped_tipo == "emi":
+            ped = PED_EMI.objects.filter(id=ped_id).first()
+        elif ped_tipo == "proeja":
+            ped = PED_ProEJA.objects.filter(id=ped_id).first()
+        else:
+            return Response({"erro": "Tipo de PED inválido."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not ped:
+            return Response({"erro": "PED não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        if not hasattr(ped, 'nota_final') or not hasattr(ped, 'situacao') or not hasattr(ped, 'status'):
+            return Response({"erro": "Dados do PED incompletos."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        if ped.professor_ped != request.user:
+            return Response({"erro": "Acesso não autorizado."}, status=status.HTTP_403_FORBIDDEN)
+
+        nota_final = ped.nota_final
+        situacao = ped.situacao
+        status_dep = ped.status
+
+        return Response(
+            {
+                "nota_final": nota_final,
+                "situacao": situacao,
+                "status": status_dep
+            },
+            status=status.HTTP_200_OK,
+        )
+    except Exception as e:
+        # Adicionar logs para investigar melhor
+        logging.error(f"Erro ao exibir nota final: {str(e)}")
+        return Response(
+            {"erro": f"Erro inesperado: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 @api_view(['POST'])
@@ -122,34 +162,33 @@ def adicionar_atividade(request, ped_tipo, ped_id):
     
 
 @api_view(['GET'])
-@permission_classes([Professor])
+@permission_classes([Professor | GestaoEscolar])
 def detalhes_atividade(request, ped_tipo, ped_id, atividade_id):
-    print(f"atividade_id: {atividade_id}")  # imprime o valor de atividade_id
     try:
         # Verifica o tipo de PED e busca a atividade correspondente
         if ped_tipo == "emi":
             atividade = Atividade_EMI.objects.filter(id=atividade_id).first()
+            serializer_class = Atividade_EMI_Serializer
         elif ped_tipo == "proeja":
             atividade = Atividade_ProEJA.objects.filter(id=atividade_id).first()
+            serializer_class = Atividade_ProEJA_Serializer
         else:
             return Response({"erro": "Tipo de PED inválido."}, status=status.HTTP_400_BAD_REQUEST)
 
-        print(f"atividade: {atividade}")  # imprime o resultado da busca
         if not atividade:
             return Response({"erro": "Atividade não encontrada."}, status=status.HTTP_404_NOT_FOUND)
 
         # Determina o PED correspondente à atividade
         ped = atividade.ped_emi if ped_tipo == "emi" else atividade.ped_proeja
-        
+
         # Verifica se o professor logado é o responsável pelo PED da atividade
         if ped.professor_ped != request.user:
             return Response({"erro": "Acesso não autorizado."}, status=status.HTTP_403_FORBIDDEN)
 
         # Serializa a atividade e retorna os detalhes
-        serializer_class = Atividade_EMI_Serializer if ped_tipo == "emi" else Atividade_ProEJA_Serializer
         serializer = serializer_class(atividade)
-        print(f"serializer.data: {serializer.data}")  # imprime o resultado da serialização
         return Response(serializer.data, status=status.HTTP_200_OK)
+
     except Exception as e:
         return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     

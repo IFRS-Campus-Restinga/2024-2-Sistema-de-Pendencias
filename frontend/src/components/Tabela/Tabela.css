@@ -122,4 +122,37 @@ table {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 10px;   
+}
+
+.botaoStatus{
+    padding: 9px 10px;
+    border: none;
+    border-radius: 6px;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    font-family: 'Roboto', sans-serif;
+    background-color: yellow;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0;
+    height: 20px;
+}
+
+.botaoStatus {
+    padding: 5px 10px;
+    background-color: #006b3f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.botaoStatus:hover {
+    background-color: #004f29;
 }
