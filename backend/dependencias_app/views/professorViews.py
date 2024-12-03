@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes
 from django.contrib.auth.models import Group
-from dependencias_app.models.professor import Professor
+
 from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
 from dependencias_app.serializers.professorSerializer import ProfessorSerializer
 from dependencias_app.permissoes import *

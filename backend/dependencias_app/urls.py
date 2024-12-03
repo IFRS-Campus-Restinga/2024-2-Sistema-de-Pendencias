@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
+from dependencias_app.views.observacaoViews import *
 from dependencias_app.views.usuarioBaseViews import *
 from dependencias_app.views.gestaoEscolarViews import *
 from dependencias_app.views.registroEscolarViews import *
@@ -103,7 +104,8 @@ urlpatterns = [
     path('atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
     
 
-
+    ##views para tela de observaçoes
+    path('adicionar-observacao/', adicionar_observacao, name='adicionar_observacao'),
 
 
 
