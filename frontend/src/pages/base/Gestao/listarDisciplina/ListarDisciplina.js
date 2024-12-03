@@ -1,6 +1,7 @@
 import { jwtDecode } from 'jwt-decode'
 import FormContainer from '../../../../components/FormContainer/FormContainer'
 import Tabela from '../../../../components/Tabela/Tabela'
+import LoadingIFRS from '../../../../components/LoadingIFRS/LoadingIFRS'
 import { disciplinaService } from '../../../../services/disciplinaService'
 import './ListarDisciplina.css'
 import {useEffect, useState} from 'react'
@@ -9,9 +10,11 @@ import Input from '../../../../components/Input/Input'
 import X from "../../../../assets/x-branco.png";
 import Lupa from "../../../../assets/lupa-branca.png";
 import Adicionar from "../../../../assets/icone-adicionar-disciplina.png";
+import loading from '../../../../assets/loading-disciplinas.png'
 
 const ListarDisciplina = () => {
     const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(true)
     const [disciplinas, setDisciplinas] = useState([])
     const [disciplinasFiltradas, setDisciplinasFiltradas] = useState([])
     const [filtroGeral, setFiltroGeral] = useState('')
@@ -34,6 +37,7 @@ const ListarDisciplina = () => {
 
             setDisciplinas(res.data)
             setDisciplinasFiltradas(res.data)
+            setIsLoading(false)
         } catch (error) {
             console.error(error)
         }
@@ -48,6 +52,8 @@ const ListarDisciplina = () => {
     useEffect(() => {
         fetchDisciplinas()
     },[])
+
+    if (isLoading) return <LoadingIFRS icone={loading}/>
 
     return (
         <FormContainer titulo='Lista de Disciplinas'>

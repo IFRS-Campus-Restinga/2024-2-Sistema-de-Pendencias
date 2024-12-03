@@ -2,14 +2,16 @@ import { useEffect, useState } from "react"
 import FormContainer from "../../../../components/FormContainer/FormContainer"
 import Tabela from "../../../../components/Tabela/Tabela"
 import Input from "../../../../components/Input/Input"
-import Button from '../../../../components/Button/Button'
 import { PEDService } from "../../../../services/pedService"
 import './ListarPED_ProEJA.css'
 import X from "../../../../assets/x-branco.png";
 import Lupa from "../../../../assets/lupa-branca.png";
+import loading from '../../../../assets/loading-peds.png'
+import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS"
 
 
 const ListarPEDProEJA = () => {
+    const [isLoading, setIsLoading] = useState(true)
     const [listaPED_ProEJA, setListaPED_ProEJA] = useState([])
     const [listaFiltrada, setListaFiltrada] = useState([])
     const [filtroGeral, setFiltroGeral] = useState('');
@@ -20,12 +22,13 @@ const ListarPEDProEJA = () => {
 
     const fetchPED_ProEJA = async () => {
         try {
-            const res = await PEDService.listaProEJA()
+            const res = await PEDService.listaProEJA(null, 'lista')
 
             if (res.status !== 200) throw new Error(res)
 
             setListaPED_ProEJA(res.data)
             setListaFiltrada(res.data)
+            setIsLoading(false)
         } catch (error) {
             console.error(error)
         }
@@ -66,6 +69,8 @@ const ListarPEDProEJA = () => {
     useEffect(() => {
         fetchPED_ProEJA()
     }, [])
+
+    if (isLoading) return <LoadingIFRS icone={loading}/>
 
     return (
         <FormContainer titulo='Dependências - ProEJA' comprimento='95%'

@@ -28,18 +28,8 @@ const DetalhesPPT = () => {
 
   const handleEditarClick = () => {
     console.log("Detalhes enviados para edição:", detalhesPPT);
-    navigate(`editarPPT/`, {
-      state: {
-        id: detalhesPPT.id,
-        aluno: detalhesPPT.aluno,
-        professor_ppt: detalhesPPT.professor_ppt,
-        professor_disciplina: detalhesPPT.professor_disciplina,
-        curso: detalhesPPT.curso,
-        disciplina: detalhesPPT.disciplina,
-        turma_origem: detalhesPPT.turma_origem,
-        turma_progressao: detalhesPPT.turma_progressao,
-        observacao: detalhesPPT.observacao,
-      },
+    navigate(`editar/`, {
+      state: detalhesPPT
     });
   };
 

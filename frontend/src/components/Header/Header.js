@@ -58,6 +58,7 @@ const Header = ({homeUrl}) => {
               Bem vindo,
             </h2>
             <p className="header-nome">{nome}</p>
+            <p className="header-grupo">({jwtDecode(sessionStorage.getItem('token')).grupo})</p>
           </span>
             <Dropdown 
               titulo={

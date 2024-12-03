@@ -71,18 +71,32 @@ class PPTSerializer(serializers.ModelSerializer):
 
         # Verifica se a requisição pediu representação detalhada
         request = self.context.get('request', None)
-        incluir_dados = request and request.query_params.get('incluir_dados')
+        retorno = request and request.query_params.get('retorno')
 
-        if incluir_dados:
-            representation['aluno'] = str(instance.aluno)
-            representation['professor_disciplina'] = str(instance.professor_disciplina)
-            representation['professor_ppt'] = str(instance.professor_ppt)
-            representation['curso'] = str(instance.curso)
-            representation['disciplina'] = str(instance.disciplina)
-            representation['turma_atual'] = str(instance.turma_atual)
-            representation['turma_progressao'] = str(instance.turma_progressao)
-            
-        representation.pop('data_criacao')
+        if retorno == 'lista':
+            # Inclui apenas os campos `id` e os campos configurados manualmente
+            representation = {
+                'id': instance.id,
+                'aluno': str(instance.aluno),
+                'professor_disciplina': str(instance.professor_disciplina),
+                'professor_ppt': str(instance.professor_ppt),
+                'curso': str(instance.curso),
+                'disciplina': str(instance.disciplina),
+                'turma_atual': instance.turma_atual.numero,
+                'turma_progressao': instance.turma_progressao.numero,
+                'status': instance.status
+            }
+        
+        elif retorno == 'detalhes':
+            representation['aluno'] = {'id': instance.aluno.id, 'nome': str(instance.aluno)}
+            representation['professor_disciplina'] = {'id': instance.professor_disciplina.id, 'nome': str(instance.professor_disciplina)}
+            representation['professor_ppt'] = {'id': instance.professor_ped.id, 'nome': str(instance.professor_ped)}
+            representation['curso'] = {'id': instance.curso.id, 'nome': instance.curso.nome}
+            representation['disciplina'] = {'id': instance.disciplina.id, 'nome': instance.disciplina.nome}
+            representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'periodo_letivo': instance.periodo_letivo.titulo}
+            representation['turma_atual'] = {'id': instance.turma_atual.id, 'turma_atual': instance.turma_atual.numero}
+            representation['turma_progressao'] = {'id': instance.turma_progressao.id, 'turma_progressao': instance.turma_progressao.titulo}
 
+            representation.pop('data_criacao')
 
         return representation

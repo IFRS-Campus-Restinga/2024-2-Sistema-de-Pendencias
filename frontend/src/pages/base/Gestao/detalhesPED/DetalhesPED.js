@@ -9,40 +9,30 @@ import { PEDService } from "../../../../services/pedService";
 import { jwtDecode } from 'jwt-decode';
 
 const DetalhesPED = () => {
-  const [detalhesPED, setDetalhesPED] = useState({});
   const { pedId } = useParams();
-  const usuarioId = jwtDecode(sessionStorage.getItem('token')).idUsuario;
-  const location = useLocation();
-  const { state } = location || {};
-
+  const location = useLocation()
+  const tipoPed = location.pathname.split('/')[4];
+  const [detalhesPED, setDetalhesPED] = useState({});
   const [modalAberto, setModalAberto] = useState(false);
-
   const abrirModal = () => setModalAberto(true);
   const fecharModal = () => setModalAberto(false);
 
   const fetchDetalhes = async () => {
     try {
-      const res = await PEDService.porId(pedId, "EMI");
+      const res = await PEDService.porId(pedId, tipoPed === 'peds-emi' ? 'Integrado':'ProEJA', "detalhes");
+
       if (res.status !== 200) throw new Error(res.response?.data?.mensagem);
+
       setDetalhesPED(res.data);
-      console.log(res.data);
     } catch (error) {
       console.error("Erro ao buscar detalhes da PED:", error.message);
     }
   };
 
-  useEffect(() => {
-    if (state) {
-      setDetalhesPED(state); // Usar o 'state' se estiver disponível
-    } else {
-      fetchDetalhes(); // Caso contrário, buscar os dados da PED pelo ID
-    }
-  }, [pedId, state]);
-
   const handleDesativarClick = async () => {
     try {
       const updatedDetalhes = { ...detalhesPED, status: "Desativado" };
-      const modalidade = state.serie_progressao ? "EMI" : "ProEJA";
+      const modalidade = detalhesPED.serie_progressao ? "EMI" : "ProEJA";
       const res = await PEDService.desativar(
         pedId,
         updatedDetalhes,
@@ -57,16 +47,24 @@ const DetalhesPED = () => {
     }
   };
 
+  useEffect(() => {
+    fetchDetalhes()
+  }, [])
+
+  if (!detalhesPED.aluno) {
+    return <div>Carregando...</div>;
+  }
+
   return (
     <FormContainer
-      titulo={`Detalhes da PED - ${state.serie_progressao ? "EMI" : "ProEJA"}`}
-      comprimento="60%"
+      titulo={`Detalhes da PED - ${detalhesPED.serie_progressao ? "EMI" : "ProEJA"}`}
+      comprimento="80%"
     >
-      {state.serie_progressao ? (
+      {detalhesPED.serie_progressao ? (
         <>
           <label className="labelCabecalhoDetalhesPED">
             <span className="spanDetalhesPED">
-              Aluno -<p className="pDetalhesPED">{state.aluno}</p>
+              Aluno -<p className="pDetalhesPED">{detalhesPED.aluno.nome}</p>
             </span>
             <label className="labelStatusPED">Andamento da PED</label>
           </label>
@@ -74,31 +72,31 @@ const DetalhesPED = () => {
             <div className="divDetalhesPED">
               <label className="labelDetalhesPED">
                 Docente responsável pela progressão
-                <p className="pDetalhesPED">{state.professor_ped}</p>
+                <p className="pDetalhesPED">{detalhesPED.professor_ped.nome}</p>
               </label>
               <label className="labelDetalhesPED">
                 Docente que ministrou a disciplina
-                <p className="pDetalhesPED">{state.professor_disciplina}</p>
+                <p className="pDetalhesPED">{detalhesPED.professor_disciplina.nome}</p>
               </label>
               <label className="labelDetalhesPED">
                 Curso
-                <p className="pDetalhesPED">{state.curso}</p>
+                <p className="pDetalhesPED">{detalhesPED.curso.nome}</p>
               </label>
               <label className="labelDetalhesPED">
                 Disciplina
-                <p className="pDetalhesPED">{state.disciplina}</p>
+                <p className="pDetalhesPED">{detalhesPED.disciplina.nome}</p>
               </label>
               <label className="labelDetalhesPED">
                 Trimestres a Recuperar
-                <p className="pDetalhesPED">{state.trimestre_recuperar}</p>
+                <p className="pDetalhesPED">{detalhesPED.trimestre_recuperar}</p>
               </label>
               <label className="labelDetalhesPED">
                 Série da Progressão
-                <p className="pDetalhesPED">{state.serie_progressao}</p>
+                <p className="pDetalhesPED">{detalhesPED.serie_progressao}</p>
               </label>
               <label className="labelDetalhesPED">
                 Turma Atual
-                <p className="pDetalhesPED">{state.turma_atual}</p>
+                <p className="pDetalhesPED">{detalhesPED.turma_atual.numero}</p>
               </label>
             </div>
             <div className="divStatusPEDEMI">
@@ -110,7 +108,7 @@ const DetalhesPED = () => {
                 <Link to={"cadastrar-form-encerramento"}>
                   <Button text="Formulário de Encerramento" />
                 </Link>
-                <Link to={`/sessao/Gestão Escolar/${usuarioId}/atividades/emi/${pedId}`}>
+                <Link to={`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${pedId}`}>
                   <Button text='Atividades'/>
                 </Link>
               </span>
@@ -121,7 +119,7 @@ const DetalhesPED = () => {
         <>
           <label className="labelCabecalhoDetalhesPED">
             <span className="spanDetalhesPED">
-              Aluno -<p className="pDetalhesPED">{state.aluno}</p>
+              Aluno -<p className="pDetalhesPED">{detalhesPED.aluno.nome}</p>
             </span>
             <label className="labelStatusPED">Andamento da PED</label>
           </label>
@@ -129,23 +127,23 @@ const DetalhesPED = () => {
             <div className="divDetalhesPED">
               <label className="labelDetalhesPED">
                 Docente responsável pela progressão
-                <p className="pDetalhesPED">{state.professor_ped}</p>
+                <p className="pDetalhesPED">{detalhesPED.professor_ped.nome}</p>
               </label>
               <label className="labelDetalhesPED">
                 Docente que ministrou a disciplina
-                <p className="pDetalhesPED">{state.professor_disciplina}</p>
+                <p className="pDetalhesPED">{detalhesPED.professor_disciplina.nome}</p>
               </label>
               <label className="labelDetalhesPED">
                 Curso
-                <p className="pDetalhesPED">{state.curso}</p>
+                <p className="pDetalhesPED">{detalhesPED.curso.nome}</p>
               </label>
               <label className="labelDetalhesPED">
                 Disciplina
-                <p className="pDetalhesPED">{state.disciplina}</p>
+                <p className="pDetalhesPED">{detalhesPED.disciplina.nome}</p>
               </label>
               <label className="labelDetalhesPED">
                 Ano/Semestre de Reprovação
-                <p className="pDetalhesPED">{state.ano_semestre_reprov}</p>
+                <p className="pDetalhesPED">{detalhesPED.ano_semestre_reprov}</p>
               </label>
             </div>
             <div className="divStatusPED">
@@ -157,7 +155,7 @@ const DetalhesPED = () => {
                 <Link to={"cadastrar-form-encerramento"}>
                   <Button text="Formulário de Encerramento" />
                 </Link>
-                <Link to={`/sessao/Gestão Escolar/${usuarioId}/atividades/proeja/${pedId}`}>
+                <Link to={`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/proeja/${pedId}`}>
                   <Button text='Atividades'/>
                 </Link>
               </span>
@@ -168,7 +166,7 @@ const DetalhesPED = () => {
 
       <label className="labelDetalhesPED">
         Observação
-        <p className="pDetalhesPED">{state.observacao}</p>
+        <p className="pDetalhesPED">{detalhesPED.observacao}</p>
       </label>
       <div className="buttons-ped">
       <span className="spanDetalhesPED">

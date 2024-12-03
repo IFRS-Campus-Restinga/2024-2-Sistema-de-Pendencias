@@ -83,7 +83,8 @@ const CadastroPED = () => {
   const trocaModalidade = (novoValor) => {
     if (!state) {
       setModalidade(novoValor);
-      const calendariosFiltrados = opcoesCalendarios.filter((calendario) => calendario.tipo_calendario === novoValor)
+      setOpcoesCalendarios(opcoesCalendarios.filter((calendario) => calendario.tipo_calendario === novoValor))
+
       if (novoValor === 'Integrado') {
         setFormData({
           aluno: '',
@@ -223,8 +224,8 @@ const CadastroPED = () => {
       setCursos(cursosPorModalidade)
 
       if (state) {
-        const index = cursosPorModalidade.findIndex(curso => curso.nome === state.curso)
-
+        const index = cursosPorModalidade.findIndex(curso => curso.nome === state.curso.nome)
+        console.log(cursosPorModalidade)
         setDisciplinas(cursosPorModalidade[index].disciplinas)
         setTurmas(cursosPorModalidade[index].turmas)
       }
@@ -244,18 +245,6 @@ const CadastroPED = () => {
     }
   }
 
-  const fetchPED = async (pedId) => {
-    try {
-      const res = await PEDService.porId(pedId, modalidade, true)
-
-      if (res.status !== 200) throw new Error(res)
-
-      setFormData(res.data)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   const fetchProfessores = async (e) => {
     try {
       const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Professor')
@@ -272,8 +261,6 @@ const CadastroPED = () => {
 
       if (res.status !== 200) throw new Error(res)
 
-      console.log(res.data)
-
       const calendariosFiltrados = res.data.filter((calendario) => calendario.tipo_calendario === modalidade)
 
       setOpcoesCalendarios(calendariosFiltrados)
@@ -284,8 +271,35 @@ const CadastroPED = () => {
 
   useEffect(() => {
     if (state) {
-      fetchPED(state.id)
-      setControleInputs(state)
+      console.log(state)
+
+      setControleInputs({
+        aluno: state.aluno.nome,
+        professor_ped: state.professor_ped.nome,
+        professor_disciplina: state.professor_disciplina.nome,
+        curso: state.curso.id,
+        disciplina: state.disciplina.id,
+        turma_atual: state?.turma_atual?.id,
+        ano_semestre_reprov: state.ano_semestre_reprov,
+        serie_progressao: state.serie_progressao,
+        trimestre_recuperar: state.trimestre_recuperar,
+        periodo_letivo: state.periodo_letivo.titulo
+      })
+
+      setFormData({
+        aluno: state.aluno.id,
+        professor_ped: state.professor_ped.id,
+        professor_disciplina: state.professor_disciplina.id,
+        curso: state.curso.id,
+        disciplina: state.disciplina.id,
+        turma_atual: state?.turma_atual?.id,
+        ano_semestre_reprov: state.ano_semestre_reprov,
+        serie_progressao: state.serie_progressao,
+        trimestre_recuperar: state.trimestre_recuperar,
+        periodo_letivo: state.periodo_letivo.id
+      })
+
+
       setDesabilitado(true)
     } else {
       setFormData({
@@ -311,6 +325,7 @@ const CadastroPED = () => {
         trimestre_recuperar: '',
         turma_origem: '',
       })
+
     }
 
     fetchCursos()
@@ -464,7 +479,7 @@ const CadastroPED = () => {
                     <label className="labelCadastroPED">
                     Período Letivo *
                     <select className={errors.periodo_letivo ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="periodo_letivo"
-                      value={formData.periodo_letivo}
+                      value={controleInputs.periodo_letivo}
                       disabled={desabilitado}
                       onChange={(e) => {                        
                         const periodo_letivoId = e.target.value;

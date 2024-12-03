@@ -156,7 +156,7 @@ const CadastroPPT = () => {
       fetchPPT(state.id)
       setDesabilitado(true)
     }
-
+    console.log(state)
     fetchCursos()
   }, [state]);
   

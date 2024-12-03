@@ -11,8 +11,11 @@ import Lupa from "../../../../assets/lupa-branca.png";
 import X from "../../../../assets/x-branco.png";
 import { jwtDecode } from 'jwt-decode';
 import IconeAdicionar from "../../../../assets/icone-adicionar-usuario.png";
+import LoadingIFRS from '../../../../components/LoadingIFRS/LoadingIFRS';
+import loading from '../../../../assets/loading-usuarios.png'
 
 const ListarAluno = () => {
+  const [isLoading, setIsLoading] = useState(true)
   const [alunos, setAlunos] = useState([]);
   const [alunosFiltrados, setAlunosFiltrados] = useState([]);
   const [grupos, setGrupos] = useState([]);
@@ -36,6 +39,7 @@ const ListarAluno = () => {
 
       setAlunos(response.data);
       setAlunosFiltrados(response.data);
+      setIsLoading(false)
     } catch (error) {
       console.error('Erro ao buscar alunos:', error);
     }
@@ -95,6 +99,8 @@ const ListarAluno = () => {
     fetchAlunos();
     fetchGrupos();
   }, []);
+
+  if (isLoading) return <LoadingIFRS icone={loading}/>
 
   return (
     <>

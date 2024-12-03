@@ -5,10 +5,13 @@ import { PEDService } from "../../../../services/pedService"
 import Input from "../../../../components/Input/Input"
 import X from "../../../../assets/x-branco.png";
 import Lupa from "../../../../assets/lupa-branca.png";
+import loading from '../../../../assets/loading-peds.png'
 import './ListarPED_EMI.css'
+import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS"
 
 
 const ListarPEDEMI = () => {
+    const [isLoading, setIsLoading] = useState(true)
     const [listaPED_EMI, setListaPED_EMI] = useState([])
     const [listaFiltrada, setListaFiltrada] = useState([])
     const [filtroGeral, setFiltroGeral] = useState('');
@@ -19,12 +22,13 @@ const ListarPEDEMI = () => {
 
     const fetchPED_EMI = async () => {
         try {
-            const res = await PEDService.listaEMI()
+            const res = await PEDService.listaEMI(null, 'lista')
 
             if (res.status !== 200) throw new Error(res)
 
             setListaPED_EMI(res.data)
             setListaFiltrada(res.data)
+            setIsLoading(false)
         } catch (error) {
             console.error(error)
         }
@@ -65,6 +69,8 @@ const ListarPEDEMI = () => {
     useEffect(() => {
         fetchPED_EMI()
     }, [])
+
+    if (isLoading) return <LoadingIFRS icone={loading}/>
 
     return (
         <FormContainer titulo='Dependências - EMI' comprimento='95%'

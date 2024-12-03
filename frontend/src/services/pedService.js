@@ -17,10 +17,10 @@ export const PEDService = {
     return res
   },
 
-  porId: async (pedId, modalidade, retornar_ids) => {
+  porId: async (pedId, modalidade, retorno) => {
     const res = await api.get(`api/ped/${pedId}/${modalidade}`, {
       params: {
-        retornar_ids
+        retorno
       }
     }).catch((erro) => {
       return erro
@@ -29,10 +29,10 @@ export const PEDService = {
     return res
   },
 
-  listaEMI: async (professorId) => {
+  listaEMI: async (professorId, retorno) => {
     const res = await api.get(`api/ped-emi/?professorId=${professorId ?? ''}`,{
       params: {
-        incluir_dados: true
+        retorno
       }
     }
     ).catch((erro) => {
@@ -42,10 +42,10 @@ export const PEDService = {
     return res
   },
 
-  listaProEJA: async (professorId) => {
+  listaProEJA: async (professorId, retorno) => {
     const res = await api.get(`api/ped-proeja/?professorId=${professorId ?? ''}`, {
       params: {
-        incluir_dados: true
+        retorno
       }
     }).catch((erro) => {
       return erro
