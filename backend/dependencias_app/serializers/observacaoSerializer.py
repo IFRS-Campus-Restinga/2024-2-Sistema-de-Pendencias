@@ -7,7 +7,4 @@ class ObservacaoSerializer(serializers.ModelSerializer):
         model = Observacao
         fields = '__all__'
     
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['data_insercao'] = instance.data_insercao.strftime('%d/%m/%Y %H:%M:%S')  # Formato de data
-        return representation
+    

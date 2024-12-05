@@ -105,8 +105,8 @@ urlpatterns = [
     
 
     ##views para tela de observaçoes
-    path('adicionar-observacao/', adicionar_observacao, name='adicionar_observacao'),
-
+    path('adicionar-observacao/<str:ped_tipo>/<int:ped_id>/', adicionar_observacao, name='adicionar_observacao'),
+    
 
 
     #views para atividades da ped

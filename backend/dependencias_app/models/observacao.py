@@ -6,7 +6,7 @@ from django.db import models
 from dependencias_app.enums.statusDependencia import *
 
 class Observacao(BaseModel):
-    data_insercao = models.DateTimeField(auto_now_add=True, verbose_name="Data de Inserção")
+    data_insercao = models.DateTimeField(auto_now_add=True)
     parecer = models.TextField(verbose_name="Parecer", help_text="Informe o parecer da observação", blank=False, null=False)
     status = models.CharField(max_length=50, choices=StatusDependencia.choices)
 
