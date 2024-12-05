@@ -2,32 +2,33 @@ import React, { useEffect, useState } from "react";
 import "./detalhesPPT.css";
 import StatusBalls from "../../../../components/StatusBall/StatusBall";
 import { PPTService } from "../../../../services/emiPptService";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Button from "../../../../components/Button/Button";
 import Modal from "../../../../components/Modal/Modal";
+import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS";
+import loading from '../../../../assets/loading-disciplinas.png'
 
 const DetalhesPPT = () => {
-  const [detalhesPPT, setDetalhesPPT] = useState({});
   const { idPpt } = useParams();
-  const location = useLocation();
-  const { state } = location;
   const navigate = useNavigate();
-
+  const [detalhesPPT, setDetalhesPPT] = useState({});
+  const [isLoading, setIsLoading] = useState(true)
   const [modalAberto, setModalAberto] = useState(false);
 
-  // Busca os detalhes da PPT pelo ID
   const fetchDetalhes = async () => {
     try {
-      const res = await PPTService.getById(idPpt);
+      const res = await PPTService.getById(idPpt, 'detalhes');
+
       if (res.status !== 200) throw new Error(res.response?.data?.mensagem);
-      console.log(res.data);
+
+      setDetalhesPPT(res.data)
+      setIsLoading(false)
     } catch (error) {
       console.error("Erro ao buscar detalhes da PPT:", error.message);
     }
   };
 
   const handleEditarClick = () => {
-    console.log("Detalhes enviados para edição:", detalhesPPT);
     navigate(`editar/`, {
       state: detalhesPPT
     });
@@ -51,9 +52,9 @@ const DetalhesPPT = () => {
 
   useEffect(() => {
     fetchDetalhes();
-    setDetalhesPPT(state);
-    console.log(state);
-  }, [idPpt]);
+  }, []);
+
+  if (isLoading) return <LoadingIFRS icone={loading}/>
 
   return (
     <div className="formContainerDetails">
@@ -70,30 +71,30 @@ const DetalhesPPT = () => {
         <div className="infos">
           <div className="info-item">
             <h3 className="h3-info">Matrícula:</h3>
-            <span className="info-value">{detalhesPPT.aluno || "-"}</span>
+            <span className="info-value">{detalhesPPT.aluno.nome || "-"}</span>
           </div>
           <div className="info-item">
             <h3 className="h3-info">Curso:</h3>
-            <span className="info-value">{detalhesPPT.curso || "-"}</span>
+            <span className="info-value">{detalhesPPT.curso.nome || "-"}</span>
           </div>
           <div className="info-item">
             <h3 className="h3-info">Turma:</h3>
-            <span className="info-value">{detalhesPPT.turma_atual || "-"}</span>
+            <span className="info-value">{detalhesPPT.turma_atual.numero || "-"}</span>
           </div>
           <div className="info-item">
             <h3 className="h3-info">Turma da PPT:</h3>
             <span className="info-value">
-              {detalhesPPT.turma_progressao || "-"}
+              {detalhesPPT.turma_progressao.numero || "-"}
             </span>
           </div>
           <div className="info-item">
             <h3 className="h3-info">Disciplina:</h3>
-            <span className="info-value">{detalhesPPT.disciplina || "-"}</span>
+            <span className="info-value">{detalhesPPT.disciplina.nome || "-"}</span>
           </div>
           <div className="info-item">
             <h3 className="h3-info">Docente responsável:</h3>
             <span className="info-value">
-              {detalhesPPT.professor_disciplina || "-"}
+              {detalhesPPT.professor_disciplina.nome || "-"}
             </span>
           </div>
           <div className="info-textarea">

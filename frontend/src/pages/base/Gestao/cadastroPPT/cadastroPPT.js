@@ -10,11 +10,14 @@ import { PPTService } from "../../../../services/emiPptService";
 import { cursoService } from "../../../../services/cursoService";
 import { validarFormularioPPT, validarTurmas } from "./validacoes";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";
+import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS";
+import loading from '../../../../assets/loading-disciplinas.png'
 
 const CadastroPPT = () => {
   const formRef = useRef();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(true)
   const [desabilitado, setDesabilitado] = useState(false)
   const { state } = location || {}; // Dados enviados via navegação
   const [cursos, setCursos] = useState([]);
@@ -45,13 +48,39 @@ const CadastroPPT = () => {
     observacao: ''
   })
 
-  const fetchPPT = async (pptId) => {
+  const fetchPPT = async () => {
     try {
-      const res = await  PPTService.getById(pptId)
+      const res = await  PPTService.getById(state.id, 'detalhes')
 
       if (res.status !== 200) throw new Error(res)
+      
+      setControleInputs({
+        aluno: res.data.aluno.nome,
+        professor_ppt: res.data.professor_ppt.nome,
+        professor_disciplina: res.data.professor_disciplina.nome,
+        curso: res.data.curso.id,
+        disciplina: res.data.disciplina.id,
+        turma_atual: res.data.turma_atual.id,
+        turma_progressao: res.data.turma_progressao.id,
+        observacao: res.data.observacao
+      })
 
-      setFormData(res.data)
+      setCursos([res.data.curso])
+      setTurmas([res.data.turma_atual, res.data.turma_progressao])
+      setDisciplinas([res.data.disciplina])
+
+      setFormData({
+        aluno: res.data.aluno.id,
+        professor_ppt: res.data.professor_ppt.id,
+        professor_disciplina: res.data.professor_disciplina.id,
+        curso: res.data.curso.id,
+        disciplina: res.data.disciplina.id,
+        turma_atual: res.data.turma_atual.id,
+        turma_progressao: res.data.turma_progressao.id,
+        observacao: res.data.observacao
+      })
+
+      setIsLoading(false)
     } catch (error) {
       console.error(error)
     }
@@ -120,13 +149,7 @@ const CadastroPPT = () => {
       
       setCursos(res.data);
 
-      if (state) {
-        const index = res.data.findIndex(curso => curso.nome === state.curso)
-
-        setDisciplinas(res.data[index].disciplinas)
-        setTurmas(res.data[index].turmas)
-      }
-
+      setIsLoading(false)
     } catch (error) {
       console.log(error);
     }
@@ -152,14 +175,45 @@ const CadastroPPT = () => {
 
   useEffect(() => {
     if (state) {
-      setControleInputs(state);
-      fetchPPT(state.id)
+      if (typeof state.observacao === 'string') {
+        setControleInputs({
+          aluno: state.aluno.nome,
+          professor_ppt: state.professor_ppt.nome,
+          professor_disciplina: state.professor_disciplina.nome,
+          curso: state.curso.id,
+          disciplina: state.disciplina.id,
+          turma_atual: state.turma_atual.id,
+          turma_progressao: state.turma_progressao.id,
+          observacao: state.observacao
+        })
+
+        setCursos([state.curso])
+        setTurmas([state.turma_atual, state.turma_progressao])
+        setDisciplinas([state.disciplina])
+  
+        setFormData({
+          aluno: state.aluno.id,
+          professor_ppt: state.professor_ppt.id,
+          professor_disciplina: state.professor_disciplina.id,
+          curso: state.curso.id,
+          disciplina: state.disciplina.id,
+          turma_atual: state.turma_atual.id,
+          turma_progressao: state.turma_progressao.id,
+          observacao: state.observacao
+        })
+
+        setIsLoading(false)
+      } else {
+        fetchPPT()
+      }
       setDesabilitado(true)
+    } else {
+      fetchCursos()
     }
-    console.log(state)
-    fetchCursos()
   }, [state]);
   
+  if (isLoading) return <LoadingIFRS icone={loading}/>
+
   return (
     <>
       <ToastContainer />

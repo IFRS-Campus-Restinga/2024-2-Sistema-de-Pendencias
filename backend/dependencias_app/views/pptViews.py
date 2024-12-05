@@ -57,7 +57,7 @@ def listar_ppt_id(request, idPpt):
     try:
         ppt = PPT.objects.get(id=idPpt)
 
-        serializer = PPTSerializer(ppt)
+        serializer = PPTSerializer(ppt, context={'request': request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
