@@ -30,15 +30,12 @@ class BaseAtividadeSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        # Formatar datas
-        if instance.data_criacao:
-            representation['data_criacao'] = instance.data_criacao.strftime('%Y-%m-%d')
-        if instance.data_de_entrega:
-            representation['data_de_entrega'] = instance.data_de_entrega.strftime('%Y-%m-%d')
-
-        # Adicionar dados do aluno se disponíveis
-        if hasattr(instance, 'aluno') and instance.aluno:
-            representation['aluno'] = UsuarioBaseSerializer(instance.aluno).data
+        representation['data_criacao'] = (
+            instance.data_criacao.strftime('%d/%m/%Y') if instance.data_criacao else "Data não informada"
+        )
+        representation['data_de_entrega'] = (
+            instance.data_de_entrega.strftime('%d/%m/%Y') if instance.data_de_entrega else "Data não informada"
+        )
 
         return representation
 

@@ -13,7 +13,7 @@ import { jwtDecode } from "jwt-decode";
 import Input from "../../../../components/Input/Input";
 import Tabela from "../../../../components/Tabela/Tabela";
 
-const AtividadesDesenvolvidas = () => {
+const AtividadesDesenvolvidasGestao = () => {
   const [atividades, setAtividades] = useState([]);
   const [aluno, setAluno] = useState(null);
   const [notaFinal, setNotaFinal] = useState(null);
@@ -90,7 +90,7 @@ const AtividadesDesenvolvidas = () => {
   const handleAdicionarAtividade = () => {
     const usuarioId = jwtDecode(sessionStorage.getItem("token")).idUsuario;
     navigate(
-      `/sessao/Professor/${usuarioId}/atividades/${pedTipo}/${pedId}/adicionarAtividade`
+      `/sessao/Gestão Escolar/${usuarioId}/atividades/${pedTipo}/${pedId}/adicionarAtividade`
     );
   };
 
@@ -98,7 +98,7 @@ const AtividadesDesenvolvidas = () => {
   const handleVisualizarAtividade = (atividadeId) => {
     const usuarioId = jwtDecode(sessionStorage.getItem("token")).idUsuario;
     navigate(
-      `/sessao/Professor/${usuarioId}/atividades/${pedTipo}/${pedId}/detalhes/${atividadeId}`
+      `/sessao/Gestão Escolar/${usuarioId}/atividades/${pedTipo}/${pedId}/detalhes/${atividadeId}`
     );
   };
 
@@ -269,4 +269,4 @@ const AtividadesDesenvolvidas = () => {
   );
 };
 
-export default AtividadesDesenvolvidas;
+export default AtividadesDesenvolvidasGestao;

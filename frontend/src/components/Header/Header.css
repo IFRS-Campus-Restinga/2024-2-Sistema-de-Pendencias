@@ -25,6 +25,10 @@
     text-align: center;
 }
 
+.header-grupo {
+    margin-left: 5px;
+}
+
 .header-titulo {
     display: flex;
     justify-content: space-evenly;

@@ -28,7 +28,7 @@ def cadastrar_ppt(request):
         return Response({'mensagem': str(e)}, status=400)
     
 @api_view(['GET'])
-@permission_classes([GestaoEscolar])
+@permission_classes([GestaoEscolar | RegistroEscolar])
 def listar_ppt(request):
     try:
         lista_ppt = PPT.objects.all()

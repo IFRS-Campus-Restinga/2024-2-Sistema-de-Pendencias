@@ -9,8 +9,11 @@ import cursoService from '../../../../services/cursoService';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Para decodificar o token e pegar o ID do usuário
 import Tabela from '../../../../components/Tabela/Tabela';
+import LoadingIFRS from '../../../../components/LoadingIFRS/LoadingIFRS';
+import loading from '../../../../assets/loading-cursos.png'
 
 const ListarCursos = () => {
+  const [isLoading, setIsLoading] = useState(true)
   const [cursos, setCursos] = useState([]);
   const [cursosFiltrados, setCursosFiltrados] = useState([]);
   const [filtroGeral, setFiltroGeral] = useState(''); // Campo único de filtro
@@ -24,15 +27,11 @@ const ListarCursos = () => {
 
       setCursos(response.data);
       setCursosFiltrados(response.data);
+      setIsLoading(false)
     } catch (error) {
       console.error('Erro ao buscar cursos:', error);
     }
   };
-
-  useEffect(() => {
-    fetchCursos();
-  }, []);
-
   
   // Função para remover acentos (para o filtro buscar tudo)
   const removeAcentos = (str) =>
@@ -47,12 +46,17 @@ const ListarCursos = () => {
     setCursosFiltrados(cursosFiltrados);
   };
   
-
   // Limpa o filtro
   const limparBusca = () => {
     setFiltroGeral('');
     fetchCursos();
   };
+
+  useEffect(() => {
+    fetchCursos();
+  }, []);
+
+  if (isLoading) return <LoadingIFRS icone={loading}/>
 
   return (
     <>

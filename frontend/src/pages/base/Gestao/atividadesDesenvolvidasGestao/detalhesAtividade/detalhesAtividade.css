@@ -1,0 +1,9 @@
+.detalhe-atividade {
+    margin: 10px 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.deletar-button{
+  background-color: red;
+}

@@ -47,18 +47,29 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
 
         # Verifica se a requisição pediu representação detalhada
         request = self.context.get('request', None)
-        incluir_dados = request and request.query_params.get('incluir_dados')
+        retorno = request and request.query_params.get('retorno')
 
-        if incluir_dados:
-            representation['aluno'] = str(instance.aluno)
-            representation['professor_disciplina'] = str(instance.professor_disciplina)
-            representation['professor_ped'] = str(instance.professor_ped)
-            representation['curso'] = str(instance.curso)
-            representation['disciplina'] = str(instance.disciplina)
-            representation['periodo_letivo'] = instance.periodo_letivo.titulo
-            
-        representation.pop('data_criacao')
-        representation.pop('plano_estudos')
-        representation.pop('form_encerramento')
+        if retorno == 'lista':
+            # Inclui apenas os campos `id` e os campos configurados manualmente
+            representation = {
+                'id': instance.id,
+                'aluno': str(instance.aluno),
+                'professor_disciplina': str(instance.professor_disciplina),
+                'professor_ped': str(instance.professor_ped),
+                'curso': str(instance.curso),
+                'disciplina': str(instance.disciplina),
+            }
+        
+        elif retorno == 'detalhes':
+            representation['aluno'] = {'id': instance.aluno.id, 'nome': str(instance.aluno)}
+            representation['professor_disciplina'] = {'id': instance.professor_disciplina.id, 'nome': str(instance.professor_disciplina)}
+            representation['professor_ped'] = {'id': instance.professor_ped.id, 'nome': str(instance.professor_ped)}
+            representation['curso'] = {'id': instance.curso.id, 'nome': instance.curso.nome}
+            representation['disciplina'] = {'id': instance.disciplina.id, 'nome': instance.disciplina.nome}
+            representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'periodo_letivo': instance.periodo_letivo.titulo}
+
+            representation.pop('data_criacao')
+            representation.pop('plano_estudos')
+            representation.pop('form_encerramento')
 
         return representation

@@ -12,8 +12,7 @@ import { usuarioBaseService } from '../../../../services/usuarioBaseService';
 const CadastroServidor = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { state } = location.state || {};  // Recupera os dados do servidor passados via navegação
-    console.log(state);
+    const { state } = location || {};  // Recupera os dados do servidor passados via navegação
     const [formData, setFormData] = useState({
         grupo: state?.grupo || 'Professor',  // Usa dados do servidor se estiverem disponíveis
         email: state?.email || '',

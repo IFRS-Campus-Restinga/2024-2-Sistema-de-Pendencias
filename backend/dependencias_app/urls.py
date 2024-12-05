@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
+from dependencias_app.views.observacaoViews import *
 from dependencias_app.views.usuarioBaseViews import *
 from dependencias_app.views.gestaoEscolarViews import *
 from dependencias_app.views.registroEscolarViews import *
@@ -103,6 +104,11 @@ urlpatterns = [
     path('atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
     
 
+    ##views para tela de observaçoes
+    #path('adicionar-observacao/<str:ped_tipo>/<int:ped_id>/', adicionar_observacao, name='adicionar_observacao'),
+    #path('adicionar-observacao/<int:ped_id>/', adicionar_observacao, name='adicionar_observacao'),
+    path('adicionar-observacao/<int:ped_id>/', adicionar_observacao, name='adicionar_observacao'),
+    path('adicionar-observacao/<int:ped_id>/', adicionar_observacao, name='adicionar_observacao'),
 
 
 
@@ -115,7 +121,7 @@ urlpatterns = [
     path('editar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', editar_atividade, name='editar_atividade'),
     path('deletar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', delete_atividade, name='deletar_atividade'),
     path('adicionar-plano-atividades/<str:ped_tipo>/<int:ped_id>/', adicionar_plano_atividades, name='adicionar_plano_atividades'),
-
+    path('exibir_nota_final/<str:ped_tipo>/<int:ped_id>/', exibir_nota_final, name='exibir_nota_final'),
 
     #view editar servidor
     path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),

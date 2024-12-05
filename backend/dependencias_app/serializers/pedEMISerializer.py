@@ -5,6 +5,12 @@ from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.pedEMI import PED_EMI
 from dependencias_app.models.turma import Turma
 from dependencias_app.models.calendarioAcademico import CalendarioAcademico
+from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
+from dependencias_app.serializers.cursoSerializer import CursoSerializer
+from dependencias_app.serializers.disciplinaSerializer import DisciplinaSerializer
+from dependencias_app.serializers.turmaSerializer import TurmaSerializer
+from dependencias_app.serializers.calendarioAcademicoSerializer import CalendarioAcademicoSerializer
+
 
 
 class PED_EMI_Serializer(serializers.ModelSerializer):
@@ -54,19 +60,33 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
 
         # Verifica se a requisição pediu representação detalhada
         request = self.context.get('request', None)
-        incluir_dados = request and request.query_params.get('incluir_dados')
+        retorno = request and request.query_params.get('retorno')
 
-        if incluir_dados:
-            representation['aluno'] = str(instance.aluno)
-            representation['professor_disciplina'] = str(instance.professor_disciplina)
-            representation['professor_ped'] = str(instance.professor_ped)
-            representation['curso'] = str(instance.curso)
-            representation['disciplina'] = str(instance.disciplina)
-            representation['turma_atual'] = str(instance.turma_atual)
-            representation['periodo_letivo'] = instance.periodo_letivo.titulo
+        if retorno == 'lista':
+            # Inclui apenas os campos `id` e os campos configurados manualmente
+            representation = {
+                'id': instance.id,
+                'aluno': str(instance.aluno),
+                'professor_disciplina': str(instance.professor_disciplina),
+                'professor_ped': str(instance.professor_ped),
+                'curso': str(instance.curso),
+                'disciplina': str(instance.disciplina),
+                'turma_atual': str(instance.turma_atual),
+            }
+        
+        elif retorno == 'detalhes':
+            representation['aluno'] = {'id': instance.aluno.id, 'nome': str(instance.aluno)}
+            representation['professor_disciplina'] = {'id': instance.professor_disciplina.id, 'nome': str(instance.professor_disciplina)}
+            representation['professor_ped'] = {'id': instance.professor_ped.id, 'nome': str(instance.professor_ped)}
+            representation['curso'] = {'id': instance.curso.id, 'nome': instance.curso.nome}
+            representation['disciplina'] = {'id': instance.disciplina.id, 'nome': instance.disciplina.nome}
+            representation['turma_atual'] = {'id': instance.turma_atual.id, 'numero': instance.turma_atual.numero}
+            representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'periodo_letivo': instance.periodo_letivo.titulo}
 
-        representation.pop('data_criacao')
-        representation.pop('plano_estudos')
-        representation.pop('form_encerramento')
+            representation.pop('data_criacao')
+            representation.pop('plano_estudos')
+            representation.pop('form_encerramento')
+
+
 
         return representation

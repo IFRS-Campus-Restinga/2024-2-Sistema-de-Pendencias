@@ -9,10 +9,10 @@ export const PPTService = {
     return res
   },
   
-  list: async () => {
+  list: async (retorno) => {
     const res = await api.get('api/listar-ppt/', {
       params: {
-        incluir_dados: true
+        retorno
       }
     }).catch((erro) => {
         return erro

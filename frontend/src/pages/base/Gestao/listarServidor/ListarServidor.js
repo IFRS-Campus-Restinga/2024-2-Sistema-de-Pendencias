@@ -12,9 +12,12 @@ import Tabela from '../../../../components/Tabela/Tabela';
 import IconeAdicionar from "../../../../assets/icone-adicionar-usuario.png";
 import X from "../../../../assets/x-branco.png";
 import Lupa from "../../../../assets/lupa-branca.png";
+import loading from '../../../../assets/loading-usuarios.png'
+import LoadingIFRS from '../../../../components/LoadingIFRS/LoadingIFRS';
 
 
 const ListarServidor = () => {
+  const [isLoading, setIsLoading] = useState(true)
   const [servidores, setServidores] = useState([]);
   const [servidoresFiltrados, setServidoresFiltrados] = useState([]);
   const [grupos, setGrupos] = useState([])
@@ -32,6 +35,7 @@ const ListarServidor = () => {
 
       setServidores(response.data);
       setServidoresFiltrados(response.data)
+      setIsLoading(false)
     } catch (error) {
       console.error('Erro ao buscar servidores:', error);
     }
@@ -90,6 +94,8 @@ const ListarServidor = () => {
     fetchServidores();
     fetchGrupos()
   }, []);
+
+  if (isLoading) return <LoadingIFRS icone={loading}/>
 
   return (
     <>

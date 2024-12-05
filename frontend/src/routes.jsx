@@ -27,6 +27,8 @@ import DetalhesPED from './pages/base/Gestao/detalhesPED/DetalhesPED'
 import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
 import ListarAluno from './pages/base/Gestao/listarAluno/ListarAluno'
 import DetalhesAluno from './pages/base/Gestao/detalhesAluno/DetalhesAluno'
+import AtividadesDesenvolvidasGestao from './pages/base/Gestao/atividadesDesenvolvidasGestao/atividadesDesenvolvidas'
+import DetalhesAtividadeGestao from './pages/base/Gestao/atividadesDesenvolvidasGestao/detalhesAtividade/detalhesAtividade'
 
 // Filhos de Registro
 import HomeRegistro from './pages/base/Registro/home/homeRegistro'
@@ -48,7 +50,7 @@ import AdicionarAtividade from './pages/base/Professor/atividadesDesenvolvidas/a
 import DetalhesAtividade from './pages/base/Professor/atividadesDesenvolvidas/detalhesAtividade/detalhesAtividade'
 import DetalhesPEDProfessor from './pages/base/Professor/detalhesPED/DetalhesPEDProfessor'
 import DetalhesPlanoEstudos from './pages/base/Professor/detalhesPlanoEstudos/DetalhesPlanoEstudos'
-
+import AdicionarObservacao from './pages/base/Professor/observacoes/adicionarObservacao'
 
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
@@ -203,6 +205,15 @@ const router = createBrowserRouter([
                 path: ':idUsuario/alunos/:idAluno',
                 element: <DetalhesAluno />
             },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId',
+                element: <AtividadesDesenvolvidasGestao />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId/detalhes/:atividadeId',
+                element: <DetalhesAtividadeGestao />
+            },
+
 
         ]
         // Adicionar outros caminhos que vão derivar da tela de home após autenticação
@@ -314,12 +325,20 @@ const router = createBrowserRouter([
             },
             {
                 path: ':idUsuario/atividades/:pedTipo/:pedId/detalhes/:atividadeId',
-                element: <DetalhesAtividade />
+                element: <DetalhesAtividade />,
             },
             {
                 path: ':idUsuario/atividades/:pedTipo/:pedId/editarAtividade/:atividadeId',
                 element: <AdicionarAtividade />,
+            },
+            {
+                path: ':idUsuario/peds-emi/:pedId/adicionarObservacao',
+                element: <AdicionarObservacao />,
             }
+            // {
+            //     path: ':idUsuario/observacoes/:pedTipo/:pedId/adicionarObservacao',
+            //     element: <AdicionarObservacao />,
+            // }
 
 
         ]

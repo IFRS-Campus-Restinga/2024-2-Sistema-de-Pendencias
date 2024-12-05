@@ -163,6 +163,11 @@ TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 
 
+REST_FRAMEWORK = {
+    'DATETIME_FORMAT': '%d/%m/%Y %H:%M:%S',
+    'DATE_FORMAT': '%d/%m/%Y',
+}
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
