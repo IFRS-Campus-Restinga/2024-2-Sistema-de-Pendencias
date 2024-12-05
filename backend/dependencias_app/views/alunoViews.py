@@ -1,3 +1,4 @@
+from django.template.defaultfilters import unordered_list
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -126,6 +127,7 @@ def listar_alunos(request):
 
 
 @api_view(['GET'])
+@permission_classes([AlunoPermissao])
 def listar_peds_aluno(request):
     try:
         usuario_logado = request.user

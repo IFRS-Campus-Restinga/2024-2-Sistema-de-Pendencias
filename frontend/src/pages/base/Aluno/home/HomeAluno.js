@@ -8,7 +8,7 @@ const HomeAluno = () => {
     const [pedsEmi, setPedsEmi] = useState([]);
     const [pedsProeja, setPedsProeja] = useState([]);
     const [loading, setLoading] = useState(true);
-    const currentYear = new Date().getFullYear();
+    const currentYear = 2026;
     const [visibleYears, setVisibleYears] = useState([currentYear, currentYear - 1, currentYear - 2, currentYear - 3]);
     const [minYear, setMinYear] = useState(currentYear - 3);
     const [selectedStatus, setSelectedStatus] = useState(["Criada", "Em Andamento", "Finalizada", "Desativado"]);
