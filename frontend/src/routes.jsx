@@ -332,9 +332,13 @@ const router = createBrowserRouter([
                 element: <AdicionarAtividade />,
             },
             {
-                path: ':idUsuario/observacoes/:pedTipo/:pedId/adicionarObservacao',
+                path: ':idUsuario/peds-emi/:pedId/adicionarObservacao',
                 element: <AdicionarObservacao />,
             }
+            // {
+            //     path: ':idUsuario/observacoes/:pedTipo/:pedId/adicionarObservacao',
+            //     element: <AdicionarObservacao />,
+            // }
 
 
         ]

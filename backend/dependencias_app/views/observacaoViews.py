@@ -21,8 +21,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import *
 from dependencias_app.serializers.cursoSerializer import CursoSerializer
-from dependencias_app.models.curso import Curso
-from dependencias_app.models.turma import Turma
 from dependencias_app.serializers.turmaSerializer import TurmaSerializer
 from dependencias_app.utils.error_handler import handle_view_errors
 import logging
@@ -30,42 +28,35 @@ from django.db import transaction
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework import status
-
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['POST'])
-@permission_classes([Professor]) 
-def adicionar_observacao(request, ped_tipo, ped_id):
+@permission_classes([IsAuthenticated])
+def adicionar_observacao(request, ped_id):
     try:
-        print(f"Dados recebidos: {request.data}")
+        data = request.data
 
-        # Busca o PED (emi ou proeja)
-        if ped_tipo == "emi":
-            ped = PED_EMI.objects.filter(id=ped_id).first()
-        elif ped_tipo == "proeja":
-            ped = PED_ProEJA.objects.filter(id=ped_id).first()
-        else:
-            return Response({"erro": "Tipo de PED inválido."}, status=status.HTTP_400_BAD_REQUEST)
+        # Detecta automaticamente o tipo do PED
+        ped = None
+        try:
+            ped = PED_EMI.objects.get(id=ped_id)
+            data['ped_emi'] = ped.id
+            data['ped_proeja'] = None
+        except PED_EMI.DoesNotExist:
+            try:
+                ped = PED_ProEJA.objects.get(id=ped_id)
+                data['ped_proeja'] = ped.id
+                data['ped_emi'] = None
+            except PED_ProEJA.DoesNotExist:
+                return Response({"mensagem": "PED não encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Log do PED encontrado
-        print(f"PED encontrado: {ped}")
+        serializer = ObservacaoSerializer(data=data)
+        if serializer.is_valid():
+            observacao = serializer.save()
 
-        if not ped:
-            return Response({"erro": "PED não encontrado."}, status=status.HTTP_404_NOT_FOUND)
-
-        # Validação do serializer
-        serializer_observacao = ObservacaoSerializer(data=request.data, context={'request': request})
-        if serializer_observacao.is_valid():
-            observacao = serializer_observacao.save(ped_emi=ped if ped_tipo == 'emi' else None, ped_proeja=ped if ped_tipo == 'proeja' else None)
-            print("Observação criada com sucesso:", observacao)
-            return Response(serializer_observacao.data, status=status.HTTP_201_CREATED)
-        else:
-            print("Erros de validação:", serializer_observacao.errors)
-            return Response(serializer_observacao.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Retorna a observação criada
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     except Exception as e:
-        print("Erro ao criar observação:", str(e))
-        return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
