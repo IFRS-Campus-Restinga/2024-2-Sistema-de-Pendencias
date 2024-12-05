@@ -100,6 +100,9 @@ const DetalhesPEDProfessor = () => {
                 <Link to={`/sessao/Professor/${usuarioId}/peds-emi/${pedId}/planoEstudos/${detalhesPED.id}/detalhes`}>
                   <Button text='Ver Plano de Estudos'/>
                 </Link>
+                <Link to={`/sessao/Professor/${usuarioId}/peds-emi/${pedId}/adicionarObservacao/`}>
+                  <Button text='Observação'/>
+                </Link>
               </span>
             </div>
           </section>
