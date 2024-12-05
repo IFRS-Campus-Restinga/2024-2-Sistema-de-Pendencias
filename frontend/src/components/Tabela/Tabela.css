@@ -17,19 +17,6 @@
     width: 100%;
 }
 
-.divTabela {
-    display: flex;
-    width: 100%;
-    background-color: #006b3f;
-    color: white;
-    padding: 10px;
-    justify-content: center;
-    text-align: center;
-    font-weight: bold;
-    border-radius: 10px;
-    margin-top: 15px;
-}
-
 .iconeAcoes {
     max-width: 15px;
     max-height: 15px;
@@ -46,6 +33,10 @@ table {
     .th-ordenar {
         display: flex;
         align-items: center;
+    }
+
+    tbody {
+        font-size: 12px;
     }
 
     tr:hover {
@@ -67,7 +58,6 @@ table {
         background-color: #006b3f;
         color: white;
         position: sticky;
-        width: auto;
         top: 0;
         z-index: 0;
         padding: 5px;
@@ -114,18 +104,14 @@ table {
     cursor: pointer;
 }
 
-.iconeAcoes {
-    margin-right: 10px;
-}
-
 .acoes {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;   
+    gap: 10px;
 }
 
-.botaoStatus{
+.botaoStatus {
     padding: 9px 10px;
     border: none;
     border-radius: 6px;

@@ -111,7 +111,7 @@ const ListarPPT = () => {
                         />
                     </div>
                 </div>
-                <Tabela listaFiltrada={dependenciasFiltradas} fontSize='10px' />
+                <Tabela listaFiltrada={dependenciasFiltradas} editar={true} visualizar={true}/>
             </FormContainer>
         </>
     );

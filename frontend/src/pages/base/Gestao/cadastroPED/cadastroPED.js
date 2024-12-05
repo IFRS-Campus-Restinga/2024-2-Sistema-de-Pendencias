@@ -9,15 +9,20 @@ import cursoService from "../../../../services/cursoService";
 import { validarFormularioPED, validarSerieTurma } from "./validacoes";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 import { PEDService } from "../../../../services/pedService";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { calendarioAcademicoService } from "../../../../services/calendarioAcademicoService";
+import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS";
+import loading from '../../../../assets/loading-peds.png'
 
 const CadastroPED = () => {
   const location = useLocation()
   const {state} = location || {}
-  const [modalidade, setModalidade] = useState(state ? state.serie_progressao ? 'Integrado' : 'ProEJA' : 'Integrado')
+  const { pedId } = useParams();
+  const tipoPed = location.pathname.split('/')[4];
+  const [isLoading, setIsLoading] = useState(true)
+  const [modalidade, setModalidade] = useState(tipoPed ? tipoPed === 'peds-emi' ? 'Integrado' : 'ProEJA' : 'Integrado')
   const [cursos, setCursos] = useState([])
   const [disciplinas, setDisciplinas] = useState([])
   const [turmas, setTurmas] = useState([])
@@ -224,12 +229,12 @@ const CadastroPED = () => {
       setCursos(cursosPorModalidade)
 
       if (state) {
-        const index = cursosPorModalidade.findIndex(curso => curso.nome === state.curso.nome)
-        console.log(cursosPorModalidade)
+        const index = cursosPorModalidade.findIndex(curso => curso.nome === state.curso || curso.nome === state.curso.nome)
         setDisciplinas(cursosPorModalidade[index].disciplinas)
         setTurmas(cursosPorModalidade[index].turmas)
       }
 
+      setIsLoading(false)
     } catch (error) {
       console.log(error)
     }
@@ -269,68 +274,100 @@ const CadastroPED = () => {
     }
   }
 
+  const fetchPED = async () => {
+    try {
+      const res = await PEDService.porId(pedId, tipoPed === 'peds-emi' ? 'Integrado':'ProEJA', "detalhes");
+
+      if (res.status !== 200) throw new Error(res.response?.data?.mensagem);
+
+      setCursos([res.data.curso])
+      setDisciplinas([res.data.disciplina])
+      setOpcoesCalendarios([res.data.periodo_letivo])
+      setTurmas([res.data?.turma_atual])
+    
+      setControleInputs({
+        aluno: res.data.aluno.nome,
+        professor_ped: res.data.professor_ped.nome,
+        professor_disciplina: res.data.professor_disciplina.nome,
+        curso: res.data.curso.id,
+        disciplina: res.data.disciplina.id,
+        turma_atual: res.data?.turma_atual?.id,
+        ano_semestre_reprov: res.data.ano_semestre_reprov,
+        serie_progressao: res.data.serie_progressao,
+        trimestre_recuperar: res.data.trimestre_recuperar,
+        periodo_letivo: res.data.periodo_letivo.titulo,
+        observacao: res.data.observacao
+      })
+
+      setFormData({
+        aluno: res.data.aluno.id,
+        professor_ped: res.data.professor_ped.id,
+        professor_disciplina: res.data.professor_disciplina.id,
+        curso: res.data.curso.id,
+        disciplina: res.data.disciplina.id,
+        turma_atual: res.data?.turma_atual?.id,
+        ano_semestre_reprov: res.data.ano_semestre_reprov,
+        serie_progressao: res.data.serie_progressao,
+        trimestre_recuperar: res.data.trimestre_recuperar,
+        periodo_letivo: res.data.periodo_letivo.id,
+        observacao: res.data.observacao
+      })
+
+      setIsLoading(false)
+    } catch (error) {
+      console.error("Erro ao buscar detalhes da PED:", error.message);
+    }
+  };
+
   useEffect(() => {
     if (state) {
-      console.log(state)
+      if (state.observacao) {
+        console.log(state)        
+        setControleInputs({
+          aluno: state.aluno.nome,
+          professor_ped: state.professor_ped.nome,
+          professor_disciplina: state.professor_disciplina.nome,
+          curso: state.curso.id,
+          disciplina: state.disciplina.id,
+          turma_atual: state?.turma_atual?.id,
+          ano_semestre_reprov: state.ano_semestre_reprov,
+          serie_progressao: state.serie_progressao,
+          trimestre_recuperar: state.trimestre_recuperar,
+          periodo_letivo: state.periodo_letivo.id,
+          observacao: state.observacao
+        })
 
-      setControleInputs({
-        aluno: state.aluno.nome,
-        professor_ped: state.professor_ped.nome,
-        professor_disciplina: state.professor_disciplina.nome,
-        curso: state.curso.id,
-        disciplina: state.disciplina.id,
-        turma_atual: state?.turma_atual?.id,
-        ano_semestre_reprov: state.ano_semestre_reprov,
-        serie_progressao: state.serie_progressao,
-        trimestre_recuperar: state.trimestre_recuperar,
-        periodo_letivo: state.periodo_letivo.titulo
-      })
+        setCursos([state.curso])
+        setTurmas([state?.turma_atual])
+        setDisciplinas([state.disciplina])
+        setOpcoesCalendarios([state.periodo_letivo])
+  
+        setFormData({
+          aluno: state.aluno.id,
+          professor_ped: state.professor_ped.id,
+          professor_disciplina: state.professor_disciplina.id,
+          curso: state.curso.id,
+          disciplina: state.disciplina.id,
+          turma_atual: state?.turma_atual?.id,
+          ano_semestre_reprov: state.ano_semestre_reprov,
+          serie_progressao: state.serie_progressao,
+          trimestre_recuperar: state.trimestre_recuperar,
+          periodo_letivo: state.periodo_letivo.id,
+          observacao: state.observacao
+        })
 
-      setFormData({
-        aluno: state.aluno.id,
-        professor_ped: state.professor_ped.id,
-        professor_disciplina: state.professor_disciplina.id,
-        curso: state.curso.id,
-        disciplina: state.disciplina.id,
-        turma_atual: state?.turma_atual?.id,
-        ano_semestre_reprov: state.ano_semestre_reprov,
-        serie_progressao: state.serie_progressao,
-        trimestre_recuperar: state.trimestre_recuperar,
-        periodo_letivo: state.periodo_letivo.id
-      })
-
-
+        setIsLoading(false)
+      } else {
+        fetchPED()
+      }
       setDesabilitado(true)
     } else {
-      setFormData({
-        aluno: '',
-        professor_ped: '',
-        professor_disciplina: '',
-        curso: '',
-        disciplina: '',
-        turma_origem: '',
-        serie_progressao: '',
-        trimestre_recuperar: '',
-        observacao: '',
-      })
-
-      setControleInputs({
-        aluno: '',
-        professor_ped: '',
-        professor_disciplina: '',
-        disciplina: '',
-        ano_semestre_reprov: '',
-        curso: '',
-        serie_progressao: '',
-        trimestre_recuperar: '',
-        turma_origem: '',
-      })
-
+      fetchCursos()
+      fetchCalendarios()
     }
+  }, [modalidade])
 
-    fetchCursos()
-    fetchCalendarios()
-  }, [modalidade, state])
+  if (isLoading) return <LoadingIFRS icone={loading}/>
 
   return (
     <>
@@ -479,7 +516,7 @@ const CadastroPED = () => {
                     <label className="labelCadastroPED">
                     Período Letivo *
                     <select className={errors.periodo_letivo ? 'errorSelectCadastroPED' : 'selectCadastroPED'} name="periodo_letivo"
-                      value={controleInputs.periodo_letivo}
+                      value={formData.periodo_letivo}
                       disabled={desabilitado}
                       onChange={(e) => {                        
                         const periodo_letivoId = e.target.value;
@@ -488,8 +525,6 @@ const CadastroPED = () => {
                         
                         if (periodo_letivo) {
                           setFormData({...formData, periodo_letivo: Number(e.target.value)})
-                          setDisciplinas(periodo_letivo.disciplinas);
-                          setTurmas(periodo_letivo.turmas)
                         }
                       }
                     }>

@@ -1,153 +1,154 @@
-  
-/* Alinhamento da info-aluno e botão em uma linha */
-.info-e-botao {
+  /* Alinhamento da info-aluno e botão em uma linha */
+  .info-e-botao {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 15px;
     margin-bottom: 2px;
   }
-  
+
   .info-aluno {
     font-size: 1.5rem;
     font-weight: bold;
   }
-  
+
   .info-aluno p {
     margin: 0;
   }
-  
-    /* Tabela de Atividades */
-    .tabela-atividades {
-      width: 100%;
-      margin-top: 20px;
-      overflow-x: auto;
-    }
-    
+
+  /* Tabela de Atividades */
+  .tabela-atividades {
+    width: 100%;
+    margin-top: 20px;
+    overflow-x: auto;
+  }
+
+  .tabela-atividades table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .tabela-atividades th,
+  .tabela-atividades td {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .tabela-atividades th {
+    background-color: #006b3f;
+    color: white;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .tabela-atividades tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  .tabela-atividades tr:nth-child(odd) {
+    background-color: white;
+  }
+
+  .plano-atividades {
+    margin-top: 20px;
+  }
+
+  .container-botao-anexar {
+    display: flex;
+    align-items: center;
+  }
+
+  .container-botao-anexar strong {
+    margin-right: 10px;
+  }
+
+  .container-botao-anexar input[type="file"] {
+    margin-right: 10px;
+    width: 35%;
+  }
+
+  /* Nota Final */
+  .nota-final {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .nota-final p {
+    margin-right: 10px;
+  }
+
+  .nota-final input {
+    margin-left: 2px;
+    margin-right: 4px;
+    width: 10%;
+  }
+
+  .modal-atividades {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Responsividade */
+  @media (max-width: 1125px) {
     .tabela-atividades table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
+
+      th,
+      td {
+        font-size: 12px;
+        padding: 8px;
+      }
     }
-    
-    .tabela-atividades th,
-    .tabela-atividades td {
-      padding: 10px;
-      border-top: 1px solid #ddd;
-      border-bottom: 1px solid #ddd;
-      text-align: center;
+  }
+
+  @media (max-width: 900px) {
+    .tabela-atividades table {
+
+      th,
+      td {
+        font-size: 10px;
+        padding: 6px;
+      }
+    }
+  }
+
+  @media (max-width: 740px) {
+    .tabela-atividades table {
+
+      th,
+      td {
+        font-size: 9px;
+        padding: 5px;
+      }
+    }
+
+  }
+
+  @media (max-width: 600px) {
+    .atividades-container {
+      margin: 10px;
+    }
+
+    .info-aluno {
       font-size: 14px;
     }
-    
-    .tabela-atividades th {
-      background-color: #006b3f;
-      color: white;
-      font-weight: bold;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-    
-    .tabela-atividades tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-    
-    .tabela-atividades tr:nth-child(odd) {
-      background-color: white;
-    }
-    
-    .plano-atividades {
-      margin-top: 20px;
-    }
 
-    .container-botao-anexar {
-      display: flex;
-      align-items: center;
-    }
+    .tabela-atividades table {
 
-    .container-botao-anexar strong{
-      margin-right: 10px;
-    }
-    
-    .container-botao-anexar input[type="file"] {
-      margin-right: 10px;
-      width: 35%;
-    }
-    
-    /* Nota Final */
-    .nota-final {
-      display: flex;
-      align-items: center;
-      margin-top: 20px;
-      font-size: 16px;
-      font-weight: bold;
-    }
-    
-    .nota-final p {
-      margin-right: 10px;
-    }
-
-    .nota-final input {
-      margin-left: 2px;
-      margin-right: 4px;
-      width: 10%;
-    }
-
-    .modal-atividades{
-      margin-top: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    /* Responsividade */
-    @media (max-width: 1125px) {
-      .tabela-atividades table {
-        th, td {
-          font-size: 12px;
-          padding: 8px;
-        }
+      th,
+      td {
+        font-size: 8px;
+        padding: 4px;
       }
     }
-    
-    @media (max-width: 900px) {
-      .tabela-atividades table {
-        th, td {
-          font-size: 10px;
-          padding: 6px;
-        }
-      }
-    
-      button {
-        font-size: 12px;
-        padding: 8px 12px;
-      }
-    }
-    
-    @media (max-width: 740px) {
-      .tabela-atividades table {
-        th, td {
-          font-size: 9px;
-          padding: 5px;
-        }
-      }
-    
-    }
-    
-    @media (max-width: 600px) {
-      .atividades-container {
-        margin: 10px;
-      }
-    
-      .info-aluno {
-        font-size: 14px;
-      }
-    
-      .tabela-atividades table {
-        th, td {
-          font-size: 8px;
-          padding: 4px;
-        }
-      }
-    }
-    
+  }

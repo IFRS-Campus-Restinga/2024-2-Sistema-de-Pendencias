@@ -87,7 +87,7 @@ const ListarDisciplina = () => {
                     />
                 </div>
             </div>
-            <Tabela listaFiltrada={disciplinasFiltradas}/>
+            <Tabela listaFiltrada={disciplinasFiltradas} editar={true} visualizar={false}/>
         </FormContainer>
     )
 }

@@ -92,7 +92,7 @@ const ListarCursos = () => {
               />
           </div>       
         </div>
-        <Tabela listaFiltrada={cursosFiltrados}/>
+        <Tabela listaFiltrada={cursosFiltrados} editar={true} visualizar={true}/>
       </FormContainer>
     </>
   );

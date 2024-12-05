@@ -136,7 +136,7 @@ const ListarServidor = () => {
         </div>
 
         <div className='tabelaContainerListarServidor'>
-          <Tabela listaFiltrada={servidoresFiltrados} />
+          <Tabela listaFiltrada={servidoresFiltrados} editar={true} visualizar={true}/>
         </div>
       </FormContainer>
     </>

@@ -7,12 +7,14 @@ import { ToastContainer, toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Input from "../../../../components/Input/Input";
-import './CadastroDisciplina.css'
+import LoadingIFRS from '../../../../components/LoadingIFRS/LoadingIFRS'
+import loading from '../../../../assets/loading-disciplinas.png'
 import { validarCampo, validarFormularioDisciplina } from "./validacoes";
-import { usuarioBaseService } from "../../../../services/usuarioBaseService";
+import './CadastroDisciplina.css'
 
 const CadastroDisciplina = () => {
   const formRef = useRef()
+  const [isLoading, setIsLoading] = useState(true)
   const [cursos, setCursos] = useState([]);
   const [errors, setErrors] = useState({});
   const [disciplinas, setDisciplinas] = useState([]);
@@ -43,6 +45,7 @@ const CadastroDisciplina = () => {
       if (response.status !== 200) throw new Error(response.data.mensagem)
 
       setDisciplinas(response.data)
+      setIsLoading(false)
     } catch (error) {
       console.error("Erro ao buscar disciplinas", error)
       
@@ -144,27 +147,27 @@ const CadastroDisciplina = () => {
     <>
       <ToastContainer/>
       <FormContainer titulo='Cadastro Disciplina' onSubmit={handleSubmit} comprimento='80%' ref={formRef}>
-              <span className='spanCadastroCurso'>
-                <label htmlFor="curso" className='labelCadastroDisciplina'>
-                  Curso
-                </label>
-                <select
-                  className='selectCadastroDisciplina'
-                  value={formData.curso}
-                  onChange={(e) => {
-                    setFormData({ ...formData, curso: e.target.value })
-                  }}
-                  onBlur={() => handleBlur('curso')}
-                  required
-                >
-                  <option className='optionCadastroDisciplina' value={''}>Selecione um curso</option>
-                  {cursos.map((curso) => (
-                    <option className='optionCadastroDisciplina' key={curso.id} value={curso.id}>
-                      {curso.nome}
-                    </option>
-                  ))}
-                </select>
-              </span>
+        <span className='spanCadastroCurso'>
+          <label htmlFor="curso" className='labelCadastroDisciplina'>
+            Curso
+          </label>
+          <select
+            className='selectCadastroDisciplina'
+            value={formData.curso}
+            onChange={(e) => {
+              setFormData({ ...formData, curso: e.target.value })
+            }}
+            onBlur={() => handleBlur('curso')}
+            required
+          >
+            <option className='optionCadastroDisciplina' value={''}>Selecione um curso</option>
+            {cursos.map((curso) => (
+              <option className='optionCadastroDisciplina' key={curso.id} value={curso.id}>
+                {curso.nome}
+              </option>
+            ))}
+          </select>
+        </span>
         <section className='sectionCadastroDisciplina'>
             <div className='divCadastroDisciplina'>
               <h3 className='h3CadastroDisciplina'>
@@ -173,19 +176,18 @@ const CadastroDisciplina = () => {
                   <FontAwesomeIcon icon={faPlusCircle} style={{ color: "#006b3f", cursor: "pointer", fontSize: "24px", marginLeft:"10px" }}/>
                 </button>
               </h3>
-              <div className='containerTabelaCadastroDisciplina'>
-                <table className='tabelaCadastroDisciplina'>
-                  <thead className='cabecalhoCadastroDisciplina'>
+              <div className='containerTabelaDisciplinas'>
+                <table>
+                  <thead>
                     <tr>
                       <th>Nome</th>
                       <th>Carga Horaria</th>
-                      <th></th>
                     </tr>
                   </thead>
-                  <tbody className="corpoCadastroDisciplina">
+                  <tbody>
                     {formData.novasDisciplinas.map((disciplina, index) => (
                       <tr key={index}>
-                        <td className='celulaCadastroDisciplina'>
+                        <td>
                           <Input
                             tipo="text"
                             valor={disciplina.nome}
@@ -204,71 +206,77 @@ const CadastroDisciplina = () => {
                             erro={errors?.novasDisciplinas?.[index]?.nome}
                           />
                         </td>
-                        <td className='celulaCadastroDisciplina'>
-                          <Input
-                            tipo="number"
-                            valor={disciplina.carga_horaria}
-                            onBlur={() => {handleBlur('novaDisciplina')}}
-                            onChange={(e) => {
-                              const novaCargaHoraria = e.target.value;
-                              setFormData((prevData) => {
-                                const novasDisciplinas = [...prevData.novasDisciplinas];
-                                novasDisciplinas[index] = {
-                                  ...novasDisciplinas[index],
-                                  carga_horaria: novaCargaHoraria,
-                                };
-                                return { ...prevData, novasDisciplinas };
-                              });
-                            }}
-                            erro={errors?.novasDisciplinas?.[index]?.carga_horaria}
-                          />
-                        </td>
                         <td>
-                      <FontAwesomeIcon
-                        icon={faTrash}
-                        style={{ cursor: "pointer", color: "red", fontSize: "20px" }}
-                        onClick={() => removeDisciplina(index)}
-                      />
-                    </td>
+                          <div className="divTabela">
+                            <Input
+                              tipo="number"
+                              valor={disciplina.carga_horaria}
+                              onBlur={() => {handleBlur('novaDisciplina')}}
+                              onChange={(e) => {
+                                const novaCargaHoraria = e.target.value;
+                                setFormData((prevData) => {
+                                  const novasDisciplinas = [...prevData.novasDisciplinas];
+                                  novasDisciplinas[index] = {
+                                    ...novasDisciplinas[index],
+                                    carga_horaria: novaCargaHoraria,
+                                  };
+                                  return { ...prevData, novasDisciplinas };
+                                });
+                              }}
+                              erro={errors?.novasDisciplinas?.[index]?.carga_horaria}
+                            />
+                            <FontAwesomeIcon
+                              icon={faTrash}
+                              style={{ cursor: "pointer", color: "red", fontSize: "20px", marginLeft: '10px' }}
+                              onClick={() => removeDisciplina(index)}
+                            />
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             </div>
-            <div className='divVincularDisciplina'>
+            <div className='divCadastroDisciplina'>
+              <h3 className='h3CadastroDisciplina'>Vincular Disciplinas</h3>
               {
-                disciplinas.length !== 0 ? (
-                  <>
-                    <h3 className='h3CadastroDisciplina'>Vincular Disciplinas</h3>
-                    <div className='containerDisciplinas'>
-                      <span className='cabecalhoDisciplinas'>
-                        <div className='colunaDisciplina'>Nome</div>
-                        <div className='colunaDisciplina'>Carga Horária</div>
-                      </span>
-                      <div className="containerTabelaDisciplinas">
+                isLoading ? (
+                  <LoadingIFRS icone={loading}/>
+                ) : (
+                  disciplinas.length !== 0 ? (
+                    <div className='containerTabelaDisciplinas'>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Nome</th>
+                            <th>Carga Horária</th>
+                          </tr>
+                        </thead>
+                        <tbody>
                           {
-                            disciplinas.map((disciplina, index) => (
-                              <label className='labelContainerDisciplinas' htmlFor={`checkbox-${disciplina.id}`} >
-                                  <input type='checkbox' className='checkboxDisciplina' id={`checkbox-${disciplina.id}`} value={disciplina.id} onChange={vinculaDisciplina} hidden/>
-                                  <div className='linhaTabelaDisciplina'>
-                                    <p className='textoTabela'>
-                                      {disciplina.nome}
-                                    </p>
-                                    <p className='textoTabela'>
-                                      {disciplina.carga_horaria} h
-                                    </p>
+                            disciplinas.map((disciplina) => (
+                              <tr>
+                                <td>
+                                  <div className="divTabela">
+                                    <input type='checkbox' className='checkboxDisciplina' id={`checkbox-${disciplina.id}`} value={disciplina.id} onChange={vinculaDisciplina} hidden/>
+                                    <label className='labelContainerDisciplinas' htmlFor={`checkbox-${disciplina.id}`} >
+                                    </label>
+                                      <p className="pDisciplina">{disciplina.nome}</p>
                                   </div>
-                              </label>
+                                </td>
+                                <td>{disciplina.carga_horaria}</td>
+                              </tr>
                             ))
                           }
-                      </div>
+                        </tbody>
+                      </table>
                     </div>
-                  </>
-                ) : (
-                  <>
-                  Não Existem disciplinas cadastradas
-                  </>
+                  ) : (
+                    <>
+                    Não Existem disciplinas cadastradas
+                    </>
+                  )
                 )
               }
             </div>

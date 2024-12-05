@@ -72,6 +72,7 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
                 'curso': str(instance.curso),
                 'disciplina': str(instance.disciplina),
                 'turma_atual': str(instance.turma_atual),
+                'status': instance.status
             }
         
         elif retorno == 'detalhes':
@@ -81,7 +82,7 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
             representation['curso'] = {'id': instance.curso.id, 'nome': instance.curso.nome}
             representation['disciplina'] = {'id': instance.disciplina.id, 'nome': instance.disciplina.nome}
             representation['turma_atual'] = {'id': instance.turma_atual.id, 'numero': instance.turma_atual.numero}
-            representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'periodo_letivo': instance.periodo_letivo.titulo}
+            representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'titulo': instance.periodo_letivo.titulo}
 
             representation.pop('data_criacao')
             representation.pop('plano_estudos')
