@@ -3,9 +3,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #f4f4f4;
+    height: fit-content;
     perspective: 1000px;
+    margin: auto;
     /* Necessário para criar o efeito 3D */
 }
 

@@ -141,7 +141,7 @@ const ListarAluno = () => {
         </div>
 
         <div className='tabelaContainerListarAluno'>
-          <Tabela listaFiltrada={alunosFiltrados} />
+          <Tabela listaFiltrada={alunosFiltrados} editar={true} visualizar={true}/>
         </div>
       </FormContainer>
     </>

@@ -58,6 +58,7 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
                 'professor_ped': str(instance.professor_ped),
                 'curso': str(instance.curso),
                 'disciplina': str(instance.disciplina),
+                'status': instance.status
             }
         
         elif retorno == 'detalhes':
@@ -66,7 +67,7 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
             representation['professor_ped'] = {'id': instance.professor_ped.id, 'nome': str(instance.professor_ped)}
             representation['curso'] = {'id': instance.curso.id, 'nome': instance.curso.nome}
             representation['disciplina'] = {'id': instance.disciplina.id, 'nome': instance.disciplina.nome}
-            representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'periodo_letivo': instance.periodo_letivo.titulo}
+            representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'titulo': instance.periodo_letivo.titulo}
 
             representation.pop('data_criacao')
             representation.pop('plano_estudos')

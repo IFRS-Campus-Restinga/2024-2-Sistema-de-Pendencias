@@ -1,6 +1,7 @@
 .sectionCadastroDisciplina {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin: 20px 0;
     width: 100%;
 }
@@ -55,21 +56,45 @@
 .divCadastroDisciplina {
     width: 50%;
     height: 100%;
+    min-height: 200px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding-right: 10px;
     text-align: center;
     align-items: center;
+    margin: 10px;
 }
 
-.divVincularDisciplina {
-    width: 50%;
-    text-align: center;
+.labelContainerDisciplinas {
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+
+.labelContainerDisciplinas:hover {
+    cursor: pointer;
+}
+
+.divTabela {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+}
+
+.pDisciplina {
+    margin: auto;
+    word-break: break-all;
+    max-width: 65%;
+}
+
+.containerTabelaDisciplinas {
+    overflow-y: scroll;
+    width: 100%;
+    max-height: 300px;
+    margin: 10px;
 }
 
 /* Mensagens de Erro */
@@ -90,63 +115,13 @@
     border: none;
 }
 
-.containerTabelaCadastroDisciplina {
-    max-height: 300px;
-    margin-top: 15px;
-    width: 100%;
-    overflow-y: scroll;
-}
-
-.cabecalhoDisciplinas {
-    display: flex;
-    background-color: #006b3f;
-    color: white;
-    align-items: center;
-    padding: 7px;
-    font-weight: bold;
-    width: 100%;
-}
-
-.colunaDisciplina {
-    width: 50%;
-    text-align: center;
-}
-
-.containerDisciplinas {
-    width: 100%;
-    margin-top: 15px;
-}
-
-.containerTabelaDisciplinas {
-    max-height: 300px;
-    overflow-y: scroll;
-}
-
-.labelContainerDisciplinas {
-    display: flex;
-    width: 100%;
-    max-width: 100%;
-    justify-content: center;
-}
-
 .textoTabela {
     padding: 7px;
     text-align: center;
     width: 50%;
 }
 
-.labelContainerDisciplinas:hover {
-    cursor: pointer;
-    background-color: #bdbdbd;
-    transition: ease-in-out .3s;
-}
-
-.linhaTabelaDisciplina {
-    display: flex;
-    width: 100%;
-}
-
-.checkboxDisciplina:checked+.linhaTabelaDisciplina {
+.checkboxDisciplina:checked+.labelContainerDisciplinas {
     background-color: #006b3f;
     color: white;
     /* Estilo quando o checkbox estiver marcado */

@@ -100,7 +100,7 @@ const ListarPEDEMI = () => {
                     />
                 </div>
             </div>
-            <Tabela listaFiltrada={listaFiltrada} fontSize={'10px'} />
+            <Tabela listaFiltrada={listaFiltrada} editar={true} visualizar={true}/>
         </FormContainer>
     )
 }

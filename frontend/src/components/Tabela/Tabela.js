@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Ordenar from "../../assets/ordenar-branco.png";
 import Lupa from "../../assets/lupa.png";
 import Editar from "../../assets/icone-editar.png";
-import Excluir from "../../assets/lixeira.png";
 import Check from "../../assets/check.png";
 import "./Tabela.css";
 import { useNavigate } from "react-router-dom";
@@ -10,11 +9,11 @@ import Modal from "../Modal/Modal";
 
 const Tabela = ({
   listaFiltrada,
-  fontSize,
   showInProgressButton,
   onChangeStatus,
   textButtonInProgress,
-  mostrarBotoesExcluirEditar = true,
+  editar,
+  visualizar
 }) => {
   const [ordenacao, setOrdenacao] = useState({ coluna: "", ordem: "asc" });
   const [listaOrdenada, setListaOrdenada] = useState([]);
@@ -99,7 +98,7 @@ const Tabela = ({
 
   return listaFiltrada.length ? (
     <div className="divContainerTabela">
-      <table className="tabela" style={{ fontSize: fontSize }}>
+      <table className="tabela">
         <thead className="cabecalhoTabela">
           <tr className="linhaCabecalhoTabela">
             {colunas.map((coluna, index) =>
@@ -179,15 +178,22 @@ const Tabela = ({
                 )
               )}
               <td className="colunaCorpoTabela">
+                {
+
+                }
                 <div className="acoes">
-                  <img
-                    className="iconeAcoes"
-                    src={Lupa}
-                    alt="Visualizar"
-                    onClick={() => redirect(`${item.id}`, { state: item })}
-                    title="Visualizar"
-                  />
-                  {mostrarBotoesExcluirEditar && (
+                  {
+                    visualizar && (
+                      <img
+                        className="iconeAcoes"
+                        src={Lupa}
+                        alt="Visualizar"
+                        onClick={() => redirect(`${item.id}`, { state: item })}
+                        title="Visualizar"
+                      />
+                    )
+                  }
+                  {editar && (
                     <>
                       <img
                         className="iconeAcoes"
@@ -196,12 +202,6 @@ const Tabela = ({
                         onClick={() =>
                           redirect(`${item.id}/editar`, { state: item })
                         }
-                        title="Visualizar"
-                      />
-                      <img
-                        className="iconeAcoes"
-                        src={Excluir}
-                        alt="Excluir"
                         title="Visualizar"
                       />
                     </>
