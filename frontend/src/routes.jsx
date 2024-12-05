@@ -55,6 +55,7 @@ import AdicionarObservacao from './pages/base/Professor/observacoes/adicionarObs
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
+import DetalhesPEDAluno from "./pages/base/Aluno/detalhesPED/DetalhesPEDAluno";
 import ListarPPT from './pages/base/Gestao/listarPPT/ListarPPT'
 import ListarPEDEMI from './pages/base/Gestao/listarPED_EMI/ListarPED_EMI'
 import ListarPEDProEJA from './pages/base/Gestao/listarPED_ProEJA/ListarPED_ProEJA'
@@ -357,6 +358,18 @@ const router = createBrowserRouter([
                 path: ':idUsuario/perfil',
                 element: <PerfilAluno />
             },
+            {
+                path: ':idUsuario/Integrado/:pedId/detalhes',
+                element: <DetalhesPEDAluno />
+            },
+            {
+                path: ':idUsuario/ProEJA/:pedId/detalhes',
+                element: <DetalhesPEDAluno />
+            },
+            {
+                path: ':usuarioId/:modalidade/:pedId/detalhes',
+                element: <DetalhesPEDAluno />
+            }
         ]
     },
 ])

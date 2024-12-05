@@ -77,7 +77,7 @@ def listar_PED_ProEJA(request):
 
 
 @api_view(['GET'])
-@permission_classes([GestaoEscolar | Professor | Coordenador])
+@permission_classes([GestaoEscolar | Professor | Coordenador | Aluno])
 def por_id(request, pedId, modalidade):
     try:
         if modalidade == 'Integrado':

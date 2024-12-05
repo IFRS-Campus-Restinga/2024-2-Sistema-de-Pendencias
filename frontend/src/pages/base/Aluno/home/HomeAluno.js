@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { alunoService } from "../../../../services/alunoService";
 import "./HomeAluno.css";
 import { toast } from "react-toastify";
@@ -12,6 +13,8 @@ const HomeAluno = () => {
     const [visibleYears, setVisibleYears] = useState([currentYear, currentYear - 1, currentYear - 2, currentYear - 3]);
     const [minYear, setMinYear] = useState(currentYear - 3);
     const [selectedStatus, setSelectedStatus] = useState(["Criada", "Em Andamento", "Finalizada", "Desativado"]);
+    const navigate = useNavigate();
+    const usuarioId = sessionStorage.getItem("token") ? JSON.parse(atob(sessionStorage.getItem("token").split(".")[1])).idUsuario : null;
 
     const statusOptions = ["Criada", "Em Andamento", "Finalizada", "Desativado"];
 
@@ -120,6 +123,15 @@ const HomeAluno = () => {
                                     <div
                                         key={ped.id}
                                         className={`pedCard ${ped.status.toLowerCase().replace(" ", "-")}`}
+                                        onClick={() => {
+                                            let modalidade = "";
+                                            if (pedsEmi.some((p) => p.id === ped.id)) {
+                                                modalidade = "Integrado"; // Modalidade correta para EMI
+                                            } else if (pedsProeja.some((p) => p.id === ped.id)) {
+                                                modalidade = "ProEJA"; // Modalidade correta para ProEJA
+                                            }
+                                            navigate(`/sessao/Aluno/${usuarioId}/${modalidade}/${ped.id}/detalhes`);
+                                        }}
                                     >
                                         <h4>{`PED ${ped.id}`}</h4>
                                         <p><strong>Curso:</strong> {ped.curso}</p>
