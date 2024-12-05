@@ -90,13 +90,12 @@ class PPTSerializer(serializers.ModelSerializer):
         elif retorno == 'detalhes':
             representation['aluno'] = {'id': instance.aluno.id, 'nome': str(instance.aluno)}
             representation['professor_disciplina'] = {'id': instance.professor_disciplina.id, 'nome': str(instance.professor_disciplina)}
-            representation['professor_ppt'] = {'id': instance.professor_ped.id, 'nome': str(instance.professor_ped)}
+            representation['professor_ppt'] = {'id': instance.professor_ppt.id, 'nome': str(instance.professor_ppt)}
             representation['curso'] = {'id': instance.curso.id, 'nome': instance.curso.nome}
             representation['disciplina'] = {'id': instance.disciplina.id, 'nome': instance.disciplina.nome}
-            representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'periodo_letivo': instance.periodo_letivo.titulo}
-            representation['turma_atual'] = {'id': instance.turma_atual.id, 'turma_atual': instance.turma_atual.numero}
-            representation['turma_progressao'] = {'id': instance.turma_progressao.id, 'turma_progressao': instance.turma_progressao.titulo}
-
+            representation['turma_atual'] = {'id': instance.turma_atual.id, 'numero': instance.turma_atual.numero}
+            representation['turma_progressao'] = {'id': instance.turma_progressao.id, 'numero': instance.turma_progressao.numero}
+    
             representation.pop('data_criacao')
 
         return representation

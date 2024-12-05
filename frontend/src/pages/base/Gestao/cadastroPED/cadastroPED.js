@@ -228,12 +228,6 @@ const CadastroPED = () => {
 
       setCursos(cursosPorModalidade)
 
-      if (state) {
-        const index = cursosPorModalidade.findIndex(curso => curso.nome === state.curso || curso.nome === state.curso.nome)
-        setDisciplinas(cursosPorModalidade[index].disciplinas)
-        setTurmas(cursosPorModalidade[index].turmas)
-      }
-
       setIsLoading(false)
     } catch (error) {
       console.log(error)
@@ -322,7 +316,6 @@ const CadastroPED = () => {
   useEffect(() => {
     if (state) {
       if (state.observacao) {
-        console.log(state)        
         setControleInputs({
           aluno: state.aluno.nome,
           professor_ped: state.professor_ped.nome,
