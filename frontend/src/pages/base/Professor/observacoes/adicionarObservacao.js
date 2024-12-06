@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import moment from 'moment';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FormContainer from '../../../../components/FormContainer/FormContainer';
 import Button from '../../../../components/Button/Button';
-import Input from '../../../../components/Input/Input';
 import { observacaoService } from '../../../../services/observacaoService';
+import './adicionarObservacao.css';
 
 const AdicionarObservacao = () => {
   const { pedId } = useParams(); // Captura o ID do PED da URL
@@ -51,9 +52,11 @@ const AdicionarObservacao = () => {
             progressStyle: { backgroundColor: '#fff' },
           });
 
-          // Exibe a data de inserção
+          // Exibe a data de inserção formatada
           if (response.data_insercao) {
-            setDataInsercao(response.data_insercao);
+            const formattedDate = moment(response.data_insercao).format('DD/MM/YYYY HH:mm:ss');
+            setDataInsercao(formattedDate);
+            console.log("Data de inserção formatada:", formattedDate); // Depuração
           }
 
           // Limpar os campos do formulário após o sucesso (opcional)
@@ -91,47 +94,65 @@ const AdicionarObservacao = () => {
     { value: 'Desativado', label: 'Desativado' },
   ];
 
+  // Log de depuração da data de inserção
+  useEffect(() => {
+    console.log("Data de inserção atual:", dataInsercao);
+  }, [dataInsercao]);
+
   return (
     <>
       <ToastContainer />
       <FormContainer onSubmit={handleSubmit} titulo="Adicionar Observação">
         {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
 
-        {/* Campo Parecer */}
-        <div className="form-group">
-          <label htmlFor="parecer">Parecer</label>
-          <Input
-            tipo="textarea"
-            valor={formData.parecer}
-            onChange={(e) => setFormData({ ...formData, parecer: e.target.value })}
-            erro={errors.parecer}
-            multiline
-          />
-          {errors.parecer && <p className="erros">{errors.parecer}</p>}
-        </div>
+        {/* Seção do Parecer */}
+        <section className="sectionCadastroObservacao">
+          <div className="divCadastroObservacao textarea">
+            <label className="labelCadastroObservacao">
+              Parecer *
+              <textarea
+                name="parecer"
+                className={
+                  errors.parecer ? 'errorTextAreaCadastroObservacao' : 'textAreaCadastroObservacao'
+                }
+                onChange={(e) => setFormData({ ...formData, parecer: e.target.value })}
+                value={formData.parecer}
+              />
+              {errors.parecer && <p className="errorMessage">{errors.parecer}</p>}
+            </label>
+          </div>
+        </section>
 
-        {/* Campo Status */}
-        <div className="form-group">
-          <label htmlFor="status">Status</label>
-          <select
-            id="status"
-            value={formData.status}
-            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-            className={`form-control ${errors.status ? 'is-invalid' : ''}`}
-          >
-            <option value="">Selecione o Status</option>
-            {statusOptions.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-          {errors.status && <p className="erros">{errors.status}</p>}
-        </div>
+        {/* Seção do Status */}
+        <section className="sectionCadastroObservacao">
+          <div className="divCadastroObservacao">
+            <label className="labelCadastroObservacao">
+              Status *
+              <select
+                name="status"
+                className={errors.status ? 'errorSelectCadastroObservacao' : 'selectCadastroObservacao'}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                value={formData.status}
+              >
+                <option value="">Selecione o status</option>
+                {statusOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              {errors.status && <p className="errorMessage">{errors.status}</p>}
+            </label>
+          </div>
+        </section>
 
         {/* Exibe a data de inserção, se disponível */}
         {dataInsercao && (
-          <div className="alert alert-info">
-            <p>Observação cadastrada em: {dataInsercao}</p>
-          </div>
+          <section className="sectionCadastroObservacao">
+            <div className="divCadastroObservacao alert alert-info">
+              <p>Observação cadastrada em: {dataInsercao}</p>
+            </div>
+          </section>
         )}
 
         <div>
