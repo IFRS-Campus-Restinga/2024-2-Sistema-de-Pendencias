@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // Captura o pedId da URL
 import moment from 'moment';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,7 +9,8 @@ import { observacaoService } from '../../../../services/observacaoService';
 import './adicionarObservacao.css';
 
 const AdicionarObservacao = () => {
-  const { pedId } = useParams(); // Captura o ID do PED da URL
+  const { pedId, emi, observacaoId } = useParams(); // Captura pedId, emi, e observacaoId da URL
+  const navigate = useNavigate(); // Usado para redirecionar após sucesso
 
   const [formData, setFormData] = useState({
     parecer: '',
@@ -18,7 +19,7 @@ const AdicionarObservacao = () => {
 
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [dataInsercao, setDataInsercao] = useState(null); // Estado para armazenar a data de inserção
+  const [dataInsercao, setDataInsercao] = useState(null);
 
   // Valida os campos do formulário
   const validarFormulario = (data) => {
@@ -38,12 +39,12 @@ const AdicionarObservacao = () => {
       const payload = {
         parecer: formData.parecer,
         status: formData.status,
+        ped_id: pedId, // Passa o pedId diretamente no payload
       };
 
       try {
-        const response = await observacaoService.adicionarObservacao(pedId, payload);
+        const response = await observacaoService.adicionarObservacao(payload);
 
-        // Verificar o código de status HTTP para garantir que a requisição foi bem-sucedida
         if (response && response.status === 201) {
           toast.success('Observação cadastrada com sucesso!', {
             position: 'bottom-center',
@@ -52,18 +53,23 @@ const AdicionarObservacao = () => {
             progressStyle: { backgroundColor: '#fff' },
           });
 
-          // Exibe a data de inserção formatada
           if (response.data_insercao) {
             const formattedDate = moment(response.data_insercao).format('DD/MM/YYYY HH:mm:ss');
             setDataInsercao(formattedDate);
-            console.log("Data de inserção formatada:", formattedDate); // Depuração
+            console.log("Data de inserção formatada:", formattedDate);
           }
 
-          // Limpar os campos do formulário após o sucesso (opcional)
+          // Limpa os campos do formulário após o sucesso
           setFormData({
             parecer: '',
             status: '',
           });
+
+          // Redireciona para o endereço correto, incluindo pedId, emi e observacaoId
+          setTimeout(() => {
+            navigate(`/sessao/Professor/${pedId}/observacoes/${emi}/${observacaoId}`); 
+          }, 3000); // Tempo de delay para garantir que o toast seja exibido antes do redirecionamento
+          
         } else {
           toast.error('Falha ao salvar a observação. Tente novamente.', {
             position: 'bottom-center',
@@ -94,14 +100,13 @@ const AdicionarObservacao = () => {
     { value: 'Desativado', label: 'Desativado' },
   ];
 
-  // Log de depuração da data de inserção
   useEffect(() => {
     console.log("Data de inserção atual:", dataInsercao);
   }, [dataInsercao]);
 
   return (
     <>
-      <ToastContainer />
+      <ToastContainer /> {/* Certifique-se de que o ToastContainer está renderizado */}
       <FormContainer onSubmit={handleSubmit} titulo="Adicionar Observação">
         {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
 
@@ -112,9 +117,7 @@ const AdicionarObservacao = () => {
               Parecer *
               <textarea
                 name="parecer"
-                className={
-                  errors.parecer ? 'errorTextAreaCadastroObservacao' : 'textAreaCadastroObservacao'
-                }
+                className={errors.parecer ? 'errorTextAreaCadastroObservacao' : 'textAreaCadastroObservacao'}
                 onChange={(e) => setFormData({ ...formData, parecer: e.target.value })}
                 value={formData.parecer}
               />

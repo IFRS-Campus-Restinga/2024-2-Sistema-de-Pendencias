@@ -103,10 +103,8 @@ urlpatterns = [
     path('atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
     
     ##views para tela de observaçoes
-    #path('adicionar-observacao/<str:ped_tipo>/<int:ped_id>/', adicionar_observacao, name='adicionar_observacao'),
-    #path('adicionar-observacao/<int:ped_id>/', adicionar_observacao, name='adicionar_observacao'),
-    path('adicionar-observacao/<int:ped_id>/', adicionar_observacao, name='adicionar_observacao'),
-    path('adicionar-observacao/<int:ped_id>/', adicionar_observacao, name='adicionar_observacao'),
+    path('adicionar-observacao/', adicionar_observacao, name='adicionar_observacao'),
+
     path('listar-observacoes/', listar_observacoes, name='listar_observacoes'),
 
     #views para atividades da ped

@@ -19,25 +19,30 @@ logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def adicionar_observacao(request, ped_id):
+def adicionar_observacao(request):
     try:
         data = request.data
-
-        # Detecta automaticamente o tipo do PED
-        ped = None
-        try:
-            ped = PED_EMI.objects.get(id=ped_id)
-            data['ped_emi'] = ped.id
-            data['ped_proeja'] = None
-        except PED_EMI.DoesNotExist:
+        
+        ped_id = data.get('ped_id')  # Obtém o ped_id do corpo da requisição (se existir)
+        
+        # Se o ped_id for fornecido, tentamos buscar o PED
+        if ped_id:
+            ped = None
             try:
                 ped = PED_ProEJA.objects.get(id=ped_id)
                 data['ped_proeja'] = ped.id
                 data['ped_emi'] = None
             except PED_ProEJA.DoesNotExist:
-                return Response({"mensagem": "PED não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+                try:
+                    ped = PED_EMI.objects.get(id=ped_id)
+                    data['ped_emi'] = ped.id
+                    data['ped_proeja'] = None
+                except PED_EMI.DoesNotExist:
+                    return Response({"mensagem": "PED não encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
+        # Serializa os dados e tenta salvar a observação
         serializer = ObservacaoSerializer(data=data)
+        
         if serializer.is_valid():
             observacao = serializer.save()
 
@@ -46,7 +51,10 @@ def adicionar_observacao(request, ped_id):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     except Exception as e:
+        # Caso algum erro inesperado ocorra, retornamos o erro
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 @api_view(['GET'])

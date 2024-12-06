@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import './ListarObservacoes.css'; // Pode criar um CSS específico
-import { observacaoService } from '../../../../services/observacaoService'; // Serviço para obter as observações
+import './ListarObservacoes.css';
+import { observacaoService } from '../../../../services/observacaoService';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Tabela from '../../../../components/Tabela/Tabela'; // Componente de Tabela para exibir as observações
-import Input from '../../../../components/Input/Input'; // Componente de Input
-import Lupa from "../../../../assets/lupa-branca.png"; // Imagem de lupa para buscar
-import X from "../../../../assets/x-branco.png"; // Imagem para limpar a busca
+import Tabela from '../../../../components/Tabela/Tabela'; 
+import Input from '../../../../components/Input/Input'; 
+import Lupa from "../../../../assets/lupa-branca.png";
+import X from "../../../../assets/x-branco.png";
+import Adicionar from "../../../../assets/icone-adicionar-curso.png"; // Ícone de adicionar (pode manter o mesmo usado para cursos)
 
 const ListarObservacoes = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [observacoes, setObservacoes] = useState([]); // Lista das observações
-  const [observacoesFiltradas, setObservacoesFiltradas] = useState([]); // Lista filtrada
-  const [filtroGeral, setFiltroGeral] = useState(''); // Filtro de pesquisa
-
+  const [observacoes, setObservacoes] = useState([]);
+  const [observacoesFiltradas, setObservacoesFiltradas] = useState([]);
+  const [filtroGeral, setFiltroGeral] = useState('');
   const navigate = useNavigate();
 
   // Função para buscar as observações
   const fetchObservacoes = async () => {
     try {
-      const response = await observacaoService.list(); // Método para listar observações
+      const response = await observacaoService.list();
       setObservacoes(response.data);
       setObservacoesFiltradas(response.data);
       setIsLoading(false);
@@ -34,12 +34,12 @@ const ListarObservacoes = () => {
     }
   };
 
-  // Função para filtrar as observações com base no filtro
+  // Função para filtrar as observações
   const filtrarObservacoes = () => {
-    const observacoesFiltradas = observacoes.filter(observacao => (
+    const observacoesFiltradas = observacoes.filter(observacao =>
       observacao.parecer.toLowerCase().includes(filtroGeral.toLowerCase()) ||
       observacao.status.toLowerCase().includes(filtroGeral.toLowerCase())
-    ));
+    );
     setObservacoesFiltradas(observacoesFiltradas);
   };
 
@@ -49,11 +49,12 @@ const ListarObservacoes = () => {
     fetchObservacoes();
   };
 
+  // Busca as observações ao carregar a página
   useEffect(() => {
     fetchObservacoes();
   }, []);
 
-  if (isLoading) return <div>Carregando...</div>; // Exibição de carregamento
+  if (isLoading) return <div>Carregando...</div>;
 
   return (
     <>
@@ -77,6 +78,14 @@ const ListarObservacoes = () => {
             src={X}
             onClick={limparBusca}
             title="Limpar Busca"
+          />
+        </div>
+        <div className="adicionarObservacao">
+          <img
+            src={Adicionar}
+            className="iconeAdicionarObservacao"
+            onClick={() => navigate(`/sessao/Professor/2/adicionarObservacao`)}
+            title="Adicionar Observação"
           />
         </div>
       </div>
