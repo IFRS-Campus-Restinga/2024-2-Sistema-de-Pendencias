@@ -820,8 +820,6 @@ const CadastroPED = () => {
                         
                         if (periodo_letivo) {
                           setFormData({...formData, periodo_letivo: Number(e.target.value)})
-                          setDisciplinas(periodo_letivo.disciplinas);
-                          setTurmas(periodo_letivo.turmas)
                         }
                       }
                     }>

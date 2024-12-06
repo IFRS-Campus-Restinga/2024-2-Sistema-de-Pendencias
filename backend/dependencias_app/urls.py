@@ -94,24 +94,20 @@ urlpatterns = [
     path('cadastrar-plano-estudos/<int:pedId>/', cadastrar_plano_estudos),
     path('desativar-ped/<int:pedId>/<str:modalidade>/', desativar_PED),
     path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
-    path('aluno/peds/', listar_peds_aluno, name='listar_peds_aluno'),
+    path('aluno/dependencias/', listar_dependencias_aluno, name='listar_peds_aluno'),
     path('ped-emi/<int:coordenadorId>/', listar_PED_EMI),
     path('ped-proeja/<int:coordenadorId>/', listar_PED_ProEJA),
 
     
-
     path('detalhes-plano-estudos/<int:ped_id>/', detalhes_plano_estudos, name='detalhes_plano_estudos'),
     path('atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
     
-
     ##views para tela de observaçoes
     #path('adicionar-observacao/<str:ped_tipo>/<int:ped_id>/', adicionar_observacao, name='adicionar_observacao'),
     #path('adicionar-observacao/<int:ped_id>/', adicionar_observacao, name='adicionar_observacao'),
     path('adicionar-observacao/<int:ped_id>/', adicionar_observacao, name='adicionar_observacao'),
     path('adicionar-observacao/<int:ped_id>/', adicionar_observacao, name='adicionar_observacao'),
     path('listar-observacoes/', listar_observacoes, name='listar_observacoes'),
-
-
 
     #views para atividades da ped
     path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),

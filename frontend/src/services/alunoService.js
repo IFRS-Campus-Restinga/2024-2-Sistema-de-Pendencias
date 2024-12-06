@@ -33,13 +33,13 @@ export const alunoService = {
         }
     },
 
-    listarPedsAluno: async () => {
+    listarDependenciasAluno: async () => {
         try {
-            const res = await api.get('api/aluno/peds/', {
+            const res = await api.get('api/aluno/dependencias/', {
                 params: {
-                    incluir_dados: true
+                    retorno: 'aluno'
                 }
-            }); // Corrigido o caminho
+            });
             return res;
         } catch (erro) {
             console.error("Erro ao listar PEDS do aluno:", erro);
