@@ -52,6 +52,8 @@ import DetalhesPEDProfessor from './pages/base/Professor/detalhesPED/DetalhesPED
 import DetalhesPlanoEstudos from './pages/base/Professor/detalhesPlanoEstudos/DetalhesPlanoEstudos'
 import AdicionarObservacao from './pages/base/Professor/observacoes/adicionarObservacao'
 import ListarObservacoes from './pages/base/Professor/listarObservacoes/ListarObservacoes'
+import DetalhesObservacoes from './pages/base/Professor/detalhesObservacoes/DetalhesObservacoes'
+
 
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
@@ -338,16 +340,14 @@ const router = createBrowserRouter([
                 path: ':idUsuario/adicionarObservacao',
                 element: <AdicionarObservacao />
             },
-            // {
-            //     path: ':idUsuario/peds-emi/:pedId/adicionarObservacao',
-            //     element: <AdicionarObservacao />,
-            // },
+            {
+                path: ':idUsuario/detalhes/:idObservacao',
+                element: <DetalhesObservacoes />
+            },
             {
                 path: ':idUsuario/observacoes/:pedTipo/:pedId',
                 element: <ListarObservacoes />
             },
-            
-
 
         ]
     },

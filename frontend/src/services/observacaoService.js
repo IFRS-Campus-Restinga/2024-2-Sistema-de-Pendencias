@@ -13,6 +13,18 @@ export const observacaoService = {
       console.error('Erro ao listar observações:', error);
       throw error;
     }
-  }
+  },
+
+  
+  visualizar: async (idObservacao) => {
+    try {
+        const res = await api.get(`/api/visualizar-observacao/${idObservacao}/`);
+        return res.data;
+    } catch (erro) {
+        console.error(`Erro ao buscar observação com ID ${idObservacao}:`, erro);
+        throw erro;
+    }
+},
+
 };
 

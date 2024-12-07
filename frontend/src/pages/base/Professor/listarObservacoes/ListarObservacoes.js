@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './ListarObservacoes.css';
 import { observacaoService } from '../../../../services/observacaoService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom'; // Import useParams
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Tabela from '../../../../components/Tabela/Tabela'; 
 import Input from '../../../../components/Input/Input'; 
 import Lupa from "../../../../assets/lupa-branca.png";
 import X from "../../../../assets/x-branco.png";
-import Adicionar from "../../../../assets/icone-adicionar-curso.png"; // Ícone de adicionar (pode manter o mesmo usado para cursos)
+import Adicionar from "../../../../assets/icone-adicionar-curso.png";
 
 const ListarObservacoes = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -16,6 +16,7 @@ const ListarObservacoes = () => {
   const [observacoesFiltradas, setObservacoesFiltradas] = useState([]);
   const [filtroGeral, setFiltroGeral] = useState('');
   const navigate = useNavigate();
+  const { idUsuario } = useParams(); // Obter dinamicamente o ID do usuário da URL
 
   // Função para buscar as observações
   const fetchObservacoes = async () => {
@@ -47,6 +48,26 @@ const ListarObservacoes = () => {
   const limparBusca = () => {
     setFiltroGeral('');
     fetchObservacoes();
+  };
+
+  // Navegar para os detalhes de uma observação específica
+  const handleVisualizar = (idObservacao) => {
+    // Verificar se o ID da observação é válido
+    if (!idObservacao || isNaN(idObservacao)) {
+      console.error('ID da observação está indefinido ou inválido.');
+      return;
+    }
+
+    if (!idUsuario) {
+      console.error('ID do usuário está indefinido.');
+      return;
+    }
+
+    // Gerar a URL para navegar para os detalhes da observação
+    const urlDetalhes = `/sessao/Professor/${idUsuario}/detalhes/${idObservacao}`;
+    console.log('Navegando para:', urlDetalhes);  // Verifique a URL gerada
+
+    navigate(urlDetalhes);
   };
 
   // Busca as observações ao carregar a página
@@ -84,13 +105,18 @@ const ListarObservacoes = () => {
           <img
             src={Adicionar}
             className="iconeAdicionarObservacao"
-            onClick={() => navigate(`/sessao/Professor/2/adicionarObservacao`)}
+            onClick={() => navigate(`/sessao/Professor/${idUsuario}/adicionarObservacao`)}
             title="Adicionar Observação"
           />
         </div>
       </div>
 
-      <Tabela listaFiltrada={observacoesFiltradas} editar={true} visualizar={true} />
+      <Tabela
+        listaFiltrada={observacoesFiltradas}
+        editar={true}
+        visualizar={true}
+        onVisualizar={(id) => handleVisualizar(id)} // Passando o ID correto da observação
+      />
     </>
   );
 };
