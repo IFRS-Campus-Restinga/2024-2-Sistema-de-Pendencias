@@ -5,6 +5,8 @@ from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.models.calendarioAcademico import CalendarioAcademico
 from dependencias_app.serializers.calendarioAcademicoSerializer import CalendarioAcademicoSerializer
+import os
+from dependencias_app.utils.enviar_email import enviar_email
 
 
 class PED_ProEJA_Serializer(serializers.ModelSerializer):
@@ -25,6 +27,7 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
 
         formPED_ProEJA.full_clean()
         formPED_ProEJA.save()
+
         return formPED_ProEJA
     
     def validate(self, attrs):

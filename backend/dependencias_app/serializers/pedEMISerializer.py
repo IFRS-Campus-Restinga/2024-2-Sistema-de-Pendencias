@@ -10,6 +10,8 @@ from dependencias_app.serializers.cursoSerializer import CursoSerializer
 from dependencias_app.serializers.disciplinaSerializer import DisciplinaSerializer
 from dependencias_app.serializers.turmaSerializer import TurmaSerializer
 from dependencias_app.serializers.calendarioAcademicoSerializer import CalendarioAcademicoSerializer
+import os
+from dependencias_app.utils.enviar_email import enviar_email
 
 
 
@@ -32,6 +34,7 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
 
         formPED_EMI.full_clean()
         formPED_EMI.save()
+        
         return formPED_EMI
     
     def validate(self, attrs):

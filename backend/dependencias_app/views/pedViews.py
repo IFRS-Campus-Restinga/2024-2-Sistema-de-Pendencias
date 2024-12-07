@@ -7,6 +7,8 @@ from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.serializers.pedEMISerializer import *
 from dependencias_app.serializers.pedProEJASerializer import *
 from dependencias_app.permissoes import *
+import threading
+
 
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
@@ -19,6 +21,17 @@ def cadastrar_PED_EMI(request):
         if not serializer.is_valid(): raise Exception(serializer.errors)
 
         serializer.save()
+
+        # busca o caminho do template
+        template = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        'templates_email',
+        'novaPED.html'
+        )
+
+        # envia email para o professor responsável e aluno da ped de forma assíncrona
+        threading.Thread(target=enviar_email, args=(serializer.aluno, template, 'Nova Dependência Cadastrada', serializer.aluno.grupo.name)).start()
+        threading.Thread(target=enviar_email, args=(serializer.professor_ped, template, 'Nova Dependência Cadastrada', serializer.professor_ped.grupo.name)).start()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:
@@ -35,6 +48,17 @@ def cadastrar_PED_ProEJA(request):
         if not serializer.is_valid(): raise Exception(serializer.errors)
 
         serializer.save()
+
+        # busca o caminho do template
+        template = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        'templates_email',
+        'novaPED.html'
+        )
+
+        # envia email para o professor responsável e aluno da ped de forma assíncrona
+        threading.Thread(target=enviar_email, args=(serializer.aluno, template, 'Nova Dependência Cadastrada', serializer.aluno.grupo.name)).start()
+        threading.Thread(target=enviar_email, args=(serializer.professor_ped, template, 'Nova Dependência Cadastrada', serializer.professor_ped.grupo.name)).start()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:

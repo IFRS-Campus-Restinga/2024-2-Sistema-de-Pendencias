@@ -16,6 +16,9 @@ from dependencias_app.serializers.pptSerializer import PPTSerializer
 from google_auth.models import UsuarioBase
 from django.contrib.auth.models import Group
 import logging
+import os
+from dependencias_app.utils.enviar_email import enviar_email
+import threading
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +44,15 @@ def cadastrar_aluno(request):
         serializer.save()
         
         logger.info('Aluno criado com sucesso: %s', serializer.data)
+
+        template = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        'templates_email',
+        'novoUsuario.html'
+        )
+
+        threading.Thread(target=enviar_email, args=(serializer, template, 'Boas Vindas ao Sistema de Dependências', serializer.grupo.name)).start()
+
         # retorna uma resposta positiva
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
