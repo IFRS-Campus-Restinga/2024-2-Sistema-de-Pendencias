@@ -15,16 +15,20 @@ export const observacaoService = {
     }
   },
 
-  
+
+  // No serviço de observação
   visualizar: async (idObservacao) => {
     try {
-        const res = await api.get(`/api/visualizar-observacao/${idObservacao}/`);
-        return res.data;
+      const res = await api.get(`/api/visualizar-observacao/${idObservacao}/`);
+      return res.data;
     } catch (erro) {
-        console.error(`Erro ao buscar observação com ID ${idObservacao}:`, erro);
-        throw erro;
+      console.error(`Erro ao visualizar observação com ID ${idObservacao}:`, erro);
+      return {
+        sucesso: false,
+        mensagem: erro.response?.data?.mensagem || 'Erro ao tentar visualizar a observação.',
+        status: erro.response?.status || 500
+      };
     }
-},
-
+  }
 };
 

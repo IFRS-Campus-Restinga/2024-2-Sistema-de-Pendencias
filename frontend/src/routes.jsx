@@ -340,13 +340,14 @@ const router = createBrowserRouter([
                 element: <AdicionarObservacao />
             },
             {
-                path: ':idUsuario/detalhes/:idObservacao',
+                path: ':idUsuario/observacoes/:pedTipo/:pedId/:idObservacao',
                 element: <DetalhesObservacoes />
             },
             {
                 path: ':idUsuario/observacoes/:pedTipo/:pedId',
                 element: <ListarObservacoes />
             },
+
 
         ]
     },

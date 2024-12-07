@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ListarObservacoes.css';
 import { observacaoService } from '../../../../services/observacaoService';
-import { useNavigate, useParams } from 'react-router-dom'; // Import useParams
+import { useNavigate, useParams } from 'react-router-dom'; 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Tabela from '../../../../components/Tabela/Tabela'; 
@@ -52,7 +52,6 @@ const ListarObservacoes = () => {
 
   // Navegar para os detalhes de uma observação específica
   const handleVisualizar = (idObservacao) => {
-    // Verificar se o ID da observação é válido
     if (!idObservacao || isNaN(idObservacao)) {
       console.error('ID da observação está indefinido ou inválido.');
       return;
@@ -62,15 +61,8 @@ const ListarObservacoes = () => {
       console.error('ID do usuário está indefinido.');
       return;
     }
-
-    // Gerar a URL para navegar para os detalhes da observação
-    const urlDetalhes = `/sessao/Professor/${idUsuario}/detalhes/${idObservacao}`;
-    console.log('Navegando para:', urlDetalhes);  // Verifique a URL gerada
-
-    navigate(urlDetalhes);
   };
 
-  // Busca as observações ao carregar a página
   useEffect(() => {
     fetchObservacoes();
   }, []);
@@ -115,7 +107,7 @@ const ListarObservacoes = () => {
         listaFiltrada={observacoesFiltradas}
         editar={true}
         visualizar={true}
-        onVisualizar={(id) => handleVisualizar(id)} // Passando o ID correto da observação
+        onVisualizar={handleVisualizar}  // Passando o método de visualização para o Tabela
       />
     </>
   );
