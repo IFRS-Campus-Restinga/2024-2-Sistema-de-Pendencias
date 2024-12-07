@@ -45,9 +45,14 @@ def cadastrar_PED_ProEJA(request):
 def listar_PED_EMI(request):
     try:
         professorId = request.GET.get('professorId')  # Captura o parâmetro de query da URL
+        coordenadorId = request.user.id
 
         if  professorId:
             lista = PED_EMI.objects.filter(professor_ped=professorId)
+
+        elif coordenadorId:
+            lista = PED_EMI.objects.filter(curso__coordenador_id=coordenadorId)
+            
         else:
             lista = PED_EMI.objects.all()
 
@@ -62,9 +67,14 @@ def listar_PED_EMI(request):
 def listar_PED_ProEJA(request):
     try:
         professorId = request.GET.get('professorId')  # Captura o parâmetro de query da URL
+        coordenadorId = request.user.id
 
         if professorId:
             lista = PED_ProEJA.objects.filter(professor_ped=professorId)
+            
+        elif coordenadorId:
+            lista = PED_ProEJA.objects.filter(curso__coordenador_id=coordenadorId)
+            
         else:
             lista = PED_ProEJA.objects.all()
         
