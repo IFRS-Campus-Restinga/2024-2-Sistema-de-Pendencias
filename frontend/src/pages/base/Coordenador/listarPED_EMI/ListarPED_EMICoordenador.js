@@ -19,7 +19,7 @@ const ListarPEDEMICoordenador = () => {
 
     const fetchPED_EMI = async () => {
         try {
-            const res = await PEDService.listaEMI()
+            const res = await PEDService.listaEMI(null, 'lista')
 
             if (res.status !== 200) throw new Error(res)
 
@@ -94,7 +94,7 @@ const ListarPEDEMICoordenador = () => {
                     />
                 </div>
             </div>
-            <Tabela listaFiltrada={listaFiltrada} fontSize={'10px'} mostrarBotoesExcluirEditar={false}/>
+            <Tabela listaFiltrada={listaFiltrada} visualizar={true}/>
         </FormContainer>
     )
 }
