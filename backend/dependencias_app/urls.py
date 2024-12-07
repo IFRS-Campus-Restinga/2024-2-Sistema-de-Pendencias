@@ -16,6 +16,7 @@ from dependencias_app.views.pptViews import *
 from dependencias_app.views.pedViews import *
 from dependencias_app.views.atividadeViews import *
 from dependencias_app.views.planoEstudosViews import *
+from dependencias_app.views.notificacaoViews import *
 
 
 urlpatterns = [
@@ -128,7 +129,11 @@ urlpatterns = [
 
     #view editar servidor
     path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),
-    ]
+
+    # Views de notificacao
+    path('buscar_notificacoes/', buscar_notificacoes),
+    path('notificacao/troca-status/', trocar_status)
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

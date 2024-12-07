@@ -7,6 +7,8 @@ from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.serializers.pedEMISerializer import *
 from dependencias_app.serializers.pedProEJASerializer import *
 from dependencias_app.permissoes import *
+import threading
+
 
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
@@ -19,6 +21,17 @@ def cadastrar_PED_EMI(request):
         if not serializer.is_valid(): raise Exception(serializer.errors)
 
         serializer.save()
+
+        # busca o caminho do template
+        template = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        'templates_email',
+        'novaPED.html'
+        )
+
+        # envia email para o professor responsável e aluno da ped de forma assíncrona
+        threading.Thread(target=enviar_email, args=(serializer.aluno, template, 'Nova Dependência Cadastrada', serializer.aluno.grupo.name)).start()
+        threading.Thread(target=enviar_email, args=(serializer.professor_ped, template, 'Nova Dependência Cadastrada', serializer.professor_ped.grupo.name)).start()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:
@@ -36,6 +49,17 @@ def cadastrar_PED_ProEJA(request):
 
         serializer.save()
 
+        # busca o caminho do template
+        template = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        'templates_email',
+        'novaPED.html'
+        )
+
+        # envia email para o professor responsável e aluno da ped de forma assíncrona
+        threading.Thread(target=enviar_email, args=(serializer.aluno, template, 'Nova Dependência Cadastrada', serializer.aluno.grupo.name)).start()
+        threading.Thread(target=enviar_email, args=(serializer.professor_ped, template, 'Nova Dependência Cadastrada', serializer.professor_ped.grupo.name)).start()
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:
         return Response({'mensagem: ': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -50,7 +74,7 @@ def listar_PED_EMI(request):
         if  professorId:
             lista = PED_EMI.objects.filter(professor_ped=professorId)
 
-        elif coordenadorId:
+        elif coordenadorId and request.user.grupo.name == 'Coordenador':
             lista = PED_EMI.objects.filter(curso__coordenador_id=coordenadorId)
             
         else:
@@ -72,7 +96,7 @@ def listar_PED_ProEJA(request):
         if professorId:
             lista = PED_ProEJA.objects.filter(professor_ped=professorId)
             
-        elif coordenadorId:
+        elif coordenadorId and request.user.grupo.name == 'Coordenador':
             lista = PED_ProEJA.objects.filter(curso__coordenador_id=coordenadorId)
             
         else:

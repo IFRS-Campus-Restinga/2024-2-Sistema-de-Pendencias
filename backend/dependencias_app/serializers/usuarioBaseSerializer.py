@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from google_auth.models import UsuarioBase
 from django.contrib.auth.models import Group
+import os
+from dependencias_app.utils.enviar_email import enviar_email
+
 
 class UsuarioBaseSerializer(serializers.ModelSerializer):
     grupo = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all())
@@ -16,8 +19,10 @@ class UsuarioBaseSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         formUsuarioBase = super().save(**kwargs)
 
+        
         formUsuarioBase.full_clean()
         formUsuarioBase.save()
+
         return formUsuarioBase
     
     def get_cpf(self, obj):

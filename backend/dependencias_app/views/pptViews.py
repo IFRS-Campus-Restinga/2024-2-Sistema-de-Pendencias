@@ -6,6 +6,7 @@ from dependencias_app.models.ppt import PPT
 from dependencias_app.permissoes import GestaoEscolar, RegistroEscolar
 from django.shortcuts import *
 import logging
+import threading
 
 logger = logging.getLogger(__name__)
 
@@ -16,11 +17,25 @@ def cadastrar_ppt(request):
     try:
         data = request.data
 
+        print(data)
+
         serializer = PPTSerializer(data=data)
         
         if serializer.is_valid(raise_exception=True):
             # Salvar o novo objeto PPT
             serializer.save()
+
+            # busca o caminho do template
+            template = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)),
+            'templates_email',
+            'novaPPT.html'
+            )
+
+            # envia email para o professor responsável e aluno da ped de forma assíncrona
+            threading.Thread(target=enviar_email, args=(serializer.instance.aluno, template, 'Nova Dependência Cadastrada', serializer.instance.aluno.grupo.name)).start()
+            threading.Thread(target=enviar_email, args=(serializer.instance.professor_ppt, template, 'Nova Dependência Cadastrada', serializer.instance.professor_ppt.grupo.name)).start()
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
     
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

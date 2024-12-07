@@ -65,6 +65,7 @@ import ListarPEDProEJA from './pages/base/Gestao/listarPED_ProEJA/ListarPED_ProE
 import ListarPEDProEJAProfessor from './pages/base/Professor/listarPED_ProEJAProfessor/ListarPED_ProEJAProfessor'
 import DetalhesCurso from './pages/base/Gestao/detalhesCurso/DetalhesCurso'
 import EditarDisciplina from './pages/base/Gestao/editarDisciplina/EditarDisciplina'
+import DetalhesPlanoEstudo from './pages/base/Aluno/detalhesPlanoEstudos/DetalhesPlanoEstudo'
 
 
 const router = createBrowserRouter([
@@ -376,7 +377,12 @@ const router = createBrowserRouter([
             {
                 path: ':usuarioId/:modalidade/:pedId/detalhes',
                 element: <DetalhesPEDAluno />
+            },
+            {
+                path: ':idUsuario/:modalidade/:pedId/planoEstudos',
+                element: <DetalhesPlanoEstudo />
             }
+
         ]
     },
 ])

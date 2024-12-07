@@ -7,6 +7,8 @@ from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.turma import Turma
 from dependencias_app.models.ppt import PPT
 from dependencias_app.models.calendarioAcademico import CalendarioAcademico
+import os
+from dependencias_app.utils.enviar_email import enviar_email
 
 class PPTSerializer(serializers.ModelSerializer):
     # variáveis de entrada do serializer (POST), recebe as chaves primárias das tabelas que se relacionam com ppt
@@ -21,6 +23,14 @@ class PPTSerializer(serializers.ModelSerializer):
     class Meta:
         model = PPT
         fields = '__all__'
+
+    def save(self, **kwargs):
+        formPPT = super().save(**kwargs)
+
+        formPPT.full_clean()
+        formPPT.save()
+
+        return formPPT
     
     def create(self, validated_data):
         hoje = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)  # Hora ajustada para 00:00:00

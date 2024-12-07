@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bem-vindo</title>
+    </head>
+
+    <body
+        style="margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; background-color: #d9d9d9; text-align: center;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #d9d9d9;">
+            <tr>
+                <td>
+                    <!-- Header -->
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                        style="background-color: #006b3f; padding: 20px 0;">
+                        <tr>
+                            <td style="text-align: center;">
+                                <img src="./assets/logo-ifrs-branco.png" style="max-height: 80px;" />
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- Main Content -->
+                    <table width="70%" cellpadding="0" cellspacing="0" border="0" align="center"
+                        style="background-color: white; border: 2px solid #ccc; border-radius: 10px; padding: 20px;">
+                        <tr>
+                            <td style="text-align: center; padding-bottom: 15px;">
+                                <h1>Uma nova Dependência foi Cadastrada para você</h1>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center; padding-bottom: 15px;">
+                                <h2>Olá {{grupo}}!</h2>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center; padding-bottom: 15px;">
+                                {% if grupo == 'Aluno' %}
+                                <p>A Gestão Escolar Cadastrou uma nova Progressão em Turma para você. Para consultar os
+                                    dados da dependência, acesse o sistema.</p>
+                                <button
+                                    style="background-color: #006b3f; color: white; font-size: 12px; padding: 10px; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; margin: 15px;">
+                                    Ir para Sistema de Dependências
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+
+</html>

@@ -69,7 +69,10 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [f'{BASE_DIR}/backend/google_auth/templates'],
+        'DIRS': [
+            f'{BASE_DIR}/backend/google_auth/templates',  # Para o Google Auth
+            os.path.join(BASE_DIR, 'dependencias_app', 'templates_email')  # Para templates de e-mail
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,14 +126,15 @@ CSRF_ESPIRE_AT_BROWSER_CLOSE = True
 
 CORS_ALLOW_CREDENTIALS = True
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.SessionAuthentication',
-#     ],
-#     "DEFAULT_PERMISSION_CLASSES": [
-#         "rest_framework.permissions.IsAuthenticated"
-#     ]
-# }
+# Configuração de email do sistema
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False  # Não use SSL se estiver usando TLS
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  # Coloque o email no .env
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # Coloque a senha de app no .env
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

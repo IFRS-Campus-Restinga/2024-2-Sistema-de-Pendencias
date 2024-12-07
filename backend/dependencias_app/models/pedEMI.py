@@ -21,7 +21,7 @@ class PED_EMI(Dependencia):
     serie_progressao = models.CharField(null=False, blank=False, choices=SerieProgressao.choices, max_length=6)
     turma_atual = models.ForeignKey(Turma, on_delete=models.DO_NOTHING)
     periodo_letivo = models.ForeignKey(CalendarioAcademico, on_delete=models.DO_NOTHING, related_name='periodo_letivo_emi')
-    plano_estudos = models.OneToOneField(PlanoEstudos, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='plano_estudos_emi')
+    plano_estudos = models.OneToOneField(PlanoEstudos, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='dependencia_emi')
     form_encerramento = models.OneToOneField(FormEncerramento, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='form_encerramento_emi')
     plano_atividades = models.FileField(upload_to='plano_atividades/', null=True, blank=True, validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
     
