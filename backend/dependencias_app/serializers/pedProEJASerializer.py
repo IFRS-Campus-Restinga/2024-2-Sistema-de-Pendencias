@@ -4,6 +4,7 @@ from dependencias_app.models.curso import Curso
 from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.models.calendarioAcademico import CalendarioAcademico
+from dependencias_app.serializers.calendarioAcademicoSerializer import CalendarioAcademicoSerializer
 
 
 class PED_ProEJA_Serializer(serializers.ModelSerializer):
@@ -68,6 +69,18 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
             representation['curso'] = {'id': instance.curso.id, 'nome': instance.curso.nome}
             representation['disciplina'] = {'id': instance.disciplina.id, 'nome': instance.disciplina.nome}
             representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'titulo': instance.periodo_letivo.titulo}
+
+            representation.pop('data_criacao')
+            representation.pop('plano_estudos')
+            representation.pop('form_encerramento')
+
+        elif retorno == 'aluno':
+            representation['aluno'] = {'id': instance.aluno.id, 'nome': str(instance.aluno)}
+            representation['professor_disciplina'] = {'id': instance.professor_disciplina.id, 'nome': str(instance.professor_disciplina)}
+            representation['professor_ped'] = {'id': instance.professor_ped.id, 'nome': str(instance.professor_ped)}
+            representation['curso'] = {'id': instance.curso.id, 'nome': instance.curso.nome}
+            representation['disciplina'] = {'id': instance.disciplina.id, 'nome': instance.disciplina.nome}
+            representation['periodo_letivo'] = instance.periodo_letivo.data_inicio
 
             representation.pop('data_criacao')
             representation.pop('plano_estudos')

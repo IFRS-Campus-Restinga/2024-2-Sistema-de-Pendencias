@@ -1,0 +1,95 @@
+/* Estilo para a seção do formulário */
+.sectionCadastroObservacao {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Garante que os campos ocupem o espaço necessário */
+    gap: 20px; /* Espaçamento consistente entre os campos */
+  }
+  
+  /* Div que envolve cada campo (Ajuste para o campo de parecer) */
+  .divCadastroObservacao {
+    width: 48%; /* Ajuste a largura para garantir que os campos fiquem alinhados */
+    padding: 10px;
+    box-sizing: border-box;
+    min-width: 280px; /* Largura mínima para os campos */
+  }
+  
+  /* Div específica para o campo de "Parecer" */
+  .divCadastroObservacao.textarea {
+    width: 100%; /* Permite que o campo de parecer ocupe toda a largura possível */
+  }
+  
+  /* Largura e espaçamento dos campos */
+  .labelCadastroObservacao {
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px; /* Espaço entre o rótulo e o campo */
+  }
+  
+  /* Estilo para os campos de input e select */
+  .selectCadastroObservacao,
+  .inputCadastroObservacao,
+  .textAreaCadastroObservacao {
+    font-size: 15px;
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 12px; /* Espaço entre os campos */
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Estilo para o campo de texto de Parecer */
+  .textAreaCadastroObservacao {
+    font-family: Arial, Helvetica, sans-serif;
+    height: 300px; /* Aumenta a altura do campo para parecer mais destacado */
+    overflow-y: auto; /* Permite rolagem vertical */
+    resize: none; /* Desativa o redimensionamento do campo */
+  }
+  
+  /* Estilos para o foco nos campos */
+  .textAreaCadastroObservacao:focus,
+  .selectCadastroObservacao:focus,
+  .inputCadastroObservacao:focus {
+    border: 1px solid #797979;
+    outline: none;
+  }
+  
+  /* Estilos para os campos com erro */
+  .errorSelectCadastroObservacao,
+  .errorInputCadastroObservacao,
+  .errorTextAreaCadastroObservacao {
+    border: 1px solid #e74c3c;
+    background-color: #f8d7da;
+  }
+  
+  /* Estilo para a mensagem de erro */
+  .errorMessage {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: -10px;
+  }
+  
+  /* Estilos para a exibição da data de inserção */
+.divCadastroObservacao.alert-info {
+    background-color: #e3f2fd;  /* Cor de fundo leve */
+    border: 1px solid #1976d2;  /* Cor de borda */
+    padding: 15px;  /* Espaçamento interno */
+    border-radius: 8px;  /* Bordas arredondadas */
+    margin-top: 20px;  /* Espaço acima da seção */
+    font-size: 16px;  /* Tamanho de fonte */
+    color: #1976d2;  /* Cor do texto */
+  }
+  
+  .sectionCadastroObservacao p {
+    margin: 0; /* Remove a margem ao redor do parágrafo */
+    font-weight: bold;  /* Deixa o texto em negrito */
+    text-align: center; /* Centraliza o texto */
+  }
+  
+  /* Outras classes já existentes podem ser mantidas ou ajustadas conforme necessário */
+  

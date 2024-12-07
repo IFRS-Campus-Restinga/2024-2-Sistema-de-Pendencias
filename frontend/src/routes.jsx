@@ -51,6 +51,7 @@ import DetalhesAtividade from './pages/base/Professor/atividadesDesenvolvidas/de
 import DetalhesPEDProfessor from './pages/base/Professor/detalhesPED/DetalhesPEDProfessor'
 import DetalhesPlanoEstudos from './pages/base/Professor/detalhesPlanoEstudos/DetalhesPlanoEstudos'
 import AdicionarObservacao from './pages/base/Professor/observacoes/adicionarObservacao'
+import ListarObservacoes from './pages/base/Professor/listarObservacoes/ListarObservacoes'
 
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
@@ -333,13 +334,18 @@ const router = createBrowserRouter([
                 element: <AdicionarAtividade />,
             },
             {
-                path: ':idUsuario/peds-emi/:pedId/adicionarObservacao',
-                element: <AdicionarObservacao />,
-            }
+                path: ':idUsuario/adicionarObservacao',
+                element: <AdicionarObservacao />
+            },
             // {
-            //     path: ':idUsuario/observacoes/:pedTipo/:pedId/adicionarObservacao',
+            //     path: ':idUsuario/peds-emi/:pedId/adicionarObservacao',
             //     element: <AdicionarObservacao />,
-            // }
+            // },
+            {
+                path: ':idUsuario/observacoes/:pedTipo/:pedId',
+                element: <ListarObservacoes />
+            },
+            
 
 
         ]

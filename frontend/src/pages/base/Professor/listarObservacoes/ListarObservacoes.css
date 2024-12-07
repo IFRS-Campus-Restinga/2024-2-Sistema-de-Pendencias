@@ -1,0 +1,50 @@
+.containerBuscarObservacao {
+  display: flex; /* Elementos em linha */
+  justify-content: space-between; /* Espaço uniforme entre os elementos */
+  align-items: center; /* Alinha verticalmente */
+  padding: 5px;
+  flex-wrap: nowrap; /* Impede que os elementos quebrem para a próxima linha */
+}
+
+.buscaBarObservacao {
+  display: flex;
+  align-items: center; /* Alinha verticalmente o conteúdo interno */
+  justify-content: center;
+  background-color: #006b3f;
+  border: 1px solid #006b3f;
+  border-radius: 8px;
+  padding: 5px 10px;
+  width: 100%;
+  max-width: 400px;
+  margin: 20px 0;
+}
+
+.buscaBarObservacao input {
+  flex: 1; /* O input ocupa o máximo de espaço disponível */
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  outline: none;
+}
+
+.iconesBuscarObservacao {
+  max-width: 15px;
+  max-height: 15px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.adicionarObservacao {
+  display: flex;
+  align-items: center; /* Mantém o ícone alinhado verticalmente */
+  margin-left: 15px; /* Espaçamento entre a barra de busca e o ícone */
+}
+
+.iconeAdicionarObservacao {
+  width: 30px; /* Largura reduzida */
+  height: 30px; /* Altura reduzida */
+  cursor: pointer;
+  color: #006b3f;
+}
+

@@ -87,7 +87,7 @@ class PPTSerializer(serializers.ModelSerializer):
                 'status': instance.status
             }
         
-        elif retorno == 'detalhes':
+        elif retorno == 'detalhes' or retorno == 'aluno':
             representation['aluno'] = {'id': instance.aluno.id, 'nome': str(instance.aluno)}
             representation['professor_disciplina'] = {'id': instance.professor_disciplina.id, 'nome': str(instance.professor_disciplina)}
             representation['professor_ppt'] = {'id': instance.professor_ppt.id, 'nome': str(instance.professor_ppt)}
@@ -97,5 +97,6 @@ class PPTSerializer(serializers.ModelSerializer):
             representation['turma_progressao'] = {'id': instance.turma_progressao.id, 'numero': instance.turma_progressao.numero}
     
             representation.pop('data_criacao')
+
 
         return representation

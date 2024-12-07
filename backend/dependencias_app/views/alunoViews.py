@@ -1,23 +1,19 @@
-from django.template.defaultfilters import unordered_list
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-# importa permissão com outro nome para não conflitar com o model Aluno
 from dependencias_app.permissoes import Aluno as AlunoPermissao
-#  importa as outras permissões
 from dependencias_app.permissoes import GestaoEscolar, RegistroEscolar, Coordenador, Professor, Aluno
-# importa a classe que permite mais de uma perfil acessar a mesma view
-from dependencias_app.permissoes import Or
 from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
 from dependencias_app.serializers.alunoSerializer import AlunoSerializer
 from dependencias_app.models.aluno import Aluno
 from dependencias_app.models.pedEMI import PED_EMI
 from dependencias_app.models.pedProEJA import PED_ProEJA
+from dependencias_app.models.ppt import PPT
 from dependencias_app.serializers.pedEMISerializer import PED_EMI_Serializer
 from dependencias_app.serializers.pedProEJASerializer import PED_ProEJA_Serializer
+from dependencias_app.serializers.pptSerializer import PPTSerializer
 from google_auth.models import UsuarioBase
 from django.contrib.auth.models import Group
-from django.shortcuts import get_object_or_404
 import logging
 
 logger = logging.getLogger(__name__)
@@ -99,24 +95,6 @@ def listar_alunos(request):
         # Listando todos os alunos
         alunos = UsuarioBase.objects.filter(grupo__name="Aluno")
 
-        # Filtro geral para nome, matrícula, CPF, e-mail
-        if filtro_geral:
-            alunos = alunos.filter(
-                Q(nome__icontains=filtro_geral) |
-                Q(aluno__matricula__icontains=filtro_geral) |
-                Q(aluno__cpf__icontains=filtro_geral) |
-                Q(email__icontains=filtro_geral)
-            )
-
-        # Filtro por intervalo de data
-        if data_inicio and data_fim:
-            alunos = alunos.filter(data_ingresso__range=(data_inicio, data_fim))
-
-        # Ordenação dos resultados
-        ordenar_por = request.GET.get('ordenar_por', None)
-        if ordenar_por in ['nome', 'email', 'matricula']:
-            alunos = alunos.order_by(ordenar_por)
-
         # Serialização dos dados
         alunos_serializer = UsuarioBaseSerializer(alunos, many=True, context={'request': request})
 
@@ -125,25 +103,23 @@ def listar_alunos(request):
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
 @api_view(['GET'])
 @permission_classes([AlunoPermissao])
-def listar_peds_aluno(request):
+def listar_dependencias_aluno(request):
     try:
-        usuario_logado = request.user
+        aluno = request.user
 
-        peds_emi = PED_EMI.objects.filter(aluno=usuario_logado).order_by('-data_criacao')
-        peds_proeja = PED_ProEJA.objects.filter(aluno=usuario_logado).order_by('-data_criacao')
+        peds_emi = PED_EMI.objects.filter(aluno=aluno).order_by('-data_criacao')
+        peds_proeja = PED_ProEJA.objects.filter(aluno=aluno).order_by('-data_criacao')
+        ppts = PPT.objects.filter(aluno=aluno).order_by('-data_criacao')
 
         peds_emi_serializer = PED_EMI_Serializer(peds_emi, many=True, context={"request": request})
         peds_proeja_serializer = PED_ProEJA_Serializer(peds_proeja, many=True, context={"request": request})
+        ppts_serializer = PPTSerializer(ppts, many=True, context={'request': request})
 
-        dados_peds = {
-            "ped_emi": peds_emi_serializer.data,
-            "ped_proeja": peds_proeja_serializer.data,
-        }
+        dependencias = (peds_emi_serializer.data + peds_proeja_serializer.data + ppts_serializer.data)
 
-        return Response(dados_peds, status=status.HTTP_200_OK)
+        return Response(dependencias, status=status.HTTP_200_OK)
 
     except Aluno.DoesNotExist:
         logger.error("Nenhum aluno associado ao usuário logado.")
