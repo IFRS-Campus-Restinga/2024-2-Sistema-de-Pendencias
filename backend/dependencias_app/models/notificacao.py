@@ -4,7 +4,7 @@ from google_auth.models import UsuarioBase
 
 class Notificacao(BaseModel):
     usuario = models.ForeignKey(UsuarioBase, on_delete=models.DO_NOTHING)
-    mensagem = models.CharField(null=False, blank=False)
+    mensagem = models.CharField(max_length=255, null=False, blank=False)
     lida = models.BooleanField(default=False)
     data = models.DateTimeField(auto_now_add=True)
 
