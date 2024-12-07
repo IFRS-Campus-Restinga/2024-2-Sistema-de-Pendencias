@@ -1,0 +1,19 @@
+.detalhes-observacao {
+    margin: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+.detalhes-observacao h1 {
+    color: #006b3f;
+    margin-bottom: 20px;
+}
+
+.detalhes-observacao p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.detalhes-observacao strong {
+    color: #006b3f;
+}

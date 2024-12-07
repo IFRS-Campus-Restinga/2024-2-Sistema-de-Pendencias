@@ -55,8 +55,6 @@ def adicionar_observacao(request):
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
 @api_view(['GET'])
 def listar_observacoes(request):
     try:
@@ -65,3 +63,15 @@ def listar_observacoes(request):
         return Response(serializer.data)  # Certifique-se de usar Response aqui
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+
+    
+@api_view(['GET'])
+def visualizar_observacao(request, id):
+    try:
+        observacao = Observacao.objects.get(pk=id)
+        observacao_serializer = ObservacaoSerializer(observacao)
+        return Response(observacao_serializer.data, status=status.HTTP_200_OK)
+    except Observacao.DoesNotExist:
+        return Response({'mensagem': 'Observação não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)    
