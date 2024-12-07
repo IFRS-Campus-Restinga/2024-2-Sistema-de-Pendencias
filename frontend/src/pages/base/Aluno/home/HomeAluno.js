@@ -3,183 +3,152 @@ import { alunoService } from "../../../../services/alunoService";
 import "./HomeAluno.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const HomeAluno = () => {
-    const [dependencias, setDependencias] = useState([])
-    const [dependenciasVisiveis , setDependenciasVisiveis] = useState([])
-    const [loading, setLoading] = useState(true);
-    const currentYear = new Date().getFullYear() + 3;
-    const [visibleYears, setVisibleYears] = useState([currentYear, currentYear - 1, currentYear - 2, currentYear - 3]);
-    const [minYear, setMinYear] = useState();
-    const [selectedStatus, setSelectedStatus] = useState(["Criada", "Em Andamento", "Finalizada", "Desativado"]);
+  const [dependencias, setDependencias] = useState([]);
+  const [dependenciasVisiveis, setDependenciasVisiveis] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const currentYear = new Date().getFullYear() + 3;
+  const [visibleYears, setVisibleYears] = useState([currentYear, currentYear - 1, currentYear - 2, currentYear - 3]);
+  const [minYear, setMinYear] = useState();
+  const navigate = useNavigate();
+  const usuarioId = jwtDecode(sessionStorage.getItem("token")).idUsuario;
+  const [selectedStatus, setSelectedStatus] = useState(["Criada", "Em Andamento", "Finalizada", "Desativado"]);
 
-    const statusOptions = ["Criada", "Em Andamento", "Finalizada", "Desativado"];
+  const statusOptions = ["Criada", "Em Andamento", "Finalizada", "Desativado"];
 
-    const carregarPeds = async () => {
-        try {
-            const response = await alunoService.listarDependenciasAluno();
+  const carregarPeds = async () => {
+    try {
+      const response = await alunoService.listarDependenciasAluno();
 
-            // obtém os anos das dependencias
-            const years = response.data.map((dependencia) => {
-                // caso a dependencia seja uma ped, retorna a data de inicio do período letivo com a qual está relacionada
-                if (dependencia.periodo_letivo) return new Date(dependencia.periodo_letivo).getFullYear()
-                
-                // caso a dependeência seja uma ppt, retorna a data de inicio da mesma
-                if  (dependencia.data_inicio) return new Date(dependencia.data_inicio).getFullYear()
-            });
+      const years = response.data.map((dependencia) => {
+        if (dependencia.periodo_letivo) return new Date(dependencia.periodo_letivo).getFullYear();
+        if (dependencia.data_inicio) return new Date(dependencia.data_inicio).getFullYear();
+      });
 
-            const minYearFromPeds = Math.min(...years);
+      const minYearFromPeds = Math.min(...years);
+      setMinYear(Math.min(minYearFromPeds, currentYear - 3));
+      setDependencias(response.data);
+      organizarDependenciasPorAno(response.data);
+    } catch (erro) {
+      console.error("Erro ao carregar PEDS do aluno:", erro);
+      toast.error("Erro ao carregar PEDS. Tente novamente.", {
+        position: "bottom-center",
+        autoClose: 3000,
+        style: { backgroundColor: "#d11c28", color: "#fff" },
+        progressStyle: { backgroundColor: "#fff" },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            setMinYear(Math.min(minYearFromPeds, currentYear - 3));
+  const organizarDependenciasPorAno = (dependencias) => {
+    const dependenciasPorAno = {};
 
-            setDependencias(response.data)
+    visibleYears.forEach((ano) => {
+      dependenciasPorAno[ano] = dependencias.filter(
+        (dependencia) =>
+          new Date(dependencia.periodo_letivo || dependencia.data_inicio).getFullYear() === ano &&
+          selectedStatus.includes(dependencia.status)
+      );
+    });
 
-            organizarDependenciasPorAno(response.data)
-        } catch (erro) {
-            console.error("Erro ao carregar PEDS do aluno:", erro);
-            toast.error("Erro ao carregar PEDS. Tente novamente.", {
-                position: "bottom-center",
-                autoClose: 3000,
-                style: { backgroundColor: "#d11c28", color: "#fff" },
-                progressStyle: { backgroundColor: "#fff" },
-            });
-        } finally {
-            setLoading(false);
-        }
-    };
+    setDependenciasVisiveis(visibleYears.map((ano) => ({ ano, dependencias: dependenciasPorAno[ano] || [] })));
+  };
 
-    const organizarDependenciasPorAno = (dependencias) => {
-        const dependenciasPorAno = {}
+  const handleScrollYears = (direction) => {
+    if (direction === "right" && visibleYears[3] > minYear) {
+      setVisibleYears(visibleYears.map((ano) => ano - 1));
+    } else if (direction === "left" && visibleYears[0] < currentYear) {
+      setVisibleYears(visibleYears.map((ano) => ano + 1));
+    }
+    organizarDependenciasPorAno(dependencias);
+  };
 
-        console.log(visibleYears)
+  const toggleStatusFilter = (status) => {
+    setSelectedStatus((prev) => (prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]));
+  };
 
-        visibleYears.forEach((ano) => {
-            dependenciasPorAno[ano] = dependencias.filter(
-                (dependencia) =>
-                    new Date(dependencia.periodo_letivo || dependencia.data_inicio).getFullYear() === ano &&
-                    selectedStatus.includes(dependencia.status)
-            );
-        });
+  const handleNavigateToDetalhes = (dependencia) => {
+    const modalidade = dependencia.turma_atual ? "Integrado" : "ProEJA";
+    navigate(`/sessao/Aluno/${usuarioId}/${modalidade}/${dependencia.id}/detalhes`, {
+      state: { modalidade }
+    });
+  };
 
-        setDependenciasVisiveis(visibleYears.map((ano) => ({ ano, dependencias: dependenciasPorAno[ano] || [] })))
-    };
+  useEffect(() => {
+    carregarPeds();
+  }, []);
 
-    const handleScrollYears = (direction) => {
-        if (direction === "right" && visibleYears[3] > minYear) {
-            setVisibleYears(visibleYears.map((ano) => ano - 1));
-            console.log('passou')
-        } else if (direction === "left" && visibleYears[0] < currentYear) {
-            setVisibleYears(visibleYears.map((ano) => ano + 1));
-        }
+  useEffect(() => {
+    organizarDependenciasPorAno(dependencias);
+  }, [visibleYears, dependencias, selectedStatus]);
 
-        organizarDependenciasPorAno(dependencias)
-    };
+  return (
+    <div className="homeAlunoContainer">
+      <h2>Minhas - PED'S</h2>
 
-    const toggleStatusFilter = (status) => {
-        setSelectedStatus((prev) =>
-            prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
-        );
-    };
-
-    useEffect(() => {
-        carregarPeds();
-    }, []);
-
-
-    useEffect(() => {
-        organizarDependenciasPorAno(dependencias);
-    }, [visibleYears, dependencias, selectedStatus]);
-
-    return (
-        <div className="homeAlunoContainer">
-            <h2>Minhas - PED'S</h2>
-
-            <div className="filterArrowContainer">
-                {/* Filtro de Status */}
-                <div className="filterContainer">
-                    <h4>Status:</h4>
-                    <div className="filterOptions">
-                        {statusOptions.map((status) => (
-                            <label key={status} className="filterOption">
-                                <input
-                                    type="checkbox"
-                                    checked={selectedStatus.includes(status)}
-                                    onChange={() => toggleStatusFilter(status)}
-                                />
-                                <span className="filterLabel">{status}</span>
-                            </label>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Setas para navegar entre anos */}
-                <div className="arrowContainer">
-                    <button
-                        className="arrowButton"
-                        onClick={() => handleScrollYears("left")}
-                        disabled={visibleYears[0] >= currentYear}
-                    >
-                        ←
-                    </button>
-                    <button
-                        className="arrowButton"
-                        onClick={() => handleScrollYears("right")}
-                        disabled={visibleYears[3] <= minYear}
-                    >
-                        →
-                    </button>
-                </div>
-            </div>
-
-            <div className="pedsContainer">
-                {dependenciasVisiveis.map(({ano, dependencias}) => (
-                    <div key={ano} className="pedsAno">
-                        <h3>{ano}</h3>
-                        <div className="pedsCards">
-                            {dependencias.length > 0 ? (
-                                dependencias.map((dependencia) => (
-                                    <div
-                                        key={dependencia.id}
-                                        className={`pedCard ${dependencia.status.toLowerCase().replace(" ", "-")}`}
-                                    >
-                                        <h4>{dependencia.data_inicio ? `PPT ${dependencia.id} ` : `PED ${dependencia.id}`}</h4>
-                                        <p><strong>Curso:</strong> {dependencia.curso.nome}</p>
-                                        {
-                                            dependencia.turma_atual ? (
-                                                <p><strong>Turma atual:</strong> {dependencia.turma_atual.numero}</p>
-                                            ) : (
-                                                <></>
-                                            )
-                                        }
-                                        {
-                                            dependencia.turma_progressao ? (
-                                                <p><strong>Turma da progressão:</strong> {dependencia.turma_progressao.numero}</p>
-                                            ) : (
-                                                <></>
-                                            )
-                                        }
-                                        <p><strong>Disciplina:</strong> {dependencia.disciplina.nome}</p>
-                                        {
-                                            dependencia.trimestre_recuperar ? (
-                                                <p><strong>Trimestre a recuperar:</strong> {dependencia.trimestre_recuperar}</p>
-                                            ) : (<></>)
-                                        }
-                                        <p><strong>Docente Responsável:</strong> {dependencia?.professor_ped?.nome || dependencia?.professor_ppt?.nome}</p>
-                                        <span className="status">{dependencia.status}</span>
-                                    </div>
-                                ))
-                            ) : (
-                                <>
-                                    <div className="emptyCard">Sem PEDs cadastradas</div>
-                                    <div className="emptyCard">Sem PEDs cadastradas</div>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                ))}
-            </div>
+      <div className="filterArrowContainer">
+        {/* Filtro de Status */}
+        <div className="filterContainer">
+          <h4>Status:</h4>
+          <div className="filterOptions">
+            {statusOptions.map((status) => (
+              <label key={status} className="filterOption">
+                <input
+                  type="checkbox"
+                  checked={selectedStatus.includes(status)}
+                  onChange={() => toggleStatusFilter(status)}
+                />
+                <span className="filterLabel">{status}</span>
+              </label>
+            ))}
+          </div>
         </div>
-    );
+
+        {/* Setas para navegar entre anos */}
+        <div className="arrowContainer">
+          <button className="arrowButton" onClick={() => handleScrollYears("left")} disabled={visibleYears[0] >= currentYear}>
+            ←
+          </button>
+          <button className="arrowButton" onClick={() => handleScrollYears("right")} disabled={visibleYears[3] <= minYear}>
+            →
+          </button>
+        </div>
+      </div>
+
+      <div className="pedsContainer">
+        {dependenciasVisiveis.map(({ ano, dependencias }) => (
+          <div key={ano} className="pedsAno">
+            <h3>{ano}</h3>
+            <div className="pedsCards">
+              {dependencias.length > 0 ? (
+                dependencias.map((dependencia) => (
+                  <div
+                    key={dependencia.id}
+                    className={`pedCard ${dependencia.status.toLowerCase().replace(" ", "-")}`}
+                    onClick={() => handleNavigateToDetalhes(dependencia)}
+                  >
+                    <h4>{dependencia.data_inicio ? `PPT ${dependencia.id}` : `PED ${dependencia.id}`}</h4>
+                    <p><strong>Curso:</strong> {dependencia.curso.nome}</p>
+                    {dependencia.turma_atual && <p><strong>Turma atual:</strong> {dependencia.turma_atual.numero}</p>}
+                    <p><strong>Disciplina:</strong> {dependencia.disciplina.nome}</p>
+                    <p><strong>Docente Responsável:</strong> {dependencia?.professor_ped?.nome || dependencia?.professor_ppt?.nome}</p>
+                    <span className="status">{dependencia.status}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="emptyCard">Sem PEDs cadastradas</div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default HomeAluno;

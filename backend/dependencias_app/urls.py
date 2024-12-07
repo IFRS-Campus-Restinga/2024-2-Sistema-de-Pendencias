@@ -98,7 +98,10 @@ urlpatterns = [
     path('ped-emi/<int:coordenadorId>/', listar_PED_EMI),
     path('ped-proeja/<int:coordenadorId>/', listar_PED_ProEJA),
 
-    
+    path('aluno/ped/<int:pedId>/<str:modalidade>/', detalhes_ped_aluno, name='detalhes_ped_aluno'),
+    path('aluno/ppt/<int:pptId>/', detalhes_ppt_aluno, name='detalhes_ppt_aluno'),
+
+
     path('detalhes-plano-estudos/<int:ped_id>/', detalhes_plano_estudos, name='detalhes_plano_estudos'),
     path('atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
     

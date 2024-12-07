@@ -78,5 +78,23 @@ export const PEDService = {
       console.error('Erro ao desativar PED:', error);
       throw error;
     }
-  }
+  },
+
+  detalhesPorIdAluno: async (pedId, modalidade) => {
+  const res = await api.get(`/api/aluno/ped/${pedId}/${modalidade}/`).catch((erro) => {
+    return erro;
+  });
+
+  return res;
+},
+
+  detalhesPPTAluno: async (pptId) => {
+  const res = await api.get(`/api/aluno/ppt/${pptId}/`).catch((erro) => {
+    return erro;
+  });
+
+  return res;
+},
+
+
 }

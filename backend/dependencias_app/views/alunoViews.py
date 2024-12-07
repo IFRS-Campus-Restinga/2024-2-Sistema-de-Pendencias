@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -133,3 +134,33 @@ def listar_dependencias_aluno(request):
             {"erro": "Erro ao listar PEDs do aluno", "detalhes": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+@api_view(['GET'])
+@permission_classes([AlunoPermissao])
+def detalhes_ped_aluno(request, pedId, modalidade):
+    try:
+        if modalidade == 'Integrado':
+            ped = get_object_or_404(PED_EMI, pk=pedId, aluno=request.user)
+            serializer = PED_EMI_Serializer(ped, context={'request': request})
+        elif modalidade == 'ProEJA':
+            ped = get_object_or_404(PED_ProEJA, pk=pedId, aluno=request.user)
+            serializer = PED_ProEJA_Serializer(ped, context={'request': request})
+        else:
+            return Response({'mensagem': "Modalidade inválida. Use 'Integrado' ou 'ProEJA'."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([AlunoPermissao])
+def detalhes_ppt_aluno(request, pptId):
+    try:
+        ppt = get_object_or_404(PPT, pk=pptId, aluno=request.user)
+        serializer = PPTSerializer(ppt, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
