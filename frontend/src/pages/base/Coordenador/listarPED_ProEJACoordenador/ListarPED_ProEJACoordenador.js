@@ -18,7 +18,7 @@ const ListarPEDProEJACoordenador = () => {
 
     const fetchPED_ProEJA = async () => {
         try {
-            const res = await PEDService.listaProEJA()
+            const res = await PEDService.listaProEJA(null, 'lista')
 
             if (res.status !== 200) throw new Error(res)
 
@@ -94,7 +94,7 @@ const ListarPEDProEJACoordenador = () => {
                 </div>
             </div>
 
-            <Tabela listaFiltrada={listaFiltrada} fontSize={'10px'} mostrarBotoesExcluirEditar={false} />
+            <Tabela listaFiltrada={listaFiltrada} visualizar={true}/>
         </FormContainer>
     )
 }
