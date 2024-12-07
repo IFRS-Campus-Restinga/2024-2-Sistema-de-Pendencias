@@ -90,7 +90,7 @@ def cadastrar_plano_estudos(request, pedId):
 
 #OPÇÃO CERTA
 @api_view(['GET'])
-@permission_classes([GestaoEscolar | Professor])
+@permission_classes([GestaoEscolar | Professor | Aluno])
 def detalhes_plano_estudos(request, ped_id):
     try:
         # Busca o plano de estudos pelo ID

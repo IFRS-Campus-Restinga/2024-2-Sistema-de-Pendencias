@@ -33,7 +33,7 @@ const DetalhesPEDAluno = () => {
   }, [pedId, modalidade]);
 
   const handleVoltar = () => {
-    navigate("/sessao/Aluno/home");
+    navigate(`/sessao/Aluno/${usuarioId}`);
   };
 
   if (!detalhesPED || Object.keys(detalhesPED).length === 0) {
@@ -77,9 +77,13 @@ const DetalhesPEDAluno = () => {
               Voltar
             </button>
             <button
-                className="btnPlanoEstudos"
-                disabled={!detalhesPED.plano_estudos} // Desativa o botão se plano_estudos for null
-                onClick={() => navigate(`/sessao/Aluno/${usuarioId}/plano-estudos/${pedId}`)}
+              className="btnPlanoEstudos"
+              disabled={!detalhesPED.plano_estudos} // Desativa o botão se plano_estudos for null
+              onClick={() =>
+                navigate(`/sessao/Aluno/${usuarioId}/${modalidade}/${pedId}/planoEstudos`, {
+                  state: { usuarioId, modalidade, pedId },
+                })
+              }
             >
               Plano de Estudos
             </button>
