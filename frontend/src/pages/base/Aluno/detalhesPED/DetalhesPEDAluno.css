@@ -1,36 +1,67 @@
 .sectionDetalhesPED {
   width: 100%;
   display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 20px;
 }
 
-.divDetalhesPED {
-  width: fit-content;
+.informacoesContainer {
+  width: 30%;
   display: flex;
   flex-direction: column;
-}
-
-.divStatusPED {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  flex: 1;
-  background-color: #f1f1f1;
-  margin-top: 10px;
+  gap: 20px;
+  padding: 20px;
   border-radius: 10px;
-  padding: 10px;
-  text-align: center;
+}
+
+.divStatusContainer {
+  width: 70%;
+  height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+  padding: 20px;
 }
 
 .labelDetalhesPED {
   font-weight: bold;
-  font-size: 15px;
-  margin: 10px;
+  font-size: 16px;
+  margin-bottom: 5px;
 }
 
 .pDetalhesPED {
   font-weight: 400;
+  font-size: 18px;
+  padding: 5px 0;
+  color: #333;
+}
+
+.labelCabecalhoDetalhesPED {
+  background-color: #006b3f;
+  color: white;
   font-size: 20px;
-  padding: 5px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.spanDetalhesPED {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.labelStatusPED {
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .status {
@@ -38,4 +69,44 @@
   font-weight: bold;
   color: #006b3f;
   margin-top: 10px;
+}
+
+.divStatusContainer {
+  width: 70%;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.buttonsContainer {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.btnPlanoEstudos,
+.btnVoltar {
+  background-color: #006b3f;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btnPlanoEstudos:hover,
+.btnVoltar:hover {
+  background-color: #004d2c;
+}
+.btnPlanoEstudos:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }

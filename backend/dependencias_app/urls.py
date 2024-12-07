@@ -16,6 +16,7 @@ from dependencias_app.views.pptViews import *
 from dependencias_app.views.pedViews import *
 from dependencias_app.views.atividadeViews import *
 from dependencias_app.views.planoEstudosViews import *
+from dependencias_app.views.notificacaoViews import *
 
 
 urlpatterns = [
@@ -107,7 +108,7 @@ urlpatterns = [
     
     ##views para tela de observaçoes
     path('adicionar-observacao/', adicionar_observacao, name='adicionar_observacao'),
-
+    path('visualizar-observacao/', visualizar_observacao, name='visualizar_observacao'),
     path('listar-observacoes/', listar_observacoes, name='listar_observacoes'),
 
     #views para atividades da ped
@@ -122,7 +123,11 @@ urlpatterns = [
 
     #view editar servidor
     path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),
-    ]
+
+    # Views de notificacao
+    path('buscar_notificacoes/', buscar_notificacoes),
+    path('notificacao/troca-status/', trocar_status)
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
