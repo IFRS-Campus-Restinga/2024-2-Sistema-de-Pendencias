@@ -50,7 +50,7 @@ def listar_PED_EMI(request):
         if  professorId:
             lista = PED_EMI.objects.filter(professor_ped=professorId)
 
-        elif coordenadorId:
+        elif coordenadorId and request.user.grupo.name == 'Coordenador':
             lista = PED_EMI.objects.filter(curso__coordenador_id=coordenadorId)
             
         else:
@@ -72,7 +72,7 @@ def listar_PED_ProEJA(request):
         if professorId:
             lista = PED_ProEJA.objects.filter(professor_ped=professorId)
             
-        elif coordenadorId:
+        elif coordenadorId and request.user.grupo.name == 'Coordenador':
             lista = PED_ProEJA.objects.filter(curso__coordenador_id=coordenadorId)
             
         else:
