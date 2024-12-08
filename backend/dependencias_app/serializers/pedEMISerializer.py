@@ -5,14 +5,8 @@ from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.pedEMI import PED_EMI
 from dependencias_app.models.turma import Turma
 from dependencias_app.models.calendarioAcademico import CalendarioAcademico
-from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
-from dependencias_app.serializers.cursoSerializer import CursoSerializer
-from dependencias_app.serializers.disciplinaSerializer import DisciplinaSerializer
-from dependencias_app.serializers.turmaSerializer import TurmaSerializer
-from dependencias_app.serializers.calendarioAcademicoSerializer import CalendarioAcademicoSerializer
-import os
-from dependencias_app.utils.enviar_email import enviar_email
-
+from dependencias_app.models.notificacao import Notificacao
+from django.conf import settings
 
 
 class PED_EMI_Serializer(serializers.ModelSerializer):
@@ -34,6 +28,12 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
 
         formPED_EMI.full_clean()
         formPED_EMI.save()
+
+        # cria notificação para o aluno
+        Notificacao.objects.create(usuario=formPED_EMI.aluno, mensagem='Nova PED (Integrado) cadastrada', url=f'{settings.BASE_APP_URL}sessao/Aluno/{formPED_EMI.aluno.id}/Integrado/{formPED_EMI.id}/detalhes')
+
+        # cria notificação para o professor responsável
+        Notificacao.objects.create(usuario=formPED_EMI.professor_ped, mensagem='Você foi registrado como professor responsável por uma PED (Integrado)', url=f'{settings.BASE_APP_URL}sessao/Professor/{formPED_EMI.professor_ped.id}/peds-emi/{formPED_EMI.id}')
         
         return formPED_EMI
     

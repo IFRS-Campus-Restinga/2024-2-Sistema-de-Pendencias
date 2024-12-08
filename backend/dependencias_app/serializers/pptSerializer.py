@@ -7,8 +7,7 @@ from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.turma import Turma
 from dependencias_app.models.ppt import PPT
 from dependencias_app.models.calendarioAcademico import CalendarioAcademico
-import os
-from dependencias_app.utils.enviar_email import enviar_email
+from dependencias_app.models.notificacao import Notificacao
 
 class PPTSerializer(serializers.ModelSerializer):
     # variáveis de entrada do serializer (POST), recebe as chaves primárias das tabelas que se relacionam com ppt
@@ -29,6 +28,9 @@ class PPTSerializer(serializers.ModelSerializer):
 
         formPPT.full_clean()
         formPPT.save()
+
+        # cria notificação para o aluno
+        Notificacao.objects.create(usuario=formPPT.aluno, mensagem='Nova PED (Integrado) cadastrada', url=f'Integrado/{formPPT.id}/detalhes')
 
         return formPPT
     

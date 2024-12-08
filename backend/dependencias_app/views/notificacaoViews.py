@@ -8,11 +8,9 @@ from dependencias_app.permissoes import *
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar | RegistroEscolar | Coordenador | Professor | Aluno])
-def buscar_notificacoes(request):
+def buscar_notificacoes(request, idUsuario):
     try:
-        usuario = request.user
-
-        notificacoes = Notificacao.objects.filter(usuario=usuario)
+        notificacoes = Notificacao.objects.filter(usuario=idUsuario).filter(lida=False)
 
         notificacao_serializer = NotificacaoSerializer(notificacoes, many=True)
 

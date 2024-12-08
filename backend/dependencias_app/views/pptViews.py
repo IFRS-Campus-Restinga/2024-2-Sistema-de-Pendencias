@@ -34,7 +34,6 @@ def cadastrar_ppt(request):
 
             # envia email para o professor responsável e aluno da ped de forma assíncrona
             threading.Thread(target=enviar_email, args=(serializer.instance.aluno, template, 'Nova Dependência Cadastrada', serializer.instance.aluno.grupo.name)).start()
-            threading.Thread(target=enviar_email, args=(serializer.instance.professor_ppt, template, 'Nova Dependência Cadastrada', serializer.instance.professor_ppt.grupo.name)).start()
             
             return Response(serializer.data, status=status.HTTP_201_CREATED)
     

@@ -132,8 +132,8 @@ urlpatterns = [
     path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),
 
     # Views de notificacao
-    path('buscar_notificacoes/', buscar_notificacoes),
-    path('notificacao/troca-status/', trocar_status)
+    path('notificacoes/<int:idUsuario>/', buscar_notificacoes),
+    path('notificacoes/troca-status/<int:idNotificacao>/', trocar_status)
 ]
 
 if settings.DEBUG:
