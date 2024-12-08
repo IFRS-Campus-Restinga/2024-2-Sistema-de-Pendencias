@@ -127,7 +127,7 @@ def desativar_ppt(request, idPpt):
 @api_view(['POST'])
 @permission_classes([RegistroEscolar])
 def ppt_em_andamento(request, idPpt):
-    logger.info('ID recebido para desativar: %s', idPpt)
+    logger.info('ID recebido para status \'em andamento\': %s', idPpt)
     try:
         # Buscar o objeto PPT pelo ID
         ppt = PPT.objects.get(id=idPpt)
@@ -137,6 +137,28 @@ def ppt_em_andamento(request, idPpt):
         # Verificar se os dados são válidos
         if serializer:
             serializer.set_status(ppt, 'Em Andamento')
+            return Response(True, status=status.HTTP_200_OK)
+        
+        # Caso o serializer não seja válido
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except PPT.DoesNotExist:
+        return Response({'mensagem': 'PPT não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([RegistroEscolar])
+def ppt_lancado(request, idPpt):
+    logger.info('ID recebido para status \'lançado\': %s', idPpt)
+    try:
+        # Buscar o objeto PPT pelo ID
+        ppt = PPT.objects.get(id=idPpt)
+
+        serializer = PPTSerializer(ppt)
+
+        # Verificar se os dados são válidos
+        if serializer:
+            serializer.set_status(ppt, 'Lançado')
             return Response(True, status=status.HTTP_200_OK)
         
         # Caso o serializer não seja válido
