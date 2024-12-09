@@ -69,8 +69,8 @@ const ListarPPTRegistro = () => {
 
     const alterarStatusPpt = async (ppt) => {
         try {
-            const updatedDetalhes = { ...ppt, status: "Em Andamento" };
-            const res = await PPTService.em_andamento(ppt.id, updatedDetalhes);
+            const updatedDetalhes = { ...ppt, status: "Lançado" };
+            const res = await PPTService.lancado(ppt.id, updatedDetalhes);
             if (!res) throw new Error(res.response?.data?.mensagem);
             console.log("PPT alterada com sucesso:", updatedDetalhes);
             fetchPPT();

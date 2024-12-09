@@ -6,6 +6,7 @@ import Input from "../../../../components/Input/Input"
 import X from "../../../../assets/x-branco.png";
 import Lupa from "../../../../assets/lupa-branca.png";
 import './ListarPED_EMIProfessor.css'
+import {jwtDecode} from 'jwt-decode'
 
 
 const ListarPEDEMIProfessor = () => {
@@ -19,7 +20,7 @@ const ListarPEDEMIProfessor = () => {
 
     const fetchPED_EMI = async () => {
         try {
-            const res = await PEDService.listaEMI()
+            const res = await PEDService.listaEMI(jwtDecode(sessionStorage.getItem('token')).idUsuario, 'lista')
 
             if (res.status !== 200) throw new Error(res)
 

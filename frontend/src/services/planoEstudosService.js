@@ -9,7 +9,8 @@ export const PlanoEstudosService = {
 
   buscarPlanoEstudo: async (pedId) => {
     try {
-      const response = await api.get(`api/detalhes-plano-estudos/${pedId}/`);  // A URL está correta
+      const response = await api.get(`api/detalhes-plano-estudos/${pedId}/`);
+      console.log("Dados do Plano de Estudo recebidos:", response.data);
       return response.data;
     } catch (error) {
       console.error("Erro ao buscar detalhes do plano de estudos:", error);

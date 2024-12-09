@@ -107,7 +107,7 @@ const DetalhesPPT = () => {
           </div>
         </div>
         <div className="statusPPT">
-          <StatusBalls status={detalhesPPT.status} />
+          <StatusBalls status={detalhesPPT.status} aparecerLancado={true}/>
         </div>
         </div>
       </div>

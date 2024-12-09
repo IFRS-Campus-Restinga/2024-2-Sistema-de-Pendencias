@@ -4,9 +4,7 @@ from dependencias_app.models.curso import Curso
 from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.models.calendarioAcademico import CalendarioAcademico
-from dependencias_app.serializers.calendarioAcademicoSerializer import CalendarioAcademicoSerializer
-import os
-from dependencias_app.utils.enviar_email import enviar_email
+from dependencias_app.models.notificacao import Notificacao
 
 
 class PED_ProEJA_Serializer(serializers.ModelSerializer):
@@ -28,6 +26,12 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
         formPED_ProEJA.full_clean()
         formPED_ProEJA.save()
 
+       # cria notificação para o aluno
+        Notificacao.objects.create(usuario=formPED_ProEJA.aluno, mensagem='Nova PED (Integrado) cadastrada', url=f'Integrado/{formPED_ProEJA.id}/detalhes')
+
+        # cria notificação para o professor responsável
+        Notificacao.objects.create(usuario=formPED_ProEJA.professor_ped, mensagem='Você foi registrado como professor responsável por uma PED (Integrado)', url=f'peds-proeja/{formPED_ProEJA.id}')
+        
         return formPED_ProEJA
     
     def validate(self, attrs):

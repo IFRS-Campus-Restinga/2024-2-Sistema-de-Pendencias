@@ -8,18 +8,15 @@ import { jwtDecode } from "jwt-decode";
 
 const DetalhesPEDAluno = () => {
   const [detalhesPED, setDetalhesPED] = useState({});
-  const { pedId, modalidade: modalidadeParam } = useParams();
+  const { pedId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const modalidade = location.state?.modalidade || modalidadeParam; // Captura do state ou da URL
+  const tipoPed = location.pathname.split('/')[4];
   const usuarioId = jwtDecode(sessionStorage.getItem("token")).idUsuario;
 
   const fetchDetalhes = async () => {
     try {
-      console.log("pedId:", pedId);
-      console.log("modalidade:", modalidade);
-
-      const res = await PEDService.detalhesPorIdAluno(pedId, modalidade);
+      const res = await PEDService.porId(pedId, tipoPed, 'detalhes');
 
       if (res.status !== 200) throw new Error(res.response?.data?.mensagem || "Erro desconhecido");
       setDetalhesPED(res.data);
@@ -30,7 +27,7 @@ const DetalhesPEDAluno = () => {
 
   useEffect(() => {
     fetchDetalhes();
-  }, [pedId, modalidade]);
+  }, [pedId]);
 
   const handleVoltar = () => {
     navigate(`/sessao/Aluno/${usuarioId}`);
@@ -41,7 +38,7 @@ const DetalhesPEDAluno = () => {
   }
 
   return (
-    <FormContainer titulo={`Detalhes da PED - ${modalidade === "Integrado" ? "Integrado" : "ProEJA"}`} comprimento="90%">
+    <FormContainer titulo={`Detalhes da PED - ${tipoPed === "Integrado" ? "Integrado" : "ProEJA"}`} comprimento="90%">
       <label className="labelCabecalhoDetalhesPED">
         <span className="labelStatusPED">Andamento da PED</span>
       </label>
@@ -50,11 +47,11 @@ const DetalhesPEDAluno = () => {
         <div className="informacoesContainer">
           <label className="labelDetalhesPED">
             Aluno
-            <p className="pDetalhesPED">{detalhesPED.aluno || "Não informado"}</p>
+            <p className="pDetalhesPED">{detalhesPED.aluno.nome || "Não informado"}</p>
           </label>
           <label className="labelDetalhesPED">
             Curso
-            <p className="pDetalhesPED">{detalhesPED.curso || "Não informado"}</p>
+            <p className="pDetalhesPED">{detalhesPED.curso.nome || "Não informado"}</p>
           </label>
           <label className="labelDetalhesPED">
             Data de Início
@@ -66,7 +63,7 @@ const DetalhesPEDAluno = () => {
           </label>
           <label className="labelDetalhesPED">
             Docente Responsável
-            <p className="pDetalhesPED">{detalhesPED.professor_ped || "Não informado"}</p>
+            <p className="pDetalhesPED">{detalhesPED.professor_ped.nome || "Não informado"}</p>
           </label>
         </div>
 
@@ -80,8 +77,8 @@ const DetalhesPEDAluno = () => {
               className="btnPlanoEstudos"
               disabled={!detalhesPED.plano_estudos} // Desativa o botão se plano_estudos for null
               onClick={() =>
-                navigate(`/sessao/Aluno/${usuarioId}/${modalidade}/${pedId}/planoEstudos`, {
-                  state: { usuarioId, modalidade, pedId },
+                navigate(`/sessao/Aluno/${usuarioId}/${tipoPed}/${pedId}/planoEstudos`, {
+                  state: { usuarioId, tipoPed, pedId },
                 })
               }
             >

@@ -80,6 +80,7 @@ urlpatterns = [
     path('editar-ppt/<int:idPpt>/', editar_ppt),
     path('desativar-ppt/<int:idPpt>/', desativar_ppt),
     path('ppt-em-andamento/<int:idPpt>/', ppt_em_andamento),
+    path('ppt-lancado/<int:idPpt>/', ppt_lancado),
     
     # views de PED
     path('cadastrarPED-EMI/', cadastrar_PED_EMI),
@@ -132,8 +133,8 @@ urlpatterns = [
     path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),
 
     # Views de notificacao
-    path('buscar_notificacoes/', buscar_notificacoes),
-    path('notificacao/troca-status/', trocar_status),
+    path('notificacoes/<int:idUsuario>/', buscar_notificacoes),
+    path('notificacoes/troca-status/<int:idNotificacao>/', trocar_status),
 
     #View para encerrar PED
     path('encerrar-ped/<str:ped_tipo>/<int:ped_id>/', encerrar_ped, name='encerrar_ped'),
