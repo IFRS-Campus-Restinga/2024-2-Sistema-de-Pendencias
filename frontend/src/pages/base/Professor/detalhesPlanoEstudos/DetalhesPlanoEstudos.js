@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { PlanoEstudosService } from "../../../../services/planoEstudosService";
 import { PEDService } from "../../../../services/pedService";
 import FormContainer from '../../../../components/FormContainer/FormContainer';
@@ -7,51 +7,41 @@ import Button from '../../../../components/Button/Button';
 import { ToastContainer } from 'react-toastify';
 import { jsPDF } from 'jspdf';
 import 'react-toastify/dist/ReactToastify.css';
-import { useLocation } from "react-router-dom";
+import LogoIFRS from '../../../../assets/logo-ifrs-colorido.png';
 
 const DetalhesPlanoEstudo = () => {
   const { idUsuario, pedId, modalidade } = useParams();
 
   const [planoEstudo, setPlanoEstudo] = useState(null);
-  const [pedVinculada, setPedVinculada] = useState(null);
+  const [detalhesPED, setDetalhesPED] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const location = useLocation();
-  const { detalhesPED } = location.state || {};
+  const tipoPed = location.pathname.split('/')[4];
 
   const navigate = useNavigate();
 
-  const aluno = detalhesPED?.aluno?.nome || '';
-  const curso = detalhesPED?.curso?.nome || '';
-  const componenteCurricular = detalhesPED?.disciplina?.nome || '';
-  const professor = detalhesPED?.professor_ped?.nome || '';
-  const semestreAno = detalhesPED?.ano_semestre_reprov || '';
-  const semestreSerie = detalhesPED?.serie_progressao || '';
-
   useEffect(() => {
-    const fetchPlanoEstudo = async () => {
+    const fetchDados = async () => {
       try {
-        const response = await PlanoEstudosService.buscarPlanoEstudo(pedId);
-        setPlanoEstudo(response);
-      } catch (err) {
-        setError("Erro ao carregar os detalhes do plano de estudos.");
-      }
-    };
+        const planoResponse = await PlanoEstudosService.buscarPlanoEstudo(pedId);
+        console.log("Plano de Estudo:", planoResponse);
 
-    const fetchPedVinculada = async () => {
-      try {
-        const pedData = await PEDService.porId(pedId, modalidade, false); // Busca a PED vinculada
-        setPedVinculada(pedData.data);
-        setLoading(false);
+        const pedResponse = await PEDService.porId(pedId, tipoPed === 'peds-emi' ? 'Integrado' : 'ProEJA', 'detalhes');
+        console.log("Detalhes PED:", pedResponse.data);
+
+        setPlanoEstudo(planoResponse);
+        setDetalhesPED(pedResponse.data);
       } catch (err) {
-        setError("Erro ao carregar os dados da PED.");
+        console.error("Erro ao carregar dados:", err);
+        setError("Erro ao carregar os dados do plano de estudos ou da PED.");
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchPlanoEstudo();
-    fetchPedVinculada();
+    fetchDados();
   }, [pedId, modalidade]);
 
   if (loading) return <div>Carregando...</div>;
@@ -67,23 +57,24 @@ const DetalhesPlanoEstudo = () => {
   const handleExportPDF = () => {
     const doc = new jsPDF();
 
+    doc.addImage(LogoIFRS, 70, 10, 60, 16, { align: "center" });
+
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
-    doc.text("Formulário do Plano de Estudos Dirigidos", 105, 20, { align: "center" });
+    doc.text("Formulário do Plano de Estudos Dirigidos", 105, 50, { align: "center" });
 
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
-    doc.text(`Aluno: ${aluno.nome}`, 14, 50);
-    doc.text(`Curso: ${curso.nome}`, 14, 60);
-    doc.text(`Forma de oferta: ${planoEstudo?.forma_oferta}`, 14, 70);
-    doc.text(`Modalidade: ${modalidade}`, 14, 80);
-    doc.text(`Componente Curricular: ${componenteCurricular}`, 14, 90);
-    doc.text(`Professor(a): ${professor.nome}`, 14, 100);
-    doc.text(`Semestre/Ano letivo: ${semestreAno}`, 14, 110);
-    doc.text(`Semestre/Série do curso: ${semestreSerie}`, 14, 120);
+    doc.text(`Aluno: ${detalhesPED?.aluno?.nome}`, 14, 70);
+    doc.text(`Curso: ${detalhesPED?.curso?.nome}`, 14, 80);
+    doc.text(`Forma de oferta: ${planoEstudo?.forma_oferta}`, 14, 90);
+    doc.text(`Componente Curricular: ${detalhesPED?.disciplina?.nome}`, 14, 100);
+    doc.text(`Professor(a): ${detalhesPED?.professor_ped?.nome}`, 14, 110);
+    doc.text(`Semestre/Ano letivo: ${detalhesPED?.trimestre_recuperar}`, 14, 120);
+    doc.text(`Semestre/Série do curso: ${detalhesPED?.serie_progressao}`, 14, 130);
 
     const turnos = ["Manhã", "Tarde", "Noite", "Integral"];
-    const yTurnoBase = 130;
+    const yTurnoBase = 140;
     doc.text("Turno:", 14, yTurnoBase);
     turnos.forEach((turnoItem, index) => {
       const xPosition = 30 + index * 40;
@@ -93,32 +84,30 @@ const DetalhesPlanoEstudo = () => {
     });
 
     doc.setFont("helvetica", "bold");
-    doc.text("PARECER PEDAGÓGICO", 14, 150);
+    doc.text("PARECER PEDAGÓGICO", 105, 180, { align: "center" });
     doc.setFont("helvetica", "normal");
+    doc.text("OBS: Descrever o desenvolvimento do estudante durante a realização do componente curricular", 14, 190);
+    doc.text("e apontar os objetivos/aspectos que ainda não foram atingidos pelo mesmo, indicando os", 14, 200);
+    doc.text("conteúdos/ conhecimentos que precisam ser recuperados.", 14, 210);
+    doc.setFont("helvetica", "normal");
+    doc.text("Parecer do(a) professor(a):", 14, 230);
     const parecerText = doc.splitTextToSize(planoEstudo?.parecer_pedagogico, 180);
-    doc.text(parecerText, 14, 160);
+    doc.text(parecerText, 14, 240);
 
     doc.setFont("helvetica", "italic");
-    doc.text("Assinatura do(a) professor(a):", 14, 250);
+    doc.text("Assinatura do(a) professor(a):", 14, 280);
 
     doc.save("Plano_de_Estudo.pdf");
   };
 
-
   return (
     <FormContainer titulo="Detalhes do Plano de Estudos">
-
+      <br />
       <p><strong>Forma de Oferta:</strong> {planoEstudo?.forma_oferta}</p>
       <p><strong>Turno:</strong> {planoEstudo?.turno}</p>
       <p><strong>Parecer Pedagógico:</strong> {planoEstudo?.parecer_pedagogico}</p>
-
-      {pedVinculada && (
-        <div>
-          <h4>Plano de Estudo Vinculado:</h4>
-          <p><strong>Nome do PED:</strong> {pedVinculada.nome}</p>
-          <p><strong>Status:</strong> {pedVinculada.status}</p>
-        </div>
-      )}
+      <br />
+      <br />
 
       <Button text="Editar Plano" onClick={handleEditar} />
       <Button text="Exportar para PDF" onClick={handleExportPDF} />

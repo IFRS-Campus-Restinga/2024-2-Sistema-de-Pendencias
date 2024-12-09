@@ -18,15 +18,16 @@ export const PEDService = {
   },
 
   porId: async (pedId, modalidade, retorno) => {
-    const res = await api.get(`api/ped/${pedId}/${modalidade}`, {
-      params: {
-        retorno
-      }
-    }).catch((erro) => {
-      return erro
-    })
-
-    return res
+    try {
+      const response = await api.get(`api/ped/${pedId}/${modalidade}`, {
+        params: { retorno },
+      });
+      console.log("Dados da PED recebidos:", response.data);
+      return response;
+    } catch (error) {
+      console.error("Erro ao buscar detalhes da PED:", error);
+      throw error;
+    }
   },
 
   listaEMI: async (professorId, retorno) => {
