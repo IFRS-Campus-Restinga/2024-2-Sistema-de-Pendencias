@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Captura o pedId da URL
-import moment from 'moment';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FormContainer from '../../../../components/FormContainer/FormContainer';
@@ -9,8 +8,9 @@ import { observacaoService } from '../../../../services/observacaoService';
 import './adicionarObservacao.css';
 
 const AdicionarObservacao = () => {
-  const { pedId, emi, observacaoId } = useParams(); // Captura pedId, emi, e observacaoId da URL
-  const navigate = useNavigate(); // Usado para redirecionar após sucesso
+  const { idUsuario, idObservacao } = useParams();
+  const navigate = useNavigate();
+  const { pedTipo, pedId } = useParams();
 
   const [formData, setFormData] = useState({
     parecer: '',
@@ -20,8 +20,30 @@ const AdicionarObservacao = () => {
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [dataInsercao, setDataInsercao] = useState(null);
+  const [modoEdicao, setModoEdicao] = useState(false);
 
-  // Valida os campos do formulário
+  useEffect(() => {
+    if (idObservacao) {
+      setModoEdicao(true);
+      fetchObservacao();
+    }
+  }, [idObservacao]);
+
+  const fetchObservacao = async () => {
+    try {
+      const response = await observacaoService.visualizar(idObservacao);
+      if (response) {
+        setFormData({
+          parecer: response.parecer,
+          status: response.status,
+        });
+        setDataInsercao(response.data_insercao);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar observação:', error);
+    }
+  };
+
   const validarFormulario = (data) => {
     const errors = {};
     if (!data.parecer) errors.parecer = 'O parecer é obrigatório';
@@ -29,61 +51,66 @@ const AdicionarObservacao = () => {
     return errors;
   };
 
-  // Submete o formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validarFormulario(formData);
     if (Object.keys(validationErrors).length === 0) {
       setShowErrorMessage(false);
 
-      const payload = {
-        parecer: formData.parecer,
-        status: formData.status,
-        ped_id: pedId, // Passa o pedId diretamente no payload
-      };
-
-      try {
-        const response = await observacaoService.adicionarObservacao(payload);
-
-        if (response && response.status === 201) {
-          toast.success('Observação cadastrada com sucesso!', {
-            position: 'bottom-center',
-            autoClose: 3000,
-            style: { backgroundColor: '#28A745', color: '#fff' },
-            progressStyle: { backgroundColor: '#fff' },
-          });
-
-          if (response.data_insercao) {
-            const formattedDate = moment(response.data_insercao).format('DD/MM/YYYY HH:mm:ss');
-            setDataInsercao(formattedDate);
-            console.log("Data de inserção formatada:", formattedDate);
+      if (modoEdicao) {
+        try {
+          const response = await observacaoService.editar(idObservacao, formData);
+          if (response) {
+            toast.success('Observação editada com sucesso!', {
+              position: 'bottom-center',
+              autoClose: 3000,
+              style: { backgroundColor: '#28A745', color: '#fff' },
+              progressStyle: { backgroundColor: '#fff' },
+            });
+            // Redirecionar para a lista de observações após a edição
+            navigate(`/sessao/Professor/${idUsuario}/observacoes/${pedTipo}/${pedId}`);
+          } else {
+            toast.error('Falha ao salvar a observação. Tente novamente.', {
+              position: 'bottom-center',
+              autoClose: 3000,
+              style: { backgroundColor: '#d11c28', color: '#fff' },
+            });
           }
-
-          // Limpa os campos do formulário após o sucesso
-          setFormData({
-            parecer: '',
-            status: '',
-          });
-
-          // Redireciona para o endereço correto, incluindo pedId, emi e observacaoId
-          setTimeout(() => {
-            navigate(`/sessao/Professor/${pedId}/observacoes/${emi}/${observacaoId}`); 
-          }, 3000); // Tempo de delay para garantir que o toast seja exibido antes do redirecionamento
-          
-        } else {
-          toast.error('Falha ao salvar a observação. Tente novamente.', {
+        } catch (error) {
+          console.error('Erro ao salvar observação:', error);
+          toast.error('Erro ao salvar observação. Tente novamente.', {
             position: 'bottom-center',
             autoClose: 3000,
             style: { backgroundColor: '#d11c28', color: '#fff' },
           });
         }
-      } catch (error) {
-        console.error('Erro ao salvar observação:', error);
-        toast.error('Erro ao salvar observação. Tente novamente.', {
-          position: 'bottom-center',
-          autoClose: 3000,
-          style: { backgroundColor: '#d11c28', color: '#fff' },
-        });
+      } else {
+        try {
+          const response = await observacaoService.adicionarObservacao(formData);
+          if (response) {
+            toast.success('Observação cadastrada com sucesso!', {
+              position: 'bottom-center',
+              autoClose: 3000,
+              style: { backgroundColor: '#28A745', color: '#fff' },
+              progressStyle: { backgroundColor: '#fff' },
+            });
+            // Redirecionar para a lista de observações após o cadastro
+            navigate(`/sessao/Professor/${idUsuario}/observacoes/${pedTipo}/${pedId}`);
+          } else {
+            toast.error('Falha ao salvar a observação. Tente novamente.', {
+              position: 'bottom-center',
+              autoClose: 3000,
+              style: { backgroundColor: '#d11c28', color: '#fff' },
+            });
+          }
+        } catch (error) {
+          console.error('Erro ao salvar observação:', error);
+          toast.error('Erro ao salvar observação. Tente novamente.', {
+            position: 'bottom-center',
+            autoClose: 3000,
+            style: { backgroundColor: '#d11c28', color: '#fff' },
+          });
+        }
       }
     } else {
       setErrors(validationErrors);
@@ -91,7 +118,6 @@ const AdicionarObservacao = () => {
     }
   };
 
-  // Define as opções de status
   const statusOptions = [
     { value: 'Criada', label: 'Criada' },
     { value: 'Em Atraso', label: 'Em Atraso' },
@@ -100,14 +126,10 @@ const AdicionarObservacao = () => {
     { value: 'Desativado', label: 'Desativado' },
   ];
 
-  useEffect(() => {
-    console.log("Data de inserção atual:", dataInsercao);
-  }, [dataInsercao]);
-
   return (
     <>
-      <ToastContainer /> {/* Certifique-se de que o ToastContainer está renderizado */}
-      <FormContainer onSubmit={handleSubmit} titulo="Adicionar Observação">
+      <ToastContainer />
+      <FormContainer onSubmit={handleSubmit} titulo={modoEdicao ? "Editar Observação" : "Adicionar Observação"}>
         {showErrorMessage && <p style={{ color: 'red' }}>* Preencha os campos obrigatórios</p>}
 
         {/* Seção do Parecer */}
@@ -159,7 +181,7 @@ const AdicionarObservacao = () => {
         )}
 
         <div>
-          <Button tipo="submit" text="Cadastrar Observação" />
+          <Button tipo="submit" text={modoEdicao ? "Editar Observação" : "Cadastrar Observação"} />
         </div>
       </FormContainer>
     </>

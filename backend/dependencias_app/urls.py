@@ -106,16 +106,17 @@ urlpatterns = [
     path('detalhes-plano-estudos/<int:ped_id>/', detalhes_plano_estudos, name='detalhes_plano_estudos'),
     path('atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
     
-    ##views para tela de observaçoes
+    #views para tela de observaçoes
     # No arquivo urls.py
     #path('visualizar-observacao/<int:id>/', visualizar_observacao, name='visualizar_observacao'),
     path('visualizar-observacao/<int:id>/', visualizar_observacao, name='visualizar_observacao'),
 
 
-
+    #views para observações
     path('adicionar-observacao/', adicionar_observacao, name='adicionar_observacao'),
     #path('visualizar-observacao/', visualizar_observacao, name='visualizar_observacao'),
     path('listar-observacoes/', listar_observacoes, name='listar_observacoes'),
+    path('editar-observacao/<int:id>/', editar_observacao, name='editar_observacao<id>'),
 
     #views para atividades da ped
     path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),
@@ -132,7 +133,10 @@ urlpatterns = [
 
     # Views de notificacao
     path('buscar_notificacoes/', buscar_notificacoes),
-    path('notificacao/troca-status/', trocar_status)
+    path('notificacao/troca-status/', trocar_status),
+
+    #View para encerrar PED
+    path('encerrar-ped/<str:ped_tipo>/<int:ped_id>/', encerrar_ped, name='encerrar_ped'),
 ]
 
 if settings.DEBUG:

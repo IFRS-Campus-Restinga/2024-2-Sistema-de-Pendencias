@@ -1,6 +1,9 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from dependencias_app.enums.statusDependencia import StatusDependencia
+from dependencias_app.models.pedEMI import PED_EMI
+from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.permissoes import *
 from django.contrib.auth.models import Group
 from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
@@ -64,5 +67,34 @@ def listarGestaoEscolar(request):
         # Serialização dos dados
         serializer = UsuarioBaseSerializer(gestao_escolar, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['PUT'])
+@permission_classes([GestaoEscolar])
+def encerrar_ped(request, ped_tipo, ped_id):
+    try:
+        if ped_tipo == "emi":
+            ped = PED_EMI.objects.filter(id=ped_id).first()
+        elif ped_tipo == "proeja":
+            ped = PED_ProEJA.objects.filter(id=ped_id).first()
+        else:
+            return Response({"erro": "Tipo de PED inválido."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not ped:
+            return Response({"erro": "PED não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Validação do status
+        if ped.status != StatusDependencia.FINALIZADO:
+            return Response(
+                {"erro": "Somente PEDs com status 'Finalizado' podem ser encerradas."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        ped.status = StatusDependencia.ENCERRADO
+        ped.save()
+
+        return Response({"status": ped.status}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)

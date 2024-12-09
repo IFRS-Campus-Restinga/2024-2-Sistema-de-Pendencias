@@ -96,5 +96,14 @@ export const PEDService = {
   return res;
 },
 
+encerrar_ped: async (params) => {
+  const { ped_tipo, ped_id } = params;
+  const res = await api.put(`/api/encerrar-ped/${ped_tipo}/${ped_id}/`).catch((erro) => {
+    return erro;
+  });
+
+  return res;
+},
+
 
 }

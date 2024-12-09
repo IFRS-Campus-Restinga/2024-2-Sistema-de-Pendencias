@@ -7,6 +7,8 @@ import StatusBalls from "../../../../components/StatusBall/StatusBall";
 import Modal from "../../../../components/Modal/Modal";
 import { PEDService } from "../../../../services/pedService";
 import { jwtDecode } from 'jwt-decode';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const DetalhesPED = () => {
   const { pedId } = useParams();
@@ -16,6 +18,11 @@ const DetalhesPED = () => {
   const [modalAberto, setModalAberto] = useState(false);
   const abrirModal = () => setModalAberto(true);
   const fecharModal = () => setModalAberto(false);
+  const [modalConfirmacaoAberto, setModalConfirmacaoAberto] = useState(false);
+
+
+  const abrirModalConfirmacao = () => setModalConfirmacaoAberto(true);
+  const fecharModalConfirmacao = () => setModalConfirmacaoAberto(false);
 
   const fetchDetalhes = async () => {
     try {
@@ -47,6 +54,30 @@ const DetalhesPED = () => {
     }
   };
 
+  const handleEncerrarClick = async () => {
+    try {
+      if (detalhesPED.status !== "Finalizada") {
+        toast.error("Somente PEDs Finalizadas podem ser encerradas.");
+        return;
+      }
+  
+      const modalidade = detalhesPED.serie_progressao ? "emi" : "proeja";
+      const res = await PEDService.encerrar_ped({
+        ped_tipo: modalidade,
+        ped_id: pedId
+      });
+  
+      if (res.status !== 200) {
+        throw new Error(res.response?.data?.mensagem || "Erro ao encerrar PED.");
+      }
+  
+      setDetalhesPED({ ...detalhesPED, status: "Encerrado" });
+      toast.success("PED encerrada com sucesso!");
+    } catch (error) {
+      toast.error(`Erro ao encerrar PED: ${error.message}`);
+    }
+  };
+  
   useEffect(() => {
     fetchDetalhes()
   }, [])
@@ -56,6 +87,8 @@ const DetalhesPED = () => {
   }
 
   return (
+  <>  
+    <ToastContainer />
     <FormContainer
       titulo={`Detalhes da PED - ${detalhesPED.serie_progressao ? "EMI" : "ProEJA"}`}
       comprimento="80%"
@@ -176,6 +209,13 @@ const DetalhesPED = () => {
               <Button text={"Editar PED"} />
             </Link>
             <Button text="Desativar PED" color={"red"} onClick={abrirModal} />
+            <Button
+              text="Encerrar PED"
+              color={"red"}
+              onClick={abrirModalConfirmacao}
+              disabled={detalhesPED.status !== "Finalizada"}
+              title={detalhesPED.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
+            />
           </>
         )}
       </span>
@@ -190,7 +230,21 @@ const DetalhesPED = () => {
         colorButton={"red"}
         onClick={handleDesativarClick}
       />
+
+      <Modal
+        estaAberto={modalConfirmacaoAberto}
+        aoFechar={fecharModalConfirmacao}
+        mensagem="Você tem certeza que deseja encerrar a PED? Essa ação é irreversível."
+        textoCancelar="Não"
+        textoOk="Encerrar"
+        colorButton={"red"}
+        onClick={async () => {
+          fecharModalConfirmacao();
+          await handleEncerrarClick();
+        }}
+      />
     </FormContainer>
+    </>
   );
 };
 

@@ -21,7 +21,8 @@ def listar_atividades(request, ped_tipo, ped_id):
         if not ped:
             return Response({"erro": "PED EMI não encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
-        if ped.professor_ped != request.user:
+        # Verifica se o usuário é o professor responsável OU pertence ao grupo GestaoEscolar
+        if ped.professor_ped != request.user and not request.user.has_perm('dependencias_app.view_gestaoescolar'):
             return Response({"erro": "Acesso não autorizado"}, status=status.HTTP_403_FORBIDDEN)
 
         atividades = Atividade_EMI.objects.filter(ped_emi=ped)
@@ -32,7 +33,8 @@ def listar_atividades(request, ped_tipo, ped_id):
         if not ped:
             return Response({"erro": "PED ProEJA não encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
-        if ped.professor_ped != request.user:
+        # Verifica se o usuário é o professor responsável OU pertence ao grupo GestaoEscolar
+        if ped.professor_ped != request.user and not request.user.has_perm('dependencias_app.view_gestaoescolar'):
             return Response({"erro": "Acesso não autorizado"}, status=status.HTTP_403_FORBIDDEN)
 
         atividades = Atividade_ProEJA.objects.filter(ped_proeja=ped)
@@ -91,11 +93,9 @@ def exibir_nota_final(request, ped_tipo, ped_id):
         if not ped:
             return Response({"erro": "PED não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
-        if not hasattr(ped, 'nota_final') or not hasattr(ped, 'situacao') or not hasattr(ped, 'status'):
-            return Response({"erro": "Dados do PED incompletos."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        if ped.professor_ped != request.user:
-            return Response({"erro": "Acesso não autorizado."}, status=status.HTTP_403_FORBIDDEN)
+        # Permitir acesso para Gestão Escolar ou professor responsável
+        if not request.user.has_perm('GestaoEscolar') and ped.professor_ped != request.user:
+            return Response({"erro": "Acesso não autorizado"}, status=status.HTTP_403_FORBIDDEN)
 
         nota_final = ped.nota_final
         situacao = ped.situacao
@@ -105,12 +105,12 @@ def exibir_nota_final(request, ped_tipo, ped_id):
             {
                 "nota_final": nota_final,
                 "situacao": situacao,
-                "status": status_dep
+                "status": status_dep,
             },
             status=status.HTTP_200_OK,
         )
+
     except Exception as e:
-        # Adicionar logs para investigar melhor
         logging.error(f"Erro ao exibir nota final: {str(e)}")
         return Response(
             {"erro": f"Erro inesperado: {str(e)}"},
@@ -165,7 +165,6 @@ def adicionar_atividade(request, ped_tipo, ped_id):
 @permission_classes([Professor | GestaoEscolar])
 def detalhes_atividade(request, ped_tipo, ped_id, atividade_id):
     try:
-        # Verifica o tipo de PED e busca a atividade correspondente
         if ped_tipo == "emi":
             atividade = Atividade_EMI.objects.filter(id=atividade_id).first()
             serializer_class = Atividade_EMI_Serializer
@@ -178,14 +177,12 @@ def detalhes_atividade(request, ped_tipo, ped_id, atividade_id):
         if not atividade:
             return Response({"erro": "Atividade não encontrada."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Determina o PED correspondente à atividade
         ped = atividade.ped_emi if ped_tipo == "emi" else atividade.ped_proeja
 
-        # Verifica se o professor logado é o responsável pelo PED da atividade
-        if ped.professor_ped != request.user:
-            return Response({"erro": "Acesso não autorizado."}, status=status.HTTP_403_FORBIDDEN)
+        # Permitir acesso para Gestão Escolar ou professor responsável
+        if not request.user.has_perm('GestaoEscolar') and ped.professor_ped != request.user:
+            return Response({"erro": "Acesso não autorizado"}, status=status.HTTP_403_FORBIDDEN)
 
-        # Serializa a atividade e retorna os detalhes
         serializer = serializer_class(atividade)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

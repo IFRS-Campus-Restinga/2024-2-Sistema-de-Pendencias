@@ -86,3 +86,19 @@ def visualizar_observacao(request, id):
         return Response({'mensagem': 'Observação não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['PUT'])
+def editar_observacao(request, id):
+    try:
+        observacao = Observacao.objects.get(pk=id)
+        observacao_serializer = ObservacaoSerializer(observacao, data=request.data)
+        if observacao_serializer.is_valid():
+            observacao_serializer.save()
+            return Response(observacao_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(observacao_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Observacao.DoesNotExist:
+        return Response({'mensagem': 'Observação não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)

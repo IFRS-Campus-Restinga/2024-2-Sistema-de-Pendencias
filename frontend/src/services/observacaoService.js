@@ -29,6 +29,20 @@ export const observacaoService = {
         status: erro.response?.status || 500
       };
     }
-  }
+  },
+
+  editar: async (idObservacao, formData) => {
+    try {
+      const res = await api.put(`/api/editar-observacao/${idObservacao}/`, formData);
+      return res.data;
+    } catch (erro) {
+      console.error(`Erro ao editar observação com ID ${idObservacao}:`, erro);
+      return {
+        sucesso: false,
+        mensagem: erro.response?.data?.mensagem || 'Erro ao tentar editar a observação.',
+        status: erro.response?.status || 500
+      };
+    }
+  },
 };
 
