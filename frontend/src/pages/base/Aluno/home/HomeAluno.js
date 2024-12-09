@@ -14,7 +14,6 @@ const HomeAluno = () => {
   const [visibleYears, setVisibleYears] = useState([currentYear, currentYear - 1, currentYear - 2, currentYear - 3]);
   const [minYear, setMinYear] = useState();
   const navigate = useNavigate();
-  const usuarioId = jwtDecode(sessionStorage.getItem("token")).idUsuario;
   const [selectedStatus, setSelectedStatus] = useState(["Criada", "Em Andamento", "Finalizada", "Desativado"]);
 
   const statusOptions = ["Criada", "Em Andamento", "Finalizada", "Desativado"];
@@ -74,9 +73,7 @@ const HomeAluno = () => {
 
   const handleNavigateToDetalhes = (dependencia) => {
     const modalidade = dependencia.turma_atual ? "Integrado" : "ProEJA";
-    navigate(`/sessao/Aluno/${usuarioId}/${modalidade}/${dependencia.id}/detalhes`, {
-      state: { modalidade }
-    });
+    navigate(`${modalidade}/${dependencia.id}/detalhes`);
   };
 
   useEffect(() => {

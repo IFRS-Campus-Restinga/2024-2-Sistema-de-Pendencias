@@ -207,13 +207,13 @@ const Tabela = ({
                     </>
                   )}
 
-                      {showInProgressButton && item.status != 'Em Andamento' && (
+                      {showInProgressButton && item.status != 'Lançado' && (
                         <img
                           className="iconeAcoes"
                           src={Check}
-                          alt="Alterar para 'Em Andamento'"
+                          alt="Alterar para 'Lançado'"
+                          title="Alterar para 'Lançado'"
                           onClick={() => abrirModal(item)}
-                          title="Alterar para 'Em Andamento'"
                         />
                       )}
                     </div>
@@ -224,7 +224,7 @@ const Tabela = ({
             <Modal
               estaAberto={modalAberto}
               aoFechar={fecharModal}
-              mensagem="Alterar o status da PPT para 'Em Andamento'"
+              mensagem="Alterar o status da PPT para 'Lançado'"
               textoCancelar="Não"
               textoOk="Alterar"
               colorButton={"red"}

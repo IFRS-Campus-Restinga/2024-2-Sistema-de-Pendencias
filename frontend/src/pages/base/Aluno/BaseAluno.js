@@ -3,7 +3,6 @@ import './BaseAluno.css'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { validaUsuario } from '../validaUsuario'
 import PageContainer from '../../../components/PageContainer/PageContainer'
-import MainContainer from '../../../components/MainContainer/mainContainer'
 import { jwtDecode } from 'jwt-decode'
 
 const BaseAluno = () => {

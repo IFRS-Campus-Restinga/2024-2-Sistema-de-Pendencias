@@ -1,13 +1,16 @@
+import os
+import threading
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from dependencias_app.models.pedEMI import PED_EMI
 from dependencias_app.models.pedProEJA import PED_ProEJA
+from dependencias_app.models.notificacao import Notificacao
 from dependencias_app.serializers.pedEMISerializer import *
 from dependencias_app.serializers.pedProEJASerializer import *
 from dependencias_app.permissoes import *
-import threading
+from dependencias_app.utils.enviar_email import enviar_email
 
 
 @api_view(['POST'])
@@ -30,8 +33,8 @@ def cadastrar_PED_EMI(request):
         )
 
         # envia email para o professor responsável e aluno da ped de forma assíncrona
-        threading.Thread(target=enviar_email, args=(serializer.aluno, template, 'Nova Dependência Cadastrada', serializer.aluno.grupo.name)).start()
-        threading.Thread(target=enviar_email, args=(serializer.professor_ped, template, 'Nova Dependência Cadastrada', serializer.professor_ped.grupo.name)).start()
+        threading.Thread(target=enviar_email, args=(serializer.instance.aluno, template, 'Nova Dependência Cadastrada', serializer.instance.aluno.grupo.name)).start()
+        threading.Thread(target=enviar_email, args=(serializer.instance.professor_ped, template, 'Nova Dependência Cadastrada', serializer.instance.professor_ped.grupo.name)).start()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:
@@ -57,8 +60,8 @@ def cadastrar_PED_ProEJA(request):
         )
 
         # envia email para o professor responsável e aluno da ped de forma assíncrona
-        threading.Thread(target=enviar_email, args=(serializer.aluno, template, 'Nova Dependência Cadastrada', serializer.aluno.grupo.name)).start()
-        threading.Thread(target=enviar_email, args=(serializer.professor_ped, template, 'Nova Dependência Cadastrada', serializer.professor_ped.grupo.name)).start()
+        threading.Thread(target=enviar_email, args=(serializer.instance.aluno, template, 'Nova Dependência Cadastrada', serializer.instance.aluno.grupo.name)).start()
+        threading.Thread(target=enviar_email, args=(serializer.instance.professor_ped, template, 'Nova Dependência Cadastrada', serializer.instanceprofessor_ped.grupo.name)).start()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:

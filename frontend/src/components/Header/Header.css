@@ -98,6 +98,43 @@ a {
     border: 2px solid white;
 }
 
+.caixaNotif {
+    z-index: 2;
+    position: fixed;
+    border: 2px solid white;
+    border-radius: 10px;
+    padding: 5px;
+    right: 25px;
+    top: 80px;
+    max-height: 200px;
+    min-height: 200px;
+    min-width: 250px;
+    max-width: 250px;
+    background-color: #006b3f;
+    overflow-y: scroll;
+}
+
+.notificacao {
+    background-color: #00834c;
+    border-radius: 10px;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: space-evenly;
+    padding: 5px;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.descricaoNotif {
+    color: white;
+    width: 100%;
+    word-break: break-all;
+    font-size: 11px;
+    text-align: left;
+}
+
 
 @media (max-width: 600px) {
     .header-saudacao {

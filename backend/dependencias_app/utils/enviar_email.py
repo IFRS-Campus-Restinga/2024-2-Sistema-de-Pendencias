@@ -1,11 +1,12 @@
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-import os
 from django.conf import settings
 
 def enviar_email(destinatario, template, assunto, grupo):
+    url = settings.BASE_APP_URL
+
     try:
-        corpo_email = render_to_string(template, context={'nome': destinatario.nome, 'grupo': grupo})
+        corpo_email = render_to_string(template, context={'grupo': grupo, 'url': url})
 
         send_mail(
         subject=assunto,

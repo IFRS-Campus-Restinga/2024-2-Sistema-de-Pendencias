@@ -32,10 +32,9 @@ const DetalhesObservacoes = () => {
 
     return (
         <FormContainer comprimento="70%" titulo="Detalhes da Observação">
-            <p><strong>ID:</strong> {observacao.id}</p>
             <p><strong>Status:</strong> {observacao.status}</p>
             <p><strong>Parecer:</strong> {observacao.parecer}</p>
-            <p><strong>Data:</strong> {observacao.data}</p>
+            <p><strong>Data de Inserção:</strong> {new Date(observacao.data_insercao).toLocaleString()}</p>  {/* Ajuste aqui */}
             <Button
                 tipo="button"
                 text="Voltar"
