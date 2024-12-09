@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from dependencias_app.models.planoEstudos import PlanoEstudos
-import os
-from dependencias_app.utils.enviar_email import enviar_email
+from dependencias_app.models.notificacao import Notificacao
+from django.conf import settings
 
 class PlanoEstudos_Serializer(serializers.ModelSerializer):
     class Meta:
@@ -13,12 +13,9 @@ class PlanoEstudos_Serializer(serializers.ModelSerializer):
         formPlanoEstudo.full_clean()
         formPlanoEstudo.save()
 
-        template = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)),
-        'templates_email',
-        'planoDeEstudos.html'
-        )
+        Notificacao.objects.create(usuario=formPlanoEstudo.dependencia_emi.aluno or formPlanoEstudo.dependencia_proeja.aluno, tipo='Plano de Estudos', mensagem='Novo Plano de Estudos', url=f'{settings.BASE_APP_URL}/sessao/Aluno/{formPlanoEstudo.dependencia_emi.aluno.id or formPlanoEstudo.dependencia_proeja.aluno.id}/Integrado/{formPlanoEstudo.dependencia_emi.id or formPlanoEstudo.dependencia_proeja.id}/planoEstudos')
 
-        enviar_email(formPlanoEstudo.dependencia_emi.aluno.email or formPlanoEstudo.dependencia_proeja.aluno.email, template, 'Plano de Estudos Cadastrado')
+        # cria notificação para a gestão
+        # Notificacao.objects.create()
 
         return formPlanoEstudo

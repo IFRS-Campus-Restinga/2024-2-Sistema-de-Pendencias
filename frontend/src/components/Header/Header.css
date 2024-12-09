@@ -106,10 +106,10 @@ a {
     padding: 5px;
     right: 25px;
     top: 80px;
-    max-height: 200px;
     min-height: 200px;
+    max-height: 300px;
     min-width: 250px;
-    max-width: 250px;
+    max-width: 325px;
     background-color: #006b3f;
     overflow-y: scroll;
 }
@@ -124,6 +124,7 @@ a {
     justify-content: space-evenly;
     padding: 5px;
     width: 100%;
+    min-width: fit-content;
     margin-bottom: 5px;
 }
 
@@ -133,6 +134,18 @@ a {
     word-break: break-all;
     font-size: 11px;
     text-align: left;
+    margin-right: 20px;
+}
+
+.conteudoNotif {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.iconeNotif {
+    max-width: 25px;
+    max-height: 25px;
 }
 
 

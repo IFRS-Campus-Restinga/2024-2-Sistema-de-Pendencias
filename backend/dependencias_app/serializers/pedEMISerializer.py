@@ -30,10 +30,10 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
         formPED_EMI.save()
 
         # cria notificação para o aluno
-        Notificacao.objects.create(usuario=formPED_EMI.aluno, mensagem='Nova PED (Integrado) cadastrada', url=f'{settings.BASE_APP_URL}sessao/Aluno/{formPED_EMI.aluno.id}/Integrado/{formPED_EMI.id}/detalhes')
+        Notificacao.objects.create(usuario=formPED_EMI.aluno, tipo='PED Integrado', mensagem='Nova PED (Integrado) cadastrada', url=f'{settings.BASE_APP_URL}/sessao/Aluno/{formPED_EMI.aluno.id}/Integrado/{formPED_EMI.id}/detalhes')
 
         # cria notificação para o professor responsável
-        Notificacao.objects.create(usuario=formPED_EMI.professor_ped, mensagem='Você foi registrado como professor responsável por uma PED (Integrado)', url=f'{settings.BASE_APP_URL}sessao/Professor/{formPED_EMI.professor_ped.id}/peds-emi/{formPED_EMI.id}')
+        Notificacao.objects.create(usuario=formPED_EMI.professor_ped, tipo='PED Integrado', mensagem='Você foi registrado como professor responsável por uma PED (Integrado), clique aqui para preencher o Plano de Estudos', url=f'{settings.BASE_APP_URL}/sessao/Professor/{formPED_EMI.professor_ped.id}/peds-emi/{formPED_EMI.id}/planoEstudos')
         
         return formPED_EMI
     
@@ -88,8 +88,6 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
             representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'titulo': instance.periodo_letivo.titulo}
 
             representation.pop('data_criacao')
-            representation.pop('plano_estudos')
-            representation.pop('form_encerramento')
 
         elif retorno == 'aluno':
             representation['aluno'] = {'id': instance.aluno.id, 'nome': str(instance.aluno)}
@@ -101,7 +99,6 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
             representation['periodo_letivo'] = instance.periodo_letivo.data_inicio
 
             representation.pop('data_criacao')
-            representation.pop('plano_estudos')
             representation.pop('form_encerramento')
 
 

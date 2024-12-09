@@ -3,10 +3,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from dependencias_app.serializers.pptSerializer import *
 from dependencias_app.models.ppt import PPT
-from dependencias_app.permissoes import GestaoEscolar, RegistroEscolar
+from dependencias_app.permissoes import *
 from django.shortcuts import *
 import logging
 import threading
+import os
+from dependencias_app.utils.enviar_email import enviar_email
 
 logger = logging.getLogger(__name__)
 
@@ -66,10 +68,10 @@ def listar_ppt_registro(request):
         return Response({'mensagem: ', str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([GestaoEscolar])
-def listar_ppt_id(request, idPpt):
+@permission_classes([GestaoEscolar | RegistroEscolar | Coordenador])
+def listar_ppt_id(request, pptId):
     try:
-        ppt = PPT.objects.get(id=idPpt)
+        ppt = PPT.objects.get(id=pptId)
 
         serializer = PPTSerializer(ppt, context={'request': request})
 

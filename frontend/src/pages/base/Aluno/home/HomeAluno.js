@@ -72,7 +72,7 @@ const HomeAluno = () => {
   };
 
   const handleNavigateToDetalhes = (dependencia) => {
-    const modalidade = dependencia.turma_atual ? "Integrado" : "ProEJA";
+    const modalidade = dependencia.turma_atual === undefined ? "ProEJA" : dependencia.turma_progressao ? "PPT" : "Integrado";
     navigate(`${modalidade}/${dependencia.id}/detalhes`);
   };
 

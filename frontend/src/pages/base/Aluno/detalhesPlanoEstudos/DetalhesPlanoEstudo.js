@@ -37,8 +37,6 @@ const DetalhesPlanoEstudo = () => {
 
   if (loading) return <div>Carregando...</div>;
 
-  if (error) return <div>{error}</div>;
-
   const handleVoltar = () => {
     navigate(`/sessao/Aluno/${usuarioId}/${modalidade}/${pedId}/detalhes`);
   };
@@ -48,11 +46,6 @@ const DetalhesPlanoEstudo = () => {
       <div className="detalhes-plano-estudos">
         <p><strong>Forma de Oferta:</strong> {planoEstudo?.forma_oferta || "Não informado"}</p>
         <p><strong>Turno:</strong> {planoEstudo?.turno || "Não informado"}</p>
-        <p><strong>Parecer Pedagógico:</strong> {planoEstudo?.parecer_pedagogico || "Não informado"}</p>
-
-        {planoEstudo?.observacoes && (
-          <p><strong>Observações:</strong> {planoEstudo.observacoes}</p>
-        )}
       </div>
 
       <div className="buttonContainer">

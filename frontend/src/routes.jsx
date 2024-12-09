@@ -58,7 +58,7 @@ import DetalhesObservacoes from './pages/base/Professor/detalhesObservacoes/Deta
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
-import DetalhesPEDAluno from "./pages/base/Aluno/detalhesPED/DetalhesPEDAluno";
+import DetalhesDependenciaAluno from "./pages/base/Aluno/detalhesDependencia/DetalhesDependenciaAluno";
 import ListarPPT from './pages/base/Gestao/listarPPT/ListarPPT'
 import ListarPEDEMI from './pages/base/Gestao/listarPED_EMI/ListarPED_EMI'
 import ListarPEDProEJA from './pages/base/Gestao/listarPED_ProEJA/ListarPED_ProEJA'
@@ -269,7 +269,7 @@ const router = createBrowserRouter([
                 path: ':idUsuario/peds-proeja/:pedId',
                 element: <DetalhesPEDCoordenador />
             },
-            
+
         ]
     },
     // Rotas de Professor
@@ -299,7 +299,7 @@ const router = createBrowserRouter([
                 path: ':idUsuario/peds-emi/:pedId',
                 element: <DetalhesPEDProfessor />
             },
-            
+
             {
                 path: ':idUsuario/peds-proeja/:pedId',
                 element: <DetalhesPEDProfessor />
@@ -319,7 +319,7 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/planoEstudos/:pedId/editar',
                 element: <PlanoEstudos />
-            },  
+            },
             {
                 path: ':idUsuario/atividades/:pedTipo/:pedId',
                 element: <AtividadesDesenvolvidas />
@@ -371,16 +371,8 @@ const router = createBrowserRouter([
                 element: <PerfilAluno />
             },
             {
-                path: ':idUsuario/Integrado/:pedId/detalhes',
-                element: <DetalhesPEDAluno />
-            },
-            {
-                path: ':idUsuario/ProEJA/:pedId/detalhes',
-                element: <DetalhesPEDAluno />
-            },
-            {
-                path: ':usuarioId/:modalidade/:pedId/detalhes',
-                element: <DetalhesPEDAluno />
+                path: ':idUsuario/:modalidade/:pedId/detalhes',
+                element: <DetalhesDependenciaAluno />
             },
             {
                 path: ':idUsuario/:modalidade/:pedId/planoEstudos',

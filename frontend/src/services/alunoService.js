@@ -40,11 +40,27 @@ export const alunoService = {
                     retorno: 'aluno'
                 }
             });
+            
             return res;
         } catch (erro) {
             console.error("Erro ao listar PEDS do aluno:", erro);
             throw erro;
         }
     },
+
+    detalhesPPTAluno: async (pptId, retorno) => {
+        try {
+            const res =  await api.get(`api/aluno/ppt/${pptId}/`, {
+                params: {
+                    retorno
+                }
+            })
+
+            return res
+        } catch (erro) {
+            console.error("Erro ao buscar detalhes da PPT do aluno:", erro);
+            throw erro;
+        }
+    }
 
 };

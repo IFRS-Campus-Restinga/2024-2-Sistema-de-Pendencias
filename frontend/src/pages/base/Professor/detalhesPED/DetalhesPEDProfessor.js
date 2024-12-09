@@ -104,7 +104,7 @@ const DetalhesPEDProfessor = () => {
         <>
           <label className="labelCabecalhoDetalhesPED">
             <span className="spanDetalhesPED">
-              Aluno -<p className="pDetalhesPED">{detalhesPED.aluno}</p>
+              Aluno -<p className="pDetalhesPED">{detalhesPED.aluno.nome}</p>
             </span>
             <label className="labelStatusPED">Andamento da PED</label>
           </label>

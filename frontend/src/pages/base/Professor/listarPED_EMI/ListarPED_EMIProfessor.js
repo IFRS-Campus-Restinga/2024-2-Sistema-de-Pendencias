@@ -95,7 +95,7 @@ const ListarPEDEMIProfessor = () => {
                     />
                 </div>
             </div>
-            <Tabela listaFiltrada={listaFiltrada} editar={true} visualizar={true}/>
+            <Tabela listaFiltrada={listaFiltrada} visualizar={true}/>
         </FormContainer>
     )
 }

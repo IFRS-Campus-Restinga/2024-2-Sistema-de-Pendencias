@@ -61,7 +61,7 @@ def cadastrar_PED_ProEJA(request):
 
         # envia email para o professor responsável e aluno da ped de forma assíncrona
         threading.Thread(target=enviar_email, args=(serializer.instance.aluno, template, 'Nova Dependência Cadastrada', serializer.instance.aluno.grupo.name)).start()
-        threading.Thread(target=enviar_email, args=(serializer.instance.professor_ped, template, 'Nova Dependência Cadastrada', serializer.instanceprofessor_ped.grupo.name)).start()
+        threading.Thread(target=enviar_email, args=(serializer.instance.professor_ped, template, 'Nova Dependência Cadastrada', serializer.instance.professor_ped.grupo.name)).start()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:

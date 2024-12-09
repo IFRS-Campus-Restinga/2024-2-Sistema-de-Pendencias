@@ -5,6 +5,7 @@ from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.models.calendarioAcademico import CalendarioAcademico
 from dependencias_app.models.notificacao import Notificacao
+from django.conf import settings
 
 
 class PED_ProEJA_Serializer(serializers.ModelSerializer):
@@ -27,10 +28,10 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
         formPED_ProEJA.save()
 
        # cria notificação para o aluno
-        Notificacao.objects.create(usuario=formPED_ProEJA.aluno, mensagem='Nova PED (Integrado) cadastrada', url=f'Integrado/{formPED_ProEJA.id}/detalhes')
+        Notificacao.objects.create(usuario=formPED_ProEJA.aluno, tipo='PED ProEJA', mensagem='Nova PED (ProEJA) cadastrada', url=f'{settings.BASE_APP_URL}/sessao/Aluno/{formPED_ProEJA.aluno.id}/ProEJA/{formPED_ProEJA.id}/detalhes')
 
         # cria notificação para o professor responsável
-        Notificacao.objects.create(usuario=formPED_ProEJA.professor_ped, mensagem='Você foi registrado como professor responsável por uma PED (Integrado)', url=f'peds-proeja/{formPED_ProEJA.id}')
+        Notificacao.objects.create(usuario=formPED_ProEJA.professor_ped, tipo='PED ProEJA', mensagem='Você foi registrado como professor responsável por uma PED (ProEJA), não esqueça de preencher o Plano de Estudos.', url=f'{settings.BASE_APP_URL}/sessao/Professor/{formPED_ProEJA.professor_ped.id}/peds-proeja/{formPED_ProEJA.id}/planoEstudos')
         
         return formPED_ProEJA
     
@@ -78,7 +79,6 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
             representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'titulo': instance.periodo_letivo.titulo}
 
             representation.pop('data_criacao')
-            representation.pop('plano_estudos')
             representation.pop('form_encerramento')
 
         elif retorno == 'aluno':
@@ -90,7 +90,6 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
             representation['periodo_letivo'] = instance.periodo_letivo.data_inicio
 
             representation.pop('data_criacao')
-            representation.pop('plano_estudos')
             representation.pop('form_encerramento')
 
         return representation

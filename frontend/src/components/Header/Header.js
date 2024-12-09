@@ -9,6 +9,12 @@ import { jwtDecode } from "jwt-decode";
 import { authService } from '../../../src/services/authService'
 import { Link, useNavigate } from "react-router-dom";
 import { notificacaoService } from "../../services/notificacaoService";
+import PED_EMI from '../../assets/peds-branco.png'
+import PED_ProEJA from '../../assets/peds-proeja-branco.png'
+import PPT from '../../assets/ppt-branco.png'
+import Plano_Estudos from '../../assets/plano-estudos-branco.png'
+import Evento from '../../assets/evento-branco.png'
+import Atividade from '../../assets/atividade-branco.png'
 
 const Header = ({homeUrl}) => {
   const [notificacoes, setNotificacoes] = useState([])
@@ -70,10 +76,38 @@ const Header = ({homeUrl}) => {
     }
   }
 
+  const setIconeNotif = (tipo) => {
+    switch (tipo) {
+      case 'PED Integrado':
+        return PED_EMI
+        break;
+      case 'PED ProEJA':
+        return PED_ProEJA
+        break;
+      case 'PPT':
+        return PPT
+        break;
+      case 'Plano de Estudos':
+        return Plano_Estudos
+        break;
+      case 'Evento':
+        return Evento
+        break;
+      case 'Atividade':
+        return Atividade
+        break;
+      default:
+        break;
+    }
+  }
+
   useEffect(() => {
     escreveNome()
-    buscar_notificacoes()
   }, [])
+
+  useEffect(() => {
+    buscar_notificacoes()
+  }, [notificAberta])
 
   return (
     <header className="header">
@@ -110,14 +144,21 @@ const Header = ({homeUrl}) => {
                   notificAberta ? (
                     <div className='caixaNotif'>
                       {
-                        notificacoes.map((notificacao) => (
-                          <Link to={notificacao.url}>
-                            <span className='notificacao' onClick={() => trocar_status(notificacao.id)}>
-                              <p>{new Date(notificacao.data).toLocaleDateString('pt-BR')}</p>
-                              <p className="descricaoNotif">{notificacao.mensagem}</p>
-                            </span>
-                          </Link>
-                        ))
+                        notificacoes.length > 0 ? (
+                          notificacoes.map((notificacao) => (
+                            <Link to={notificacao.url}>
+                              <span className='notificacao' onClick={() => trocar_status(notificacao.id)}>
+                                <p>{new Date(notificacao.data).toLocaleDateString('pt-BR')}</p>
+                                <div className="conteudoNotif">
+                                  <p className="descricaoNotif">{notificacao.mensagem}</p>
+                                  <img src={setIconeNotif(notificacao.tipo)} className="iconeNotif"/>
+                                </div>
+                              </span>
+                            </Link>
+                          ))
+                        ) : (
+                          <p>Você não possui notificações</p>
+                        )
                       }
                     </div>
                   ) : (

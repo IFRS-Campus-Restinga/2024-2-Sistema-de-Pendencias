@@ -8,6 +8,7 @@ from dependencias_app.models.turma import Turma
 from dependencias_app.models.ppt import PPT
 from dependencias_app.models.calendarioAcademico import CalendarioAcademico
 from dependencias_app.models.notificacao import Notificacao
+from django.conf import settings
 
 class PPTSerializer(serializers.ModelSerializer):
     # variáveis de entrada do serializer (POST), recebe as chaves primárias das tabelas que se relacionam com ppt
@@ -30,7 +31,7 @@ class PPTSerializer(serializers.ModelSerializer):
         formPPT.save()
 
         # cria notificação para o aluno
-        Notificacao.objects.create(usuario=formPPT.aluno, mensagem='Nova PED (Integrado) cadastrada', url=f'Integrado/{formPPT.id}/detalhes')
+        Notificacao.objects.create(usuario=formPPT.aluno, tipo='PPT', mensagem='Nova PPT (Integrado) cadastrada, verifique os dados', url=f'{settings.BASE_APP_URL}/sessao/Aluno/{formPPT.aluno.id}/PPT/{formPPT.id}/detalhes')
 
         return formPPT
     

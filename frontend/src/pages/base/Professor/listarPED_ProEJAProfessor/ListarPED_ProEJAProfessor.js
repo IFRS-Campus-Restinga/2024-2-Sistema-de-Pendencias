@@ -6,9 +6,11 @@ import { PEDService } from "../../../../services/pedService"
 import './ListarPED_ProEJAProfessor.css'
 import X from "../../../../assets/x-branco.png";
 import Lupa from "../../../../assets/lupa-branca.png";
+import { useParams } from "react-router-dom"
 
 
 const ListarPEDProEJAProfessor = () => {
+    const professorId = useParams().idUsuario
     const [listaPED_ProEJA, setListaPED_ProEJA] = useState([])
     const [listaFiltrada, setListaFiltrada] = useState([])
     const [filtroGeral, setFiltroGeral] = useState('');
@@ -19,7 +21,7 @@ const ListarPEDProEJAProfessor = () => {
 
     const fetchPED_ProEJA = async () => {
         try {
-            const res = await PEDService.listaProEJA()
+            const res = await PEDService.listaProEJA(professorId, 'lista')
 
             if (res.status !== 200) throw new Error(res)
 
@@ -95,7 +97,7 @@ const ListarPEDProEJAProfessor = () => {
                 </div>
             </div>
 
-            <Tabela listaFiltrada={listaFiltrada} fontSize={'10px'} />
+            <Tabela listaFiltrada={listaFiltrada} visualizar={true}/>
         </FormContainer>
     )
 }
