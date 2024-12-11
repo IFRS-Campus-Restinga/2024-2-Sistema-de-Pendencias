@@ -124,7 +124,7 @@ const Header = ({homeUrl}) => {
             </span>
               <Dropdown
                 tipo={'usuario'}
-                titulo={
+                icone={
                   <img src={jwtDecode(sessionStorage.getItem('token')).fotoPerfil} className="fotoPerfil"/>
                 } 
                 itens={[

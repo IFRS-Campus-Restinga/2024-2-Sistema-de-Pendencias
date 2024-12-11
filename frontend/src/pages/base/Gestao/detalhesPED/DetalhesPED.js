@@ -104,45 +104,63 @@ const DetalhesPED = () => {
         <>
           <label className="labelCabecalhoDetalhesPED">
             <span className="spanDetalhesPED">
-              Aluno -<p className="pDetalhesPED">{detalhesPED.aluno.nome}</p>
+              Aluno - <p className="nomeAlunoPED">{detalhesPED.aluno.nome}</p>
             </span>
             <label className="labelStatusPED">Andamento da PED</label>
           </label>
-          <section className="sectionDetalhesPEDEMI">
+          <section className="sectionDetalhesPED">
             <div className="divDetalhesPED">
-              <label className="labelDetalhesPED">
-                Docente responsável pela progressão
-                <p className="pDetalhesPED">{detalhesPED.professor_ped.nome}</p>
-              </label>
-              <label className="labelDetalhesPED">
-                Docente que ministrou a disciplina
-                <p className="pDetalhesPED">{detalhesPED.professor_disciplina.nome}</p>
-              </label>
-              <label className="labelDetalhesPED">
-                Curso
-                <p className="pDetalhesPED">{detalhesPED.curso.nome}</p>
-              </label>
-              <label className="labelDetalhesPED">
-                Disciplina
-                <p className="pDetalhesPED">{detalhesPED.disciplina.nome}</p>
-              </label>
-              <label className="labelDetalhesPED">
-                Trimestres a Recuperar
-                <p className="pDetalhesPED">{detalhesPED.trimestre_recuperar}</p>
-              </label>
-              <label className="labelDetalhesPED">
-                Série da Progressão
-                <p className="pDetalhesPED">{detalhesPED.serie_progressao}</p>
-              </label>
-              <label className="labelDetalhesPED">
-                Turma Atual
-                <p className="pDetalhesPED">{detalhesPED.turma_atual.numero}</p>
-              </label>
+              <span className="dadosPED">
+                <label className="labelDetalhesPED">
+                  Docente responsável pela progressão
+                  <p className="pDetalhesPED">{detalhesPED.professor_ped.nome}</p>
+                </label>
+                <label className="labelDetalhesPED">
+                  Docente que ministrou a disciplina
+                  <p className="pDetalhesPED">{detalhesPED.professor_disciplina.nome}</p>
+                </label>
+              </span>
+              <span className="dadosPED">
+                <label className="labelDetalhesPED">
+                  Curso
+                  <p className="pDetalhesPED">{detalhesPED.curso.nome}</p>
+                </label>
+                <label className="labelDetalhesPED">
+                  Disciplina
+                  <p className="pDetalhesPED">{detalhesPED.disciplina.nome}</p>
+                </label>
+              </span>
+              <span className="dadosPED">
+                <label className="labelDetalhesPED">
+                  Trimestres a Recuperar
+                  <p className="pDetalhesPED">{detalhesPED.trimestre_recuperar}</p>
+                </label>
+                <label className="labelDetalhesPED">
+                  Série da Progressão
+                  <p className="pDetalhesPED">{detalhesPED.serie_progressao}</p>
+                </label>
+                <label className="labelDetalhesPED">
+                  Turma Atual
+                  <p className="pDetalhesPED">{detalhesPED.turma_atual.numero}</p>
+                </label>
+                <label className="labelDetalhesPED">
+                  Observação
+                  <p className="pDetalhesPED">{detalhesPED.observacao}</p>
+                </label>
+              </span>
             </div>
             <div className="divStatusPED">
               <div className="opcoesContainer">
-                <Dropdown icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
+                <Dropdown tipo={'icone'} icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
                   itens={[
+                    {
+                      link: 'editar',
+                      name: 'Editar PED'
+                    },
+                    {
+                      link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${pedId}`,
+                      name: 'Atividades'
+                    },
                     {
                       link: planoId ? `planoEstudos/${planoId}/detalhes` : null,
                       name: 'Plano de Estudos',
@@ -153,14 +171,23 @@ const DetalhesPED = () => {
                       name: 'Formulário de Encerramento',
                       desabilitado: formEncerramentoId ? false : true
                     },
-                    {
-                      link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${pedId}`,
-                      name: 'Atividades'
-                    }
                   ]}
                 />
               </div>
               <StatusBalls status={detalhesPED.status} />
+              <div className="buttons-ped">
+                {detalhesPED.status !== "Desativado" && (
+                  <>
+                    <Button text="Desativar PED" color="#f00" onClick={abrirModal} />
+                    <Button
+                      text="Encerrar PED"
+                      onClick={abrirModalConfirmacao}
+                      disabled={detalhesPED.status !== "Finalizada"}
+                      title={detalhesPED.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
+                    />
+                  </>
+                )}
+              </div>
             </div>
           </section>
         </>
@@ -174,31 +201,49 @@ const DetalhesPED = () => {
           </label>
           <section className="sectionDetalhesPED">
             <div className="divDetalhesPED">
-              <label className="labelDetalhesPED">
-                Docente responsável pela progressão
-                <p className="pDetalhesPED">{detalhesPED.professor_ped.nome}</p>
-              </label>
-              <label className="labelDetalhesPED">
-                Docente que ministrou a disciplina
-                <p className="pDetalhesPED">{detalhesPED.professor_disciplina.nome}</p>
-              </label>
-              <label className="labelDetalhesPED">
-                Curso
-                <p className="pDetalhesPED">{detalhesPED.curso.nome}</p>
-              </label>
-              <label className="labelDetalhesPED">
-                Disciplina
-                <p className="pDetalhesPED">{detalhesPED.disciplina.nome}</p>
-              </label>
-              <label className="labelDetalhesPED">
-                Ano/Semestre de Reprovação
-                <p className="pDetalhesPED">{detalhesPED.ano_semestre_reprov}</p>
-              </label>
+              <span className="dadosPED">
+                <label className="labelDetalhesPED">
+                  Docente responsável pela progressão
+                  <p className="pDetalhesPED">{detalhesPED.professor_ped.nome}</p>
+                </label>
+                <label className="labelDetalhesPED">
+                  Docente que ministrou a disciplina
+                  <p className="pDetalhesPED">{detalhesPED.professor_disciplina.nome}</p>
+                </label>
+              </span>
+              <span className="dadosPED">
+                <label className="labelDetalhesPED">
+                  Curso
+                  <p className="pDetalhesPED">{detalhesPED.curso.nome}</p>
+                </label>
+                <label className="labelDetalhesPED">
+                  Disciplina
+                  <p className="pDetalhesPED">{detalhesPED.disciplina.nome}</p>
+                </label>
+              </span>
+              <span className="dadosPED">
+                <label className="labelDetalhesPED">
+                  Ano/Semestre de Reprovação
+                  <p className="pDetalhesPED">{detalhesPED.ano_semestre_reprov}</p>
+                </label>
+                <label className="labelDetalhesPED">
+                  Observação
+                  <p className="pDetalhesPED">{detalhesPED.observacao}</p>
+                </label>
+              </span>
             </div>
             <div className="divStatusPED">
-            <div className="opcoesContainer">
-                <Dropdown icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
+              <div className="opcoesContainer">
+                <Dropdown tipo={'icone'} icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
                   itens={[
+                    {
+                      link: 'editar',
+                      name: 'Editar PED'
+                    },
+                    {
+                      link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${pedId}`,
+                      name: 'Atividades'
+                    },
                     {
                       link: planoId ? `planoEstudos/${planoId}/detalhes` : null,
                       name: 'Plano de Estudos',
@@ -207,42 +252,30 @@ const DetalhesPED = () => {
                     {
                       link: formEncerramentoId ? `formEncerramento/${formEncerramentoId}/detalhes` : null,
                       name: 'Formulário de Encerramento',
-                      desabilitado: planoId ? false : true
+                      desabilitado: formEncerramentoId ? false : true
                     },
-                    {
-                      link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${pedId}`,
-                      name: 'Atividades'
-                    }
                   ]}
                 />
               </div>
-              <StatusBalls status={detalhesPED.status} tipo={"PED"} />
+              <StatusBalls status={detalhesPED.status} />
+              <div className="buttons-ped">
+                {detalhesPED.status !== "Desativado" && (
+                  <>
+                    <Button text="Desativar PED" color="#f00" onClick={abrirModal} />
+                    <Button
+                      text="Encerrar PED"
+                      color={"red"}
+                      onClick={abrirModalConfirmacao}
+                      disabled={detalhesPED.status === "Finalizada" ? true : false}
+                      title={detalhesPED.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
+                    />
+                  </>
+                )}
+              </div>
             </div>
           </section>
         </>
       )}
-
-      <label className="labelDetalhesPED">
-        Observação
-        <p className="pDetalhesPED">{detalhesPED.observacao}</p>
-      </label>
-      <div className="buttons-ped">
-        {detalhesPED.status !== "Desativado" && (
-          <>
-            <Link to={"editar"} state={detalhesPED}>
-              <Button text={"Editar PED"} />
-            </Link>
-            <Button text="Desativar PED" color="#f00" onClick={abrirModal} />
-            <Button
-              text="Encerrar PED"
-              color={"red"}
-              onClick={abrirModalConfirmacao}
-              disabled={detalhesPED.status !== "Finalizada"}
-              title={detalhesPED.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
-            />
-          </>
-        )}
-      </div>
 
       <Modal
         estaAberto={modalAberto}

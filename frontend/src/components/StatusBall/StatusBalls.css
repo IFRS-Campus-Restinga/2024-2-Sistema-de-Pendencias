@@ -6,8 +6,8 @@
     max-width: 100%;
     width: 100%;
     min-width: 300px;
-    padding: 10px;
-    margin-top: 10px;
+    margin: auto;
+    padding-top: 10px;
 }
 
 .status-ball {
@@ -54,20 +54,33 @@
     flex: 1;
 }
 
-@media (max-width: 1240px) {
+@media (max-width: 1260px) {
+    .containerProgresso {
+        display: none;
+    }
+
+}
+
+@media (max-width: 1000px) {
+    .containerProgresso {
+        display: flex;
+    }
+}
+
+@media (max-width: 860px) {
     .containerProgresso {
         display: none;
     }
 }
 
-@media (max-width: 1030px) {
+@media (max-width: 570px) {
     .status-ball {
         width: 80px;
         height: 80px;
-        font-size: 12px;
     }
 
     .status-text {
-        font-size: 10px;
+        font-size: 8px;
+        font-weight: 700;
     }
 }

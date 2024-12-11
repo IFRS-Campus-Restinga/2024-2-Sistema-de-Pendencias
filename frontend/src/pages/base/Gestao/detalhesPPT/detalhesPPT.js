@@ -7,6 +7,7 @@ import Button from "../../../../components/Button/Button";
 import Modal from "../../../../components/Modal/Modal";
 import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS";
 import loading from '../../../../assets/loading-disciplinas.png'
+import FormContainer from "../../../../components/FormContainer/FormContainer";
 
 const DetalhesPPT = () => {
   const { idPpt } = useParams();
@@ -56,91 +57,76 @@ const DetalhesPPT = () => {
 
   if (isLoading) return <LoadingIFRS icone={loading}/>
 
-  return (
-    <div className="formContainerDetails">
-      <div className="main-title">
-        <h1>Detalhes da PPT</h1>
-      </div>
-
-      <div className="green-bar-container">
-        <div className="green-bar">
-          <h2>Andamento da PPT</h2>
-        </div>
-        <div className="mainContent">
-
-        <div className="infos">
-          <div className="info-item">
-            <h3 className="h3-info">Matrícula:</h3>
-            <span className="info-value">{detalhesPPT.aluno.nome || "-"}</span>
-          </div>
-          <div className="info-item">
-            <h3 className="h3-info">Curso:</h3>
-            <span className="info-value">{detalhesPPT.curso.nome || "-"}</span>
-          </div>
-          <div className="info-item">
-            <h3 className="h3-info">Turma:</h3>
-            <span className="info-value">{detalhesPPT.turma_atual.numero || "-"}</span>
-          </div>
-          <div className="info-item">
-            <h3 className="h3-info">Turma da PPT:</h3>
-            <span className="info-value">
-              {detalhesPPT.turma_progressao.numero || "-"}
+    return (
+      <>  
+        <FormContainer
+          titulo={`Detalhes da PPT`}
+          comprimento="80%"
+        >
+          <label className="labelCabecalhoDetalhesPPT">
+            <span className="spanDetalhesPPT">
+              Aluno - <p className="nomeAlunoPED">{detalhesPPT.aluno.nome}</p>
             </span>
-          </div>
-          <div className="info-item">
-            <h3 className="h3-info">Disciplina:</h3>
-            <span className="info-value">{detalhesPPT.disciplina.nome || "-"}</span>
-          </div>
-          <div className="info-item">
-            <h3 className="h3-info">Docente responsável:</h3>
-            <span className="info-value">
-              {detalhesPPT.professor_disciplina.nome || "-"}
-            </span>
-          </div>
-          <div className="info-textarea">
-            <h3 className="h3-info">Observações:</h3>
-            <textarea
-              id="textarea"
-              value={detalhesPPT.observacao || ""}
-              disabled
-            />
-          </div>
-        </div>
-        <div className="statusPPT">
-          <StatusBalls status={detalhesPPT.status} aparecerLancado={true}/>
-        </div>
-        </div>
-      </div>
-
-      <div className="buttons">
-        {detalhesPPT.status !== "Desativado" && (
-          <>
-            <Button
-              tipo={"submit"}
-              text="Desativar PPT"
-              color={"red"}
-              onClick={abrirModal}
-            />
-            <Button
-              tipo={"submit"}
-              text="Editar PPT"
-              onClick={handleEditarClick}
-            />
-          </>
-        )}
-      </div>
-
-      <Modal
-        estaAberto={modalAberto}
-        aoFechar={fecharModal}
-        mensagem="Você tem certeza que deseja desativar o PPT?"
-        textoCancelar="Não"
-        textoOk="Desativar"
-        colorButton={"red"}
-        onClick={handleDesativarClick}
-      />
-    </div>
-  );
+            <label className="labelStatusPED">Andamento da PPT</label>
+          </label>
+          <section className="sectionDetalhesPPT">
+            <div className="divDetalhesPPT">
+              <span className="dadosPED">
+                <label className="labelDetalhesPPT">
+                  Docente responsável pela progressão
+                  <p className="pDetalhesPPT">{detalhesPPT.professor_ppt.nome}</p>
+                </label>
+                <label className="labelDetalhesPPT">
+                  Docente que ministrou a disciplina
+                  <p className="pDetalhesPPT">{detalhesPPT.professor_disciplina.nome}</p>
+                </label>
+              </span>
+              <span className="dadosPED">
+                <label className="labelDetalhesPPT">
+                  Curso
+                  <p className="pDetalhesPPT">{detalhesPPT.curso.nome}</p>
+                </label>
+                <label className="labelDetalhesPPT">
+                  Disciplina
+                  <p className="pDetalhesPPT">{detalhesPPT.disciplina.nome}</p>
+                </label>
+              </span>
+              <span className="dadosPED">
+                <label className="labelDetalhesPPT">
+                  Turma Atual
+                  <p className="pDetalhesPPT">{detalhesPPT.turma_atual.numero}</p>
+                </label>
+                <label className="labelDetalhesPPT">
+                  Turma da Progressão
+                  <p className="pDetalhesPPT">{detalhesPPT.turma_progressao.numero}</p>
+                </label>
+                <label className="labelDetalhesPPT">
+                  Observação
+                  <p className="pDetalhesPPT">{detalhesPPT.observacao}</p>
+                </label>
+              </span>
+            </div>
+            <div className="divStatusPED">
+              <StatusBalls status={detalhesPPT.status} />
+              <div className="buttons-ped">
+                {detalhesPPT.status !== "Desativado" && (
+                  <Button text="Desativar PPT" color="#f00" onClick={abrirModal} />
+                )}
+              </div>
+            </div>
+          </section>
+        </FormContainer>
+        <Modal
+          estaAberto={modalAberto}
+          aoFechar={fecharModal}
+          mensagem="Você tem certeza que deseja desativar o PPT?"
+          textoCancelar="Não"
+          textoOk="Desativar"
+          colorButton={"red"}
+          onClick={handleDesativarClick}
+          />
+        </>
+    )
 };
 
 export default DetalhesPPT;

@@ -1,4 +1,6 @@
-.dropdown-cabecalho {
+.dropdown-cabecalho,
+.dropdown-cabecalho-usuario,
+.dropdown-cabecalho-icone {
   background-color: transparent;
   font-weight: bold;
   display: flex;
@@ -7,7 +9,7 @@
   align-items: center;
   font-size: 1rem;
   cursor: pointer;
-  height: 40px;
+  min-height: max-content;
   line-height: 40px;
   color: #000;
   border: none;
@@ -33,60 +35,60 @@
   left: 0;
 }
 
-.dropdown-usuario {
+.dropdown-conteudo,
+.dropdown-conteudo-usuario,
+.dropdown-conteudo-icone {
+  position: absolute;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  min-width: 160px;
+  border-radius: 10px;
+  min-height: min-content;
+  top: 110%;
 }
 
 .dropdown-conteudo,
-.dropdown-usuario-conteudo {
+.dropdown-conteudo-icone {
   background-color: #fff;
-  position: absolute;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  min-width: 160px;
-  max-width: 200px;
-  border-radius: 10px;
+  z-index: 3
 }
 
-.dropdown-conteudo {
-  background-color: #fff;
-  width: fit-content;
-  margin-top: 43px;
-  z-index: 3;
+.dropdown-conteudo-usuario {
+  z-index: 4
 }
 
-.dropdown-usuario-conteudo {
+.dropdown-conteudo-usuario {
+  right: 0;
   background-color: #006b3f;
   border: 2px solid #003c23;
-  z-index: 4;
-  margin-top: 60px;
-
-  .link,
-  .dropdown-item {
-    color: white;
-    font-weight: 500;
-  }
-
 }
 
-.dropdown-item {
+.dropdown-item,
+.dropdown-item-usuario {
   padding: 10px;
   cursor: pointer;
   width: 100%;
   border: none;
   background-color: transparent;
+  min-width: max-content;
   font-weight: 500;
   font-size: 15px;
   text-align: left;
 }
 
-.dropdown-conteudo .dropdown-item:first-child {
+.dropdown-item-usuario {
+  color: white;
+}
+
+.dropdown-conteudo .dropdown-item:first-child,
+.dropdown-conteudo-icone .dropdown-item:first-child {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
 
-.dropdown-conteudo .dropdown-item:last-child {
+.dropdown-conteudo .dropdown-item:last-child,
+.dropdown-conteudo-icone .dropdown-item:last-child {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
@@ -122,17 +124,14 @@
 
 /* Responsividade */
 @media (max-width: 760px) {
-  .dropdown-item {
-    font-size: 14px;
-    font-weight: 600;
+  .dropdown-conteudo {
+    left: 30px;
+    top: 0;
   }
 
-  .dropdown-conteudo {
-    background-color: #fff;
-    z-index: 1;
-    position: absolute;
-    margin-left: 200px;
-    margin-top: 0;
+  .dropdown-conteudo-icone {
+    top: 0;
+    right: 30px;
   }
 
   .dropdown-titulo {
@@ -142,7 +141,6 @@
   .dropdown-cabecalho {
     background-color: transparent;
     position: absolute;
-    font-weight: bold;
     display: flex;
     z-index: 2;
     align-items: center;

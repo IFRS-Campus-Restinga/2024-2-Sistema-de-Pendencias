@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Dropdown.css';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Dropdown = ({ titulo, icone, itens, tipo }) => {
+const Dropdown = ({ titulo, icone, itens, tipo, alinhar }) => {
   const redirect = useNavigate()
   const [aberto, setAberto] = useState(false);
   let timeoutId; // Variável para armazenar o timeout
@@ -20,28 +20,20 @@ const Dropdown = ({ titulo, icone, itens, tipo }) => {
 
     return (
       <>
-        {tipo !== 'usuario' ? (
-          <>
+        {icone && titulo ? (
             <button
               className="dropdown-cabecalho"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
               {icone}
-              {
-                titulo ? (
-                  <span className="dropdown-titulo">
-                    {titulo}
-                  </span>
-                ) : (<></>)
-              }
-            </button>
+              <span className='dropdown-titulo'>{titulo}</span>
             {aberto && (
               <div
                 className="dropdown-conteudo"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-              >
+                >
                 {itens.map((item, index) => (
                     <button className="dropdown-item" disabled={item.desabilitado} onClick={() => redirect(item.link)}>
                       {item.name}
@@ -49,35 +41,54 @@ const Dropdown = ({ titulo, icone, itens, tipo }) => {
                 ))}
               </div>
             )}
-          </>
-        ) : (
-          <>
-            <span 
+          </button>
+        ) : tipo === 'usuario' ? (
+            <button 
              onMouseEnter={handleMouseEnter}
              onMouseLeave={handleMouseLeave}
-             className='dropdown-usuario'
-            >{titulo}
-            </span>
+             className='dropdown-cabecalho-usuario'
+            >{icone}
             {aberto && (
               <div
-                className="dropdown-usuario-conteudo"
+                className="dropdown-conteudo-usuario"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-              >
+                >
                 {itens.map((item, index) => (
                   item.link ? (
                     <Link key={index} to={item.link} className="link">
-                      <div className="dropdown-item">{item.name}</div>
+                      <div className="dropdown-item-usuario">{item.name}</div>
                     </Link>
                   ) : (
-                    <div className="dropdown-item" onClick={item.onClick}>{item.name}</div>
+                    <div className="dropdown-item-usuario" onClick={item.onClick}>{item.name}</div>
                   )
                 ))
               }
               </div>
             )}
-          </>
-        )}
+            </button>
+        ) : tipo === 'icone' ? (
+            <button 
+             onMouseEnter={handleMouseEnter}
+             onMouseLeave={handleMouseLeave}
+             className='dropdown-cabecalho-icone'
+            >{icone}
+            {aberto && (
+              <div
+                className="dropdown-conteudo-icone"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                >
+                {itens.map((item, index) => (
+                  <button className="dropdown-item" disabled={item.desabilitado} onClick={() => redirect(item.link)}>
+                    {item.name}
+                  </button>
+                ))
+              }
+              </div>
+            )}
+            </button>
+        ) : (<></>)}
       </>
   );
 };

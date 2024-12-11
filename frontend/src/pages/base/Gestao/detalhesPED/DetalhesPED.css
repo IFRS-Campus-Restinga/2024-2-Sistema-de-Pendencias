@@ -4,11 +4,6 @@
     justify-content: flex-start;
 }
 
-.sectionDetalhesPEDEMI {
-    max-width: 100%;
-    display: flex;
-}
-
 .divDetalhesPED {
     width: fit-content;
     display: flex;
@@ -22,36 +17,44 @@
     background-color: #f1f1f1;
     margin-top: 10px;
     border-radius: 10px;
-    max-height: 400px;
+    max-height: 300px;
+    margin-left: 15px;
+    padding: 10px;
 }
 
 .opcoesContainer {
     display: flex;
-    padding: 10px;
-    padding-right: 20px;
     justify-content: end;
-}
-
-.status-container {
-    margin: auto;
+    min-height: 24px;
 }
 
 .labelDetalhesPED {
+    display: flex;
+    flex-direction: column;
     font-weight: bold;
-    font-size: 15px;
+    font-size: 17px;
     margin: 10px;
+}
+
+.nomeAlunoPED {
+    font-size: 15px;
+    margin-left: 10px;
 }
 
 .pDetalhesPED {
     font-weight: 400;
-    font-size: 20px;
-    padding: 5px;
+    font-size: 15px;
+    margin: 5px;
 }
 
 .spanDetalhesPED {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
+}
+
+.labelStatusPED {
+    margin: auto;
 }
 
 .labelCabecalhoDetalhesPED {
@@ -67,11 +70,64 @@
     border-radius: 10px;
 }
 
-.labelStatusPED {
-    margin: auto;
-}
-
 .buttons-ped {
     display: flex;
     flex-direction: row;
+    justify-content: center;
+    padding-top: 10px;
+}
+
+@media (max-width: 1260px) {
+    .divStatusPED {
+        height: 300px;
+    }
+
+    .labelDetalhesPED {
+        font-size: 15px;
+    }
+
+    .pDetalhesPED {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .sectionDetalhesPED {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .labelStatusPED {
+        display: none;
+    }
+
+    .dadosPED {
+        display: flex;
+    }
+
+    .divStatusPED {
+        width: 100%;
+        height: max-content;
+        flex: none;
+        margin: 0;
+    }
+
+    .divDetalhesPED {
+        margin: 10px;
+        border: 2px solid #ccc;
+        border-radius: 10px;
+    }
+}
+
+@media (max-width: 760px) {
+    .opcoesContainer {
+        min-height: 24px;
+    }
+}
+
+@media (max-width: 680px) {
+    .labelDetalhesPED {
+        font-size: 12px;
+    }
 }
