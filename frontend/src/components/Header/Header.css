@@ -27,6 +27,7 @@
 
 .header-grupo {
     margin-left: 5px;
+    text-align: center;
 }
 
 .header-titulo {
@@ -65,9 +66,9 @@ a {
 }
 
 .logo {
-    max-width: 100%;
+    max-width: 180px;
     height: auto;
-    width: 180px;
+    width: 30%;
 }
 
 #button-logout {
@@ -149,17 +150,33 @@ a {
 }
 
 
-@media (max-width: 600px) {
+@media (max-width: 730px) {
     .header-saudacao {
         display: none;
     }
 }
 
-@media (max-width: 400px) {
-    .header-nome {
-        display: none;
+@media (max-width: 630px) {
+    .menu {
+        margin: 0;
     }
 
+    .header-nome,
+    .header-grupo {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .fotoPerfil,
+    .buttonNotif {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+@media (max-width: 400px) {
     .header-titulo {
         display: none;
         margin: 0;

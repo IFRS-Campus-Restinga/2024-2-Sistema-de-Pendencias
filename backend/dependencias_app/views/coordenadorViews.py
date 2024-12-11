@@ -1,3 +1,5 @@
+import os
+import threading
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes
@@ -7,6 +9,7 @@ from google_auth.models import UsuarioBase
 from dependencias_app.serializers.coordenadorSerializer import CoordenadorSerializer
 from dependencias_app.permissoes import *
 from dependencias_app.models.coordenador import Coordenador
+from dependencias_app.utils.enviar_email import enviar_email
 
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
@@ -27,9 +30,17 @@ def cadastrarCoordenador(request):
         serializer = UsuarioBaseSerializer(data=data)
 
         # valida os dados do serializador
-        if not serializer.is_valid(): raise Exception(f'{serializer.error_messages}')
+        if not serializer.is_valid(): raise Exception(f'{serializer.errors}')
 
         serializer.save()
+
+        template = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        'templates_email',
+        'novoUsuario.html'
+        )
+
+        threading.Thread(target=enviar_email, args=(serializer, template, 'Boas Vindas ao Sistema de Dependências', serializer.grupo.name)).start()
         # retorna uma resposta positiva
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:

@@ -8,6 +8,13 @@
   transition: background-color 0.3s;
   font-family: 'Roboto', sans-serif;
   font-weight: bold;
+  width: fit-content;
+}
+
+.custom-button:disabled {
+  background-color: #ccc;
+  color: white;
+  cursor: not-allowed
 }
 
 .containerBotao {

@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import LogoIFRS from '../../../../assets/logo-ifrs-colorido.png';
 
 const DetalhesPlanoEstudo = () => {
-  const { idUsuario, pedId, modalidade } = useParams();
+  const { idUsuario, pedId, modalidade, planoId } = useParams();
 
   const [planoEstudo, setPlanoEstudo] = useState(null);
   const [detalhesPED, setDetalhesPED] = useState(null);
@@ -25,13 +25,13 @@ const DetalhesPlanoEstudo = () => {
   useEffect(() => {
     const fetchDados = async () => {
       try {
-        const planoResponse = await PlanoEstudosService.buscarPlanoEstudo(pedId);
+        const planoResponse = await PlanoEstudosService.buscarPlanoEstudo(planoId);
         console.log("Plano de Estudo:", planoResponse);
 
         const pedResponse = await PEDService.porId(pedId, tipoPed === 'peds-emi' ? 'Integrado' : 'ProEJA', 'detalhes');
         console.log("Detalhes PED:", pedResponse.data);
 
-        setPlanoEstudo(planoResponse);
+        setPlanoEstudo(planoResponse.data);
         setDetalhesPED(pedResponse.data);
       } catch (err) {
         console.error("Erro ao carregar dados:", err);
@@ -70,8 +70,8 @@ const DetalhesPlanoEstudo = () => {
     doc.text(`Forma de oferta: ${planoEstudo?.forma_oferta}`, 14, 90);
     doc.text(`Componente Curricular: ${detalhesPED?.disciplina?.nome}`, 14, 100);
     doc.text(`Professor(a): ${detalhesPED?.professor_ped?.nome}`, 14, 110);
-    doc.text(`Semestre/Ano letivo: ${detalhesPED?.trimestre_recuperar}`, 14, 120);
-    doc.text(`Semestre/Série do curso: ${detalhesPED?.serie_progressao}`, 14, 130);
+    doc.text(`Semestre/Ano letivo: ${detalhesPED?.trimestre_recuperar || detalhesPED.ano_semestre_reprov}`, 14, 120);
+    doc.text(`Semestre/Série do curso: ${detalhesPED?.serie_progressao || detalhesPED.ano_semestre_reprov}`, 14, 130);
 
     const turnos = ["Manhã", "Tarde", "Noite", "Integral"];
     const yTurnoBase = 140;

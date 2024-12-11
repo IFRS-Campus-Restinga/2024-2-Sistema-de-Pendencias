@@ -23,7 +23,7 @@ const ListarPPTRegistro = () => {
 
     const fetchPPT = async () => {
         try {
-            const res = await PPTService.listRegistro();
+            const res = await PPTService.list('lista');
 
             if (res.status !== 200) throw new Error(res.response.data.mensagem);
 

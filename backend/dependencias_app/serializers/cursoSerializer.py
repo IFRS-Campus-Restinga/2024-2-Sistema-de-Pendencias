@@ -57,9 +57,7 @@ class CursoSerializer(serializers.ModelSerializer):
         return value     
 
     def update(self, instance, validated_data):
-        """
-        Atualiza o curso e as turmas associadas.
-        """
+        print(validated_data)
         turmas_data = validated_data.pop('turmas', [])  # Pega as turmas associadas
 
         # Atualiza os campos do curso

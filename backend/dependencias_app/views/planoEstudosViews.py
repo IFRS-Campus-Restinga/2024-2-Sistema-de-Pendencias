@@ -68,17 +68,17 @@ def cadastrar_plano_estudos(request, pedId):
 #OPÇÃO CERTA
 @api_view(['GET'])
 @permission_classes([GestaoEscolar | Professor | Aluno])
-def detalhes_plano_estudos(request, ped_id):
+def detalhes_plano_estudos(request, planoId):
     try:
         # Busca o plano de estudos pelo ID
-        plano_estudo = PlanoEstudos.objects.filter(id=ped_id).first()
+        plano_estudo = PlanoEstudos.objects.get(id=planoId)
         
         # Caso o plano de estudos não exista
         if not plano_estudo:
             return Response({"erro": "Plano de estudos não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
         # Serializa o plano de estudos
-        serializer = PlanoEstudos_Serializer(plano_estudo)
+        serializer = PlanoEstudos_Serializer(plano_estudo, context={'request': request})
 
         # Retorna os dados do plano de estudos
         return Response(serializer.data, status=status.HTTP_200_OK)

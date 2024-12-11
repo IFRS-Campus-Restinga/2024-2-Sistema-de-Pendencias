@@ -119,10 +119,11 @@ const Header = ({homeUrl}) => {
               <h2 className="header-saudacao">
                 Bem vindo,
               </h2>
-              <p className="header-nome">{nome}</p>
-              <p className="header-grupo">({jwtDecode(sessionStorage.getItem('token')).grupo})</p>
+                <p className="header-nome">{nome}</p>
+                <p className="header-grupo">({jwtDecode(sessionStorage.getItem('token')).grupo})</p>
             </span>
-              <Dropdown 
+              <Dropdown
+                tipo={'usuario'}
                 titulo={
                   <img src={jwtDecode(sessionStorage.getItem('token')).fotoPerfil} className="fotoPerfil"/>
                 } 

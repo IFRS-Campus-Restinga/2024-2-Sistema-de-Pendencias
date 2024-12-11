@@ -52,7 +52,6 @@ const StatusBalls = ({ status, tipo, parecerLancado }) => {
 
 
             {/* Bola 3: Lançado */}
-            {parecerLancado && (
                 <>
                 <div className='containerProgresso'>
                     <div style={{width: '14px', height: '14px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#00b36b' : 'white', border: '1px solid #ccc'}}/>
@@ -64,7 +63,6 @@ const StatusBalls = ({ status, tipo, parecerLancado }) => {
                     <div className="status-text">Lançado</div>
                 </div>
                 </>
-             )}
                 <div className='containerProgresso'>
                     <div style={{width: '14px', height: '14px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#00b36b' : 'white', border: '1px solid #ccc'}}/>
                     <div style={{width: '17px', height: '17px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#009e55' : 'white', border: '1px solid #ccc'}}/>

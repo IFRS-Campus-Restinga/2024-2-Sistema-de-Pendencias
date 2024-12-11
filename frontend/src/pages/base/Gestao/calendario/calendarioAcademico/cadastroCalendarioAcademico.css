@@ -34,30 +34,6 @@ button[type="submit"] {
   box-sizing: border-box;
 }
 
-/* Estilo para o campo Data Início */
-#data_inicio {
-  width: 100%;
-  padding: 12px;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 15px;
-  box-sizing: border-box;
-}
-
-/* Estilo para o campo Data Fim */
-#data_fim {
-  width: 100%;
-  padding: 12px;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 15px;
-  box-sizing: border-box;
-}
-
 /* Estilo para o campo Tipo de Calendário */
 #tipo_calendario {
   width: 100%;

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './Dropdown.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-const Dropdown = ({ titulo, icone, itens }) => {
+const Dropdown = ({ titulo, icone, itens, tipo }) => {
+  const redirect = useNavigate()
   const [aberto, setAberto] = useState(false);
   let timeoutId; // Variável para armazenar o timeout
 
@@ -19,7 +20,7 @@ const Dropdown = ({ titulo, icone, itens }) => {
 
     return (
       <>
-        {typeof titulo === 'string' ? (
+        {tipo !== 'usuario' ? (
           <>
             <button
               className="dropdown-cabecalho"
@@ -27,9 +28,13 @@ const Dropdown = ({ titulo, icone, itens }) => {
               onMouseLeave={handleMouseLeave}
             >
               {icone}
-              <span className="dropdown-titulo">
-                {titulo}
-              </span>
+              {
+                titulo ? (
+                  <span className="dropdown-titulo">
+                    {titulo}
+                  </span>
+                ) : (<></>)
+              }
             </button>
             {aberto && (
               <div
@@ -38,9 +43,9 @@ const Dropdown = ({ titulo, icone, itens }) => {
                 onMouseLeave={handleMouseLeave}
               >
                 {itens.map((item, index) => (
-                  <Link key={index} to={item.link} className="link">
-                    <div className="dropdown-item">{item.name}</div>
-                  </Link>
+                    <button className="dropdown-item" disabled={item.desabilitado} onClick={() => redirect(item.link)}>
+                      {item.name}
+                    </button>
                 ))}
               </div>
             )}

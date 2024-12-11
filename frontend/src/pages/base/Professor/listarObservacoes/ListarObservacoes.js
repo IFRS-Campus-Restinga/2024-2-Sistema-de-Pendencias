@@ -9,6 +9,7 @@ import Input from '../../../../components/Input/Input';
 import Lupa from "../../../../assets/lupa-branca.png";
 import X from "../../../../assets/x-branco.png";
 import Adicionar from "../../../../assets/icone-adicionar-curso.png";
+import FormContainer from '../../../../components/FormContainer/FormContainer';
 
 const ListarObservacoes = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -72,43 +73,45 @@ const ListarObservacoes = () => {
   return (
     <>
       <ToastContainer />
-      <div className="containerBuscarObservacao">
-        <div className="buscaBarObservacao">
-          <Input
-            tipo="search"
-            valor={filtroGeral}
-            onChange={(e) => setFiltroGeral(e.target.value)}
-            textoAjuda="Buscar Observações"
-          />
-          <img
-            className="iconesBuscarObservacao"
-            src={Lupa}
-            onClick={filtrarObservacoes}
-            title="Buscar"
-          />
-          <img
-            className="iconesBuscarObservacao"
-            src={X}
-            onClick={limparBusca}
-            title="Limpar Busca"
-          />
-        </div>
-        <div className="adicionarObservacao">
-          <img
-            src={Adicionar}
-            className="iconeAdicionarObservacao"
-            onClick={() => navigate(`/sessao/Professor/${idUsuario}/adicionarObservacao`)}
-            title="Adicionar Observação"
-          />
-        </div>
-      </div>
+      <FormContainer titulo={'Observações'}>
+          <div className="containerBuscarObservacao">
+            <div className="buscaBarObservacao">
+              <Input
+                tipo="search"
+                valor={filtroGeral}
+                onChange={(e) => setFiltroGeral(e.target.value)}
+                textoAjuda="Buscar Observações"
+              />
+              <img
+                className="iconesBuscarObservacao"
+                src={Lupa}
+                onClick={filtrarObservacoes}
+                title="Buscar"
+              />
+              <img
+                className="iconesBuscarObservacao"
+                src={X}
+                onClick={limparBusca}
+                title="Limpar Busca"
+              />
+            </div>
+            <div className="adicionarObservacao">
+              <img
+                src={Adicionar}
+                className="iconeAdicionarObservacao"
+                onClick={() => navigate(`/sessao/Professor/${idUsuario}/adicionarObservacao`)}
+                title="Adicionar Observação"
+              />
+            </div>
+          </div>
 
-      <Tabela
-        listaFiltrada={observacoesFiltradas}
-        editar={true}
-        visualizar={true}
-        onVisualizar={handleVisualizar}  // Passando o método de visualização para o Tabela
-      />
+          <Tabela
+            listaFiltrada={observacoesFiltradas}
+            editar={true}
+            visualizar={true}
+            onVisualizar={handleVisualizar}  // Passando o método de visualização para o Tabela
+          />
+      </FormContainer>
     </>
   );
 };

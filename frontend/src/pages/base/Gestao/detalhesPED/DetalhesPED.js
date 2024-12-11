@@ -9,11 +9,16 @@ import { PEDService } from "../../../../services/pedService";
 import { jwtDecode } from 'jwt-decode';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Dropdown from "../../../../components/Dropdown/Dropdown";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGear } from "@fortawesome/free-solid-svg-icons";
 
 const DetalhesPED = () => {
   const { pedId } = useParams();
-  const location = useLocation()
+  const location = useLocation();
   const tipoPed = location.pathname.split('/')[4];
+  const [planoId, setPlanoId] = useState(null)
+  const [formEncerramentoId, setFormEncerramentoId] = useState(null)
   const [detalhesPED, setDetalhesPED] = useState({});
   const [modalAberto, setModalAberto] = useState(false);
   const abrirModal = () => setModalAberto(true);
@@ -31,6 +36,8 @@ const DetalhesPED = () => {
       if (res.status !== 200) throw new Error(res.response?.data?.mensagem);
 
       setDetalhesPED(res.data);
+      setPlanoId(res.data.plano_estudos)
+      setFormEncerramentoId(res.data.form_encerramento)
     } catch (error) {
       console.error("Erro ao buscar detalhes da PED:", error.message);
     }
@@ -132,19 +139,28 @@ const DetalhesPED = () => {
                 <p className="pDetalhesPED">{detalhesPED.turma_atual.numero}</p>
               </label>
             </div>
-            <div className="divStatusPEDEMI">
+            <div className="divStatusPED">
+              <div className="opcoesContainer">
+                <Dropdown icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
+                  itens={[
+                    {
+                      link: planoId ? `planoEstudos/${planoId}/detalhes` : null,
+                      name: 'Plano de Estudos',
+                      desabilitado: planoId ? false : true
+                    },
+                    {
+                      link: formEncerramentoId ? `formEncerramento/${formEncerramentoId}/detalhes` : null,
+                      name: 'Formulário de Encerramento',
+                      desabilitado: formEncerramentoId ? false : true
+                    },
+                    {
+                      link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${pedId}`,
+                      name: 'Atividades'
+                    }
+                  ]}
+                />
+              </div>
               <StatusBalls status={detalhesPED.status} />
-              <span className="spanDetalhesPED">
-                <Link to={"planoEstudos"}>
-                  <Button text="Plano de Estudos" />
-                </Link>
-                <Link to={"cadastrar-form-encerramento"}>
-                  <Button text="Formulário de Encerramento" />
-                </Link>
-                <Link to={`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${pedId}`}>
-                  <Button text='Atividades'/>
-                </Link>
-              </span>
             </div>
           </section>
         </>
@@ -180,18 +196,27 @@ const DetalhesPED = () => {
               </label>
             </div>
             <div className="divStatusPED">
+            <div className="opcoesContainer">
+                <Dropdown icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
+                  itens={[
+                    {
+                      link: planoId ? `planoEstudos/${planoId}/detalhes` : null,
+                      name: 'Plano de Estudos',
+                      desabilitado: planoId ? false : true
+                    },
+                    {
+                      link: formEncerramentoId ? `formEncerramento/${formEncerramentoId}/detalhes` : null,
+                      name: 'Formulário de Encerramento',
+                      desabilitado: planoId ? false : true
+                    },
+                    {
+                      link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${pedId}`,
+                      name: 'Atividades'
+                    }
+                  ]}
+                />
+              </div>
               <StatusBalls status={detalhesPED.status} tipo={"PED"} />
-              <span className="spanDetalhesPED">
-                <Link to={"planoEstudos"}>
-                  <Button text="Plano de Estudos" />
-                </Link>
-                <Link to={"cadastrar-form-encerramento"}>
-                  <Button text="Formulário de Encerramento" />
-                </Link>
-                <Link to={`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/proeja/${pedId}`}>
-                  <Button text='Atividades'/>
-                </Link>
-              </span>
             </div>
           </section>
         </>
@@ -202,13 +227,12 @@ const DetalhesPED = () => {
         <p className="pDetalhesPED">{detalhesPED.observacao}</p>
       </label>
       <div className="buttons-ped">
-      <span className="spanDetalhesPED">
         {detalhesPED.status !== "Desativado" && (
           <>
             <Link to={"editar"} state={detalhesPED}>
               <Button text={"Editar PED"} />
             </Link>
-            <Button text="Desativar PED" color={"red"} onClick={abrirModal} />
+            <Button text="Desativar PED" color="#f00" onClick={abrirModal} />
             <Button
               text="Encerrar PED"
               color={"red"}
@@ -218,7 +242,6 @@ const DetalhesPED = () => {
             />
           </>
         )}
-      </span>
       </div>
 
       <Modal

@@ -7,6 +7,7 @@ import './eventoCalendario.css';
 import validarEvento from "./validacoes";
 import Button from "../../../../../components/Button/Button";
 import FormContainer from "../../../../../components/FormContainer/FormContainer";
+import Input from '../../../../../components/Input/Input';
 
 const EventoCalendarioPage = () => {
   const navigate = useNavigate();
@@ -129,7 +130,7 @@ const EventoCalendarioPage = () => {
         {showErrorMessage && <p style={{ color: 'red' }}>* Preencha todos os campos obrigatórios</p>}
 
         <label className='labelCustomizado'>Título
-          <input
+          <Input
             id="titulo"
             type='text'
             name="titulo"
@@ -152,7 +153,7 @@ const EventoCalendarioPage = () => {
         </label>
 
         <label className='labelCustomizado'>Data Início
-          <input
+          <Input
             id="data_inicio"
             type="date"
             name="data_inicio"
@@ -174,7 +175,7 @@ const EventoCalendarioPage = () => {
 
         {!formData.dia_todo && (
           <label className='labelCustomizado'>Horário Início:
-            <input
+            <Input
               id='hora_inicio'
               type="time"
               name="hora_inicio"
@@ -186,7 +187,7 @@ const EventoCalendarioPage = () => {
         )}
 
         <label className='labelCustomizado'>Data Fim
-          <input
+          <Input
             id="data_fim"
             type="date"
             name="data_fim"
@@ -200,7 +201,7 @@ const EventoCalendarioPage = () => {
 
         {!formData.dia_todo && (
           <label className='labelCustomizado'>Horário Fim:
-            <input
+            <Input
               id='hora_fim'
               type="time"
               name="hora_fim"

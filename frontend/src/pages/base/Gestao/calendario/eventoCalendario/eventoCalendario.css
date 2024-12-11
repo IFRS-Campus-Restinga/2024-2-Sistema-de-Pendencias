@@ -43,9 +43,9 @@ button[type="submit"] {
   margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 12px;
   box-sizing: border-box;
-  min-height: 100px;
+  min-height: 50px;
   /* para destacar como área de texto */
   resize: vertical;
   /* permite redimensionar verticalmente */
@@ -91,28 +91,4 @@ button[type="submit"] {
 
 #botaoDelete {
   background-color: #cd0000;
-}
-
-/* Estilo para o campo Data Início */
-#data_inicio {
-  width: 100%;
-  padding: 12px;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 15px;
-  box-sizing: border-box;
-}
-
-/* Estilo para o campo Data Fim */
-#data_fim {
-  width: 100%;
-  padding: 12px;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 15px;
-  box-sizing: border-box;
 }

@@ -24,18 +24,3 @@
     align-items: center;
     margin: 10px;
 }
-
-@media (max-width: 900) {
-    .formContainer {
-        padding: 20px;
-
-    }
-}
-
-@media screen and (max-width: 760px) {
-    .formContainer {
-        width: 70%;
-        max-height: 90vh;
-        justify-content: space-evenly;
-    }
-}

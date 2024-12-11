@@ -23,11 +23,23 @@
 }
 
 @media (max-width: 760px) {
+    .container {
+        display: flex;
+    }
+
+    .navItemContainer {
+        height: 25%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     .navBarGestao {
         display: flex;
         flex-direction: column;
-        justify-content: space-evenly;
         align-items: center;
+        justify-content: unset;
         align-self: flex-start;
         max-height: 100vh;
         height: 100vh;
@@ -37,14 +49,5 @@
 
     .navTexto {
         display: none;
-    }
-
-    .navItemContainer {
-        height: fit-content;
-        width: fit-content;
-        max-width: fit-content;
-        max-height: fit-content;
-        padding: 0;
-        margin: 0;
     }
 }

@@ -33,8 +33,8 @@ export const PPTService = {
     return res
   },
 
-  getById: async (id, retorno) => {
-    const res = await api.get(`api/listar-ppt/${id}/`, {
+  getById: async (idPpt, retorno) => {
+    const res = await api.get(`api/listar-ppt/${idPpt}/`, {
       params: {
         retorno
       }

@@ -104,7 +104,7 @@ urlpatterns = [
     path('aluno/ppt/<int:pptId>/', detalhes_ppt_aluno, name='detalhes_ppt_aluno'),
 
 
-    path('detalhes-plano-estudos/<int:ped_id>/', detalhes_plano_estudos, name='detalhes_plano_estudos'),
+    path('detalhes-plano-estudos/<int:planoId>/', detalhes_plano_estudos, name='detalhes_plano_estudos'),
     path('atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
     
     #views para tela de observaçoes

@@ -7,11 +7,15 @@ export const PlanoEstudosService = {
   },
  
 
-  buscarPlanoEstudo: async (pedId) => {
+  buscarPlanoEstudo: async (planoId, retorno) => {
     try {
-      const response = await api.get(`api/detalhes-plano-estudos/${pedId}/`);
+      const response = await api.get(`api/detalhes-plano-estudos/${planoId}/`, {
+        params: {
+          retorno
+        }
+      });
       console.log("Dados do Plano de Estudo recebidos:", response.data);
-      return response.data;
+      return response;
     } catch (error) {
       console.error("Erro ao buscar detalhes do plano de estudos:", error);
       throw error;

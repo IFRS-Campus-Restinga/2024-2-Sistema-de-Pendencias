@@ -10,28 +10,29 @@ import "./DetalhesPlanoEstudo.css";
 const DetalhesPlanoEstudo = () => {
   const { pedId, modalidade } = useParams();
   const location = useLocation();
-  const { usuarioId } = location.state || {};
+  const { usuarioId, plano_id } = location.state || {};
 
-  const [planoEstudo, setPlanoEstudo] = useState(null);
+  const [planoEstudo, setPlanoEstudo] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchPlanoEstudo = async () => {
-      try {
-        const response = await PlanoEstudosService.buscarPlanoEstudo(pedId);
-        setPlanoEstudo(response.data);
-      } catch (err) {
-        console.error(err);
-        setError("Erro ao carregar os detalhes do plano de estudos.");
-        toast.error("Erro ao carregar os detalhes do plano de estudos.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchPlanoEstudo = async () => {
+    try {
+      const response = await PlanoEstudosService.buscarPlanoEstudo(plano_id, 'aluno');
+      setPlanoEstudo(response.data);
 
+    } catch (err) {
+      console.error(err);
+      setError("Erro ao carregar os detalhes do plano de estudos.");
+      toast.error("Erro ao carregar os detalhes do plano de estudos.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchPlanoEstudo();
   }, [pedId]);
 
@@ -44,8 +45,8 @@ const DetalhesPlanoEstudo = () => {
   return (
     <FormContainer titulo="Detalhes do Plano de Estudos">
       <div className="detalhes-plano-estudos">
-        <p><strong>Forma de Oferta:</strong> {planoEstudo?.forma_oferta || "Não informado"}</p>
-        <p><strong>Turno:</strong> {planoEstudo?.turno || "Não informado"}</p>
+        <p><strong>Forma de Oferta:</strong> {planoEstudo.forma_oferta || "Não informado"}</p>
+        <p><strong>Turno:</strong> {planoEstudo.turno || "Não informado"}</p>
       </div>
 
       <div className="buttonContainer">

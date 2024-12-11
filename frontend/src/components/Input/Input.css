@@ -20,21 +20,3 @@ input:focus {
     border: 1px solid #797979;
     outline: none;
 }
-
-@media (max-width: 740px) {
-
-    .input,
-    .input[type='date'] {
-        font-size: 10px;
-    }
-}
-
-/* .sem-setas::-webkit-inner-spin-button,
-.sem-setas::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-.sem-setas {
-    -moz-appearance: textfield;
-} */

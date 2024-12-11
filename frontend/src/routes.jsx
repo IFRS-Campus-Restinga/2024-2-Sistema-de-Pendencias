@@ -82,17 +82,38 @@ const router = createBrowserRouter([
                 path: ':idUsuario/',
                 element: <HomeGestao />
             },
-            {
-                path: ':idUsuario/cadastroCurso',
-                element: <CadastroCurso />
-            },
+            // Rotas de Servidores
             {
                 path: ':idUsuario/cadastroServidor',
                 element: <CadastroServidor />
             },
             {
+                path: ':idUsuario/servidores',
+                element: <ListarServidor />
+            },
+            {
+                path: ':idUsuario/servidores/:idServidor',
+                element: <DetalhesServidor />
+            },
+            {
+                path: ':idUsuario/servidores/:idServidor/editar',
+                element: <CadastroServidor />
+            },
+            {
                 path: ':idUsuario/cadastroAluno',
                 element: <CadastroAluno />
+            },
+            {
+                path: ':idUsuario/alunos',
+                element: <ListarAluno />
+            },
+            {
+                path: ':idUsuario/alunos/:idAluno',
+                element: <DetalhesAluno />
+            },
+            {
+                path: ':idUsuario/cadastroCurso',
+                element: <CadastroCurso />
             },
             {
                 path: ':idUsuario/cadastroDisciplina',
@@ -101,10 +122,6 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/cadastroPED',
                 element: <CadastroPED />
-            },
-            {
-                path: ':idUsuario/servidores',
-                element: <ListarServidor />
             },
             {
                 path: ':idUsuario/cursos',
@@ -151,10 +168,6 @@ const router = createBrowserRouter([
                 element: <ListarCalendariosAcademicosPage />
             },
             {
-                path: ':idUsuario/servidores/:idServidor',
-                element: <DetalhesServidor />
-            },
-            {
                 path: ':idUsuario/cadastroPPT',
                 element: <CadastroPPT />
             },
@@ -195,20 +208,12 @@ const router = createBrowserRouter([
                 element: <CadastroPED />
             },
             {
-                path: ':idUsario/peds-proeja/:pedId/planoEstudos',
-                element: <PlanoEstudos />
+                path: ':idUsario/peds-proeja/:pedId/planoEstudos/:planoId/detalhes',
+                element: <DetalhesPlanoEstudos />
             },
             {
-                path: ':idUsuario/servidores/:idServidor/editar',
-                element: <CadastroServidor />
-            },
-            {
-                path: ':idUsuario/alunos',
-                element: <ListarAluno />
-            },
-            {
-                path: ':idUsuario/alunos/:idAluno',
-                element: <DetalhesAluno />
+                path: ':idUsario/peds-emi/:pedId/planoEstudos/:planoId/detalhes',
+                element: <DetalhesPlanoEstudos />
             },
             {
                 path: ':idUsuario/atividades/:pedTipo/:pedId',
@@ -313,7 +318,7 @@ const router = createBrowserRouter([
                 element: <PlanoEstudos />
             },
             {
-                path: ':idUsuario/peds-emi/:pedId/planoEstudos/:pedId/detalhes',
+                path: ':idUsuario/peds-emi/:pedId/planoEstudos/:planoId/detalhes',
                 element: <DetalhesPlanoEstudos />
             },
             {
@@ -351,7 +356,7 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/editarObservacao/:idObservacao',
                 element: <AdicionarObservacao />,
-              },
+            },
 
 
         ]

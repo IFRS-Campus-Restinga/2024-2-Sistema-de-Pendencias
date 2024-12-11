@@ -15,6 +15,7 @@ const Tabela = ({
   editar,
   visualizar
 }) => {
+  const [largura, setLargura] = useState(window.innerWidth)
   const [ordenacao, setOrdenacao] = useState({ coluna: "", ordem: "asc" });
   const [listaOrdenada, setListaOrdenada] = useState([]);
   const [colunas, setColunas] = useState([]);
@@ -35,6 +36,14 @@ const Tabela = ({
       fecharModal();
     }
   };
+
+  const setLimiteCaracteres = () => {
+    if (largura < 1000) {
+      return 15; // Limite para telas pequenas
+    } else {
+      return 35; // Limite para telas grandes
+    }
+  }
 
   const ordenarPorColuna = (coluna) => {
     const novaOrdem =
@@ -89,12 +98,23 @@ const Tabela = ({
           : maior;
       }, {});
 
-      console.log(listaFiltrada);
 
       setListaOrdenada(listaFiltrada);
       setColunas(Object.keys(modeloColunas));
     }
   }, [listaFiltrada]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setLargura(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [])
 
   return listaFiltrada.length ? (
     <div className="divContainerTabela">
@@ -171,7 +191,7 @@ const Tabela = ({
                     {typeof item[coluna] === "string" &&
                       /^\d{4}-\d{2}-\d{2}$/.test(item[coluna])
                       ? item[coluna].split("-").reverse().join("/")
-                      : limitadorDeTexto(item[coluna] || "-", 35)}
+                      : limitadorDeTexto(item[coluna] || "-", setLimiteCaracteres())}
                   </td>
                 ) : (
                   <></>

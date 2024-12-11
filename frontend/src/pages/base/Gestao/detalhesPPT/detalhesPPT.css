@@ -1,5 +1,5 @@
-.formContainerDetails{
-    width: 60%;
+.formContainerDetails {
+    width: 80%;
     background-color: white;
     border-radius: 8px;
     padding: 20px;
@@ -75,13 +75,13 @@
     outline: none;
 }
 
-.buttons{
+.buttons {
     display: flex;
     flex-direction: row;
     justify-content: center;
 }
 
-.statusPPT{
+.statusPPT {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -93,12 +93,12 @@
     max-height: 280px;
 }
 
-.mainContent{
+.mainContent {
     display: flex;
     justify-content: space-between;
 }
 
-.infos{
+.infos {
     margin-top: 10px;
     margin-left: 10px;
 }

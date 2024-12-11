@@ -16,7 +16,7 @@ const DetalhesServidor = () => {
 
     // Função para editar servidor
     const handleEditar = () => {
-        navigate(`editarServidor/`, { state: { state } });
+        navigate(`editar`, { state: { state } });
     };
 
     return (

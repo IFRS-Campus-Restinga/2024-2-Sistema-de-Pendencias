@@ -143,6 +143,9 @@ const DetalhesPEDProfessor = () => {
                 <Link to={`/sessao/Professor/${usuarioId}/atividades/proeja/${pedId}`}>
                   <Button text='Atividades'/>
                 </Link>
+                <Link to={`/sessao/Professor/${usuarioId}/observacoes/emi/${pedId}`}>
+                  <Button text='Lista Observações'/>
+                </Link>
               </span>
             </div>
           </section>

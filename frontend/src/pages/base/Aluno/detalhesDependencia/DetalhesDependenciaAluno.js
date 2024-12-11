@@ -117,7 +117,7 @@ const DetalhesDependenciaAluno = () => {
                   disabled={!detalhesDependencia.plano_estudos} // Desativa o botão se plano_estudos for null
                   onClick={() =>
                     navigate(`/sessao/Aluno/${usuarioId}/${modalidade}/${pedId}/planoEstudos`, {
-                      state: { usuarioId, modalidade, pedId },
+                      state: { usuarioId, modalidade, pedId, plano_id: detalhesDependencia?.plano_estudos},
                     })
                   }
                 >

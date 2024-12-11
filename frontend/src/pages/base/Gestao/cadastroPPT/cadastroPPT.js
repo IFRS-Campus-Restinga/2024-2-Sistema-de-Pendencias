@@ -150,6 +150,7 @@ const CadastroPPT = () => {
       setCursos(res.data);
 
       setIsLoading(false)
+
     } catch (error) {
       console.log(error);
     }
@@ -174,42 +175,12 @@ const CadastroPPT = () => {
   };
 
   useEffect(() => {
-    if (state) {
-      if (typeof state.observacao === 'string') {
-        setControleInputs({
-          aluno: state.aluno.nome,
-          professor_ppt: state.professor_ppt.nome,
-          professor_disciplina: state.professor_disciplina.nome,
-          curso: state.curso.id,
-          disciplina: state.disciplina.id,
-          turma_atual: state.turma_atual.id,
-          turma_progressao: state.turma_progressao.id,
-          observacao: state.observacao
-        })
-
-        setCursos([state.curso])
-        setTurmas([state.turma_atual, state.turma_progressao])
-        setDisciplinas([state.disciplina])
-  
-        setFormData({
-          aluno: state.aluno.id,
-          professor_ppt: state.professor_ppt.id,
-          professor_disciplina: state.professor_disciplina.id,
-          curso: state.curso.id,
-          disciplina: state.disciplina.id,
-          turma_atual: state.turma_atual.id,
-          turma_progressao: state.turma_progressao.id,
-          observacao: state.observacao
-        })
-
-        setIsLoading(false)
-      } else {
+      if (state) {
         fetchPPT()
+        setDesabilitado(true)
+      }else {
+        fetchCursos()
       }
-      setDesabilitado(true)
-    } else {
-      fetchCursos()
-    }
   }, [state]);
   
   if (isLoading) return <LoadingIFRS icone={loading}/>

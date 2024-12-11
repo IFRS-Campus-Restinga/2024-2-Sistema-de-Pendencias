@@ -69,9 +69,9 @@ def listar_ppt_registro(request):
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar | RegistroEscolar | Coordenador])
-def listar_ppt_id(request, pptId):
+def listar_ppt_id(request, idPpt):
     try:
-        ppt = PPT.objects.get(id=pptId)
+        ppt = PPT.objects.get(id=idPpt)
 
         serializer = PPTSerializer(ppt, context={'request': request})
 

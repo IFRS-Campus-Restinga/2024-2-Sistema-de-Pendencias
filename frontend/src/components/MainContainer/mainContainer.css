@@ -6,3 +6,12 @@
     background-color: #f1f1f1;
     padding-bottom: 20px;
 }
+
+@media (max-width: 760px) {
+    .container {
+        display: flex;
+        flex-direction: row;
+        flex: auto;
+        padding-bottom: 0;
+    }
+}

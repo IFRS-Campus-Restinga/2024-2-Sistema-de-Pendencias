@@ -6,6 +6,7 @@ import { calendarioAcademicoService } from '../../../../../services/calendarioAc
 import { validarCadastroCalendarioAcademico } from './validacoesCadastroCalendarioAcademico';
 import Button from "../../../../../components/Button/Button";
 import FormContainer from "../../../../../components/FormContainer/FormContainer";
+import Input from '../../../../../components/Input/Input'
 import './cadastroCalendarioAcademico.css';
 
 const CadastroCalendarioAcademicoPage = () => {
@@ -132,7 +133,7 @@ const CadastroCalendarioAcademicoPage = () => {
         </label>
 
         <div className="labelCustomizado">Data Início</div>
-        <input
+        <Input
           id="data_inicio"
           type="date"
           name="data_inicio"
@@ -145,7 +146,7 @@ const CadastroCalendarioAcademicoPage = () => {
         {errors.data_inicio && <p className="erros">{errors.data_inicio}</p>}
 
         <div className="labelCustomizado">Data Fim</div>
-        <input
+        <Input
           id="data_fim"
           type="date"
           name="data_fim"
