@@ -40,7 +40,7 @@ Instale as dependências
 
 Confira se há migrations a fazer ou migrar
 
-- py manage.py makemigrations
+- py manage.py makemigrations (se nao fizer todas, tentar também o py manage.py makemigrations google_auth e py manage.py makemigrations dependencias_app)
 - py manage.py migrate
 
 Carregue os grupos e permissões
