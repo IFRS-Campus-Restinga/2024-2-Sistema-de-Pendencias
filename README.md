@@ -58,8 +58,8 @@ docker-compose up -d
 # Verificar logs
 docker-compose logs -f backend
 
-# O servidor estará disponível em: http://localhost:8000
-```
+- py manage.py makemigrations (se nao fizer todas, tentar também o py manage.py makemigrations google_auth e py manage.py makemigrations dependencias_app)
+- py manage.py migrate
 
 **Serviços iniciados:**
 - 🟦 Backend Django: http://localhost:8000
