@@ -12,88 +12,92 @@ import { jwtDecode } from "jwt-decode";
 const BaseGestao = () => {
   const redirect = useNavigate()
   const homeUrl = `/sessao/${jwtDecode(sessionStorage.getItem('token')).grupo}/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`
-  
-    const validaGestao = () => {
-      const res = validaUsuario('Gestão Escolar')
 
-      if (!res.status) {
-          if (res.grupo === undefined) redirect('/')
-          else redirect(`/sessao/${res.grupo}/${res.idUsuario}`)
-      }
+  const validaGestao = () => {
+    const res = validaUsuario('Gestão Escolar')
+
+    if (!res.status) {
+      if (res.grupo === undefined) redirect('/')
+      else redirect(`/sessao/${res.grupo}/${res.idUsuario}`)
     }
+  }
 
-    useEffect(() => {
-        validaGestao()
-    },[])
+  useEffect(() => {
+    validaGestao()
+  }, [])
 
 
   return (
     <PageContainer homeUrl={homeUrl}>
       <nav className="navBarGestao">
         <div className="navItemContainer">
-        <Link to={homeUrl}>
-        <FontAwesomeIcon icon={faHouse} color="black" size="xl"/>
-        <span className="navTexto">
-        Início
-        </span>
-        </Link>
+          <Link to={homeUrl}>
+            <FontAwesomeIcon icon={faHouse} color="black" size="xl" />
+            <span className="navTexto">
+              Início
+            </span>
+          </Link>
         </div>
         <div className="navItemContainer">
-        <Dropdown titulo='Dependências' itens={[
-        {
-        name: "Dependências - EMI",
-        link: `${homeUrl}/peds-emi`
-        },
-        {
-        name: "Dependências - ProEJA",
-        link: `${homeUrl}/peds-proeja`
-        },
-        {
-        name: "Cadastro PED",
-        link: `${homeUrl}/cadastroPED`
-        },
-        {
-        name: "Gerenciar PPT",
-        link: `${homeUrl}/ppts`
-        }        
-        ]} icone={<FontAwesomeIcon icon={faBook}  color="black" size="xl"/>}
-        />
+          <Dropdown titulo='Dependências' itens={[
+            {
+              name: "Dependências - EMI",
+              link: `${homeUrl}/peds-emi`
+            },
+            {
+              name: "Dependências - ProEJA",
+              link: `${homeUrl}/peds-proeja`
+            },
+            {
+              name: "Cadastro PED",
+              link: `${homeUrl}/cadastroPED`
+            },
+            {
+              name: "Gerenciar PPT",
+              link: `${homeUrl}/ppts`
+            }
+          ]} icone={<FontAwesomeIcon icon={faBook} color="black" size="xl" />}
+          />
         </div>
         <div className="navItemContainer">
-        <Dropdown titulo='Calendário' itens={[
-        {
-        name: "Cadastrar Eventos",
-        link: `${homeUrl}/eventoCalendario`
-        },
-        {
-        name: "Calendário",
-        link: `${homeUrl}/calendario`
-        }
-        ]}
-        icone={<FontAwesomeIcon icon={faCalendarDays} color="black" size="xl"/>}
-        />  
+          <Dropdown titulo='Calendário' itens={[
+            {
+              name: "Cadastrar Eventos",
+              link: `${homeUrl}/eventoCalendario`
+            },
+            {
+              name: "Calendário",
+              link: `${homeUrl}/calendario`
+            }
+          ]}
+            icone={<FontAwesomeIcon icon={faCalendarDays} color="black" size="xl" />}
+          />
         </div>
         <div className="navItemContainer">
-        <Dropdown titulo='Gerenciar Cadastros' itens={[
-        {
-        name: "Alunos",
-        link: `${homeUrl}/alunos`
-        },
-        {
-        name: "Servidores",
-        link: `${homeUrl}/servidores`
-        },
-        {
-        name: "Cursos",
-        link: `${homeUrl}/cursos`
-        },
-        {
-        name: "Disciplinas",
-        link: `${homeUrl}/disciplinas`
-        },
-        ]}
-        icone={<FontAwesomeIcon icon={faClipboardList}  color='black' size="xl"/>}
-        />  
+          <Dropdown titulo='Gerenciar Cadastros' itens={[
+            {
+              name: "Alunos",
+              link: `${homeUrl}/alunos`
+            },
+            {
+              name: "Servidores",
+              link: `${homeUrl}/servidores`
+            },
+            {
+              name: "Cursos",
+              link: `${homeUrl}/cursos`
+            },
+            {
+              name: "Disciplinas",
+              link: `${homeUrl}/disciplinas`
+            },
+            {
+              name: "Conselho de Classe",
+              link: `${homeUrl}/conselhoDeClasse`
+            },
+          ]}
+            icone={<FontAwesomeIcon icon={faClipboardList} color='black' size="xl" />}
+          />
         </div>
       </nav>
       <Outlet />

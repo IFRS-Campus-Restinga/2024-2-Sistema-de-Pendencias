@@ -17,6 +17,7 @@ from dependencias_app.views.pedViews import *
 from dependencias_app.views.atividadeViews import *
 from dependencias_app.views.planoEstudosViews import *
 from dependencias_app.views.notificacaoViews import *
+from dependencias_app.views.conselhoDeClasseViews import *
 
 
 urlpatterns = [
@@ -138,6 +139,14 @@ urlpatterns = [
 
     #View para encerrar PED
     path('encerrar-ped/<str:ped_tipo>/<int:ped_id>/', encerrar_ped, name='encerrar_ped'),
+    
+    #View para Conselho de Classe
+    path('obter-conselho-de-classe/', obter_conselho_de_classe, name='obter_conselho_de_classe'),
+    path('listar-conselho-de-classe/', listar_conselho_de_classe, name='listar_conselho_de_classe'),
+    path('criar-conselho-de-classe/', criar_conselho_de_classe, name='criar_conselho_de_classe'),
+    path('editar-conselho-de-classe/<int:id>/', editar_conselho_de_classe, name='editar_conselho_de_classe'),
+    path('deletar-conselho-de-classe/<int:id>/', deletar_conselho_de_classe, name='deletar_conselho_de_classe'),
+    
 ]
 
 if settings.DEBUG:

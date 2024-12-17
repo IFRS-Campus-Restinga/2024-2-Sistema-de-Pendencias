@@ -29,6 +29,9 @@ import ListarAluno from './pages/base/Gestao/listarAluno/ListarAluno'
 import DetalhesAluno from './pages/base/Gestao/detalhesAluno/DetalhesAluno'
 import AtividadesDesenvolvidasGestao from './pages/base/Gestao/atividadesDesenvolvidasGestao/atividadesDesenvolvidas'
 import DetalhesAtividadeGestao from './pages/base/Gestao/atividadesDesenvolvidasGestao/detalhesAtividade/detalhesAtividade'
+import ListarConselhoDeClasse from './pages/base/Gestao/listarConselhoDeClasse/ListarConselhoDeClasse'
+import CadastrarConselhoDeClasse from './pages/base/Gestao/cadastrarConselhoDeClasse/CadastrarConselhoDeClasse'
+
 
 // Filhos de Registro
 import HomeRegistro from './pages/base/Registro/home/homeRegistro'
@@ -222,6 +225,14 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/atividades/:pedTipo/:pedId/detalhes/:atividadeId',
                 element: <DetalhesAtividadeGestao />
+            },
+            {
+                path: ':idUsuario/conselhoDeClasse',
+                element: <ListarConselhoDeClasse />
+            },
+            {
+                path: ':idUsuario/conselhoDeClasse/cadastrarConselhoDeClasse',
+                element: <CadastrarConselhoDeClasse />
             },
 
 

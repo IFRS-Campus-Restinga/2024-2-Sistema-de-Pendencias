@@ -16,6 +16,7 @@ from dependencias_app.models.notificacao import Notificacao
 from dependencias_app.models.atividade import *
 from dependencias_app.models.coordenador import *
 from dependencias_app.models.observacao import *
+from dependencias_app.models.conselhoDeClasse import *
 
 
 admin.site.register(Aluno)
@@ -36,3 +37,4 @@ admin.site.register(Atividade_ProEJA)
 admin.site.register(Coordenador)
 admin.site.register(Observacao)
 admin.site.register(Notificacao)
+admin.site.register(ConselhoDeClasse)

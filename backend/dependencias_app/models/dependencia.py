@@ -15,5 +15,5 @@ class Dependencia(BaseModel):
     
 
     class Meta:
-        abstract = True
+        abstract = False
 
