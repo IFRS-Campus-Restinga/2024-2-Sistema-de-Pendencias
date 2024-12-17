@@ -66,6 +66,9 @@ import ListarPEDProEJAProfessor from './pages/base/Professor/listarPED_ProEJAPro
 import DetalhesCurso from './pages/base/Gestao/detalhesCurso/DetalhesCurso'
 import EditarDisciplina from './pages/base/Gestao/editarDisciplina/EditarDisciplina'
 import DetalhesPlanoEstudo from './pages/base/Aluno/detalhesPlanoEstudos/DetalhesPlanoEstudo'
+import ListarConselhoClasse from './pages/base/Gestao/listarconselhoClasse/ConselhoClasse'
+import CadastroConselhoClasse from './pages/base/Gestao/cadastroConselhoClasse/CadastroConselhoClasse'
+
 
 
 const router = createBrowserRouter([
@@ -222,6 +225,14 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/atividades/:pedTipo/:pedId/detalhes/:atividadeId',
                 element: <DetalhesAtividadeGestao />
+            },
+            {
+                path: ':idUsuario/conselhoClasse',
+                element: <ListarConselhoClasse />
+            },
+            {
+                path: ':idUsuario/cadastrarConselho',
+                element: <CadastroConselhoClasse />
             },
 
 

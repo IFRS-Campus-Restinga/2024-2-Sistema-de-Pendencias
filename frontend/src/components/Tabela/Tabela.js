@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Ordenar from "../../assets/ordenar-branco.png";
 import Lupa from "../../assets/lupa.png";
 import Editar from "../../assets/icone-editar.png";
+import Deletar from "../../assets/lixeira.png";
 import Check from "../../assets/check.png";
 import "./Tabela.css";
 import { useNavigate } from "react-router-dom";
@@ -13,9 +14,10 @@ const Tabela = ({
   onChangeStatus,
   textButtonInProgress,
   editar,
-  visualizar
+  deletar,
+  visualizar,
 }) => {
-  const [largura, setLargura] = useState(window.innerWidth)
+  const [largura, setLargura] = useState(window.innerWidth);
   const [ordenacao, setOrdenacao] = useState({ coluna: "", ordem: "asc" });
   const [listaOrdenada, setListaOrdenada] = useState([]);
   const [colunas, setColunas] = useState([]);
@@ -23,7 +25,7 @@ const Tabela = ({
   const [modalAberto, setModalAberto] = useState(false);
   const [idItem, setIdItem] = useState(null); // Novo estado para armazenar o id do item
   const abrirModal = (id) => {
-    console.log(id, "aaa")
+    console.log(id, "aaa");
     setIdItem(id); // Salva o id do item que acionou o modal
     setModalAberto(true); // Abre o modal
   };
@@ -43,7 +45,7 @@ const Tabela = ({
     } else {
       return 35; // Limite para telas grandes
     }
-  }
+  };
 
   const ordenarPorColuna = (coluna) => {
     const novaOrdem =
@@ -63,10 +65,10 @@ const Tabela = ({
           ? -1
           : 1
         : valorA > valorB
-          ? novaOrdem === "asc"
-            ? 1
-            : -1
-          : 0;
+        ? novaOrdem === "asc"
+          ? 1
+          : -1
+        : 0;
     });
 
     setListaOrdenada(lista);
@@ -98,7 +100,6 @@ const Tabela = ({
           : maior;
       }, {});
 
-
       setListaOrdenada(listaFiltrada);
       setColunas(Object.keys(modeloColunas));
     }
@@ -109,12 +110,12 @@ const Tabela = ({
       setLargura(window.innerWidth);
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
-  }, [])
+  }, []);
 
   return listaFiltrada.length ? (
     <div className="divContainerTabela">
@@ -189,30 +190,29 @@ const Tabela = ({
                 coluna !== "id" ? (
                   <td key={colIndex} className="colunaCorpoTabela">
                     {typeof item[coluna] === "string" &&
-                      /^\d{4}-\d{2}-\d{2}$/.test(item[coluna])
+                    /^\d{4}-\d{2}-\d{2}$/.test(item[coluna])
                       ? item[coluna].split("-").reverse().join("/")
-                      : limitadorDeTexto(item[coluna] || "-", setLimiteCaracteres())}
+                      : limitadorDeTexto(
+                          item[coluna] || "-",
+                          setLimiteCaracteres()
+                        )}
                   </td>
                 ) : (
                   <></>
                 )
               )}
               <td className="colunaCorpoTabela">
-                {
-
-                }
+                {}
                 <div className="acoes">
-                  {
-                    visualizar && (
-                      <img
-                        className="iconeAcoes"
-                        src={Lupa}
-                        alt="Visualizar"
-                        onClick={() => redirect(`${item.id}`, { state: item })}
-                        title="Visualizar"
-                      />
-                    )
-                  }
+                  {visualizar && (
+                    <img
+                      className="iconeAcoes"
+                      src={Lupa}
+                      alt="Visualizar"
+                      onClick={() => redirect(`${item.id}`, { state: item })}
+                      title="Visualizar"
+                    />
+                  )}
                   {editar && (
                     <>
                       <img
@@ -227,16 +227,30 @@ const Tabela = ({
                     </>
                   )}
 
-                      {showInProgressButton && item.status != 'Lançado' && (
-                        <img
-                          className="iconeAcoes"
-                          src={Check}
-                          alt="Alterar para 'Lançado'"
-                          title="Alterar para 'Lançado'"
-                          onClick={() => abrirModal(item)}
-                        />
-                      )}
-                    </div>
+                  {deletar && (
+                    <>
+                      <img
+                        className="iconeAcoes"
+                        src={Deletar}
+                        alt="Deletar"
+                        onClick={() =>
+                          redirect(`${item.id}/deletar`, { state: item })
+                        }
+                        title="Deletar"
+                      />
+                    </>
+                  )}
+
+                  {showInProgressButton && item.status != "Lançado" && (
+                    <img
+                      className="iconeAcoes"
+                      src={Check}
+                      alt="Alterar para 'Lançado'"
+                      title="Alterar para 'Lançado'"
+                      onClick={() => abrirModal(item)}
+                    />
+                  )}
+                </div>
               </td>
             </tr>
           ))}
