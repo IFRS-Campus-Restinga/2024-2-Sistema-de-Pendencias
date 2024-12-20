@@ -12,6 +12,9 @@ import atividadeService from "../../../../services/atividadeService";
 import { jwtDecode } from "jwt-decode";
 import Input from "../../../../components/Input/Input";
 import Tabela from "../../../../components/Tabela/Tabela";
+import * as XLSX from "xlsx";
+import {ExcelRenderer, OutTable} from 'react-excel-renderer';
+import Promise from "bluebird";
 
 const AtividadesDesenvolvidas = () => {
   const [atividades, setAtividades] = useState([]);
@@ -25,248 +28,319 @@ const AtividadesDesenvolvidas = () => {
   const [atividadeIdDeletar, setAtividadeIdDeletar] = useState(null);
   let [planoUrl, setPlanoUrl] = useState(null);
 
+  const [itens, setItens] = useState([]);
+
   const { pedTipo, pedId } = useParams();
 
   const navigate = useNavigate();
 
-  // Função para buscar as atividades
-  const fetchAtividades = async () => {
-    try {
-      if (!pedTipo || !pedId) {
-        console.error("pedTipo ou pedId não encontrado");
-        toast.error("Erro ao carregar atividades");
-        return;
-      }
-      const response = await atividadeService.listarAtividades(pedTipo, pedId);
-      setAtividades(response.data);
+  const importarExcel = (file) => {
+    const promisse = new Promise((resolve, reject) => {
+      const lerArquivo = new FileReader();
+      lerArquivo.readAsArrayBuffer(file);
 
-      // Se o aluno não estiver presente nas atividades, você pode usar o primeiro aluno da resposta
-      if (response.data.length > 0 && response.data[0].aluno) {
-        setAluno(response.data[0].aluno); // Definindo aluno a partir da primeira atividade
-      }
-    } catch (error) {
-      console.error("Erro ao carregar atividades:", error.response || error);
-      toast.error("Erro ao carregar atividades");
-    } finally {
-      setLoading(false);
-    }
+      lerArquivo.onload = (e) => {
+        const buffer = e.target.result;
+        const wb = XLSX.read(buffer, { type: "buffer" });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+        resolve(data);
+      };
+
+      lerArquivo.onerror = (e) => {
+        reject(e);
+      };
+      promisse.then((data) => {
+        setItens(data);
+      });
+    })
   };
 
-  const handleAnexarPlanoAtividades = async () => {
-    try {
-      if (!planoAtividades) {
-        toast.error("Selecione um arquivo antes de anexar.");
-        return;
-      }
-      const formData = new FormData();
-      formData.append("plano_atividades", planoAtividades);
-      console.log(planoAtividades);
+  const fileHandler = (event) => {
+    let file = event.target.files[0];
 
-      await atividadeService.adicionarPlanoAtividades(pedTipo, pedId, formData);
-      toast.success("Plano de atividades anexado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao anexar plano de atividades:", error);
-      toast.error("Erro ao anexar plano de atividades!");
-    }
+    ExcelRenderer(file, (err, resp) => {
+      if (err) {
+        console.log(err);
+      } else {
+        this.setState({
+          cols: resp.cols,
+          rows: resp.rows
+        })
+      }
+    });
   };
 
-  // Carregar atividades e dados do aluno ao montar o componente
-  useEffect(() => {
-    const fetchNotaFinal = async () => {
+  const handleLerArquivo = (event) => {
+    const file = event.target.files[0];
+    importarExcel(file);
+  };
+
+    // Função para buscar as atividades
+    const fetchAtividades = async () => {
       try {
-        const response = await atividadeService.exibirNotaFinal(pedTipo, pedId);
-        setNotaFinal(response?.nota_final || null); // Atualiza o estado com a nota final, se existir
+        if (!pedTipo || !pedId) {
+          console.error("pedTipo ou pedId não encontrado");
+          toast.error("Erro ao carregar atividades");
+          return;
+        }
+        const response = await atividadeService.listarAtividades(pedTipo, pedId);
+        setAtividades(response.data);
+
+        // Se o aluno não estiver presente nas atividades, você pode usar o primeiro aluno da resposta
+        if (response.data.length > 0 && response.data[0].aluno) {
+          setAluno(response.data[0].aluno); // Definindo aluno a partir da primeira atividade
+        }
       } catch (error) {
-        console.error("Erro ao buscar nota final:", error);
-        toast.error("Erro ao carregar a nota final.");
+        console.error("Erro ao carregar atividades:", error.response || error);
+        toast.error("Erro ao carregar atividades");
+      } finally {
+        setLoading(false);
       }
     };
-  
-    fetchAtividades(); // Chama a função existente
-    fetchNotaFinal();  // Busca a nota final
-  }, [pedTipo, pedId]);
 
-  // Função para navegação para adicionar nova atividade
-  const handleAdicionarAtividade = () => {
-    const usuarioId = jwtDecode(sessionStorage.getItem("token")).idUsuario;
-    navigate(
-      `/sessao/Professor/${usuarioId}/atividades/${pedTipo}/${pedId}/adicionarAtividade`
-    );
-  };
+    const handleAnexarPlanoAtividades = async () => {
+      try {
+        if (!planoAtividades) {
+          toast.error("Selecione um arquivo antes de anexar.");
+          return;
+        }
+        const formData = new FormData();
+        formData.append("plano_atividades", planoAtividades);
+        console.log(planoAtividades);
 
-  // Função para navegar para a visualização da atividade
-  const handleVisualizarAtividade = (atividadeId) => {
-    const usuarioId = jwtDecode(sessionStorage.getItem("token")).idUsuario;
-    navigate(
-      `/sessao/Professor/${usuarioId}/atividades/${pedTipo}/${pedId}/detalhes/${atividadeId}`
-    );
-  };
+        await atividadeService.adicionarPlanoAtividades(pedTipo, pedId, formData);
+        toast.success("Plano de atividades anexado com sucesso!");
+      } catch (error) {
+        console.error("Erro ao anexar plano de atividades:", error);
+        toast.error("Erro ao anexar plano de atividades!");
+      }
+    };
 
-  // Função para deletar uma atividade
-  const handleDeletarAtividade = async (atividadeId) => {
-    setShowModalDeletar(true);
-    setAtividadeIdDeletar(atividadeId);
-  };
+    // Carregar atividades e dados do aluno ao montar o componente
+    useEffect(() => {
+      const fetchNotaFinal = async () => {
+        try {
+          const response = await atividadeService.exibirNotaFinal(pedTipo, pedId);
+          setNotaFinal(response?.nota_final || null); // Atualiza o estado com a nota final, se existir
+        } catch (error) {
+          console.error("Erro ao buscar nota final:", error);
+          toast.error("Erro ao carregar a nota final.");
+        }
+      };
+      
+      fetchAtividades(); // Chama a função existente
+      fetchNotaFinal();  // Busca a nota final
+    }, [pedTipo, pedId]);
 
-  const handleConfirmarDeletar = async () => {
-    try {
-      await atividadeService.deletarAtividade(
-        pedTipo,
-        pedId,
-        atividadeIdDeletar
+    // Função para navegação para adicionar nova atividade
+    const handleAdicionarAtividade = () => {
+      const usuarioId = jwtDecode(sessionStorage.getItem("token")).idUsuario;
+      navigate(
+        `/sessao/Professor/${usuarioId}/atividades/${pedTipo}/${pedId}/adicionarAtividade`
       );
-      toast.success("Atividade deletada com sucesso!");
-      fetchAtividades(); // Atualiza a lista de atividades
-      setShowModalDeletar(false);
-    } catch (error) {
-      console.error("Erro ao deletar atividade:", error);
-      toast.error("Erro ao deletar atividade!");
-      setShowModalDeletar(false);
-    }
-  };
+    };
 
-  const handleNotaInput = (e) => setNotaInput(e.target.value);
-
-  const handleSaveNotaFinal = () => {
-    setShowModal(true); // Exibir o modal de confirmação
-  };
-
-  const confirmSaveNotaFinal = async () => {
-    try {
-      const response = await atividadeService.atualizarNotaFinal(
-        pedTipo,
-        pedId,
-        parseFloat(notaInput)
+    // Função para navegar para a visualização da atividade
+    const handleVisualizarAtividade = (atividadeId) => {
+      const usuarioId = jwtDecode(sessionStorage.getItem("token")).idUsuario;
+      navigate(
+        `/sessao/Professor/${usuarioId}/atividades/${pedTipo}/${pedId}/detalhes/${atividadeId}`
       );
-      setNotaFinal(response.data.nota_final); // Atualiza a nota final na tela
-      toast.success("Nota final salva com sucesso!");
-    } catch (error) {
-      console.error("Erro ao salvar a nota final:", error.response || error);
-      toast.error("Erro ao salvar a nota final.");
-    } finally {
-      setShowModal(false); // Fechar o modal
-    }
-  };
+    };
 
-  return (
-    <>
-      <ToastContainer />
-      <FormContainer titulo="Atividades Desenvolvidas" comprimento="90%">
-        <div className="info-e-botao">
-          <div className="info-aluno">
-            {aluno && (
-              <p>
-                <strong>Aluno:</strong> {aluno.nome}
-              </p>
-            )}
-          </div>
-          <Button
-            text="Adicionar Atividade"
-            onClick={handleAdicionarAtividade}
-          />
-        </div>
-        <div className="tabela-atividades">
-          <table>
-            <thead>
-              <tr>
-                <th>Criado em</th>
-                <th>Atividade</th>
-                <th>Data de entrega</th>
-                <th>Nota</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="5">Carregando...</td>
-                </tr>
-              ) : (
-                atividades.map((atividade) => (
-                  <tr key={atividade.id}>
-                    <td>
-                    {atividade?.data_criacao || '-'}
-                    </td>
-                    <td>{atividade.titulo}</td>
-                    <td>
-                    {atividade?.data_de_entrega || '-'}
-                    </td>
-                    <td>{atividade.nota || "Não atribuída"}</td>
-                    <td className="icone-container">
-                      <img
-                        className="iconeAcoes"
-                        src={Lupa}
-                        alt="Visualizar"
-                        onClick={() => handleVisualizarAtividade(atividade.id)}
-                        title="Visualizar"
-                      />
-                      <img
-                        className="iconeAcoes"
-                        src={Deletar}
-                        alt="Deletar"
-                        onClick={() => handleDeletarAtividade(atividade.id)}
-                        title="Deletar"
-                      />
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-        <div className="modal-atividades">
-          {showModalDeletar && (
-            <div className="modal">
-              <p>Tem certeza de que deseja deletar a atividade?</p>
-              <Button text="Confirmar" onClick={handleConfirmarDeletar} />
-              <Button
-                text="Cancelar"
-                onClick={() => setShowModalDeletar(false)}
+    // Função para deletar uma atividade
+    const handleDeletarAtividade = async (atividadeId) => {
+      setShowModalDeletar(true);
+      setAtividadeIdDeletar(atividadeId);
+    };
+
+    const handleConfirmarDeletar = async () => {
+      try {
+        await atividadeService.deletarAtividade(
+          pedTipo,
+          pedId,
+          atividadeIdDeletar
+        );
+        toast.success("Atividade deletada com sucesso!");
+        fetchAtividades(); // Atualiza a lista de atividades
+        setShowModalDeletar(false);
+      } catch (error) {
+        console.error("Erro ao deletar atividade:", error);
+        toast.error("Erro ao deletar atividade!");
+        setShowModalDeletar(false);
+      }
+    };
+
+    const handleNotaInput = (e) => setNotaInput(e.target.value);
+
+    const handleSaveNotaFinal = () => {
+      setShowModal(true); // Exibir o modal de confirmação
+    };
+
+    const confirmSaveNotaFinal = async () => {
+      try {
+        const response = await atividadeService.atualizarNotaFinal(
+          pedTipo,
+          pedId,
+          parseFloat(notaInput)
+        );
+        setNotaFinal(response.data.nota_final); // Atualiza a nota final na tela
+        toast.success("Nota final salva com sucesso!");
+      } catch (error) {
+        console.error("Erro ao salvar a nota final:", error.response || error);
+        toast.error("Erro ao salvar a nota final.");
+      } finally {
+        setShowModal(false); // Fechar o modal
+      }
+    };
+
+    return (
+      <>
+        <ToastContainer />
+        <FormContainer titulo="Atividades Desenvolvidas" comprimento="90%">
+          <div className="tabela-atividades">
+            <div>
+              <input type="file"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  importarExcel(file);
+                }}
               />
             </div>
-          )}
-        </div>
-        <div className="plano-atividades">
-          <div className="container-botao-anexar">
-            <strong>Plano de atividades:</strong>
-            <Input
-              className="input-arquivo"
-              type="file"
-              onChange={(e) => setPlanoAtividades(e.target.files[0])}
-            />
-            <Button text="Anexar" onClick={handleAnexarPlanoAtividades} />
-          </div>
-        </div>
-        <div className="nota-final">
-        <p><strong>Nota Final:</strong></p>
-        {notaFinal !== null ? ( // Se já existir uma nota final
-          <p>{notaFinal}</p> // Exibe a nota
-        ) : (
-          <>
-            <Input
-              type="number"
-              value={notaInput}
-              onChange={handleNotaInput}
-              placeholder="Informe a nota final"
-            />
-            <Button text="Finalizar" onClick={handleSaveNotaFinal} />
-          </>
-        )}
-        </div>
-        <div className="modal-atividades">
-          {showModal && (
-            <div className="modal">
-              <p>
-                Tem certeza de que deseja salvar a nota final e finalizar a PED?
-              </p>
-              <Button text="Confirmar" onClick={confirmSaveNotaFinal} />
-              <Button text="Cancelar" onClick={() => setShowModal(false)} />
+            <div className="info-e-botao">
+              <div className="info-aluno">
+                {aluno && (
+                  <p>
+                    <strong>Aluno:</strong> {aluno.nome}
+                  </p>
+                )}
+              </div>
+              <Button
+                text="Adicionar Atividade"
+                onClick={handleAdicionarAtividade}
+              />
             </div>
-          )}
-        </div>
-      </FormContainer>
-    </>
-  );
-};
+                
+            <table>
+              <thead>
+                <tr>
+                  <th>Criado em</th>
+                  <th scope="col">Atividade</th>
+                  <th scope="col">Descrição</th>
+                  <th scope="col">Data de entrega</th>
+                  <th scope="col">Observações</th>
+                  <th scope="col">Nota</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {itens.map((d) => (
+                  <tr key={d.Atividade}>
+                    <th>{d.Atividade}</th>
+                    <td>{d.Descrição}</td>
+                    <td>{d.DataDeEntrega}</td>
+                    <td>{d.Observacoes}</td>
+                    <td>{d.Nota}</td>
+                  </tr>
+                ))}
+                {loading ? (
+                  <tr>
+                    <td colSpan="5">Carregando...</td>
+                  </tr>
+                ) : (
+                  atividades.map((atividade) => (
+                    <tr key={atividade.id}>
+                      <td>
+                        {atividade?.data_criacao || '-'}
+                      </td>
+                      <td>{atividade.titulo}</td>
+                      <td>
+                        {atividade?.data_de_entrega || '-'}
+                      </td>
+                      <td>{atividade.nota || "Não atribuída"}</td>
+                      <td className="icone-container">
+                        <img
+                          className="iconeAcoes"
+                          src={Lupa}
+                          alt="Visualizar"
+                          onClick={() => handleVisualizarAtividade(atividade.id)}
+                          title="Visualizar"
+                        />
+                        <img
+                          className="iconeAcoes"
+                          src={Deletar}
+                          alt="Deletar"
+                          onClick={() => handleDeletarAtividade(atividade.id)}
+                          title="Deletar"
+                        />
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          <div className="modal-atividades">
+            {showModalDeletar && (
+              <div className="modal">
+                <p>Tem certeza de que deseja deletar a atividade?</p>
+                <Button text="Confirmar" onClick={handleConfirmarDeletar} />
+                <Button
+                  text="Cancelar"
+                  onClick={() => setShowModalDeletar(false)}
+                />
+              </div>
+            )}
+          </div>
+          <div className="excel-atividades">
+            <strong>Importar Excel:</strong>
+            <input type="file" onChange={handleLerArquivo} />
+            <Button text="Importar" onClick={importarExcel} />
+          </div>
+          <div className="plano-atividades">
+            <div className="container-botao-anexar">
+              <strong>Plano de atividades:</strong>
+              <Input
+                className="input-arquivo"
+                type="file"
+                onChange={(e) => setPlanoAtividades(e.target.files[0])}
+              />
+              <Button text="Anexar" onClick={handleAnexarPlanoAtividades} />
+            </div>
+          </div>
+          <div className="nota-final">
+            <p><strong>Nota Final:</strong></p>
+            {notaFinal !== null ? ( // Se já existir uma nota final
+              <p>{notaFinal}</p> // Exibe a nota
+            ) : (
+              <>
+                <Input
+                  type="number"
+                  value={notaInput}
+                  onChange={handleNotaInput}
+                  placeholder="Informe a nota final"
+                />
+                <Button text="Finalizar" onClick={handleSaveNotaFinal} />
+              </>
+            )}
+          </div>
+          <div className="modal-atividades">
+            {showModal && (
+              <div className="modal">
+                <p>
+                  Tem certeza de que deseja salvar a nota final e finalizar a PED?
+                </p>
+                <Button text="Confirmar" onClick={confirmSaveNotaFinal} />
+                <Button text="Cancelar" onClick={() => setShowModal(false)} />
+              </div>
+            )}
+          </div>
+        </FormContainer>
+      </>
+    );
+  
+}
 
 export default AtividadesDesenvolvidas;

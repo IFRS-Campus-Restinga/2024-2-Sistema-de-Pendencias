@@ -84,4 +84,4 @@ Isso deve abrir automaticamente a página principal do projeto em seu navegador 
 
 ## Acessar o sistema:
 
-Acessar com o perfil de gestão escolar e ir em gerenciar cadastros > Conselho de Clase
+Acessar com o perfil de professor > Ir em dependências no menu > Minhas PEDS EMI > Ações (Visuzaliar) > Atividades
