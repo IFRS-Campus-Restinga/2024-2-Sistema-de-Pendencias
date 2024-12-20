@@ -146,6 +146,9 @@ urlpatterns = [
     path('editar-conselho-de-classe/<int:conselho_id>/', editar_conselho),
     path('deletar-conselho-de-classe/<int:conselho_id>/', deletar_conselho),
 
+    #view para upload de atividade
+    path('upload-atividade/', upload_atividade),
+
 ]
 
 if settings.DEBUG:

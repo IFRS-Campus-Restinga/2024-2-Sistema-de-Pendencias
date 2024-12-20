@@ -1,5 +1,2 @@
-## Onde encontrar o front
-A funcionalidade foi criada com a permissão de Gestão Escolar. Ao logar com este perfil, no menu onde está escrito "Dependencias" abrirá um dropdown que terá o
-"Conselho de classe", página a qual deve listar os conselhos. Na mesma página, existe um ícone de adição, que é por onde realiza-se o cadastro de conselho de classe.
-
-Implementei o backend e quase todo o frontend, não tive tempo de fazer as requisições funcionarem
+## Onde encontrar e como rodar
+A funcionalidade foi criada com a permissão de Professor. O sistema ja estava com erro para criar ped, então nao pude colocar o front do upload junto do cadastro de atividades, mas ele se localiza no menu, onde há "Atividades", abre o dropdown com o link para "Upload de atividades" que somente o professor tem acesso. O upload só permite arquivo XLSX e ele valida se as colunas são: título, descrição, nota, data de entrega e observações. Para rodar, basta instalar as dependencias necessárias do arquivo README.md geral do projeto e instalar "pip install panda" no backend e npm install xlsx na pasta do frontend

@@ -53,6 +53,7 @@ import DetalhesPlanoEstudos from './pages/base/Professor/detalhesPlanoEstudos/De
 import AdicionarObservacao from './pages/base/Professor/observacoes/adicionarObservacao'
 import ListarObservacoes from './pages/base/Professor/listarObservacoes/ListarObservacoes'
 import DetalhesObservacoes from './pages/base/Professor/detalhesObservacoes/DetalhesObservacoes'
+import UploadAtividade from './pages/base/Professor/uploadAtividade/UploadAtividade'
 
 
 // Filhos de Aluno
@@ -368,8 +369,10 @@ const router = createBrowserRouter([
                 path: ':idUsuario/editarObservacao/:idObservacao',
                 element: <AdicionarObservacao />,
             },
-
-
+            {
+                path: ':idUsuario/upload/',
+                element: <UploadAtividade />,
+            },
         ]
     },
     // Rotas de Aluno
