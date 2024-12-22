@@ -22,14 +22,6 @@ const CadastroServidor = () => {
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const [grupos, setGrupos] = useState([])
 
-    const grupoMap = {
-        // ID de cada grupo (de acordo com o auth.group)
-        'Gestão Escolar': 1,
-        'Coordenador': 3,
-        'Registro Escolar': 4,
-        'Professor': 5,
-    };
-
     const fetchGrupos = async () => {
         try {
             const res = await usuarioBaseService.listarGrupos()
@@ -57,14 +49,8 @@ const CadastroServidor = () => {
 
     const enviarHandler = async (e) => {
         e.preventDefault();
-        const { grupo, email } = formData;
 
-        const grupoId = grupoMap[grupo];
-
-        const dataToSend = { grupo: grupoId, email };
-        const dataToSendGrupoNome = { grupo, email };
-
-        const validationErrors = validarFormulario(dataToSend);
+        const validationErrors = validarFormulario(formData);
 
         if (Object.keys(validationErrors).length !== 0) {
             setErrors(validationErrors)
@@ -73,9 +59,7 @@ const CadastroServidor = () => {
         } else {
             try {
                 if (isEditing) {
-                    // Atualiza o servidor existente
-                    const response = await servidorService.editar(state.id, dataToSend);
-                    console.log("Response:", response);
+                    const response = await servidorService.editar(state.id, formData);
 
                     if (response) {
                         toast.success(`Servidor atualizado com sucesso!`, {
@@ -100,11 +84,10 @@ const CadastroServidor = () => {
 
                 } else {
                     // Cria um novo servidor
-                    const response = await servidorService.create(dataToSendGrupoNome, 'csrftoken');
-                    console.log(response);
+                    const response = await usuarioBaseService.criar(formData);
 
                     if (response.status === 201) {
-                        toast.success(`Novo ${grupo} cadastrado com sucesso!`, {
+                        toast.success(`Novo usuário cadastrado com sucesso!`, {
                             position: "bottom-center",
                             autoClose: 3000,
                             style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
@@ -169,24 +152,6 @@ const CadastroServidor = () => {
                             )
                         ))
                     }
-                    {/* <label className='labelRadioCadastroServidor' htmlFor='RegistroEscolar'>
-                        <input className='radioCadastroServidor' id='RegistroEscolar' type="radio" name='grupo' value="RegistroEscolar" checked={formData.grupo === 'RegistroEscolar'}
-                            onChange={(e) => setFormData({ ...formData, grupo: e.target.value })}
-                        />
-                        <span className='spanRadioCadastroServidor'>Registros Escolares</span>
-                    </label>
-                    <label className='labelRadioCadastroServidor' htmlFor='GestaoEscolar'>
-                        <input className='radioCadastroServidor' id='GestaoEscolar' type="radio" value="GestaoEscolar" name='grupo' checked={formData.grupo === 'GestaoEscolar'}
-                            onChange={(e) => setFormData({ ...formData, grupo: e.target.value })}
-                        />
-                        <span className='spanRadioCadastroServidor'>Gestão Escolar</span>
-                    </label>
-                    <label className='labelRadioCadastroServidor' name='Coordenador' htmlFor='Coordenador'>
-                        <input className='radioCadastroServidor' id='Coordenador' name='grupo' type="radio" value="Coordenador" checked={formData.grupo === 'Coordenador'}
-                            onChange={(e) => setFormData({ ...formData, grupo: e.target.value })}
-                        />
-                        <span className='spanRadioCadastroServidor'>Coordenador</span>
-                    </label> */}
                 </div>
                 <div className="form-item">
                     <label className='labelCadastroServidor'>E-mail</label>

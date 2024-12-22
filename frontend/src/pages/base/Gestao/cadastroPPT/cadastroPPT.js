@@ -6,7 +6,7 @@ import FormContainer from "../../../../components/FormContainer/FormContainer"; 
 import { ToastContainer, toast } from "react-toastify";
 import {jwtDecode} from 'jwt-decode'
 import "./cadastroPPT.css";
-import { PPTService } from "../../../../services/emiPptService";
+import { PPTService } from "../../../../services/pptService";
 import { cursoService } from "../../../../services/cursoService";
 import { validarFormularioPPT, validarTurmas } from "./validacoes";
 import { usuarioBaseService } from "../../../../services/usuarioBaseService";

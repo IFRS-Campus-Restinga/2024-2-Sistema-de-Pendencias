@@ -2,7 +2,15 @@ import { api } from "../config/axiosConfig"
 
 
 export const usuarioBaseService = {
-    get: async (idUsuario) => {
+    criar: async (params) => {
+        const res = await api.post('api/cadastrar-usuario/', params).catch((erro) => {
+            return erro
+        })
+
+        return res
+    },
+
+    porId: async (idUsuario) => {
         const res = await api.get(`api/usuario/${idUsuario}/`).catch((erro) => {
             return erro
         })
@@ -24,5 +32,11 @@ export const usuarioBaseService = {
         })
 
         return res
+    },
+
+    editar: async (idUsuario, params) => {
+        const res = await api.post(`api/usuario/editar/${idUsuario}/`, params).catch((erro) => {
+            return erro
+        })
     }
 }

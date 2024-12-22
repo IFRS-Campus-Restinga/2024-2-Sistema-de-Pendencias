@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
-import "./DetalhesPED.css";
+import "./DetalhesDependencia.css";
 import Button from "../../../../components/Button/Button";
 import StatusBalls from "../../../../components/StatusBall/StatusBall";
 import Modal from "../../../../components/Modal/Modal";
@@ -12,34 +12,40 @@ import "react-toastify/dist/ReactToastify.css";
 import Dropdown from "../../../../components/Dropdown/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
+import { PPTService } from "../../services/pptService";
 
 const DetalhesPED = () => {
-  const { pedId } = useParams();
   const location = useLocation();
   const tipoPed = location.pathname.split('/')[4];
+  const perfil = jwtDecode(sessionStorage.getItem('token')).grupo
+  const { pedId, pptId } = useParams();
+  const [isLoading, setIsLoading] = useState(true)
+  const [detalhesDependencia, setDetalhesDependencia] = useState({});
   const [planoId, setPlanoId] = useState(null)
   const [formEncerramentoId, setFormEncerramentoId] = useState(null)
-  const [detalhesPED, setDetalhesPED] = useState({});
   const [modalAberto, setModalAberto] = useState(false);
+  const [modalConfirmacaoAberto, setModalConfirmacaoAberto] = useState(false);
+  
   const abrirModal = () => setModalAberto(true);
   const fecharModal = () => setModalAberto(false);
-  const [modalConfirmacaoAberto, setModalConfirmacaoAberto] = useState(false);
-
 
   const abrirModalConfirmacao = () => setModalConfirmacaoAberto(true);
   const fecharModalConfirmacao = () => setModalConfirmacaoAberto(false);
 
   const fetchDetalhes = async () => {
-    try {
-      const res = await PEDService.porId(pedId, tipoPed === 'peds-emi' ? 'Integrado':'ProEJA', "detalhes");
+    if (pptId) {
+      try {
+        const res = await PPTService.porId(pptId, grupo === 'Aluno' ? 'aluno' : 'detalhes')
 
-      if (res.status !== 200) throw new Error(res.response?.data?.mensagem);
+        if (res.status !== 200) throw new Error(res)
 
-      setDetalhesPED(res.data);
-      setPlanoId(res.data.plano_estudos)
-      setFormEncerramentoId(res.data.form_encerramento)
-    } catch (error) {
-      console.error("Erro ao buscar detalhes da PED:", error.message);
+        setDetalhesDependencia(res.data)
+        setIsLoading(false)
+      } catch (erro) {
+        console.error(erro)
+      }
+    } else {
+      
     }
   };
 
@@ -89,7 +95,7 @@ const DetalhesPED = () => {
     fetchDetalhes()
   }, [])
 
-  if (!detalhesPED.aluno) {
+  if (!detalhesDependencia.aluno) {
     return <div>Carregando...</div>;
   }
 

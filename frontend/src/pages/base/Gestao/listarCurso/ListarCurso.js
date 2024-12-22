@@ -23,7 +23,7 @@ const ListarCursos = () => {
   // Função para buscar os cursos
   const fetchCursos = async () => {
     try {
-      const response = await cursoService.list('lista');
+      const response = await cursoService.listar('lista');
 
       setCursos(response.data);
       setCursosFiltrados(response.data);

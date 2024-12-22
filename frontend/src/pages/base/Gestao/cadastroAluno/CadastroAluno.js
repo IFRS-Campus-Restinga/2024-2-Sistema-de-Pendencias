@@ -3,16 +3,16 @@ import React, { useRef, useState } from 'react';
 import { validarFormulario, validarCampo } from './validacoes';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { alunoService } from "../../../../services/alunoService";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import Button from "../../../../components/Button/Button";
 import Input from '../../../../components/Input/Input'
+import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 
 const CadastroAluno = () => {
   const formRef = useRef()
   const [formData, setFormData] = useState({
     email: '',
-    perfil: 'Aluno',
+    grupo: 'Aluno',
   });
   const [errors, setErrors] = useState({});
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -23,13 +23,13 @@ const CadastroAluno = () => {
     if (Object.keys(validationErrors).length === 0) {
       setShowErrorMessage(false);
       try {
-        const response = await alunoService.create(formData)
+        const response = await usuarioBaseService.criar(formData)
 
         if (response.status !== 201) throw new Error(response.error)
         // Limpar o formulário após o sucesso
         setFormData({
           email: '',
-          perfil: 'Aluno',
+          grupo: 'Aluno',
         });
 
         formRef.current.reset()

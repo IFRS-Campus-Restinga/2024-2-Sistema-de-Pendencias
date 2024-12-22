@@ -48,17 +48,12 @@ const CadastroCurso = () => {
 
   // Função para buscar coordenadores com base no valor digitado
   const fetchCoordenadores = async (e) => {
-    const inputValue = e.target.value;
     try {
-      if (inputValue.length > 2) { // Começa a buscar quando o usuário digitar 3 caracteres
-        const res = await usuarioBaseService.buscarPorParametro(inputValue, 'Coordenador');
-        setOpcoesCoordenadores(res.data || []);  // Garantir que seja um array vazio em caso de erro ou resposta vazia
-      } else {
-        setOpcoesCoordenadores([]); // Limpa a lista de opções se o campo for muito curto
-      }
+      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Coordenador');
+      
+      setOpcoesCoordenadores(res.data);  // Garantir que seja um array vazio em caso de erro ou resposta vazia
     } catch (error) {
-      console.error('Erro ao buscar coordenadores: ', error);
-      setOpcoesCoordenadores([]);  // Garantir que seja um array vazio em caso de erro
+      console.error(error)
     }
   };
 
@@ -73,8 +68,8 @@ const CadastroCurso = () => {
     } else {
       try {
         const response = state 
-          ? await cursoService.update(state.id, formData)  // Atualiza curso se estiver editando
-          : await cursoService.create(formData);  // Cria curso se for um novo
+          ? await cursoService.editar(state.id, formData)  // Atualiza curso se estiver editando
+          : await cursoService.criar(formData);  // Cria curso se for um novo
 
         if (response.status !== 200 && response.status !== 201) {
           const errorMessage = response.data?.message || 'Erro desconhecido';
@@ -216,7 +211,7 @@ const CadastroCurso = () => {
                   const param = e.target.value;
                   console.log(e.target.value);
 
-                  const coordenador = opcoesCoordenadores.find((coordenador) => param === coordenador.nome || coordenador.matricula || coordenador.email);
+                  const coordenador = opcoesCoordenadores.find((coordenador) => param === coordenador.email);
 
                   if (coordenador) setFormData({...formData, coordenador: coordenador.id});
                 }

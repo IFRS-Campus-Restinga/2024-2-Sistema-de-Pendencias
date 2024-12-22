@@ -1,7 +1,7 @@
 import { api } from '../config/axiosConfig';
 
 export const cursoService = {
-    create: async (data) => {
+    criar: async (data) => {
         try {
             const response = await api.post('/api/cadastrar-curso/', data);
             return response;
@@ -11,7 +11,7 @@ export const cursoService = {
         }
     },
 
-    list: async (retorno) => {
+    listar: async (retorno) => {
         try {
             const response = await api.get(`/api/listar-cursos/`, {
                 params: {
@@ -26,9 +26,9 @@ export const cursoService = {
     },
 
     // Método para atualizar um curso
-    update: async (id, params) => {
+    editar: async (idCurso, params) => {
         try {
-            const res = await api.put(`api/editar-curso/${id}/`, params); // Endpoint de edição de curso
+            const res = await api.put(`api/curso/${idCurso}/editar`, params); // Endpoint de edição de curso
             return res;
         } catch (erro) {
             console.error("Erro ao atualizar curso:", erro);
@@ -46,16 +46,6 @@ export const cursoService = {
         })
 
         return res
-    },
-
-    delete: async (id) => {
-        try {
-            const response = await api.delete(`/api/deletar-curso/${id}/`);
-            return response;
-        } catch (error) {
-            console.error('Erro ao deletar curso:', error);
-            throw error; // Lança o erro
-        }
     },
 
     // Método para obter um curso pelo ID
