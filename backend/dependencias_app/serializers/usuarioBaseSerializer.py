@@ -24,7 +24,7 @@ class UsuarioBaseSerializer(serializers.ModelSerializer):
         formUsuarioBase.save()
 
         return formUsuarioBase
-    
+
     def get_cpf(self, obj):
         if obj.grupo and obj.grupo.name == 'Professor' and obj.grupo.name == 'Coordenador' and hasattr(obj, 'professor' or 'coordenador'):
             return obj.professor.cpf or obj.coordenador.cpf

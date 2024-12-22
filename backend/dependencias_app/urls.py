@@ -3,9 +3,6 @@ from django.conf.urls.static import static
 from django.urls import path
 from dependencias_app.views.observacaoViews import *
 from dependencias_app.views.usuarioBaseViews import *
-from dependencias_app.views.gestaoEscolarViews import *
-from dependencias_app.views.registroEscolarViews import *
-from dependencias_app.views.coordenadorViews import *
 from dependencias_app.views.professorViews import *
 from dependencias_app.views.servidorViews import *
 from dependencias_app.views.alunoViews import *
@@ -20,31 +17,32 @@ from dependencias_app.views.notificacaoViews import *
 
 
 urlpatterns = [
-    # views cadastro de usuários
-    path('cadastrar-gestao-escolar/', cadastrar_gestao_escolar),
-    path('cadastrar-registro-escolar/', cadastrar_registro_escolar),
-    path('cadastrar-coordenador/', cadastrarCoordenador),
-    path('cadastrar-professor/', cadastrar_professor),
-    path('cadastrar-aluno/', cadastrar_aluno),
+    # views de usuários
+    path('cadastrar-usuario/', cadastrar_usuario),
+    path('usuario/<int:idUsuario>/', get_infos_usuario),
+    path('listar-servidores/', listar_servidores),
+    path('listar-alunos/', listar_alunos),
+    path('usuario/<int:idUsuario>/editar/', editar_usuario),
+    # cadastra informações adicionais dos alunos e professores
     path('dados-adicionais-aluno/', infos_adicionais_aluno),
     path('dados-adicionais-professor/', infos_adicionais_professor),
+    # path('dados-aluno/<int:idAluno>/', get_aluno_infos),
+    path('usuarios/<str:param>/<str:grupo>', listar_por_parametro),
+
     path('listar-grupos/', listar_grupos),
-    path('dados-adicionais-coordenador/', infos_adicionais_coordenador),
 
     # views de curso
-    # curso já manipula turmas por vínculo, por isso turmas não necessitam de uma view própria
     path('cadastrar-curso/', cadastrar_curso),
     path('listar-cursos/', listar_cursos),
     path('listar-cursos/<str:modalidade>/', listar_por_modalidade),
-    path('cursos/<int:curso_id>/', obter_curso, name='obter_curso'),
-    path('editar-curso/<int:curso_id>/', atualizar_curso, name='atualizar_curso'),
-    path('cursos/<int:curso_id>/atualizar/', atualizar_curso, name='atualizar_curso'),
+    path('cursos/<int:idCurso>/', obter_curso),
+    path('curso/<int:idCurso>/editar', editar_curso),
 
     # views de disciplinas
     path('cadastrar-disciplina/', cadastrar_disciplina),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
-    path('disciplina/<int:disciplinaId>/', buscar_disciplina),
-    path('disciplina/editar/<int:disciplinaId>/', editar_disciplina),
+    path('disciplina/<int:idDisciplina>/', buscar_disciplina),
+    path('disciplina/editar/<int:idDisciplina>/', editar_disciplina),
 
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),
@@ -57,17 +55,6 @@ urlpatterns = [
     path('calendario-academico/<int:id_pacote>/eventos/', listar_eventos_do_calendario_academico, name='listar_eventos_do_calendario_academico'),
     path('atualizar-calendario-academico/<int:id_calendario>/', atualizar_calendario_academico, name='atualizar_calendario_academico'),
     path('obter-calendario-academico/<int:id_calendario>/', obter_calendario_academico, name='obter_calendario_academico'),
-
-
-    # views de lista de usuários
-    path('usuario/<int:idUsuario>/', get_infos_usuario),
-    path('dados-aluno/<int:idAluno>/', get_aluno_infos),
-    path('listar-servidores/', listar_servidores, name='listar_servidores'),
-    path('usuarios/<str:param>/<str:grupo>', listar_por_parametro),
-    path('listar-alunos/', listar_alunos),
-
-    # views de exclusão de usuários
-    path('deletar-servidor/<int:idusuario>/', deletar_servidor, name='deletar_servidor'),
 
     #views de visualizar cadastro
     path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
@@ -100,10 +87,6 @@ urlpatterns = [
     path('ped-emi/<int:coordenadorId>/', listar_PED_EMI),
     path('ped-proeja/<int:coordenadorId>/', listar_PED_ProEJA),
 
-    path('aluno/ped/<int:pedId>/<str:modalidade>/', detalhes_ped_aluno, name='detalhes_ped_aluno'),
-    path('aluno/ppt/<int:pptId>/', detalhes_ppt_aluno, name='detalhes_ppt_aluno'),
-
-
     path('detalhes-plano-estudos/<int:planoId>/', detalhes_plano_estudos, name='detalhes_plano_estudos'),
     path('atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
     
@@ -135,9 +118,6 @@ urlpatterns = [
     # Views de notificacao
     path('notificacoes/<int:idUsuario>/', buscar_notificacoes),
     path('notificacoes/troca-status/<int:idNotificacao>/', trocar_status),
-
-    #View para encerrar PED
-    path('encerrar-ped/<str:ped_tipo>/<int:ped_id>/', encerrar_ped, name='encerrar_ped'),
 ]
 
 if settings.DEBUG:

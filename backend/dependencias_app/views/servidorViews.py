@@ -1,36 +1,17 @@
+from django.shortcuts import get_object_or_404
+from google_auth.models import UsuarioBase
+from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
+from dependencias_app.permissoes import *
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from dependencias_app.serializers.usuarioBaseSerializer import UsuarioBaseSerializer
-from google_auth.models import UsuarioBase
-
+from rest_framework.decorators import api_view, permission_classes
 
 @api_view(['GET'])
+@permission_classes([GestaoEscolar])
 def listar_servidores(request):
     try:
-        # Filtros adicionais
-        filtro_geral = request.GET.get('filtroGeral', None)  # Novo filtro para nome e matrícula
-        data_inicio = request.GET.get('data_inicio', None)
-        data_fim = request.GET.get('data_fim', None)
-
         # Listando e filtrando os dados
-        servidores = UsuarioBase.objects.exclude(grupo__name="Aluno")
-
-        if filtro_geral:
-            servidores = servidores.filter(
-                Q(nome__icontains=filtro_geral) | 
-                Q(infos_professor__matricula__icontains=filtro_geral) |
-                Q(infos_professor__cpf__icontains=filtro_geral) |
-                Q(email__icontains=filtro_geral)
-            )
-        
-        if data_inicio and data_fim:
-            servidores = servidores.filter(data_ingresso__range=(data_inicio, data_fim))
-
-        # Ordenação
-        ordenar_por = request.GET.get('ordenar_por', None)
-        if ordenar_por in ['perfil', 'first_name', 'last_name']:
-            servidores = servidores.order_by(ordenar_por)
+        servidores = UsuarioBase.objects.exclude(grupo__name="Aluno")        
 
         # Serialização dos dados
         servidores_serializer = UsuarioBaseSerializer(servidores, many=True, context={'request': request})
@@ -40,9 +21,10 @@ def listar_servidores(request):
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-def visualizar_servidor(request, id):
+@permission_classes([GestaoEscolar])
+def visualizar_servidor(request, idUsuario):
     try:
-        servidor = UsuarioBase.objects.get(pk=id)
+        servidor = get_object_or_404(UsuarioBase, pk=idUsuario)
         
         servidor_serializer = UsuarioBaseSerializer(servidor)
 
@@ -52,36 +34,17 @@ def visualizar_servidor(request, id):
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
-@api_view(['DELETE'])
-def deletar_servidor(request, id):
+@api_view(['POST'])
+@permission_classes([GestaoEscolar])
+def editar_servidor(request, idUsuario):
     try:
-        servidor = UsuarioBase.objects.get(pk=id)
+        servidor = get_object_or_404(UsuarioBase, pk=idUsuario)
 
-        servidor.delete()
-        return Response({'mensagem': 'Servidor removido com sucesso.'}, status=status.HTTP_204_NO_CONTENT)
-    except servidor.DoesNotExist:
-        return Response({'mensagem': 'Servidor não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = UsuarioBaseSerializer(servidor, data=request.data)
 
-@api_view(['PUT'])
-def editar_servidor(request, id):
-    try:
-        servidor = UsuarioBase.objects.get(pk=id)
+        if not serializer.is_valid(): raise Exception(serializer.errors)
 
-        print("Dados recebidos:", request.data)
-
-        servidor_serializer = UsuarioBaseSerializer(servidor, data=request.data)
-
-        if servidor_serializer.is_valid():
-            servidor_serializer.save()
-            return Response(servidor_serializer.data, status=status.HTTP_200_OK)
-        else:
-            # Imprima os erros detalhados de validação
-            print("Erros de validação:", servidor_serializer.errors)
-            return Response(servidor_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except UsuarioBase.DoesNotExist:
-        return Response({'mensagem': 'Servidor não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer.save()
+        return Response(status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
