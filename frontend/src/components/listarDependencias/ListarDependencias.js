@@ -1,20 +1,23 @@
+import './ListarDependencias.css';
 import { useEffect, useState } from 'react';
-import './ListarPPT.css';
-import { PPTService } from '../../../../services/emiPptService';
-import FormContainer from '../../../../components/FormContainer/FormContainer';
-import Input from '../../../../components/Input/Input';
-import Button from '../../../../components/Button/Button';
-import { Link, useNavigate } from 'react-router-dom';
+import LoadingIFRS from '../LoadingIFRS/LoadingIFRS';
+import FormContainer from '../FormContainer/FormContainer';
+import Tabela from '../Tabela/Tabela';
+import Input from '../Input/Input';
+import X from "../../assets/x-branco.png";
+import Lupa from "../../assets/lupa-branca.png";
+import AdicionarPPT from "../../assets/adicionar-livro.png";
+import PPT from '../../assets/loading-ppt.png'
+import PED_ProEJA from '../../assets/loading-peds-proeja.png'
+import PED_EMI from '../../assets/loading-peds-emi.png'
+import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import Tabela from '../../../../components/Tabela/Tabela';
-import X from "../../../../assets/x-branco.png";
-import Lupa from "../../../../assets/lupa-branca.png";
-import AdicionarPPT from "../../../../assets/adicionar-livro.png";
+import { PPTService } from '../../services/pptService';
+import { PEDService } from '../../services/pedService';
 
-const ListarPPT = () => {
-    const navegar = useNavigate();
-    const [listaPPT, setListaPPT] = useState([]);
-    const [dependenciasFiltradas, setDependenciasFiltradas] = useState([]);
+const ListarDependencias = ({listaDependencias}) => {
+    const [isLoading, setIsLoading] = useState(true)
+    const [dependenciasFiltradas, setDependenciasFiltradas] = useState(listaDependencias);
     const [filtroGeral, setFiltroGeral] = useState('');
     const [dataInicio, setDataInicio] = useState('');
     const [dataFim, setDataFim] = useState('');
@@ -22,20 +25,6 @@ const ListarPPT = () => {
     const [situacao, setSituacao] = useState('');
 
     const navigate = useNavigate();
-
-
-    const fetchPPT = async () => {
-        try {
-            const res = await PPTService.list('lista');
-
-            if (res.status !== 200) throw new Error(res.response.data.mensagem);
-
-            setListaPPT(res.data);
-            setDependenciasFiltradas(res.data); // Carregar lista completa ao iniciar
-        } catch (error) {
-            console.error('Erro ao buscar PPTs: ', error);
-        }
-    };
 
     const limparBusca = () => {
         setDataInicio('');
@@ -49,7 +38,7 @@ const ListarPPT = () => {
         str?.normalize("NFD").replace(/[\u0300-\u036f]/g, "") || "";
 
     const filtrarPPT = () => {
-        const dependenciasFiltradas = listaPPT.filter((ppt) => {
+        const dependenciasFiltradas = listaDependencias.filter((ppt) => {
             const filtroGeralAtende = !filtroGeral ||
                 // serve para passar por cada elemento da dependencia
                 Object.values(ppt).some((campo) =>
@@ -70,9 +59,7 @@ const ListarPPT = () => {
         setDependenciasFiltradas(dependenciasFiltradas);
     };
 
-    useEffect(() => {
-        fetchPPT();
-    }, []);
+    // if (isLoading) return <LoadingIFRS icone={}/>
 
     return (
         <>
@@ -117,4 +104,4 @@ const ListarPPT = () => {
     );
 };
 
-export default ListarPPT;
+export default ListarDependencias;

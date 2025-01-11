@@ -1,26 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
-import FormContainer from "../../../../components/FormContainer/FormContainer";
 import "./DetalhesDependencia.css";
-import Button from "../../../../components/Button/Button";
-import StatusBalls from "../../../../components/StatusBall/StatusBall";
-import Modal from "../../../../components/Modal/Modal";
-import { PEDService } from "../../../../services/pedService";
+import React, { useEffect, useState } from "react";
+import FormContainer from "../FormContainer/FormContainer";
+import Button from "../Button/Button";
+import StatusBalls from "../StatusBall/StatusBall";
+import Dropdown from "../Dropdown/Dropdown";
+import Modal from "../Modal/Modal";
 import { jwtDecode } from 'jwt-decode';
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Dropdown from "../../../../components/Dropdown/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
-import { PPTService } from "../../services/pptService";
+import LoadingIFRS from "../LoadingIFRS/LoadingIFRS";
 
-const DetalhesPED = () => {
-  const location = useLocation();
-  const tipoPed = location.pathname.split('/')[4];
-  const perfil = jwtDecode(sessionStorage.getItem('token')).grupo
-  const { pedId, pptId } = useParams();
-  const [isLoading, setIsLoading] = useState(true)
-  const [detalhesDependencia, setDetalhesDependencia] = useState({});
+const DetalhesDependencia = ({dependencia, tipo, modalidade}) => {
   const [planoId, setPlanoId] = useState(null)
   const [formEncerramentoId, setFormEncerramentoId] = useState(null)
   const [modalAberto, setModalAberto] = useState(false);
@@ -32,126 +22,59 @@ const DetalhesPED = () => {
   const abrirModalConfirmacao = () => setModalConfirmacaoAberto(true);
   const fecharModalConfirmacao = () => setModalConfirmacaoAberto(false);
 
-  const fetchDetalhes = async () => {
-    if (pptId) {
-      try {
-        const res = await PPTService.porId(pptId, grupo === 'Aluno' ? 'aluno' : 'detalhes')
-
-        if (res.status !== 200) throw new Error(res)
-
-        setDetalhesDependencia(res.data)
-        setIsLoading(false)
-      } catch (erro) {
-        console.error(erro)
-      }
-    } else {
-      
-    }
-  };
-
-  const handleDesativarClick = async () => {
-    try {
-      const updatedDetalhes = { ...detalhesPED, status: "Desativado" };
-      const modalidade = detalhesPED.serie_progressao ? "EMI" : "ProEJA";
-      const res = await PEDService.desativar(
-        pedId,
-        updatedDetalhes,
-        modalidade
-      );
-      if (!res) throw new Error(res.response?.data?.mensagem);
-      setDetalhesPED(updatedDetalhes);
-      console.log("PED desativada com sucesso:", updatedDetalhes);
-      fecharModal();
-    } catch (error) {
-      console.error("Erro ao desativar PED:", error.message);
-    }
-  };
-
-  const handleEncerrarClick = async () => {
-    try {
-      if (detalhesPED.status !== "Finalizada") {
-        toast.error("Somente PEDs Finalizadas podem ser encerradas.");
-        return;
-      }
-  
-      const modalidade = detalhesPED.serie_progressao ? "emi" : "proeja";
-      const res = await PEDService.encerrar_ped({
-        ped_tipo: modalidade,
-        ped_id: pedId
-      });
-  
-      if (res.status !== 200) {
-        throw new Error(res.response?.data?.mensagem || "Erro ao encerrar PED.");
-      }
-  
-      setDetalhesPED({ ...detalhesPED, status: "Encerrado" });
-      toast.success("PED encerrada com sucesso!");
-    } catch (error) {
-      toast.error(`Erro ao encerrar PED: ${error.message}`);
-    }
-  };
-  
-  useEffect(() => {
-    fetchDetalhes()
-  }, [])
-
-  if (!detalhesDependencia.aluno) {
-    return <div>Carregando...</div>;
-  }
-
   return (
-  <>  
-    <ToastContainer />
     <FormContainer
-      titulo={`Detalhes da PED - ${detalhesPED.serie_progressao ? "EMI" : "ProEJA"}`}
+      titulo={`Detalhes da ${tipo} - ${modalidade}`}
       comprimento="80%"
     >
-      {detalhesPED.serie_progressao ? (
+  {
+    modalidade ? (
+      modalidade === 'Integrado' ? (
         <>
-          <label className="labelCabecalhoDetalhesPED">
-            <span className="spanDetalhesPED">
-              Aluno - <p className="nomeAlunoPED">{detalhesPED.aluno.nome}</p>
+          <label className="labelCabecalhoDetalhesDependencia">
+            <span className="spanDetalhesDependencia">
+              Aluno - <p className="nomeAlunoPED">{dependencia.aluno.nome}</p>
             </span>
             <label className="labelStatusPED">Andamento da PED</label>
           </label>
-          <section className="sectionDetalhesPED">
-            <div className="divDetalhesPED">
+          <section className="sectionDetalhesDependencia">
+            <div className="divDetalhesDependencia">
               <span className="dadosPED">
-                <label className="labelDetalhesPED">
+                <label className="labelDetalhesDependencia">
                   Docente responsável pela progressão
-                  <p className="pDetalhesPED">{detalhesPED.professor_ped.nome}</p>
+                  <p className="pDetalhesDependencia">{dependencia.professor_ped.nome}</p>
                 </label>
-                <label className="labelDetalhesPED">
+                <label className="labelDetalhesDependencia">
                   Docente que ministrou a disciplina
-                  <p className="pDetalhesPED">{detalhesPED.professor_disciplina.nome}</p>
+                  <p className="pDetalhesDependencia">{dependencia.professor_disciplina.nome}</p>
                 </label>
               </span>
               <span className="dadosPED">
-                <label className="labelDetalhesPED">
+                <label className="labelDetalhesDependencia">
                   Curso
-                  <p className="pDetalhesPED">{detalhesPED.curso.nome}</p>
+                  <p className="pDetalhesDependencia">{dependencia.curso.nome}</p>
                 </label>
-                <label className="labelDetalhesPED">
+                <label className="labelDetalhesDependencia">
                   Disciplina
-                  <p className="pDetalhesPED">{detalhesPED.disciplina.nome}</p>
+                  <p className="pDetalhesDependencia">{dependencia.disciplina.nome}</p>
                 </label>
               </span>
               <span className="dadosPED">
-                <label className="labelDetalhesPED">
+                <label className="labelDetalhesDependencia">
                   Trimestres a Recuperar
-                  <p className="pDetalhesPED">{detalhesPED.trimestre_recuperar}</p>
+                  <p className="pDetalhesDependencia">{dependencia.trimestre_recuperar}</p>
                 </label>
-                <label className="labelDetalhesPED">
+                <label className="labelDetalhesDependencia">
                   Série da Progressão
-                  <p className="pDetalhesPED">{detalhesPED.serie_progressao}</p>
+                  <p className="pDetalhesDependencia">{dependencia.serie_progressao}</p>
                 </label>
-                <label className="labelDetalhesPED">
+                <label className="labelDetalhesDependencia">
                   Turma Atual
-                  <p className="pDetalhesPED">{detalhesPED.turma_atual.numero}</p>
+                  <p className="pDetalhesDependencia">{dependencia.turma_atual.numero}</p>
                 </label>
-                <label className="labelDetalhesPED">
+                <label className="labelDetalhesDependencia">
                   Observação
-                  <p className="pDetalhesPED">{detalhesPED.observacao}</p>
+                  <p className="pDetalhesDependencia">{dependencia.observacao}</p>
                 </label>
               </span>
             </div>
@@ -161,10 +84,11 @@ const DetalhesPED = () => {
                   itens={[
                     {
                       link: 'editar',
-                      name: 'Editar PED'
+                      name: 'Editar PED',
+                      state: dependencia
                     },
                     {
-                      link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${pedId}`,
+                      // link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${}`,
                       name: 'Atividades'
                     },
                     {
@@ -180,16 +104,16 @@ const DetalhesPED = () => {
                   ]}
                 />
               </div>
-              <StatusBalls status={detalhesPED.status} />
+              <StatusBalls status={dependencia.status} />
               <div className="buttons-ped">
-                {detalhesPED.status !== "Desativado" && (
+                {dependencia.status !== "Desativado" && (
                   <>
                     <Button text="Desativar PED" color="#f00" onClick={abrirModal} />
                     <Button
                       text="Encerrar PED"
                       onClick={abrirModalConfirmacao}
-                      disabled={detalhesPED.status !== "Finalizada"}
-                      title={detalhesPED.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
+                      disabled={dependencia.status !== "Finalizada"}
+                      title={dependencia.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
                     />
                   </>
                 )}
@@ -199,91 +123,161 @@ const DetalhesPED = () => {
         </>
       ) : (
         <>
-          <label className="labelCabecalhoDetalhesPED">
-            <span className="spanDetalhesPED">
-              Aluno -<p className="pDetalhesPED">{detalhesPED.aluno.nome}</p>
+        <label className="labelCabecalhoDetalhesDependencia">
+          <span className="spanDetalhesDependencia">
+            Aluno -<p className="pDetalhesDependencia">{dependencia.aluno.nome}</p>
+          </span>
+          <label className="labelStatusPED">Andamento da PED</label>
+        </label>
+        <section className="sectionDetalhesDependencia">
+          <div className="divDetalhesDependencia">
+            <span className="dadosPED">
+              <label className="labelDetalhesDependencia">
+                Docente responsável pela progressão
+                <p className="pDetalhesDependencia">{dependencia.professor_ped.nome}</p>
+              </label>
+              <label className="labelDetalhesDependencia">
+                Docente que ministrou a disciplina
+                <p className="pDetalhesDependencia">{dependencia.professor_disciplina.nome}</p>
+              </label>
             </span>
-            <label className="labelStatusPED">Andamento da PED</label>
-          </label>
-          <section className="sectionDetalhesPED">
-            <div className="divDetalhesPED">
-              <span className="dadosPED">
-                <label className="labelDetalhesPED">
-                  Docente responsável pela progressão
-                  <p className="pDetalhesPED">{detalhesPED.professor_ped.nome}</p>
-                </label>
-                <label className="labelDetalhesPED">
-                  Docente que ministrou a disciplina
-                  <p className="pDetalhesPED">{detalhesPED.professor_disciplina.nome}</p>
-                </label>
-              </span>
-              <span className="dadosPED">
-                <label className="labelDetalhesPED">
-                  Curso
-                  <p className="pDetalhesPED">{detalhesPED.curso.nome}</p>
-                </label>
-                <label className="labelDetalhesPED">
-                  Disciplina
-                  <p className="pDetalhesPED">{detalhesPED.disciplina.nome}</p>
-                </label>
-              </span>
-              <span className="dadosPED">
-                <label className="labelDetalhesPED">
-                  Ano/Semestre de Reprovação
-                  <p className="pDetalhesPED">{detalhesPED.ano_semestre_reprov}</p>
-                </label>
-                <label className="labelDetalhesPED">
-                  Observação
-                  <p className="pDetalhesPED">{detalhesPED.observacao}</p>
-                </label>
-              </span>
+            <span className="dadosPED">
+              <label className="labelDetalhesDependencia">
+                Curso
+                <p className="pDetalhesDependencia">{dependencia.curso.nome}</p>
+              </label>
+              <label className="labelDetalhesDependencia">
+                Disciplina
+                <p className="pDetalhesDependencia">{dependencia.disciplina.nome}</p>
+              </label>
+            </span>
+            <span className="dadosPED">
+              <label className="labelDetalhesDependencia">
+                Ano/Semestre de Reprovação
+                <p className="pDetalhesDependencia">{dependencia.ano_semestre_reprov}</p>
+              </label>
+              <label className="labelDetalhesDependencia">
+                Observação
+                <p className="pDetalhesDependencia">{dependencia.observacao}</p>
+              </label>
+            </span>
+          </div>
+          <div className="divStatusPED">
+            <div className="opcoesContainer">
+              <Dropdown tipo={'icone'} icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
+                itens={[
+                  {
+                    link: 'editar',
+                    name: 'Editar PED',
+                    state: dependencia
+                  },
+                  {
+                    // link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${pedId}`,
+                    name: 'Atividades'
+                  },
+                  {
+                    link: dependencia.planoId ? `planoEstudos/${dependencia.planoId}/detalhes` : null,
+                    name: 'Plano de Estudos',
+                    desabilitado: dependencia.planoId ? false : true
+                  },
+                  {
+                    link: dependencia.formEncerramentoId ? `formEncerramento/${dependencia.formEncerramentoId}/detalhes` : null,
+                    name: 'Formulário de Encerramento',
+                    desabilitado: dependencia.formEncerramentoId ? false : true
+                  },
+                ]}
+              />
             </div>
-            <div className="divStatusPED">
-              <div className="opcoesContainer">
-                <Dropdown tipo={'icone'} icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
-                  itens={[
-                    {
-                      link: 'editar',
-                      name: 'Editar PED'
-                    },
-                    {
-                      link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${pedId}`,
-                      name: 'Atividades'
-                    },
-                    {
-                      link: planoId ? `planoEstudos/${planoId}/detalhes` : null,
-                      name: 'Plano de Estudos',
-                      desabilitado: planoId ? false : true
-                    },
-                    {
-                      link: formEncerramentoId ? `formEncerramento/${formEncerramentoId}/detalhes` : null,
-                      name: 'Formulário de Encerramento',
-                      desabilitado: formEncerramentoId ? false : true
-                    },
-                  ]}
-                />
-              </div>
-              <StatusBalls status={detalhesPED.status} />
-              <div className="buttons-ped">
-                {detalhesPED.status !== "Desativado" && (
-                  <>
-                    <Button text="Desativar PED" color="#f00" onClick={abrirModal} />
-                    <Button
-                      text="Encerrar PED"
-                      color={"red"}
-                      onClick={abrirModalConfirmacao}
-                      disabled={detalhesPED.status === "Finalizada" ? true : false}
-                      title={detalhesPED.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
-                    />
-                  </>
-                )}
-              </div>
+            <StatusBalls status={dependencia.status} />
+            <div className="buttons-ped">
+              {dependencia.status !== "Desativado" && (
+                <>
+                  <Button text="Desativar PED" color="#f00" onClick={abrirModal} />
+                  <Button
+                    text="Encerrar PED"
+                    color={"red"}
+                    onClick={abrirModalConfirmacao}
+                    disabled={dependencia.status === "Finalizada" ? true : false}
+                    title={dependencia.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
+                  />
+                </>
+              )}
             </div>
-          </section>
+          </div>
+        </section>
         </>
-      )}
+      )
+    ) : (
+      <>
+      <label className="labelCabecalhoDetalhesDependencia">
+        <span className="spanDetalhesDependencia">
+          Aluno -<p className="pDetalhesDependencia">{dependencia.aluno.nome}</p>
+        </span>
+        <label className="labelStatusPED">Andamento da PPT</label>
+      </label>
+      <section className="sectionDetalhesDependencia">
+        <div className="divDetalhesDependencia">
+          <span className="dadosPED">
+            <label className="labelDetalhesDependencia">
+              Docente responsável pela progressão
+              <p className="pDetalhesDependencia">{dependencia.professor_ppt.nome}</p>
+            </label>
+            <label className="labelDetalhesDependencia">
+              Docente que ministrou a disciplina
+              <p className="pDetalhesDependencia">{dependencia.professor_disciplina.nome}</p>
+            </label>
+          </span>
+          <span className="dadosPED">
+            <label className="labelDetalhesDependencia">
+              Curso
+              <p className="pDetalhesDependencia">{dependencia.curso.nome}</p>
+            </label>
+            <label className="labelDetalhesDependencia">
+              Disciplina
+              <p className="pDetalhesDependencia">{dependencia.disciplina.nome}</p>
+            </label>
+          </span>
+          <span className="dadosPED">
+            <label className="labelDetalhesDependencia">
+              Observação
+              <p className="pDetalhesDependencia">{dependencia.observacao}</p>
+            </label>
+          </span>
+        </div>
+        <div className="divStatusPED">
+          <div className="opcoesContainer">
+            <Dropdown tipo={'icone'} icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
+              itens={[
+                {
+                  link: 'editar',
+                  name: 'Editar PPT',
+                  state: dependencia
+                },
+              ]}
+            />
+          </div>
+          <StatusBalls status={dependencia.status} />
+          <div className="buttons-ped">
+            {dependencia.status !== "Desativado" && (
+              <>
+                <Button text="Desativar PED" color="#f00" onClick={abrirModal} />
+                <Button
+                  text="Encerrar PED"
+                  color={"red"}
+                  onClick={abrirModalConfirmacao}
+                  disabled={dependencia.status === "Finalizada" ? true : false}
+                  title={dependencia.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
+                />
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+      </>
+    )
+  }
 
-      <Modal
+      {/* <Modal
         estaAberto={modalAberto}
         aoFechar={fecharModal}
         mensagem="Você tem certeza que deseja desativar a PED?"
@@ -304,10 +298,10 @@ const DetalhesPED = () => {
           fecharModalConfirmacao();
           await handleEncerrarClick();
         }}
-      />
+      /> */}
+
     </FormContainer>
-    </>
   );
 };
 
-export default DetalhesPED;
+export default DetalhesDependencia;

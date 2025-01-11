@@ -35,7 +35,7 @@ const Dropdown = ({ titulo, icone, itens, tipo, alinhar }) => {
                 onMouseLeave={handleMouseLeave}
                 >
                 {itens.map((item, index) => (
-                    <button className="dropdown-item" disabled={item.desabilitado} onClick={() => redirect(item.link)}>
+                    <button className="dropdown-item" disabled={item.desabilitado} onClick={() => redirect(item.link, {state: item.state})}>
                       {item.name}
                     </button>
                 ))}
@@ -80,7 +80,7 @@ const Dropdown = ({ titulo, icone, itens, tipo, alinhar }) => {
                 onMouseLeave={handleMouseLeave}
                 >
                 {itens.map((item, index) => (
-                  <button className="dropdown-item" disabled={item.desabilitado} onClick={() => redirect(item.link)}>
+                  <button className="dropdown-item" disabled={item.desabilitado} onClick={() => redirect(item.link, {state: item.state})}>
                     {item.name}
                   </button>
                 ))

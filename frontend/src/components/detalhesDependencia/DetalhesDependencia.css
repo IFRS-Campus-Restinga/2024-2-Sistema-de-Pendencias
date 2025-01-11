@@ -1,10 +1,10 @@
-.sectionDetalhesPED {
+.sectionDetalhesDependencia {
     width: 100%;
     display: flex;
     justify-content: flex-start;
 }
 
-.divDetalhesPED {
+.divDetalhesDependencia {
     width: fit-content;
     display: flex;
     flex-direction: column;
@@ -28,7 +28,7 @@
     min-height: 24px;
 }
 
-.labelDetalhesPED {
+.labelDetalhesDependencia {
     display: flex;
     flex-direction: column;
     font-weight: bold;
@@ -41,13 +41,13 @@
     margin-left: 10px;
 }
 
-.pDetalhesPED {
+.pDetalhesDependencia {
     font-weight: 400;
     font-size: 15px;
     margin: 5px;
 }
 
-.spanDetalhesPED {
+.spanDetalhesDependencia {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -57,7 +57,7 @@
     margin: auto;
 }
 
-.labelCabecalhoDetalhesPED {
+.labelCabecalhoDetalhesDependencia {
     background-color: #006b3f;
     color: white;
     font-size: 20px;
@@ -82,17 +82,17 @@
         height: 300px;
     }
 
-    .labelDetalhesPED {
+    .labelDetalhesDependencia {
         font-size: 15px;
     }
 
-    .pDetalhesPED {
+    .pDetalhesDependencia {
         font-size: 12px;
     }
 }
 
 @media (max-width: 1000px) {
-    .sectionDetalhesPED {
+    .sectionDetalhesDependencia {
         flex-direction: column;
         align-items: center;
         justify-content: center;
@@ -113,7 +113,7 @@
         margin: 0;
     }
 
-    .divDetalhesPED {
+    .divDetalhesDependencia {
         margin: 10px;
         border: 2px solid #ccc;
         border-radius: 10px;
@@ -127,7 +127,7 @@
 }
 
 @media (max-width: 680px) {
-    .labelDetalhesPED {
+    .labelDetalhesDependencia {
         font-size: 12px;
     }
 }

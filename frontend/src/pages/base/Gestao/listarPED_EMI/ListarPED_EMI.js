@@ -5,7 +5,7 @@ import { PEDService } from "../../../../services/pedService"
 import Input from "../../../../components/Input/Input"
 import X from "../../../../assets/x-branco.png";
 import Lupa from "../../../../assets/lupa-branca.png";
-import loading from '../../../../assets/loading-peds.png'
+import loading from '../../../../assets/loading-peds-emi.png'
 import './ListarPED_EMI.css'
 import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS"
 

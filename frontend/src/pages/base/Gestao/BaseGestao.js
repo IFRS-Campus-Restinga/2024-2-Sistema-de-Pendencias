@@ -42,11 +42,11 @@ const BaseGestao = () => {
         <Dropdown titulo='Dependências' itens={[
         {
         name: "Dependências - EMI",
-        link: `${homeUrl}/peds-emi`
+        link: `${homeUrl}/peds/Integrado`
         },
         {
         name: "Dependências - ProEJA",
-        link: `${homeUrl}/peds-proeja`
+        link: `${homeUrl}/peds/ProEJA`
         },
         {
         name: "Cadastro PED",

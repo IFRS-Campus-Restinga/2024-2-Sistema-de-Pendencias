@@ -1,12 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom'
 // Tela de Login
 import LoginPage from './pages/login/LoginPage'
+
 // import das telas base de cada perfil
 import BaseGestao from './pages/base/Gestao/BaseGestao'
 import BaseRegistro from './pages/base/Registro/BaseRegistro'
 import BaseCoordenador from './pages/base/Coordenador/BaseCoordenador'
 import BaseProfessor from './pages/base/Professor/BaseProfessor'
 import BaseAluno from './pages/base/Aluno/BaseAluno'
+
 // Filhos de Gestao
 import HomeGestao from './pages/base/Gestao/home/HomeGestao'
 import CadastroCurso from './pages/base/Gestao/cadastroCurso/CadastroCurso'
@@ -22,8 +24,7 @@ import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
 import ListarDisciplina from './pages/base/Gestao/listarDisciplina/ListarDisciplina'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 import DetalhesServidor from './pages/base/Gestao/detalhesServidor/DetalhesServidor'
-// import DetalhesPPT from './pages/base/Gestao/detalhesPPT/detalhesPPT'
-// import DetalhesPED from './pages/base/Gestao/detalhesPED/DetalhesPED'
+import DetalhesPEDGestao from './pages/base/Gestao/detalhesPEDGestao/DetalhesPEDGestao'
 import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
 import ListarAluno from './pages/base/Gestao/listarAluno/ListarAluno'
 import DetalhesAluno from './pages/base/Gestao/detalhesAluno/DetalhesAluno'
@@ -135,253 +136,251 @@ const router = createBrowserRouter([
                 path: ':idUsuario/disciplinas/:idDisciplina/editar',
                 element: <EditarDisciplina />
             },
-            //             {
-            //                 path: ':idUsuario/calendario',
-            //                 element: <CalendarioPage />
-            //             },
-            //             {
-            //                 path: ':idUsuario/cadastroCalendarioAcademico',
-            //                 element: <CadastroCalendarioAcademicoPage />
-            //             },
-            //             {
-            //                 path: ':idUsuario/calendario/:idCalendario/editar',
-            //                 element: <CadastroCalendarioAcademicoPage />
-            //             },
-            //             {
-            //                 path: ':idUsuario/CalendariosAcademicos',
-            //                 element: <ListarCalendariosAcademicosPage />
-            //             },
-            //             {
-            //                 path: ':idUsuario/eventoCalendario',
-            //                 element: <EventoCalendarioPage />
-            //             },
-            //             {
-            //                 path: ':idUsuario/calendario/evento/:idEvento',
-            //                 element: <EventoCalendarioPage />
-            //             },
-            //             {
-            //                 path: ':idUsuario/cadastroPED',
-            //                 element: <CadastroPED />
-            //             },
-            //             {
-            //                 path: ':idUsuario/peds-emi',
-            //                 element: <ListarPEDEMI />
-            //             },
-            //             {
-            //                 path: ':idUsuario/peds-proeja',
-            //                 element: <ListarPEDProEJA />
-            //             },
-            //             {
-            //                 path: ':idUsuario/peds-emi/:idPed',
-            //                 element: <DetalhesPED />
-            //             },
-            //             {
-            //                 path: ':idUsuario/peds-proeja/:idPed',
-            //                 element: <DetalhesPED />
-            //             },
-            //             {
-            //                 path: ':idUsuario/peds-emi/:idPed/editar',
-            //                 element: <CadastroPED />
-            //             },
-            //             {
-            //                 path: ':idUsuario/peds-proeja/:idPed/editar',
-            //                 element: <CadastroPED />
-            //             },
-            //             {
-            //                 path: ':idUsuario/cadastroPPT',
-            //                 element: <CadastroPPT />
-            //             },
-            //             {
-            //                 path: ':idUsuario/ppts',
-            //                 element: <ListarPPT />
-            //             },
-            //             {
-            //                 path: ':idUsuario/ppts/:idPpt',
-            //                 element: <DetalhesPPT />
-            //             },
-            //             {
-            //                 path: ':idUsuario/ppts/:idPpt/editar',
-            //                 element: <CadastroPPT />
-            //             },
-            //             {
-            //                 path: ':idUsario/peds-proeja/:idPed/planoEstudos/:planoId/detalhes',
-            //                 element: <DetalhesPlanoEstudos />
-            //             },
-            //             {
-            //                 path: ':idUsario/peds-emi/:idPed/planoEstudos/:planoId/detalhes',
-            //                 element: <DetalhesPlanoEstudos />
-            //             },
-            //             {
-            //                 path: ':idUsuario/atividades/:pedTipo/:idPed',
-            //                 element: <AtividadesDesenvolvidasGestao />
-            //             },
-            //             {
-            //                 path: ':idUsuario/atividades/:pedTipo/:idPed/detalhes/:atividadeId',
-            //                 element: <DetalhesAtividadeGestao />
-            //             },
+            {
+                path: ':idUsuario/calendario',
+                element: <CalendarioPage />
+            },
+            {
+                path: ':idUsuario/cadastroCalendarioAcademico',
+                element: <CadastroCalendarioAcademicoPage />
+            },
+            {
+                path: ':idUsuario/calendario/:idCalendario/editar',
+                element: <CadastroCalendarioAcademicoPage />
+            },
+            {
+                path: ':idUsuario/CalendariosAcademicos',
+                element: <ListarCalendariosAcademicosPage />
+            },
+            {
+                path: ':idUsuario/eventoCalendario',
+                element: <EventoCalendarioPage />
+            },
+            {
+                path: ':idUsuario/calendario/evento/:idEvento',
+                element: <EventoCalendarioPage />
+            },
+            {
+                path: ':idUsuario/cadastroPED',
+                element: <CadastroPED />
+            },
+            {
+                path: ':idUsuario/peds/Integrado',
+                element: <ListarPEDEMI />
+            },
+            {
+                path: ':idUsuario/peds/ProEJA',
+                element: <ListarPEDProEJA />
+            },
+            {
+                path: ':idUsuario/peds/Integrado/:idPed',
+                element: <DetalhesPEDGestao />
+            },
+            {
+                path: ':idUsuario/peds/ProEJA/:idPed',
+                element: <DetalhesPEDGestao />
+            },
+            {
+                path: ':idUsuario/peds/Integrado/:idPed/editar',
+                element: <CadastroPED />
+            },
+            {
+                path: ':idUsuario/peds/ProEJA/:idPed/editar',
+                element: <CadastroPED />
+            },
+            {
+                path: ':idUsuario/cadastroPPT',
+                element: <CadastroPPT />
+            },
+            // {
+            //     path: ':idUsuario/ppts',
+            //     element: <ListarPPT />
+            // },
+            // {
+            //     path: ':idUsuario/ppts/:idPpt',
+            //     element: <DetalhesDependencia />
+            // },
+            {
+                path: ':idUsuario/ppts/:idPpt/editar',
+                element: <CadastroPPT />
+            },
+            {
+                path: ':idUsario/peds/ProEJA/:idPed/planoEstudos/:planoId/detalhes',
+                element: <DetalhesPlanoEstudos />
+            },
+            {
+                path: ':idUsario/peds/EMI/:idPed/planoEstudos/:planoId/detalhes',
+                element: <DetalhesPlanoEstudos />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:idPed',
+                element: <AtividadesDesenvolvidasGestao />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:idPed/detalhes/:atividadeId',
+                element: <DetalhesAtividadeGestao />
+            },
 
-
-            //         ]
-            //         // Adicionar outros caminhos que vão derivar da tela de home após autenticação
-
-            //     },
-            //     // Rotas de Registro Escolar
-            //     {
-            //         path: '/sessao/Registro Escolar/',
-            //         element: <BaseRegistro />,
-            //         children: [
-            //             {
-            //                 path: ':idUsuario/',
-            //                 element: <HomeRegistro />
-            //             },
-            //             {
-            //                 path: ':idUsuario/listarPPTregistro',
-            //                 element: <ListarPPTRegistro />
-            //             }
-            //         ]
-            //     },
-            //     // Rotas de Coordenador
-            //     {
-            //         path: '/sessao/Coordenador/',
-            //         element: <BaseCoordenador />,
-            //         // adicionar abaixo, as children de coordenador
-            //         children: [
-            //             {
-            //                 path: ':idUsuario/',
-            //                 element: <HomeCoordenador />
-            //             },
-            //             {
-            //                 path: ':idUsuario/perfil/',
-            //                 element: <PerfilCoordenador />
-            //             },
-            //             {
-            //                 path: ':idUsuario/peds-emi/',
-            //                 element: <ListarPEDEMICoordenador />
-            //             },
-            //             {
-            //                 path: ':idUsuario/peds-proeja/',
-            //                 element: <ListarPEDProEJACoordenador />
-            //             },
-            //             {
-            //                 path: ':idUsuario/peds-emi/:idPed',
-            //                 element: <DetalhesPEDCoordenador />
-            //             },
-            //             {
-            //                 path: ':idUsuario/peds-proeja/:pedId',
-            //                 element: <DetalhesPEDCoordenador />
-            //             },
 
         ]
     },
-    //     // Rotas de Professor
-    //     {
-    //         path: '/sessao/Professor/',
-    //         element: <BaseProfessor />,
-    //         // adicionar abaixo, as children de professor
-    //         children: [
-    //             {
-    //                 path: ':idUsuario/',
-    //                 element: <HomeProfessor />
+    // Rotas de Registro Escolar
+    {
+        path: '/sessao/Registro Escolar/',
+        element: <BaseRegistro />,
+        children: [
+            {
+                path: ':idUsuario/',
+                element: <HomeRegistro />
+            },
+            //     {
+            //         path: ':idUsuario/listarPPTregistro',
+            //         element: <ListarPPT />
+            //     }
+        ]
+    },
+    // Rotas de Coordenador
+    {
+        path: '/sessao/Coordenador/',
+        element: <BaseCoordenador />,
+        // adicionar abaixo, as children de coordenador
+        children: [
+            {
+                path: ':idUsuario/',
+                element: <HomeCoordenador />
+            },
+            {
+                path: ':idUsuario/perfil/',
+                element: <PerfilCoordenador />
+            },
+            {
+                path: ':idUsuario/peds/Integrado',
+                element: <ListarPEDEMICoordenador />
+            },
+            {
+                path: ':idUsuario/peds/ProEJA/',
+                element: <ListarPEDProEJACoordenador />
+            },
+            {
+                path: ':idUsuario/peds/Integrado/:idPed',
+                element: <DetalhesPEDCoordenador />
+            },
+            {
+                path: ':idUsuario/peds/ProEJA/:pedId',
+                element: <DetalhesPEDCoordenador />
+            },
 
-    //             },
-    //             {
-    //                 path: ':idUsuario/perfil/',
-    //                 element: <PerfilProfessor />
-    //             },
-    //             {
-    //                 path: ':idUsuario/peds-emi/',
-    //                 element: <ListarPEDEMIProfessor />
-    //             },
-    //             {
-    //                 path: ':idUsuario/peds-proeja/',
-    //                 element: <ListarPEDProEJAProfessor />
-    //             },
-    //             {
-    //                 path: ':idUsuario/peds-emi/:pedId',
-    //                 element: <DetalhesPEDProfessor />
-    //             },
+        ]
+    },
+    // Rotas de Professor
+    {
+        path: '/sessao/Professor/',
+        element: <BaseProfessor />,
+        //   adicionar abaixo, as children de professor
+        children: [
+            {
+                path: ':idUsuario/',
+                element: <HomeProfessor />
 
-    //             {
-    //                 path: ':idUsuario/peds-proeja/:pedId',
-    //                 element: <DetalhesPEDProfessor />
-    //             },
-    //             {
-    //                 path: ':idUsuario/peds-emi/:pedId/planoEstudos',
-    //                 element: <PlanoEstudos />
-    //             },
-    //             {
-    //                 path: ':idUsuario/peds-proeja/:pedId/planoEstudos',
-    //                 element: <PlanoEstudos />
-    //             },
-    //             {
-    //                 path: ':idUsuario/peds-emi/:pedId/planoEstudos/:planoId/detalhes',
-    //                 element: <DetalhesPlanoEstudos />
-    //             },
-    //             {
-    //                 path: ':idUsuario/planoEstudos/:pedId/editar',
-    //                 element: <PlanoEstudos />
-    //             },
-    //             {
-    //                 path: ':idUsuario/atividades/:pedTipo/:pedId',
-    //                 element: <AtividadesDesenvolvidas />
-    //             },
-    //             {
-    //                 path: ':idUsuario/atividades/:pedTipo/:pedId/adicionarAtividade',
-    //                 element: <AdicionarAtividade />,
-    //             },
-    //             {
-    //                 path: ':idUsuario/atividades/:pedTipo/:pedId/detalhes/:atividadeId',
-    //                 element: <DetalhesAtividade />,
-    //             },
-    //             {
-    //                 path: ':idUsuario/atividades/:pedTipo/:pedId/editarAtividade/:atividadeId',
-    //                 element: <AdicionarAtividade />,
-    //             },
-    //             {
-    //                 path: ':idUsuario/adicionarObservacao',
-    //                 element: <AdicionarObservacao />
-    //             },
-    //             {
-    //                 path: ':idUsuario/observacoes/:pedTipo/:pedId/:idObservacao',
-    //                 element: <DetalhesObservacoes />
-    //             },
-    //             {
-    //                 path: ':idUsuario/observacoes/:pedTipo/:pedId',
-    //                 element: <ListarObservacoes />
-    //             },
-    //             {
-    //                 path: ':idUsuario/editarObservacao/:idObservacao',
-    //                 element: <AdicionarObservacao />,
-    //             },
+            },
+            {
+                path: ':idUsuario/perfil/',
+                element: <PerfilProfessor />
+            },
+            {
+                path: ':idUsuario/peds/Integrado/',
+                element: <ListarPEDEMIProfessor />
+            },
+            {
+                path: ':idUsuario/peds/ProEJA/',
+                element: <ListarPEDProEJAProfessor />
+            },
+            // {
+            //     path: ':idUsuario/peds/Integrado/:pedId',
+            //     element: <DetalhesDependencia />
+            // },
+
+            // {
+            //     path: ':idUsuario/peds/ProEJA/:pedId',
+            //     element: <DetalhesDependencia />
+            // },
+            {
+                path: ':idUsuario/peds/Integrado/:pedId/planoEstudos',
+                element: <PlanoEstudos />
+            },
+            {
+                path: ':idUsuario/peds/ProEJA/:pedId/planoEstudos',
+                element: <PlanoEstudos />
+            },
+            {
+                path: ':idUsuario/peds/Integrado/:pedId/planoEstudos/:planoId/detalhes',
+                element: <DetalhesPlanoEstudos />
+            },
+            {
+                path: ':idUsuario/planoEstudos/:pedId/editar',
+                element: <PlanoEstudos />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId',
+                element: <AtividadesDesenvolvidas />
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId/adicionarAtividade',
+                element: <AdicionarAtividade />,
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId/detalhes/:atividadeId',
+                element: <DetalhesAtividade />,
+            },
+            {
+                path: ':idUsuario/atividades/:pedTipo/:pedId/editarAtividade/:atividadeId',
+                element: <AdicionarAtividade />,
+            },
+            {
+                path: ':idUsuario/adicionarObservacao',
+                element: <AdicionarObservacao />
+            },
+            {
+                path: ':idUsuario/observacoes/:pedTipo/:pedId/:idObservacao',
+                element: <DetalhesObservacoes />
+            },
+            {
+                path: ':idUsuario/observacoes/:pedTipo/:pedId',
+                element: <ListarObservacoes />
+            },
+            {
+                path: ':idUsuario/editarObservacao/:idObservacao',
+                element: <AdicionarObservacao />,
+            },
 
 
-    //         ]
-    //     },
-    //     // Rotas de Aluno
-    //     {
-    //         path: '/sessao/Aluno/',
-    //         element: <BaseAluno />,
-    //         // adicionar abaixo, as children de aluno
-    //         children: [
-    //             {
-    //                 path: ':idUsuario/',
-    //                 element: <HomeAluno />
-    //             },
-    //             {
-    //                 path: ':idUsuario/perfil',
-    //                 element: <PerfilAluno />
-    //             },
-    //             {
-    //                 path: ':idUsuario/:modalidade/:pedId/detalhes',
-    //                 element: <DetalhesDependenciaAluno />
-    //             },
-    //             {
-    //                 path: ':idUsuario/:modalidade/:pedId/planoEstudos',
-    //                 element: <DetalhesPlanoEstudo />
-    //             }
+        ]
+    },
+    //   Rotas de Aluno
+    {
+        path: '/sessao/Aluno/',
+        element: <BaseAluno />,
+        //   adicionar abaixo, as children de aluno
+        children: [
+            {
+                path: ':idUsuario/',
+                element: <HomeAluno />
+            },
+            {
+                path: ':idUsuario/perfil',
+                element: <PerfilAluno />
+            },
+            // {
+            //     path: ':idUsuario/:modalidade/:pedId/detalhes',
+            //     element: <DetalhesDependencia />
+            // },
+            {
+                path: ':idUsuario/:modalidade/:pedId/planoEstudos',
+                element: <DetalhesPlanoEstudo />
+            }
 
-    //         ]
-    //     },
+        ]
+    },
 ])
 
 export default router

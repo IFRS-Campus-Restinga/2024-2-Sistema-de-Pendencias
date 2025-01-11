@@ -14,15 +14,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { calendarioAcademicoService } from "../../../../services/calendarioAcademicoService";
 import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS";
-import loading from '../../../../assets/loading-peds.png'
+import loadingEMI from '../../../../assets/loading-peds-emi.png'
+import loadingProEJA from '../../../../assets/loading-peds-proeja.png'
 
 const CadastroPED = () => {
   const location = useLocation()
   const {state} = location || {}
   const { pedId } = useParams();
-  const tipoPed = location.pathname.split('/')[4];
+  const tipoPed = location.pathname.split('/')[5];
   const [isLoading, setIsLoading] = useState(true)
-  const [modalidade, setModalidade] = useState(tipoPed ? tipoPed === 'peds-emi' ? 'Integrado' : 'ProEJA' : 'Integrado')
+  const [modalidade, setModalidade] = useState(tipoPed ?? 'Integrado')
   const [cursos, setCursos] = useState([])
   const [disciplinas, setDisciplinas] = useState([])
   const [turmas, setTurmas] = useState([])
@@ -152,7 +153,6 @@ const CadastroPED = () => {
     }
     
     if (Object.keys(erros).length !== 0) {
-      console.log(erros)
       setErrors(erros)
     } else {
       try {
@@ -222,7 +222,7 @@ const CadastroPED = () => {
 
   const fetchCursos = async () => {
     try {
-      const res = await cursoService.list('dependencia')
+      const res = await cursoService.listar('dependencia')
 
       const cursosPorModalidade = res.data.filter((curso) => curso.modalidade === modalidade)
 
@@ -270,7 +270,7 @@ const CadastroPED = () => {
 
   const fetchPED = async () => {
     try {
-      const res = await PEDService.porId(pedId, tipoPed === 'peds-emi' ? 'Integrado':'ProEJA', "detalhes");
+      const res = await PEDService.porId(pedId, tipoPed, "detalhes");
 
       if (res.status !== 200) throw new Error(res.response?.data?.mensagem);
 
@@ -314,6 +314,7 @@ const CadastroPED = () => {
   };
 
   useEffect(() => {
+    console.log(state)
     if (state) {
       if (state.observacao) {
         setControleInputs({
@@ -353,6 +354,7 @@ const CadastroPED = () => {
       } else {
         fetchPED()
       }
+
       setDesabilitado(true)
     } else {
       fetchCursos()
@@ -360,7 +362,7 @@ const CadastroPED = () => {
     }
   }, [modalidade])
 
-  if (isLoading) return <LoadingIFRS icone={loading}/>
+  if (isLoading) return <LoadingIFRS icone={modalidade === 'Integrado' ? loadingEMI : loadingProEJA}/>
 
   return (
     <>

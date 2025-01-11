@@ -79,7 +79,6 @@ urlpatterns = [
     path('ped-emi/<int:professorId>/', listar_PED_EMI),
     path('ped-proeja/<int:professorId>/', listar_PED_ProEJA),
     path('ped/<int:pedId>/<str:modalidade>/', por_id),
-    #path('cadastrar-plano-estudos/', cadastrar_plano_estudos),
     path('cadastrar-plano-estudos/<int:pedId>/', cadastrar_plano_estudos),
     path('desativar-ped/<int:pedId>/<str:modalidade>/', desativar_PED),
     path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),

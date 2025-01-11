@@ -6,7 +6,7 @@ import { PEDService } from "../../../../services/pedService"
 import './ListarPED_ProEJA.css'
 import X from "../../../../assets/x-branco.png";
 import Lupa from "../../../../assets/lupa-branca.png";
-import loading from '../../../../assets/loading-peds.png'
+import loading from '../../../../assets/loading-peds-proeja.png'
 import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS"
 
 
