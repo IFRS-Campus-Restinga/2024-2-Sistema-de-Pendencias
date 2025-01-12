@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
-import DetalhesDependencia from "../../../../components/detalhesDependencia/DetalhesDependencia"
+import DetalhesDependencia from "../../../../components/DetalhesDependencia/DetalhesDependencia"
 import { PEDService } from "../../../../services/pedService"
 import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS"
 import loadingEMI from '../../../../assets/loading-peds-emi.png'
 import loadingProEJA from '../../../../assets/loading-peds-proeja.png'
 
 
-const DetalhesPEDGestao = () => {
+const DetalhesPEDGestao
+ = () => {
     const [PED, setPED] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const modalidade = useLocation().pathname.split('/')[5]

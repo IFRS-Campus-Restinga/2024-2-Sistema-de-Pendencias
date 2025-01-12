@@ -24,7 +24,8 @@ import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
 import ListarDisciplina from './pages/base/Gestao/listarDisciplina/ListarDisciplina'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 import DetalhesServidor from './pages/base/Gestao/detalhesServidor/DetalhesServidor'
-import DetalhesPEDGestao from './pages/base/Gestao/detalhesPEDGestao/DetalhesPEDGestao'
+import DetalhesPEDGestao from './pages/base/Gestao/detalhesDependenciaGestao/DetalhesPEDGestao'
+import DetalhesPPTGestao from './pages/base/Gestao/detalhesDependenciaGestao/DetalhesPPTGestao'
 import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
 import ListarAluno from './pages/base/Gestao/listarAluno/ListarAluno'
 import DetalhesAluno from './pages/base/Gestao/detalhesAluno/DetalhesAluno'
@@ -33,6 +34,7 @@ import DetalhesAtividadeGestao from './pages/base/Gestao/atividadesDesenvolvidas
 
 // Filhos de Registro
 import HomeRegistro from './pages/base/Registro/home/homeRegistro'
+
 // Filhos de Coordenador
 import HomeCoordenador from './pages/base/Coordenador/home/HomeCoordenador'
 import PerfilCoordenador from './pages/base/Coordenador/perfilCoordenador/PerfilCoordenador'
@@ -57,12 +59,12 @@ import DetalhesObservacoes from './pages/base/Professor/detalhesObservacoes/Deta
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
-import ListarPEDEMI from './pages/base/Gestao/listarPED_EMI/ListarPED_EMI'
-import ListarPEDProEJA from './pages/base/Gestao/listarPED_ProEJA/ListarPED_ProEJA'
 import ListarPEDProEJAProfessor from './pages/base/Professor/listarPED_ProEJAProfessor/ListarPED_ProEJAProfessor'
 import DetalhesCurso from './pages/base/Gestao/detalhesCurso/DetalhesCurso'
 import EditarDisciplina from './pages/base/Gestao/editarDisciplina/EditarDisciplina'
 import DetalhesPlanoEstudo from './pages/base/Aluno/detalhesPlanoEstudos/DetalhesPlanoEstudo'
+import ListarPEDGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPEDGestao'
+import ListarPPTGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPPTGestao'
 
 
 const router = createBrowserRouter([
@@ -166,11 +168,11 @@ const router = createBrowserRouter([
             },
             {
                 path: ':idUsuario/peds/Integrado',
-                element: <ListarPEDEMI />
+                element: <ListarPEDGestao />
             },
             {
                 path: ':idUsuario/peds/ProEJA',
-                element: <ListarPEDProEJA />
+                element: <ListarPEDGestao />
             },
             {
                 path: ':idUsuario/peds/Integrado/:idPed',
@@ -192,14 +194,14 @@ const router = createBrowserRouter([
                 path: ':idUsuario/cadastroPPT',
                 element: <CadastroPPT />
             },
-            // {
-            //     path: ':idUsuario/ppts',
-            //     element: <ListarPPT />
-            // },
-            // {
-            //     path: ':idUsuario/ppts/:idPpt',
-            //     element: <DetalhesDependencia />
-            // },
+            {
+                path: ':idUsuario/ppts',
+                element: <ListarPPTGestao />
+            },
+            {
+                path: ':idUsuario/ppts/:idPpt',
+                element: <DetalhesPPTGestao />
+            },
             {
                 path: ':idUsuario/ppts/:idPpt/editar',
                 element: <CadastroPPT />

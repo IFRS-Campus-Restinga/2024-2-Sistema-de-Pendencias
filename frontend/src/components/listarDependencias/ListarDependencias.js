@@ -7,22 +7,18 @@ import Input from '../Input/Input';
 import X from "../../assets/x-branco.png";
 import Lupa from "../../assets/lupa-branca.png";
 import AdicionarPPT from "../../assets/adicionar-livro.png";
-import PPT from '../../assets/loading-ppt.png'
-import PED_ProEJA from '../../assets/loading-peds-proeja.png'
-import PED_EMI from '../../assets/loading-peds-emi.png'
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import { PPTService } from '../../services/pptService';
-import { PEDService } from '../../services/pedService';
 
-const ListarDependencias = ({listaDependencias}) => {
-    const [isLoading, setIsLoading] = useState(true)
-    const [dependenciasFiltradas, setDependenciasFiltradas] = useState(listaDependencias);
+const ListarDependencias = ({listaDependencias, tipo, modalidade, editar, visualizar}) => {
+    const [dependenciasFiltradas, setDependenciasFiltradas] = useState([]);
     const [filtroGeral, setFiltroGeral] = useState('');
     const [dataInicio, setDataInicio] = useState('');
     const [dataFim, setDataFim] = useState('');
     const [status, setStatus] = useState('');
     const [situacao, setSituacao] = useState('');
+    
+    console.log(dependenciasFiltradas)
 
     const navigate = useNavigate();
 
@@ -37,11 +33,11 @@ const ListarDependencias = ({listaDependencias}) => {
     const removeAcentos = (str) =>
         str?.normalize("NFD").replace(/[\u0300-\u036f]/g, "") || "";
 
-    const filtrarPPT = () => {
-        const dependenciasFiltradas = listaDependencias.filter((ppt) => {
+    const filtrarDependencias = () => {
+        const dependenciasFiltradas = listaDependencias.filter((dependencia) => {
             const filtroGeralAtende = !filtroGeral ||
                 // serve para passar por cada elemento da dependencia
-                Object.values(ppt).some((campo) =>
+                Object.values(dependencia).some((campo) =>
                     removeAcentos(campo?.toString().toLowerCase()).includes(
                         removeAcentos(filtroGeral.toLowerCase())
                     )
@@ -49,25 +45,23 @@ const ListarDependencias = ({listaDependencias}) => {
 
             return (
                 filtroGeralAtende &&
-                (!dataInicio || new Date(ppt.data_inicio) >= new Date(dataInicio)) &&
-                (!dataFim || new Date(ppt.data_final) <= new Date(dataFim)) &&
-                (!status || removeAcentos(ppt.status).toLowerCase() === removeAcentos(status).toLowerCase()) &&
-                (!situacao || removeAcentos(ppt.situacao).toLowerCase() === removeAcentos(situacao).toLowerCase())
+                (!dataInicio || new Date(dependencia.data_inicio) >= new Date(dataInicio)) &&
+                (!dataFim || new Date(dependencia.data_final) <= new Date(dataFim)) &&
+                (!status || removeAcentos(dependencia.status).toLowerCase() === removeAcentos(status).toLowerCase()) &&
+                (!situacao || removeAcentos(dependencia.situacao).toLowerCase() === removeAcentos(situacao).toLowerCase())
             );
         });
 
         setDependenciasFiltradas(dependenciasFiltradas);
     };
 
-    // if (isLoading) return <LoadingIFRS icone={}/>
+    useEffect(() => {
+        setDependenciasFiltradas(listaDependencias)
+    },[modalidade])
 
     return (
         <>
-            <FormContainer titulo='Lista de PPT' comprimento='90%'
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    filtrarPPT();
-                }}>
+            <FormContainer titulo={`Lista de ${tipo} ${modalidade ?? ''}`} comprimento='90%'>
                 <div className='containerBuscarPPT'>
                     <div class="buscaBarPPT">
                         <Input
@@ -79,7 +73,7 @@ const ListarDependencias = ({listaDependencias}) => {
                         <img
                             className='iconesBuscarPPT'
                             src={Lupa}
-                            onClick={filtrarPPT}
+                            onClick={filtrarDependencias}
                             title='Buscar'
                         />
                         <img
@@ -93,12 +87,12 @@ const ListarDependencias = ({listaDependencias}) => {
                         <img
                             className='iconeAdicionarPPT'
                             src={AdicionarPPT}
-                            onClick={() => navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroPPT`)}
-                            title='Cadastrar PPT'
+                            onClick={() => navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/${tipo === 'PED' ? 'cadastroPED' : 'cadastroPPT'}`)}
+                            alt='Cadastrar PPT'
                         />
                     </div>
                 </div>
-                <Tabela listaFiltrada={dependenciasFiltradas} editar={true} visualizar={true}/>
+                <Tabela listaFiltrada={dependenciasFiltradas} editar={editar} visualizar={visualizar}/>
             </FormContainer>
         </>
     );
