@@ -4,47 +4,24 @@ import Button from "../../../../components/Button/Button";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./planoEstudos.css";
+import "./CadastroPlanoEstudos.css";
 import { PlanoEstudosService } from "../../../../services/planoEstudosService";
 import { validarFormularioPlanoEstudos } from "./validacoes";
 
 const Turnos = ["Manhã", "Tarde", "Noite", "Integral"];
 const FormaOferta = ["Presencial", "EAD", "Híbrido"];
 
-const PlanoEstudos = () => {
-  const { pedId } = useParams(); // ID do plano de estudos
+const CadastroPlanoEstudos = () => {
   const location = useLocation();
+  const modalidade = location.pathname.split("/")[5]
   const { state } = location || {}; // Verifica se estamos editando ou criando
-
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     forma_oferta: "",
     turno: "",
     parecer_pedagogico: "",
-    pedId: pedId || "",
+    ped: state.id
   });
-
-  const [errors, setErrors] = useState({});
-
-  // Busca os dados do plano de estudos caso esteja editando
-  useEffect(() => {
-    const fetchPlanoEstudo = async () => {
-      if (state?.isEditing && pedId) {
-        try {
-          const response = await PlanoEstudosService.buscarPlanoEstudo(pedId);
-          setFormData({
-            forma_oferta: response.forma_oferta || "",
-            turno: response.turno || "",
-            parecer_pedagogico: response.parecer_pedagogico || "",
-            pedId: pedId,
-          });
-        } catch (error) {
-          console.error("Erro ao buscar detalhes do plano de estudos", error);
-        }
-      }
-    };
-
-    fetchPlanoEstudo();
-  }, [state, pedId]);
 
   // Atualiza os valores do formulário
   const handleChange = (e) => {
@@ -66,19 +43,17 @@ const PlanoEstudos = () => {
     } else {
       try {
         let response;
-        if (state?.isEditing) {
-          response = await PlanoEstudosService.update(pedId, formData);
+        if (state.plano_estudos) {
+          response = await PlanoEstudosService.editar(state.plano_estudos, modalidade, formData);
         } else {
-          response = await PlanoEstudosService.create(formData);
+          response = await PlanoEstudosService.criar(formData, modalidade);
         }
 
-        if (response.status !== 200 && response.status !== 201) {
-          throw new Error(response.response.data.mensagem);
-        }
+        if (response.status !== 200 && response.status !== 201) throw new Error(response.response.data.mensagem);
 
         // Exibe toast de sucesso
         toast.success(
-          state?.isEditing
+          state.plano_estudos
             ? "Plano de estudos editado com sucesso!"
             : "Plano de estudos cadastrado com sucesso!",
           {
@@ -98,12 +73,13 @@ const PlanoEstudos = () => {
           forma_oferta: "",
           turno: "",
           parecer_pedagogico: "",
-          pedId: "",
+          ped: state.id
         });
+
         setErrors({}); // Limpa os erros
       } catch (error) {
         console.error(
-          state?.isEditing
+          state.plano_estudos
             ? "Erro ao editar o plano de estudos"
             : "Erro ao cadastrar o plano de estudos",
           error
@@ -115,12 +91,27 @@ const PlanoEstudos = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchPlanoEstudo = async () => {
+      if (state.plano_estudos) {
+        try {
+          const res = await PlanoEstudosService.buscar(state.plano_estudos, 'detalhes', modalidade);
+          setFormData(res.data);
+        } catch (error) {
+          console.error("Erro ao buscar detalhes do plano de estudos", error);
+        }
+      }
+    };
+
+    fetchPlanoEstudo();
+  }, [state]);
+
   return (
     <>
       <ToastContainer />
       <FormContainer
         onSubmit={handleSubmit}
-        titulo={state?.isEditing ? "Editar Plano de Estudos" : "Cadastrar Plano de Estudos"}
+        titulo={state.plano_estudos ? "Editar Plano de Estudos" : "Cadastrar Plano de Estudos"}
       >
         {Object.keys(errors).length > 0 && (
           <p style={{ color: "red" }}>*Preencha os campos obrigatórios</p>
@@ -199,10 +190,10 @@ const PlanoEstudos = () => {
           </div>
         </section>
 
-        <Button tipo="submit" text={state?.isEditing ? "Salvar Alterações" : "Cadastrar"} />
+        <Button tipo="submit" text={state.plano_estudos ? "Salvar Alterações" : "Cadastrar"} />
       </FormContainer>
     </>
   );
 };
 
-export default PlanoEstudos;
+export default CadastroPlanoEstudos;

@@ -4,10 +4,10 @@ from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import *
 from rest_framework.response import Response
 from rest_framework import status
-from dependencias_app.models.planoEstudos import PlanoEstudos
+from dependencias_app.models.planoEstudos import *
 from dependencias_app.models.pedEMI import PED_EMI
 from dependencias_app.models.pedProEJA import PED_ProEJA
-from dependencias_app.serializers.planoEstudosSerializer import PlanoEstudos_Serializer
+from dependencias_app.serializers.planoEstudosSerializer import *
 from dependencias_app.permissoes import *
 import logging
 from dependencias_app.utils.enviar_email import enviar_email
@@ -17,94 +17,58 @@ logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
 @permission_classes([GestaoEscolar | Professor])
-def cadastrar_plano_estudos(request, pedId):
-    logger.info('Dados recebidos: %s', request.data)
+def cadastrar_plano_estudos(request, modalidade):
     try:
         data = request.data
 
-        # Tenta buscar o PED_EMI primeiro; se não encontrar, tenta o PED_ProEJA
-        try:
-            ped = PED_EMI.objects.get(id=pedId)
-        except PED_EMI.DoesNotExist:
-            try:
-                ped = PED_ProEJA.objects.get(id=pedId)
-            except PED_ProEJA.DoesNotExist:
-                return Response({'mensagem': 'PED não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+        if modalidade == 'Integrado':
+            serializer = PlanoEstudos_EMI_Serializer(data=data)
 
-        serializer = PlanoEstudos_Serializer(data=data)
+        elif modalidade == 'ProEJA':
+            serializer = PlanoEstudos_ProEJA_Serializer(data=data)
+        
+        if not serializer.is_valid(): raise Exception(serializer.errors)
 
-        if serializer.is_valid():
-            plano_estudo = serializer.save()
-
-            template = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
-            'templates_email',
-            'planoEstudos.html'
-            )
-
-            # Verifica a instância e atribui o plano de estudos ao PED correspondente
-            if isinstance(ped, PED_EMI):
-                ped.plano_estudos = plano_estudo
-                ped.status = 'Em Andamento'  # Atualiza o status
-                ped.save()
-
-
-            elif isinstance(ped, PED_ProEJA):
-                ped.plano_estudos = plano_estudo
-                ped.status = 'Em Andamento'  # Atualiza o status
-                ped.save()
-            
-            threading.Thread(target=enviar_email, args=(ped.aluno, template, 'Plano de Estudos Cadastrado', ped.aluno.grupo.name)).start()
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:
-        logger.error("Erro ao cadastrar Plano de Estudo Dirigido: %s", str(e))
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
 
 
-#OPÇÃO CERTA
 @api_view(['GET'])
 @permission_classes([GestaoEscolar | Professor | Aluno])
-def detalhes_plano_estudos(request, planoId):
+def detalhes_plano_estudos(request, planoId, modalidade):
     try:
-        # Busca o plano de estudos pelo ID
-        plano_estudo = PlanoEstudos.objects.get(id=planoId)
-        
-        # Caso o plano de estudos não exista
-        if not plano_estudo:
-            return Response({"erro": "Plano de estudos não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        if modalidade == 'Integrado':
+            plano = get_object_or_404(PlanoEstudos_EMI, pk=planoId)
 
-        # Serializa o plano de estudos
-        serializer = PlanoEstudos_Serializer(plano_estudo, context={'request': request})
+            serializer = PlanoEstudos_EMI_Serializer(plano, context={'request': request})
+        elif modalidade == 'ProEJA':
+            plano = get_object_or_404(PlanoEstudos_ProEJA, pk=planoId)
+            
+            serializer = PlanoEstudos_ProEJA_Serializer(plano, context={'request': request})
 
-        # Retorna os dados do plano de estudos
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
+        return Response(serializer.data, status=status.HTTP_200_OK)        
     except Exception as e:
-        # Captura qualquer outra exceção inesperada
-        return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'mensagem':str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['PUT'])
 @permission_classes([GestaoEscolar | Professor])
-def atualizar_plano_estudos(request, ped_id):
+def editar_plano_estudos(request, planoId, modalidade):
     try:
-        # Log para ver o ped_id recebido
-        print(f"ID do plano de estudos: {ped_id}")
+        data = request.data
 
-        # Busca o plano de estudos pelo ID
-        plano_estudo = PlanoEstudos.objects.filter(id=ped_id).first()
+        if modalidade == 'Integrado':
+            plano = get_object_or_404(PlanoEstudos_EMI, pk=planoId)
 
-        # Caso o plano de estudos não exista
-        if not plano_estudo:
-            return Response({"erro": "Plano de estudos não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+            serializer = PlanoEstudos_EMI_Serializer(plano, data=data)
+        
+        elif modalidade == 'ProEJA':
+            plano = get_object_or_404(PlanoEstudos_ProEJA, pk=planoId)
 
-        # Aqui você pode processar a atualização
-        # Exemplo: Atualizando dados do plano de estudo
-        serializer = PlanoEstudos_Serializer(plano_estudo, data=request.data, partial=True)
+            serializer = PlanoEstudos_ProEJA_Serializer(plano, data=data)
 
         if serializer.is_valid():
             serializer.save()  # Salva as atualizações no banco de dados

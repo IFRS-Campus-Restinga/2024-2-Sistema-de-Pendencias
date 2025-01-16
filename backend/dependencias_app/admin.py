@@ -9,8 +9,8 @@ from dependencias_app.models.professor import Professor
 from dependencias_app.models.turma import Turma
 from dependencias_app.models.pedEMI import PED_EMI
 from dependencias_app.models.pedProEJA import PED_ProEJA
-from dependencias_app.models.planoEstudos import PlanoEstudos
-from dependencias_app.models.formEncerramento import FormEncerramento
+from dependencias_app.models.planoEstudos import *
+from dependencias_app.models.formEncerramento import *
 from google_auth.models import UsuarioBase
 from dependencias_app.models.notificacao import Notificacao
 from dependencias_app.models.atividade import *
@@ -29,8 +29,10 @@ admin.site.register(Turma)
 admin.site.register(UsuarioBase)
 admin.site.register(PED_ProEJA)
 admin.site.register(PED_EMI)
-admin.site.register(PlanoEstudos)
-admin.site.register(FormEncerramento)
+admin.site.register(PlanoEstudos_EMI)
+admin.site.register(PlanoEstudos_ProEJA)
+admin.site.register(FormEncerramento_EMI)
+admin.site.register(FormEncerramento_ProEJA)
 admin.site.register(Atividade_EMI)
 admin.site.register(Atividade_ProEJA)
 admin.site.register(Coordenador)

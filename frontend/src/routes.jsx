@@ -21,9 +21,13 @@ import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendari
 import CadastroCalendarioAcademicoPage from './pages/base/Gestao/calendario/calendarioAcademico/cadastroCalendarioAcademico'
 import ListarCalendariosAcademicosPage from './pages/base/Gestao/calendario/calendarioAcademico/listaCalendariosAcademicos'
 import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
+import DetalhesCurso from './pages/base/Gestao/detalhesCurso/DetalhesCurso'
+import EditarDisciplina from './pages/base/Gestao/editarDisciplina/EditarDisciplina'
 import ListarDisciplina from './pages/base/Gestao/listarDisciplina/ListarDisciplina'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 import DetalhesServidor from './pages/base/Gestao/detalhesServidor/DetalhesServidor'
+import ListarPEDGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPEDGestao'
+import ListarPPTGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPPTGestao'
 import DetalhesPEDGestao from './pages/base/Gestao/detalhesDependenciaGestao/DetalhesPEDGestao'
 import DetalhesPPTGestao from './pages/base/Gestao/detalhesDependenciaGestao/DetalhesPPTGestao'
 import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
@@ -45,8 +49,8 @@ import DetalhesPEDCoordenador from './pages/base/Coordenador/detalhesPED/Detalhe
 // Filhos de Professor
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
 import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfessor'
-import ListarPEDEMIProfessor from './pages/base/Professor/listarPED_EMI/ListarPED_EMIProfessor'
-import PlanoEstudos from './pages/base/Professor/planoEstudos/planoEstudos'
+import ListarPEDProfessor from './pages/base/Professor/listarDependenciasProfessor/ListarPEDProfessor'
+import CadastroPlanoEstudos from './pages/base/Professor/cadastroPlanoEstudos/CadastroPlanoEstudos'
 import AtividadesDesenvolvidas from './pages/base/Professor/atividadesDesenvolvidas/atividadesDesenvolvidas'
 import AdicionarAtividade from './pages/base/Professor/atividadesDesenvolvidas/adicionarAtividade/adicionarAtividade'
 import DetalhesAtividade from './pages/base/Professor/atividadesDesenvolvidas/detalhesAtividade/detalhesAtividade'
@@ -59,13 +63,8 @@ import DetalhesObservacoes from './pages/base/Professor/detalhesObservacoes/Deta
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
-import ListarPEDProEJAProfessor from './pages/base/Professor/listarPED_ProEJAProfessor/ListarPED_ProEJAProfessor'
-import DetalhesCurso from './pages/base/Gestao/detalhesCurso/DetalhesCurso'
-import EditarDisciplina from './pages/base/Gestao/editarDisciplina/EditarDisciplina'
 import DetalhesPlanoEstudo from './pages/base/Aluno/detalhesPlanoEstudos/DetalhesPlanoEstudo'
-import ListarPEDGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPEDGestao'
-import ListarPPTGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPPTGestao'
-
+import DetalhesPEDProfessor from './pages/base/Professor/detalhesDependenciaProfessor/DetalhesPEDProfessor'
 
 const router = createBrowserRouter([
     {
@@ -290,49 +289,24 @@ const router = createBrowserRouter([
                 element: <PerfilProfessor />
             },
             {
-                path: ':idUsuario/peds/Integrado/',
-                element: <ListarPEDEMIProfessor />
+                path: ':idUsuario/peds/:modalidade/',
+                element: <ListarPEDProfessor />
             },
             {
-                path: ':idUsuario/peds/ProEJA/',
-                element: <ListarPEDProEJAProfessor />
-            },
-            // {
-            //     path: ':idUsuario/peds/Integrado/:pedId',
-            //     element: <DetalhesDependencia />
-            // },
-
-            // {
-            //     path: ':idUsuario/peds/ProEJA/:pedId',
-            //     element: <DetalhesDependencia />
-            // },
-            {
-                path: ':idUsuario/peds/Integrado/:pedId/planoEstudos',
-                element: <PlanoEstudos />
+                path: ':idUsuario/peds/:modalidade/:pedId',
+                element: <DetalhesPEDProfessor />
             },
             {
-                path: ':idUsuario/peds/ProEJA/:pedId/planoEstudos',
-                element: <PlanoEstudos />
+                path: ':idUsuario/peds/:modalidade/:pedId/planoEstudos',
+                element: <CadastroPlanoEstudos />
             },
             {
-                path: ':idUsuario/peds/Integrado/:pedId/planoEstudos/:planoId/detalhes',
-                element: <DetalhesPlanoEstudos />
-            },
-            {
-                path: ':idUsuario/planoEstudos/:pedId/editar',
-                element: <PlanoEstudos />
-            },
-            {
-                path: ':idUsuario/atividades/:pedTipo/:pedId',
+                path: ':idUsuario/peds/:modalidade/:pedId/atividades',
                 element: <AtividadesDesenvolvidas />
             },
             {
-                path: ':idUsuario/atividades/:pedTipo/:pedId/adicionarAtividade',
-                element: <AdicionarAtividade />,
-            },
-            {
-                path: ':idUsuario/atividades/:pedTipo/:pedId/detalhes/:atividadeId',
-                element: <DetalhesAtividade />,
+                path: ':idUsuario/peds/Integrado/:pedId/atividades/:atividadeId',
+                element: <DetalhesAtividade />
             },
             {
                 path: ':idUsuario/atividades/:pedTipo/:pedId/editarAtividade/:atividadeId',

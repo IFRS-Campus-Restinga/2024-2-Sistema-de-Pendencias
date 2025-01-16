@@ -23,6 +23,7 @@ urlpatterns = [
     path('listar-servidores/', listar_servidores),
     path('listar-alunos/', listar_alunos),
     path('usuario/<int:idUsuario>/editar/', editar_usuario),
+    path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
     # cadastra informações adicionais dos alunos e professores
     path('dados-adicionais-aluno/', infos_adicionais_aluno),
     path('dados-adicionais-professor/', infos_adicionais_professor),
@@ -74,20 +75,19 @@ urlpatterns = [
     path('cadastrarPED-ProEJA/', cadastrar_PED_ProEJA),
     path('ped-emi/', listar_PED_EMI),
     path('ped-proeja/', listar_PED_ProEJA),
-    path('atualizar-emi/<int:pedId>/', atualizar_EMI),
-    path('atualizar-proeja/<int:pedId>/', atualizar_ProEJA),
     path('ped-emi/<int:professorId>/', listar_PED_EMI),
     path('ped-proeja/<int:professorId>/', listar_PED_ProEJA),
+    path('atualizar-emi/<int:pedId>/', atualizar_EMI),
+    path('atualizar-proeja/<int:pedId>/', atualizar_ProEJA),
     path('ped/<int:pedId>/<str:modalidade>/', por_id),
-    path('cadastrar-plano-estudos/<int:pedId>/', cadastrar_plano_estudos),
     path('desativar-ped/<int:pedId>/<str:modalidade>/', desativar_PED),
-    path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
-    path('aluno/dependencias/', listar_dependencias_aluno, name='listar_peds_aluno'),
+    path('aluno/dependencias/', listar_dependencias_aluno),
     path('ped-emi/<int:coordenadorId>/', listar_PED_EMI),
     path('ped-proeja/<int:coordenadorId>/', listar_PED_ProEJA),
 
-    path('detalhes-plano-estudos/<int:planoId>/', detalhes_plano_estudos, name='detalhes_plano_estudos'),
-    path('atualizar-plano-estudos/<int:ped_id>/', atualizar_plano_estudos, name='atualizar_plano_estudos'),
+    path('plano-estudos/cadastrar/<str:modalidade>/', cadastrar_plano_estudos),
+    path('plano-estudos/detalhes/<int:planoId>/<str:modalidade>/', detalhes_plano_estudos),
+    path('plano-estudos/editar/<int:planoId>/<str:modalidade>/', editar_plano_estudos,),
     
     #views para tela de observaçoes
     # No arquivo urls.py

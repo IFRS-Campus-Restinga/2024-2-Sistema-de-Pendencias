@@ -4,6 +4,8 @@ import DetalhesDependencia from "../../../../components/DetalhesDependencia/Deta
 import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS"
 import loadingPPT from '../../../../assets/loading-ppt.png'
 import { PPTService } from "../../../../services/pptService"
+import { faHospitalWide } from "@fortawesome/free-solid-svg-icons"
+import { jwtDecode } from "jwt-decode"
 
 
 const DetalhesPPTGestao
@@ -32,7 +34,7 @@ const DetalhesPPTGestao
     if (isLoading) return <LoadingIFRS icone={loadingPPT}/>
 
     return (
-        <DetalhesDependencia dependencia={PPT} modalidade={null} tipo={'PPT'}/>
+        <DetalhesDependencia dependencia={PPT} modalidade={null} tipo={'PPT'} grupo={jwtDecode(sessionStorage.getItem('token')).grupo}/>
     )
 }
 

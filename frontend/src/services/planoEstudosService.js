@@ -1,35 +1,34 @@
 import { api } from "../config/axiosConfig";
 
 export const PlanoEstudosService = {
-  create: async (formData) => {
-    const { pedId } = formData; // Extrai pedId do formData
-    return api.post(`/api/cadastrar-plano-estudos/${pedId}/`, formData); // Inclui pedId na URL
+  criar: async (formData, modalidade) => {
+    const res = api.post(`/api/plano-estudos/cadastrar/${modalidade}/`, formData).catch((error) => {
+      return error
+    });
+
+    return res
   },
  
 
-  buscarPlanoEstudo: async (planoId, retorno) => {
-    try {
-      const response = await api.get(`api/detalhes-plano-estudos/${planoId}/`, {
+  buscar: async (planoId, retorno, modalidade) => {
+      const res = await api.get(`/api/plano-estudos/detalhes/${planoId}/${modalidade}/`, {
         params: {
           retorno
         }
-      });
-      console.log("Dados do Plano de Estudo recebidos:", response.data);
-      return response;
-    } catch (error) {
-      console.error("Erro ao buscar detalhes do plano de estudos:", error);
-      throw error;
-    }
+      }
+    ).catch((error) => {
+      return error
+    })
+
+    return res
   },
   
-  update: async (pedId, formData) => {
-    try {
-      const response = await api.put(`/api/atualizar-plano-estudos/${pedId}/`, formData);
-      return response; // Retorne o objeto completo
-    } catch (error) {
-      console.error("Erro ao atualizar plano de estudos:", error);
-      throw error;
-    }
+  editar: async (planoId, modalidade, params) => {
+    const res = await api.put(`/api/plano-estudos/editar/${planoId}/${modalidade}/`, params).catch((error) => {
+      return error
+    })
+
+    return res
   },
 };
 

@@ -77,9 +77,15 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
             representation['curso'] = {'id': instance.curso.id, 'nome': instance.curso.nome}
             representation['disciplina'] = {'id': instance.disciplina.id, 'nome': instance.disciplina.nome}
             representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'titulo': instance.periodo_letivo.titulo}
+            
+            plano_estudos = getattr(instance, 'plano_estudos_proeja', None)
+                        
+            if not plano_estudos == None:
+                representation['plano_estudos'] = plano_estudos.id
+            else:
+                representation['plano_estudos'] = plano_estudos
 
             representation.pop('data_criacao')
-            representation.pop('form_encerramento')
 
         elif retorno == 'aluno':
             representation['aluno'] = {'id': instance.aluno.id, 'nome': str(instance.aluno)}
@@ -88,6 +94,14 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
             representation['curso'] = {'id': instance.curso.id, 'nome': instance.curso.nome}
             representation['disciplina'] = {'id': instance.disciplina.id, 'nome': instance.disciplina.nome}
             representation['periodo_letivo'] = instance.periodo_letivo.data_inicio
+            
+            plano_estudos = getattr(instance, 'plano_estudos_proeja', None)
+
+            if not plano_estudos == None:
+                representation['plano_estudos'] = plano_estudos.id
+            else:
+                representation['plano_estudos'] = plano_estudos
+
 
             representation.pop('data_criacao')
             representation.pop('form_encerramento')

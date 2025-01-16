@@ -8,12 +8,13 @@ import loadingProEJA from '../../../../assets/loading-peds-proeja.png'
 import { jwtDecode } from "jwt-decode"
 
 
-const DetalhesPEDGestao
+const DetalhesPEDProfessor
  = () => {
     const [PED, setPED] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const modalidade = useLocation().pathname.split('/')[5]
     const pedId = useLocation().state.id
+
 
     const fetchDetalhesPED = async () => {
         try {
@@ -39,4 +40,4 @@ const DetalhesPEDGestao
     )
 }
 
-export default DetalhesPEDGestao
+export default DetalhesPEDProfessor

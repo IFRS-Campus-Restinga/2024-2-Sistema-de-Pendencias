@@ -86,6 +86,8 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
             representation['disciplina'] = {'id': instance.disciplina.id, 'nome': instance.disciplina.nome}
             representation['turma_atual'] = {'id': instance.turma_atual.id, 'numero': instance.turma_atual.numero}
             representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'titulo': instance.periodo_letivo.titulo}
+            representation['plano_estudos'] = getattr(instance, 'plano_estudos_emi', None).id
+
 
             representation.pop('data_criacao')
 

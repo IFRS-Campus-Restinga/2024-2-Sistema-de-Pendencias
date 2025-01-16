@@ -8,11 +8,8 @@ import Modal from "../Modal/Modal";
 import { jwtDecode } from 'jwt-decode';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
-import LoadingIFRS from "../LoadingIFRS/LoadingIFRS";
 
-const DetalhesDependencia = ({dependencia, tipo, modalidade}) => {
-  const [planoId, setPlanoId] = useState(null)
-  const [formEncerramentoId, setFormEncerramentoId] = useState(null)
+const DetalhesDependencia = ({dependencia, tipo, modalidade, grupo}) => {
   const [modalAberto, setModalAberto] = useState(false);
   const [modalConfirmacaoAberto, setModalConfirmacaoAberto] = useState(false);
   
@@ -22,205 +19,31 @@ const DetalhesDependencia = ({dependencia, tipo, modalidade}) => {
   const abrirModalConfirmacao = () => setModalConfirmacaoAberto(true);
   const fecharModalConfirmacao = () => setModalConfirmacaoAberto(false);
 
+  const setLink = (id, nome) => {
+    if (id) return `${nome}/${id}`
+
+    if (grupo === 'Professor') return `${nome}`
+
+    return null 
+  }
+
   return (
     <FormContainer
       titulo={`Detalhes da ${tipo} - ${modalidade}`}
       comprimento="80%"
     >
-  {
-    modalidade ? (
-      modalidade === 'Integrado' ? (
-        <>
-          <label className="labelCabecalhoDetalhesDependencia">
-            <span className="spanDetalhesDependencia">
-              Aluno - <p className="nomeAlunoPED">{dependencia.aluno.nome}</p>
-            </span>
-            <label className="labelStatusPED">Andamento da PED</label>
-          </label>
-          <section className="sectionDetalhesDependencia">
-            <div className="divDetalhesDependencia">
-              <span className="dadosPED">
-                <label className="labelDetalhesDependencia">
-                  Docente responsável pela progressão
-                  <p className="pDetalhesDependencia">{dependencia.professor_ped.nome}</p>
-                </label>
-                <label className="labelDetalhesDependencia">
-                  Docente que ministrou a disciplina
-                  <p className="pDetalhesDependencia">{dependencia.professor_disciplina.nome}</p>
-                </label>
-              </span>
-              <span className="dadosPED">
-                <label className="labelDetalhesDependencia">
-                  Curso
-                  <p className="pDetalhesDependencia">{dependencia.curso.nome}</p>
-                </label>
-                <label className="labelDetalhesDependencia">
-                  Disciplina
-                  <p className="pDetalhesDependencia">{dependencia.disciplina.nome}</p>
-                </label>
-              </span>
-              <span className="dadosPED">
-                <label className="labelDetalhesDependencia">
-                  Trimestres a Recuperar
-                  <p className="pDetalhesDependencia">{dependencia.trimestre_recuperar}</p>
-                </label>
-                <label className="labelDetalhesDependencia">
-                  Série da Progressão
-                  <p className="pDetalhesDependencia">{dependencia.serie_progressao}</p>
-                </label>
-                <label className="labelDetalhesDependencia">
-                  Turma Atual
-                  <p className="pDetalhesDependencia">{dependencia.turma_atual.numero}</p>
-                </label>
-                <label className="labelDetalhesDependencia">
-                  Observação
-                  <p className="pDetalhesDependencia">{dependencia.observacao}</p>
-                </label>
-              </span>
-            </div>
-            <div className="divStatusPED">
-              <div className="opcoesContainer">
-                <Dropdown tipo={'icone'} icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
-                  itens={[
-                    {
-                      link: 'editar',
-                      name: 'Editar PED',
-                      state: dependencia
-                    },
-                    {
-                      // link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${}`,
-                      name: 'Atividades'
-                    },
-                    {
-                      link: planoId ? `planoEstudos/${planoId}/detalhes` : null,
-                      name: 'Plano de Estudos',
-                      desabilitado: planoId ? false : true
-                    },
-                    {
-                      link: formEncerramentoId ? `formEncerramento/${formEncerramentoId}/detalhes` : null,
-                      name: 'Formulário de Encerramento',
-                      desabilitado: formEncerramentoId ? false : true
-                    },
-                  ]}
-                />
-              </div>
-              <StatusBalls status={dependencia.status} />
-              <div className="buttons-ped">
-                {dependencia.status !== "Desativado" && (
-                  <>
-                    <Button text="Desativar PED" color="#f00" onClick={abrirModal} />
-                    <Button
-                      text="Encerrar PED"
-                      onClick={abrirModalConfirmacao}
-                      disabled={dependencia.status !== "Finalizada"}
-                      title={dependencia.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
-                    />
-                  </>
-                )}
-              </div>
-            </div>
-          </section>
-        </>
-      ) : (
-        <>
-        <label className="labelCabecalhoDetalhesDependencia">
-          <span className="spanDetalhesDependencia">
-            Aluno -<p className="pDetalhesDependencia">{dependencia.aluno.nome}</p>
-          </span>
-          <label className="labelStatusPED">Andamento da PED</label>
-        </label>
-        <section className="sectionDetalhesDependencia">
-          <div className="divDetalhesDependencia">
-            <span className="dadosPED">
-              <label className="labelDetalhesDependencia">
-                Docente responsável pela progressão
-                <p className="pDetalhesDependencia">{dependencia.professor_ped.nome}</p>
-              </label>
-              <label className="labelDetalhesDependencia">
-                Docente que ministrou a disciplina
-                <p className="pDetalhesDependencia">{dependencia.professor_disciplina.nome}</p>
-              </label>
-            </span>
-            <span className="dadosPED">
-              <label className="labelDetalhesDependencia">
-                Curso
-                <p className="pDetalhesDependencia">{dependencia.curso.nome}</p>
-              </label>
-              <label className="labelDetalhesDependencia">
-                Disciplina
-                <p className="pDetalhesDependencia">{dependencia.disciplina.nome}</p>
-              </label>
-            </span>
-            <span className="dadosPED">
-              <label className="labelDetalhesDependencia">
-                Ano/Semestre de Reprovação
-                <p className="pDetalhesDependencia">{dependencia.ano_semestre_reprov}</p>
-              </label>
-              <label className="labelDetalhesDependencia">
-                Observação
-                <p className="pDetalhesDependencia">{dependencia.observacao}</p>
-              </label>
-            </span>
-          </div>
-          <div className="divStatusPED">
-            <div className="opcoesContainer">
-              <Dropdown tipo={'icone'} icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
-                itens={[
-                  {
-                    link: 'editar',
-                    name: 'Editar PED',
-                    state: dependencia
-                  },
-                  {
-                    // link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${pedId}`,
-                    name: 'Atividades'
-                  },
-                  {
-                    link: dependencia.planoId ? `planoEstudos/${dependencia.planoId}/detalhes` : null,
-                    name: 'Plano de Estudos',
-                    desabilitado: dependencia.planoId ? false : true
-                  },
-                  {
-                    link: dependencia.formEncerramentoId ? `formEncerramento/${dependencia.formEncerramentoId}/detalhes` : null,
-                    name: 'Formulário de Encerramento',
-                    desabilitado: dependencia.formEncerramentoId ? false : true
-                  },
-                ]}
-              />
-            </div>
-            <StatusBalls status={dependencia.status} />
-            <div className="buttons-ped">
-              {dependencia.status !== "Desativado" && (
-                <>
-                  <Button text="Desativar PED" color="#f00" onClick={abrirModal} />
-                  <Button
-                    text="Encerrar PED"
-                    color={"red"}
-                    onClick={abrirModalConfirmacao}
-                    disabled={dependencia.status === "Finalizada" ? true : false}
-                    title={dependencia.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
-                  />
-                </>
-              )}
-            </div>
-          </div>
-        </section>
-        </>
-      )
-    ) : (
-      <>
       <label className="labelCabecalhoDetalhesDependencia">
         <span className="spanDetalhesDependencia">
-          Aluno -<p className="pDetalhesDependencia">{dependencia.aluno.nome}</p>
+          Aluno - <p className="nomeAlunoPED">{dependencia.aluno.nome}</p>
         </span>
-        <label className="labelStatusPED">Andamento da PPT</label>
+        <label className="labelStatusPED">Andamento da PED</label>
       </label>
       <section className="sectionDetalhesDependencia">
         <div className="divDetalhesDependencia">
           <span className="dadosPED">
             <label className="labelDetalhesDependencia">
               Docente responsável pela progressão
-              <p className="pDetalhesDependencia">{dependencia.professor_ppt.nome}</p>
+              <p className="pDetalhesDependencia">{dependencia.professor_ped.nome}</p>
             </label>
             <label className="labelDetalhesDependencia">
               Docente que ministrou a disciplina
@@ -238,10 +61,43 @@ const DetalhesDependencia = ({dependencia, tipo, modalidade}) => {
             </label>
           </span>
           <span className="dadosPED">
+          {
+            modalidade === 'Integrado' ? (
+              <>
+                <label className="labelDetalhesDependencia">
+                  Trimestres a Recuperar
+                  <p className="pDetalhesDependencia">{dependencia.trimestre_recuperar}</p>
+                </label>
+                <label className="labelDetalhesDependencia">
+                  Série da Progressão
+                  <p className="pDetalhesDependencia">{dependencia.serie_progressao}</p>
+                </label>
+                <label className="labelDetalhesDependencia">
+                  Turma Atual
+                  <p className="pDetalhesDependencia">{dependencia.turma_atual.numero}</p>
+                </label>
+              </>
+            ) : modalidade === 'ProEJA' ? (
+              <label className="labelDetalhesDependencia">
+                Ano/Semestre de Reprovação
+                <p className="pDetalhesDependencia">{dependencia.ano_semestre_reprov}</p>
+              </label>
+            ) : (
+              <>
+                <label className="labelDetalhesDependencia">
+                  Turma Atual
+                  <p className="pDetalhesDependencia">{dependencia.turma_atual}</p>
+                </label><label className="labelDetalhesDependencia">
+                  Turma da Progressão
+                  <p className="pDetalhesDependencia">{dependencia.turma_progressao}</p>
+                </label>
+              </>
+            )
+          }
             <label className="labelDetalhesDependencia">
-              Observação
-              <p className="pDetalhesDependencia">{dependencia.observacao}</p>
-            </label>
+            Observação
+            <p className="pDetalhesDependencia">{dependencia.observacao}</p>
+          </label>
           </span>
         </div>
         <div className="divStatusPED">
@@ -249,33 +105,46 @@ const DetalhesDependencia = ({dependencia, tipo, modalidade}) => {
             <Dropdown tipo={'icone'} icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
               itens={[
                 {
+                  // link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${}`,
+                  name: 'Atividades'
+                },
+                {
                   link: 'editar',
-                  name: 'Editar PPT',
-                  state: dependencia
+                  name: 'Editar PED',
+                  state: dependencia,
+                  desabilitado: grupo !== 'Gestão Escolar'
+                },
+                {
+                  link: setLink(dependencia.planoId, 'planoEstudos'),
+                  name: 'Plano de Estudos',
+                  state: dependencia,
+                  desabilitado: dependencia.planoId || grupo !== 'Professor'
+                },
+                {
+                  link: setLink(dependencia.formEncerramentoId, 'formEncerramento'),
+                  name: 'Formulário de Encerramento',
+                  state: dependencia,
+                  desabilitado: dependencia.formEncerramentoId || grupo !== 'Professor'
                 },
               ]}
             />
           </div>
           <StatusBalls status={dependencia.status} />
           <div className="buttons-ped">
-            {dependencia.status !== "Desativado" && (
+            {dependencia.status !== "Desativado" && grupo === 'Gestão Escolar' ? (
               <>
                 <Button text="Desativar PED" color="#f00" onClick={abrirModal} />
                 <Button
                   text="Encerrar PED"
-                  color={"red"}
                   onClick={abrirModalConfirmacao}
-                  disabled={dependencia.status === "Finalizada" ? true : false}
+                  disabled={dependencia.status !== "Finalizada"}
                   title={dependencia.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
                 />
               </>
-            )}
+            ): <></>}
           </div>
         </div>
       </section>
-      </>
-    )
-  }
 
       {/* <Modal
         estaAberto={modalAberto}
