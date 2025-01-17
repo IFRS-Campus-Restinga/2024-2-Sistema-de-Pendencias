@@ -6,3 +6,10 @@
 .detalhe-plano-estudos strong {
   font-weight: bold;
 }
+
+.divPlanoEstudos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}

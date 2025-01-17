@@ -8,8 +8,10 @@ import Modal from "../Modal/Modal";
 import { jwtDecode } from 'jwt-decode';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 const DetalhesDependencia = ({dependencia, tipo, modalidade, grupo}) => {
+  const redirect = useNavigate()
   const [modalAberto, setModalAberto] = useState(false);
   const [modalConfirmacaoAberto, setModalConfirmacaoAberto] = useState(false);
   
@@ -101,34 +103,42 @@ const DetalhesDependencia = ({dependencia, tipo, modalidade, grupo}) => {
           </span>
         </div>
         <div className="divStatusPED">
-          <div className="opcoesContainer">
-            <Dropdown tipo={'icone'} icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
-              itens={[
-                {
-                  // link: `/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/atividades/emi/${}`,
-                  name: 'Atividades'
-                },
-                {
-                  link: 'editar',
-                  name: 'Editar PED',
-                  state: dependencia,
-                  desabilitado: grupo !== 'Gestão Escolar'
-                },
-                {
-                  link: setLink(dependencia.planoId, 'planoEstudos'),
-                  name: 'Plano de Estudos',
-                  state: dependencia,
-                  desabilitado: dependencia.planoId || grupo !== 'Professor'
-                },
-                {
-                  link: setLink(dependencia.formEncerramentoId, 'formEncerramento'),
-                  name: 'Formulário de Encerramento',
-                  state: dependencia,
-                  desabilitado: dependencia.formEncerramentoId || grupo !== 'Professor'
-                },
-              ]}
-            />
-          </div>
+            {
+              grupo !== "Aluno" ? (
+                <div className="opcoesContainer">
+                  <Dropdown tipo={'icone'} icone={<FontAwesomeIcon icon={faGear} color="black" size="xl"/>}
+                  itens={[
+                    {
+                      link: `atividades/`,
+                      name: 'Atividades',
+                      state: dependencia,
+                      desabilitado: dependencia.plano_estudo
+                    },
+                    {
+                      link: 'editar',
+                      name: 'Editar PED',
+                      state: dependencia,
+                      desabilitado: grupo !== 'Gestão Escolar'
+                    },
+                    {
+                      link: setLink(dependencia.plano_estudos, 'planoEstudos'),
+                      name: 'Plano de Estudos',
+                      state: dependencia,
+                      desabilitado: !(dependencia.plano_estudos) ? grupo !== 'Professor' : false
+                    },
+                    {
+                      link: setLink(dependencia.form_encerramento, 'formEncerramento'),
+                      name: 'Formulário de Encerramento',
+                      state: dependencia,
+                      desabilitado: !(dependencia.form_encerramento) ? grupo !== 'Professor' : false
+                    },
+                  ]}
+                  />
+                </div>
+              ) : (
+                <></>
+              )
+            }
           <StatusBalls status={dependencia.status} />
           <div className="buttons-ped">
             {dependencia.status !== "Desativado" && grupo === 'Gestão Escolar' ? (
@@ -141,7 +151,12 @@ const DetalhesDependencia = ({dependencia, tipo, modalidade, grupo}) => {
                   title={dependencia.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
                 />
               </>
-            ): <></>}
+            ) : (
+              grupo === 'Aluno' ? (
+                <Button text={"Atividades"} onClick={() => redirect(``)} disabled={dependencia.plano_estudo}/>
+              ) : (<></>)
+            )
+          }
           </div>
         </div>
       </section>

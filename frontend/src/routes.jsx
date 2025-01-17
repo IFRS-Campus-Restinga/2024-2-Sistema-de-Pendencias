@@ -33,6 +33,7 @@ import DetalhesPPTGestao from './pages/base/Gestao/detalhesDependenciaGestao/Det
 import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
 import ListarAluno from './pages/base/Gestao/listarAluno/ListarAluno'
 import DetalhesAluno from './pages/base/Gestao/detalhesAluno/DetalhesAluno'
+import DetalhesPlanoEstudos from './pages/base/Gestao/detalhesPlanoEstudos/DetalhesPlanoEstudos'
 import AtividadesDesenvolvidasGestao from './pages/base/Gestao/atividadesDesenvolvidasGestao/atividadesDesenvolvidas'
 import DetalhesAtividadeGestao from './pages/base/Gestao/atividadesDesenvolvidasGestao/detalhesAtividade/detalhesAtividade'
 
@@ -50,21 +51,18 @@ import DetalhesPEDCoordenador from './pages/base/Coordenador/detalhesPED/Detalhe
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
 import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfessor'
 import ListarPEDProfessor from './pages/base/Professor/listarDependenciasProfessor/ListarPEDProfessor'
+import DetalhesPEDProfessor from './pages/base/Professor/detalhesDependenciaProfessor/DetalhesPEDProfessor'
 import CadastroPlanoEstudos from './pages/base/Professor/cadastroPlanoEstudos/CadastroPlanoEstudos'
 import AtividadesDesenvolvidas from './pages/base/Professor/atividadesDesenvolvidas/atividadesDesenvolvidas'
 import AdicionarAtividade from './pages/base/Professor/atividadesDesenvolvidas/adicionarAtividade/adicionarAtividade'
 import DetalhesAtividade from './pages/base/Professor/atividadesDesenvolvidas/detalhesAtividade/detalhesAtividade'
-import DetalhesPlanoEstudos from './pages/base/Professor/detalhesPlanoEstudos/DetalhesPlanoEstudos'
 import AdicionarObservacao from './pages/base/Professor/observacoes/adicionarObservacao'
 import ListarObservacoes from './pages/base/Professor/listarObservacoes/ListarObservacoes'
 import DetalhesObservacoes from './pages/base/Professor/detalhesObservacoes/DetalhesObservacoes'
 
-
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
-import DetalhesPlanoEstudo from './pages/base/Aluno/detalhesPlanoEstudos/DetalhesPlanoEstudo'
-import DetalhesPEDProfessor from './pages/base/Professor/detalhesDependenciaProfessor/DetalhesPEDProfessor'
 
 const router = createBrowserRouter([
     {
@@ -206,11 +204,7 @@ const router = createBrowserRouter([
                 element: <CadastroPPT />
             },
             {
-                path: ':idUsario/peds/ProEJA/:idPed/planoEstudos/:planoId/detalhes',
-                element: <DetalhesPlanoEstudos />
-            },
-            {
-                path: ':idUsario/peds/EMI/:idPed/planoEstudos/:planoId/detalhes',
+                path: ':idUsario/peds/:modalidade/:idPed/planoEstudos/:planoId/',
                 element: <DetalhesPlanoEstudos />
             },
             {
@@ -301,6 +295,10 @@ const router = createBrowserRouter([
                 element: <CadastroPlanoEstudos />
             },
             {
+                path: ':idUsuario/peds/:modalidade/:pedId/planoEstudos/:planoId/',
+                element: <CadastroPlanoEstudos />
+            },
+            {
                 path: ':idUsuario/peds/:modalidade/:pedId/atividades',
                 element: <AtividadesDesenvolvidas />
             },
@@ -350,11 +348,6 @@ const router = createBrowserRouter([
             //     path: ':idUsuario/:modalidade/:pedId/detalhes',
             //     element: <DetalhesDependencia />
             // },
-            {
-                path: ':idUsuario/:modalidade/:pedId/planoEstudos',
-                element: <DetalhesPlanoEstudo />
-            }
-
         ]
     },
 ])

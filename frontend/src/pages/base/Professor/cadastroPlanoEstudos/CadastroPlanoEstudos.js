@@ -16,6 +16,7 @@ const CadastroPlanoEstudos = () => {
   const modalidade = location.pathname.split("/")[5]
   const { state } = location || {}; // Verifica se estamos editando ou criando
   const [errors, setErrors] = useState({});
+  const [desabilitado, setDesabilitado] = useState(false)
   const [formData, setFormData] = useState({
     forma_oferta: "",
     turno: "",
@@ -96,7 +97,10 @@ const CadastroPlanoEstudos = () => {
       if (state.plano_estudos) {
         try {
           const res = await PlanoEstudosService.buscar(state.plano_estudos, 'detalhes', modalidade);
+
           setFormData(res.data);
+
+          setDesabilitado(res.data.aprovado)
         } catch (error) {
           console.error("Erro ao buscar detalhes do plano de estudos", error);
         }
@@ -130,6 +134,7 @@ const CadastroPlanoEstudos = () => {
                 }
                 onChange={handleChange}
                 value={formData.forma_oferta}
+                disabled={desabilitado}
               >
                 <option value="">Selecione a forma de oferta</option>
                 {FormaOferta.map((forma, index) => (
@@ -154,6 +159,7 @@ const CadastroPlanoEstudos = () => {
                 }
                 onChange={handleChange}
                 value={formData.turno}
+                disabled={desabilitado}
               >
                 <option value="">Selecione o turno</option>
                 {Turnos.map((turno, index) => (
@@ -182,6 +188,7 @@ const CadastroPlanoEstudos = () => {
                 }
                 onChange={handleChange}
                 value={formData.parecer_pedagogico}
+                disabled={desabilitado}
               />
               {errors.parecer_pedagogico && (
                 <p className="errorMessage">{errors.parecer_pedagogico}</p>
@@ -190,7 +197,7 @@ const CadastroPlanoEstudos = () => {
           </div>
         </section>
 
-        <Button tipo="submit" text={state.plano_estudos ? "Salvar Alterações" : "Cadastrar"} />
+        <Button tipo="submit" text={state.plano_estudos ? "Salvar Alterações" : "Cadastrar"} disabled={desabilitado}/>
       </FormContainer>
     </>
   );
