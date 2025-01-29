@@ -5,15 +5,16 @@ from django.shortcuts import *
 from rest_framework.response import Response
 from rest_framework import status
 from dependencias_app.models.planoEstudos import *
-from dependencias_app.models.pedEMI import PED_EMI
-from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.serializers.planoEstudosSerializer import *
 from dependencias_app.permissoes import *
-import logging
 from dependencias_app.utils.enviar_email import enviar_email
+from google_auth.models import UsuarioBase
 
-
-logger = logging.getLogger(__name__)
+template = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        'templates_email',
+        'planoDeEstudos.html'
+        )
 
 @api_view(['POST'])
 @permission_classes([GestaoEscolar | Professor])
@@ -28,6 +29,13 @@ def cadastrar_plano_estudos(request, modalidade):
             serializer = PlanoEstudos_ProEJA_Serializer(data=data)
         
         if not serializer.is_valid(): raise Exception(serializer.errors)
+
+        lista_gestao = UsuarioBase.objects.filter(grupo__name='Gestão Escolar')
+
+        # envia email para os perfis de gestão do sistema de forma assíncrona
+
+        for gestao in lista_gestao:
+            threading.Thread(target=enviar_email, args=(gestao, template, 'Novo Plano de Estudos Cadastrado', gestao.grupo.name)).start()
 
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -63,15 +71,19 @@ def editar_plano_estudos(request, planoId, modalidade):
         if modalidade == 'Integrado':
             plano = get_object_or_404(PlanoEstudos_EMI, pk=planoId)
 
-            serializer = PlanoEstudos_EMI_Serializer(plano, data=data)
+            serializer = PlanoEstudos_EMI_Serializer(plano, data=data, partial=True)
         
         elif modalidade == 'ProEJA':
             plano = get_object_or_404(PlanoEstudos_ProEJA, pk=planoId)
 
-            serializer = PlanoEstudos_ProEJA_Serializer(plano, data=data)
+            serializer = PlanoEstudos_ProEJA_Serializer(plano, data=data, partial=True)
 
         if serializer.is_valid():
-            serializer.save()  # Salva as atualizações no banco de dados
+            serializer.save()
+
+            if data['aprovado'] == True:
+                threading.Thread(target=enviar_email, args=(serializer.instance.ped.aluno, template, 'Novo Plano de Estudos Cadastrado', serializer.instance.ped.aluno.grupo.name)).start()
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

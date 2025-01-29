@@ -24,26 +24,26 @@ urlpatterns = [
     path('listar-alunos/', listar_alunos),
     path('usuario/<int:idUsuario>/editar/', editar_usuario),
     path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
+    path('listar-grupos/', listar_grupos),
+
     # cadastra informações adicionais dos alunos e professores
     path('dados-adicionais-aluno/', infos_adicionais_aluno),
     path('dados-adicionais-professor/', infos_adicionais_professor),
-    # path('dados-aluno/<int:idAluno>/', get_aluno_infos),
     path('usuarios/<str:param>/<str:grupo>', listar_por_parametro),
 
-    path('listar-grupos/', listar_grupos),
 
     # views de curso
     path('cadastrar-curso/', cadastrar_curso),
     path('listar-cursos/', listar_cursos),
     path('listar-cursos/<str:modalidade>/', listar_por_modalidade),
-    path('cursos/<int:idCurso>/', obter_curso),
-    path('curso/<int:idCurso>/editar', editar_curso),
+    path('cursos/<int:cursoId>/', obter_curso),
+    path('curso/<int:cursoId>/editar', editar_curso),
 
     # views de disciplinas
     path('cadastrar-disciplina/', cadastrar_disciplina),
     path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
-    path('disciplina/<int:idDisciplina>/', buscar_disciplina),
-    path('disciplina/editar/<int:idDisciplina>/', editar_disciplina),
+    path('disciplina/<int:disciplinaId>/', buscar_disciplina),
+    path('disciplina/editar/<int:disciplinaId>/', editar_disciplina),
 
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),
@@ -85,6 +85,19 @@ urlpatterns = [
     path('ped-emi/<int:coordenadorId>/', listar_PED_EMI),
     path('ped-proeja/<int:coordenadorId>/', listar_PED_ProEJA),
 
+    #views para atividades da ped
+    path('atividade/cadastro/<str:modalidade>/', cadastrar_atividade),
+    path('plano-atividades/<int:pedId>/<str:modalidade>/', listar_atividades),
+    path('atividade/listar/<str:modalidade>/', listar_atividades_professor),
+    path('atualizar-nota-final/<str:ped_tipo>/<int:ped_id>/', atualizar_nota_final, name='atualizar_nota_final'),
+    path('detalhes-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', detalhes_atividade, name='detalhes_atividade'),
+    path('editar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', editar_atividade, name='editar_atividade'),
+    path('deletar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', delete_atividade, name='deletar_atividade'),
+    path('adicionar-plano-atividades/<str:ped_tipo>/<int:ped_id>/', adicionar_plano_atividades, name='adicionar_plano_atividades'),
+    path('exibir_nota_final/<str:ped_tipo>/<int:ped_id>/', exibir_nota_final, name='exibir_nota_final'),
+
+
+    # views de plano de estudos
     path('plano-estudos/cadastrar/<str:modalidade>/', cadastrar_plano_estudos),
     path('plano-estudos/detalhes/<int:planoId>/<str:modalidade>/', detalhes_plano_estudos),
     path('plano-estudos/editar/<int:planoId>/<str:modalidade>/', editar_plano_estudos,),
@@ -100,16 +113,6 @@ urlpatterns = [
     #path('visualizar-observacao/', visualizar_observacao, name='visualizar_observacao'),
     path('listar-observacoes/', listar_observacoes, name='listar_observacoes'),
     path('editar-observacao/<int:id>/', editar_observacao, name='editar_observacao<id>'),
-
-    #views para atividades da ped
-    path('listar-atividades/<str:ped_tipo>/<int:ped_id>/', listar_atividades, name='listar_atividades'),
-    path('atualizar-nota-final/<str:ped_tipo>/<int:ped_id>/', atualizar_nota_final, name='atualizar_nota_final'),
-    path('adicionar-atividades/<str:ped_tipo>/<int:ped_id>/', adicionar_atividade, name='adicionar_atividades'),
-    path('detalhes-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', detalhes_atividade, name='detalhes_atividade'),
-    path('editar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', editar_atividade, name='editar_atividade'),
-    path('deletar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', delete_atividade, name='deletar_atividade'),
-    path('adicionar-plano-atividades/<str:ped_tipo>/<int:ped_id>/', adicionar_plano_atividades, name='adicionar_plano_atividades'),
-    path('exibir_nota_final/<str:ped_tipo>/<int:ped_id>/', exibir_nota_final, name='exibir_nota_final'),
 
     #view editar servidor
     path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),

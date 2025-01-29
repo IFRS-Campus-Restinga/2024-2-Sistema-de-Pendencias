@@ -14,7 +14,7 @@ BASE_DIR = settings.BASE_DIR
 
 def admin_login(request):
     flow = Flow.from_client_secrets_file(
-        f'{BASE_DIR}/client_secret.json',  # Caminho para seu arquivo de credenciais JSON
+        f'{BASE_DIR}/credentials/client_secret.json',  # Caminho para seu arquivo de credenciais JSON
         scopes=[
             'https://www.googleapis.com/auth/userinfo.email',
             'https://www.googleapis.com/auth/userinfo.profile',

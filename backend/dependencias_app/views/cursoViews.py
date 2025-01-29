@@ -56,9 +56,9 @@ def listar_por_modalidade(request, modalidade):
 
 @api_view(['GET'])
 @permission_classes([Professor])
-def listar_turmas_por_curso(request, idCurso):
+def listar_turmas_por_curso(request, cursoId):
     try:
-        curso = Curso.objects.get(id=idCurso)
+        curso = Curso.objects.get(id=cursoId)
         turmas = Turma.objects.filter(curso=curso)
         
         # Serializa os dados das turmas
@@ -70,9 +70,9 @@ def listar_turmas_por_curso(request, idCurso):
     
     
 @api_view(['GET'])
-def obter_curso(request, idCurso):
+def obter_curso(request, cursoId):
     try:
-        curso = Curso.objects.get(id=idCurso)  # Buscando o curso pelo ID
+        curso = Curso.objects.get(id=cursoId)  # Buscando o curso pelo ID
         serializer = CursoSerializer(curso, context={'request': request})  # Serializando o curso encontrado
         
         return Response(serializer.data, status=status.HTTP_200_OK)  # Retorna os dados do curso em formato JSON com status 200 OK
@@ -83,7 +83,7 @@ def obter_curso(request, idCurso):
 
 @api_view(['PUT'])
 @permission_classes([GestaoEscolar])
-def editar_curso(request, idCurso):
+def editar_curso(request, cursoId):
     turmas = request.data.pop('turmas', [])  # Pega as turmas enviadas
 
     try:
@@ -91,7 +91,7 @@ def editar_curso(request, idCurso):
 
         if (data['modalidade'] == 'Integrado' and turmas == []): raise Exception('Os cursos de modalidade Integrado devem possuir turmas cadastradas')
 
-        curso = get_object_or_404(Curso, pk=idCurso)
+        curso = get_object_or_404(Curso, pk=cursoId)
 
         serializer_curso = CursoSerializer(curso, data=data)
 

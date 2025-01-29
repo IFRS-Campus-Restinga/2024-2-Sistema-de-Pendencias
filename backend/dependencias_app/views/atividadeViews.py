@@ -1,5 +1,6 @@
 import logging
-from django.http import FileResponse
+from django.shortcuts import *
+from dependencias_app.utils.upload_files import upload_to_drive
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,44 +8,92 @@ from dependencias_app.models.atividade import *
 from dependencias_app.models.pedEMI import PED_EMI
 from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.serializers.atividadeSerializer import *
-from dependencias_app.permissoes import Professor, GestaoEscolar, Coordenador
+from dependencias_app.permissoes import *
 from rest_framework.parsers import MultiPartParser, FormParser
 from dependencias_app.enums.situacaoDependencia import SituacaoDependencia
 from dependencias_app.enums.statusDependencia import StatusDependencia
 
 
+@api_view(['POST'])
+@permission_classes([Professor | Coordenador | GestaoEscolar])
+def cadastrar_atividade(request, modalidade):
+    data = request.data.copy()
+    
+    try:
+        # Faz o upload do arquivo e obtém a URL
+        if 'arquivo' not in request.FILES:
+            raise Exception('Arquivo não fornecido')
+
+        file = request.FILES.get('arquivo')
+        url_pdf = upload_to_drive(file, data.get('titulo'), request.user.grupo.name)
+        
+        # Adiciona a URL ao dicionário de dados
+        data['url_PDF'] = url_pdf
+
+        # Seleciona o serializer conforme a modalidade
+        if modalidade == "Integrado":
+            serializer = Atividade_EMI_Serializer(data=data)
+        elif modalidade == "ProEJA":
+            serializer = Atividade_ProEJA_Serializer(data=data)
+        else: 
+            raise Exception('Modalidade inválida')
+
+        # Verifica se os dados enviados são válidos
+        if not serializer.is_valid():
+            raise Exception(f'Erro de validação: {serializer.errors}')
+
+        # Salva a atividade no banco de dados
+        serializer.save()
+
+        return Response({'message': 'Atividade cadastrada com sucesso!'}, status=status.HTTP_201_CREATED)
+    
+    except Exception as e:
+        # Retorna erro genérico em caso de falha
+        return Response({"mensagem": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
-@permission_classes([Professor | GestaoEscolar | Coordenador])
-def listar_atividades(request, ped_tipo, ped_id):
-    if ped_tipo == "emi":
-        ped = PED_EMI.objects.filter(id=ped_id).first()
-        if not ped:
-            return Response({"erro": "PED EMI não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+@permission_classes([Professor | GestaoEscolar | Coordenador | Aluno])
+def listar_atividades(request, pedId, modalidade):
+    try:        
+        # Busca o PED (emi ou proeja) a partir do tipo e ID
+        if modalidade == "Integrado":
+            atividades = Atividade_EMI.objects.filter(ped=pedId).order_by('data_criacao')
 
-        # Verifica se o usuário é o professor responsável OU pertence ao grupo GestaoEscolar
-        if ped.professor_ped != request.user and not request.user.has_perm('dependencias_app.view_gestaoescolar'):
-            return Response({"erro": "Acesso não autorizado"}, status=status.HTTP_403_FORBIDDEN)
+            if not atividades.exists(): raise Exception('Nenhuma atividade encontrada')
 
-        atividades = Atividade_EMI.objects.filter(ped_emi=ped)
-        serializer = Atividade_EMI_Serializer(atividades, many=True)
+            serializer = Atividade_EMI_Serializer(atividades)
+        elif modalidade == "ProEJA":
+            atividades = Atividade_ProEJA.objects.filter(ped=pedId).order_by('data_criacao')
 
-    elif ped_tipo == "proeja":
-        ped = PED_ProEJA.objects.filter(id=ped_id).first()
-        if not ped:
-            return Response({"erro": "PED ProEJA não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+            if not atividades.exists(): raise Exception('Nenhuma atividade encontrada')
 
-        # Verifica se o usuário é o professor responsável OU pertence ao grupo GestaoEscolar
-        if ped.professor_ped != request.user and not request.user.has_perm('dependencias_app.view_gestaoescolar'):
-            return Response({"erro": "Acesso não autorizado"}, status=status.HTTP_403_FORBIDDEN)
+            serializer = Atividade_ProEJA_Serializer(atividades)
+        else: 
+            raise Exception('Modalidade inválida')
 
-        atividades = Atividade_ProEJA.objects.filter(ped_proeja=ped)
-        serializer = Atividade_ProEJA_Serializer(atividades, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        # Retorna erro genérico em caso de falha
+        return Response({"mensagem": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    else:
-        return Response({"erro": "Tipo de PED inválido"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+@permission_classes([Professor])
+def listar_atividades_professor(request, modalidade):
+    try:
+        if modalidade == 'Integrado':
+            atividades = get_list_or_404(Atividade_EMI, professor=request.user)
 
-    return Response(serializer.data, status=status.HTTP_200_OK)
+            serializer = Atividade_EMI_Serializer(data=atividades)
+        elif modalidade == 'ProEJA':
+            atividades = get_list_or_404(Atividade_ProEJA, professor=request.user)
 
+            serializer = Atividade_ProEJA_Serializer(data=atividades)
+        else:
+            raise Exception('Modalidade inválida')
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
 @permission_classes([Professor])
@@ -115,51 +164,7 @@ def exibir_nota_final(request, ped_tipo, ped_id):
         return Response(
             {"erro": f"Erro inesperado: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
-
-@api_view(['POST'])
-@permission_classes([Professor])
-def adicionar_atividade(request, ped_tipo, ped_id):
-    try:
-        # Busca o PED (emi ou proeja) a partir do tipo e ID
-        if ped_tipo == "emi":
-            ped = PED_EMI.objects.filter(id=ped_id).first()
-        elif ped_tipo == "proeja":
-            ped = PED_ProEJA.objects.filter(id=ped_id).first()
-        else:
-            return Response({"erro": "Tipo de PED inválido."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Se o PED não for encontrado, retornar erro
-        if not ped:
-            return Response({"erro": "PED não encontrado."}, status=status.HTTP_404_NOT_FOUND)
-
-        # Verificar se o professor logado é o responsável pelo PED
-        if ped.professor_ped != request.user:
-            return Response({"erro": "Acesso não autorizado."}, status=status.HTTP_403_FORBIDDEN)
-
-        # Verifica qual serializer usar
-        if ped_tipo == 'emi':
-            serializer = Atividade_EMI_Serializer(data=request.data)
-        elif ped_tipo == 'proeja':
-            serializer = Atividade_ProEJA_Serializer(data=request.data)
-
-        # Verifica se os dados enviados são válidos
-        if serializer.is_valid():
-            # Salva a atividade associando ao PED correspondente
-            if ped_tipo == 'emi':
-                atividade = serializer.save(ped_emi=ped)  # Passa o PED_EMI
-            elif ped_tipo == 'proeja':
-                atividade = serializer.save(ped_proeja=ped)  # Passa o PED_ProEJA
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            # Retorna os erros de validação
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        # Retorna erro genérico em caso de falha
-        return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+        )    
 
 @api_view(['GET'])
 @permission_classes([Professor | GestaoEscolar])

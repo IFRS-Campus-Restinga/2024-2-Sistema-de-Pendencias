@@ -37,6 +37,7 @@ def login_view(request):
         user.nome = f'{user_info.get("nome")} {user_info.get("sobrenome")}'
         user.save()
 
+        # Faz login na aplicação
         login(request, user)
 
         pictureCode = user_info.get('foto'),

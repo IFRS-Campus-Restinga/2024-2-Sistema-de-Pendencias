@@ -11,6 +11,7 @@ class PlanoEstudos(BaseModel):
     forma_oferta = models.CharField(help_text="Selecione a forma de oferta", choices=FormaOferta.choices, max_length=20, null=False, blank=False)
     turno = models.CharField(help_text="Selecione o turno", choices=Turnos, max_length=10, null=False, blank=False)
     parecer_pedagogico = models.TextField(help_text="Informe o parecer pedagógico",blank=False, null=False)
+    aprovado = models.BooleanField(default=False)
 
 
     class Meta:
