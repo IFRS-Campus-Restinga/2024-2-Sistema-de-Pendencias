@@ -1,6 +1,6 @@
 import "./Input.css"; // Para o CSS que vamos criar
 
-const Input = ({ type, textoAjuda, erro, onChange, onBlur, valor, desabilitado, alinharCentro, name, dataMinima, lista }) => {
+const Input = ({ type, textoAjuda, erro, onChange, onBlur, valor, desabilitado, alinharCentro, name, dataMinima, lista, tiposDeArquivo }) => {
   return (
     <input
       type={type}
@@ -14,6 +14,7 @@ const Input = ({ type, textoAjuda, erro, onChange, onBlur, valor, desabilitado, 
       style={{textAlign: alinharCentro ? 'center' : 'left'}}
       min={dataMinima}
       list={lista}
+      accept={tiposDeArquivo}
     />
   );
 };

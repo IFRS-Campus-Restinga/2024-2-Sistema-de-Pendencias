@@ -1,0 +1,10 @@
+.divCadastroAtividade {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.labelCadastroAtividade {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}

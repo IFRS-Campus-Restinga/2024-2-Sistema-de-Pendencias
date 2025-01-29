@@ -1,7 +1,7 @@
 import React, { useEffect, forwardRef, useState } from 'react';
 import './FormContainer.css';
 
-const FormContainer = forwardRef(({ children, onSubmit, titulo, comprimento }, formRef) => {
+const FormContainer = forwardRef(({ children, onSubmit, titulo, comprimento, encType }, formRef) => {
     const [largura, setLargura] = useState(window.innerWidth);
 
     const setComprimento = (tela) => {
@@ -24,7 +24,7 @@ const FormContainer = forwardRef(({ children, onSubmit, titulo, comprimento }, f
     }, []);
 
     return (
-        <form className="formContainer" onSubmit={onSubmit} style={{ width: setComprimento(largura) }} ref={formRef}>
+        <form className="formContainer" onSubmit={onSubmit} style={{ width: setComprimento(largura) }} ref={formRef} encType={encType}>
             <span className="tituloForm">{titulo}</span>
             <hr className="linha" />
             {children}

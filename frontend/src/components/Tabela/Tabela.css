@@ -141,3 +141,8 @@ table {
 .botaoStatus:hover {
     background-color: #004f29;
 }
+
+.divTabela {
+    justify-self: center;
+    flex: 1;
+}

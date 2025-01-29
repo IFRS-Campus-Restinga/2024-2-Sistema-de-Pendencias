@@ -1,7 +1,45 @@
 import { api } from '../config/axiosConfig';
 
 const atividadeService = {
-  listarAtividades: (pedTipo, pedId) => api.get(`api/listar-atividades/${pedTipo}/${pedId}/`),
+  criar: async (modalidade, params) => {
+    const res = await api.post(`/api/atividade/cadastro/${modalidade}/`, params, {
+      headers: {
+        "Content-Type": 'multipart/form-data'
+      }
+    }).catch((erro) => {
+      return erro
+    })
+
+    return res
+  },
+
+  adicionar: async (pedId, modalidade, params) => {
+    const res = await api.post(`/api/plano-atividades/adicionar/${pedId}/${modalidade}/`, params, {
+      headers: {
+        "Content-Type": 'multipart/form-data'
+      }
+    }).catch((erro) => {
+      return erro
+    })
+
+    return res
+  },
+
+  listarPorPED: async (pedId, modalidade) => {
+      const res = await api.get(`/api/plano-atividades/${pedId}/${modalidade}/`).catch((erro) => {
+        return erro
+      });
+
+      return res
+  },
+
+  listarPorProfessor: async (modalidade) => {
+    const res = await api.get(`/api/atividade/listar/${modalidade}/`).catch((erro) => {
+      return erro
+    })
+
+    return res
+  },
   
   atualizarNotaFinal: (pedTipo, pedId, notaFinal) => 
     api.put(`api/atualizar-nota-final/${pedTipo}/${pedId}/`, { nota_final: notaFinal }),
@@ -85,16 +123,6 @@ const atividadeService = {
       return response.data;
     } catch (error) {
       console.error('Erro ao adicionar plano de atividades:', error);
-      throw error;
-    }
-  },
-
-  buscarPlanoAtividades: async function (pedTipo, pedId) {
-    try {
-      const response = await api.get(`api/ped/${pedTipo}/${pedId}/plano-atividades/`);
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao buscar plano de atividades:', error);
       throw error;
     }
   },

@@ -53,7 +53,7 @@ import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfes
 import ListarPEDProfessor from './pages/base/Professor/listarDependenciasProfessor/ListarPEDProfessor'
 import DetalhesPEDProfessor from './pages/base/Professor/detalhesDependenciaProfessor/DetalhesPEDProfessor'
 import CadastroPlanoEstudos from './pages/base/Professor/cadastroPlanoEstudos/CadastroPlanoEstudos'
-import AtividadesDesenvolvidas from './pages/base/Professor/atividadesDesenvolvidas/atividadesDesenvolvidas'
+import AtividadesPEDProfessor from './pages/base/Professor/atividadesDesenvolvidas/AtividadesPEDProfessor'
 import AdicionarAtividade from './pages/base/Professor/atividadesDesenvolvidas/adicionarAtividade/adicionarAtividade'
 import DetalhesAtividade from './pages/base/Professor/atividadesDesenvolvidas/detalhesAtividade/detalhesAtividade'
 import AdicionarObservacao from './pages/base/Professor/observacoes/adicionarObservacao'
@@ -63,6 +63,7 @@ import DetalhesObservacoes from './pages/base/Professor/detalhesObservacoes/Deta
 // Filhos de Aluno
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
+import CadastroAtividade from './pages/base/Professor/cadastroAtividade/CadastroAtividade'
 
 const router = createBrowserRouter([
     {
@@ -283,6 +284,10 @@ const router = createBrowserRouter([
                 element: <PerfilProfessor />
             },
             {
+                path: ':idUsuario/atividades/',
+                element: <AtividadesPEDProfessor />
+            },
+            {
                 path: ':idUsuario/peds/:modalidade/',
                 element: <ListarPEDProfessor />
             },
@@ -299,8 +304,12 @@ const router = createBrowserRouter([
                 element: <CadastroPlanoEstudos />
             },
             {
+                path: ':idUsuario/cadastroAtividade/',
+                element: <CadastroAtividade />
+            },
+            {
                 path: ':idUsuario/peds/:modalidade/:pedId/atividades',
-                element: <AtividadesDesenvolvidas />
+                element: <AtividadesPEDProfessor />
             },
             {
                 path: ':idUsuario/peds/Integrado/:pedId/atividades/:atividadeId',

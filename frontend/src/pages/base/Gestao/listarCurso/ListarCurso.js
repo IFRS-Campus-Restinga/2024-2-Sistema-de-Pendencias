@@ -62,7 +62,6 @@ const ListarCursos = () => {
     <>
       <FormContainer titulo='Lista de Cursos' comprimento='90%'>
         <div className='containerBuscarCurso'>
-
             <div class="buscaBarCurso">
               <Input
               tipo='search'

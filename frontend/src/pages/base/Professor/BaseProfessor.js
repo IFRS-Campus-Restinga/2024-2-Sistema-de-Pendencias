@@ -28,31 +28,33 @@ const BaseProfessor = () => {
     return (
         <PageContainer homeUrl={homeUrl}>
             <nav className='navBarProfessor'>
-                <div className='itemContainer'>
-                    <div className='navItemContainer'>
-                        <Link to={homeUrl}>
-                        <FontAwesomeIcon icon={faHouse} color='black' size='xl'/>
-                        <span className='navTexto'>
-                            Início
-                        </span>
-                        </Link>
-                    </div>
-                    <div className='navItemContainer'>
-                        <Dropdown
-                            icone={<FontAwesomeIcon icon={faBook} color='black' size='xl'/>}
-                            titulo={'Dependencias'}
-                            itens={[
-                                {
-                                    name: 'Minhas PEDs - EMI',
-                                    link: `${homeUrl}/peds/Integrado`
-                                },
-                                {
-                                    name: 'Minhas PEDs - ProEJA',
-                                    link: `${homeUrl}/peds/ProEJA`
-                                },
-                            ]}
-                        />
-                    </div>
+                <div className='navItemContainer'>
+                    <Link to={homeUrl}>
+                    <FontAwesomeIcon icon={faHouse} color='black' size='xl'/>
+                    <span className='navTexto'>
+                        Início
+                    </span>
+                    </Link>
+                </div>
+                <div className='navItemContainer'>
+                    <Dropdown
+                        icone={<FontAwesomeIcon icon={faBook} color='black' size='xl'/>}
+                        titulo={'Dependencias'}
+                        itens={[
+                            {
+                                name: 'Minhas PEDs - EMI',
+                                link: `${homeUrl}/peds/Integrado`
+                            },
+                            {
+                                name: 'Minhas PEDs - ProEJA',
+                                link: `${homeUrl}/peds/ProEJA`
+                            },
+                            {
+                                name: 'Atividades',
+                                link: `${homeUrl}/atividades`
+                            }
+                        ]}
+                    />
                 </div>
             </nav>
             <Outlet/>

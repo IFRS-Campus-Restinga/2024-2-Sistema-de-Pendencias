@@ -26,9 +26,9 @@ export const cursoService = {
     },
 
     // Método para atualizar um curso
-    editar: async (idCurso, params) => {
+    editar: async (cursoId, params) => {
         try {
-            const res = await api.put(`api/curso/${idCurso}/editar`, params); // Endpoint de edição de curso
+            const res = await api.put(`api/curso/${cursoId}/editar`, params); // Endpoint de edição de curso
             return res;
         } catch (erro) {
             console.error("Erro ao atualizar curso:", erro);
@@ -49,9 +49,9 @@ export const cursoService = {
     },
 
     // Método para obter um curso pelo ID
-    getCursoById: async (curso_id,retorno) => {
+    getCursoById: async (cursoId, retorno) => {
         try {
-            const res = await api.get(`api/cursos/${curso_id}/`, {
+            const res = await api.get(`api/cursos/${cursoId }/`, {
                 params: {
                     retorno
                 }

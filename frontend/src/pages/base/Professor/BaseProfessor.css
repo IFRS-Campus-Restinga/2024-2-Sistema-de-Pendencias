@@ -3,16 +3,39 @@
     height: 40px;
     display: flex;
     align-items: center;
+    gap: 50px;
     padding: 5px;
     background-color: #fff;
     box-shadow: 0 0px 3px rgba(0, 0, 0, 0.2);
     margin-bottom: 20px;
 }
 
-.itemContainer {
-    display: flex;
-    margin-left: 15px;
-    justify-content: space-between;
-    width: 25%;
-    min-width: 300px;
+@media (max-width: 760px) {
+    .container {
+        display: flex;
+    }
+
+    .navItemContainer {
+        height: 25%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .navBarProfessor {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: unset;
+        align-self: flex-start;
+        max-height: 100vh;
+        height: 100vh;
+        width: 2rem;
+        margin: 0;
+    }
+
+    .navTexto {
+        display: none;
+    }
 }

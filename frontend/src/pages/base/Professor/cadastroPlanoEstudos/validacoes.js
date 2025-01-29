@@ -7,7 +7,7 @@ export const validarFormaOferta = (formaOferta) => {
 
 export const validarTurno = (turno) => {
   if (!turno || turno.length === 0) {
-    return 'Campo obrigatório';
+    return 'Campo obrigatório'; 
   }
   return null;
 };
@@ -31,8 +31,6 @@ export const validarFormularioPlanoEstudos = (formData) => {
   if (erroFormaOferta) erros.forma_oferta = erroFormaOferta;
   if (erroTurno) erros.turno = erroTurno;
   if (erroParecerPedagogico) erros.parecer_pedagogico = erroParecerPedagogico;
-
-  console.log('Erros encontrados na validação do formulário:', erros);
 
   return erros;
 };
