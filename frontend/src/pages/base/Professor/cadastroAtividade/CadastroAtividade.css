@@ -1,10 +1,61 @@
 .divCadastroAtividade {
     display: flex;
-    justify-content: space-evenly;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 .labelCadastroAtividade {
     font-size: 15px;
     font-weight: 700;
     margin-bottom: 15px;
+}
+
+.textAreaCadastroAtividade {
+    border-radius: 8px;
+    width: 100%;
+    border: 1px solid #ccc;
+    height: 70px;
+    margin-top: 10px;
+    padding: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.textAreaCadastroAtividade:focus {
+    border: 1px solid #797979;
+    outline: none;
+}
+
+.pCadastroAtividade {
+    font-size: 10px;
+}
+
+.labelInputVazio,
+.labelInputArquivo {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.labelInputVazio {
+    background-color: white;
+    color: #797979;
+    border: 1px solid #797979;
+}
+
+.labelInputArquivo {
+    background-color: #006b3f;
+    color: white;
+}
+
+.labelInputArquivo:hover,
+.labelInputVazio:hover {
+    cursor: pointer;
+    scale: calc(1.05);
+    transition: ease-in 0.3s;
 }

@@ -19,13 +19,10 @@ def upload_to_drive(file, file_name, grupo):
         
         media = MediaIoBaseUpload(io.BytesIO(file.read()), mimetype='application/pdf')
 
-        print(f'Fazendo o upload para a pasta 1ClTW88YusBkt1Gt0i7ZHdW9qcBc50ldG com o nome {file_name}')
-
         # Cria o arquivo no Google Drive
-        uploaded_file = service.files().create(body=file_metadata, media_body=media, fields='id, webViewLink').execute()
+        uploaded_file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
-        # Retorna o link para visualização do arquivo no Google Drive
-        return uploaded_file.get('webViewLink')  # Retorna a URL pública do arquivo
+        return uploaded_file.get('id')
 
     except Exception as e:
         # Retorna a mensagem de erro se algo falhar

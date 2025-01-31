@@ -21,14 +21,9 @@ def cadastrar_atividade(request, modalidade):
     
     try:
         # Faz o upload do arquivo e obtém a URL
-        if 'arquivo' not in request.FILES:
-            raise Exception('Arquivo não fornecido')
-
-        file = request.FILES.get('arquivo')
-        url_pdf = upload_to_drive(file, data.get('titulo'), request.user.grupo.name)
-        
-        # Adiciona a URL ao dicionário de dados
-        data['url_PDF'] = url_pdf
+        if 'arquivo' in request.FILES:
+            file = request.FILES.get('arquivo')
+            data['drive_id'] = upload_to_drive(file, data.get('titulo'), request.user.grupo.name)
 
         # Seleciona o serializer conforme a modalidade
         if modalidade == "Integrado":

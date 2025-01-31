@@ -9,6 +9,8 @@ import { jwtDecode } from 'jwt-decode'
 import { validarFormAtividade } from './validacoes'
 import atividadeService from '../../../../services/atividadeService'
 import Switch from '../../../../components/Switch/Switch'
+import uploadCinza from '../../../../assets/upload-cinza.png'
+import uploadBranco from '../../../../assets/upload-branco.png'
 
 const CadastroAtividade = () => {
     const formRef = useRef()
@@ -19,15 +21,12 @@ const CadastroAtividade = () => {
     const [formData, setFormData] = useState({
         titulo: '',
         descricao: '',
-        data_entrega: '',
-        observacoes: '',
         arquivo: '',
         professor: jwtDecode(sessionStorage.getItem('token')).idUsuario
     })
 
     const trocarModalidade = () => {
         setModalidade(modalidade === 'Integrado' ? 'ProEJA' : 'Integrado')
-        console.log(modalidade)
     }
 
     const handleSubmit = async (e) => {
@@ -38,6 +37,7 @@ const CadastroAtividade = () => {
 
         if (!erro) {
             try {
+                console.log(formData)
                 const res = await atividadeService.criar(modalidade, formData)
 
                 if (res.status !== 201) throw new Error(res)
@@ -58,10 +58,9 @@ const CadastroAtividade = () => {
 
                 setFormData({
                     titulo: '',
-                    data_entrega: '',
                     descricao: '',
-                    observacoes: '',
-                    arquivo: ''
+                    arquivo: '',
+                    professor: jwtDecode(sessionStorage.getItem('token')).idUsuario
                 })
 
                 formRef.current.reset()
@@ -70,6 +69,13 @@ const CadastroAtividade = () => {
             }
         }
     }
+
+    const limitadorDeTexto = (texto, limitador) => {
+        if (typeof texto === "string" && texto.length > limitador) {
+          return texto.substring(0, limitador) + "...";
+        }
+        return texto;
+      };
 
     return (
         <>
@@ -89,45 +95,42 @@ const CadastroAtividade = () => {
                     />
                     {errors?.titulo ? (<p style={{ color: 'red', fontWeight: 400, fontSize: '12px' }}>{errors.titulo}</p>) : null}
                 </label>
-                <div className="divCadastroAtividade">
-                    <label className="labelCadastroAtividade">
-                        Data de Entrega *
-                        <Input
-                            onChange={(e) => { setFormData({ ...formData, data_entrega: e.target.value }) }}
-                            type={'date'}
-                            valor={formData.data_entrega}
-                            erro={errors?.data}
-                            dataMinima={new Date().toISOString().split('T')[0]}
-                        />
-                        {errors?.data ? (<p style={{ color: 'red', fontWeight: 400, fontSize: '12px' }}>{errors.data}</p>) : null}
-                    </label>
-                    <label className="labelCadastroAtividade">
-                        PDF atividade
-                        <Input
-                            onChange={(e) => { setFormData({ ...formData, arquivo: e.target.files[0] }) }}
-                            type={'file'}
-                            accept=".jpg, .jpeg, .png, .pdf"
-                        />
-                    </label>
-                </div>
                 <label className="labelCadastroAtividade">
                     Descrição *
-                    <Input
+                    <textarea
                         onChange={(e) => { setFormData({ ...formData, descricao: e.target.value }) }}
-                        type={'text'}
-                        valor={formData.descricao}
-                        erro={errors?.descricao}
+                        value={formData.descricao}
+                        className='textAreaCadastroAtividade'
                     />
                     {errors?.descricao ? (<p style={{ color: 'red', fontWeight: 400, fontSize: '12px' }}>{errors.descricao}</p>) : null}
                 </label>
-                <label className="labelCadastroAtividade">
-                    Observações
-                    <Input
-                        onChange={(e) => { setFormData({ ...formData, observacoes: e.target.value }) }}
-                        valor={formData.observacoes}
-                        type={'text'}
-                    />
-                </label>
+                <div className="divCadastroAtividade">
+                    <p className='pCadastroAtividade'>
+                        Escolha opcionalmente algum arquivo de conteúdo para a atividade
+                    </p>
+                    <label className={formData.arquivo === '' ? "labelInputVazio" : "labelInputArquivo"} htmlFor='arquivo'>
+                        <img src={formData.arquivo === '' ? uploadCinza : uploadBranco} style={{width: '25px', height: '25px'}}/>
+                        <p>
+                               {
+                                formData.arquivo === '' ? (
+                                    'Fazer Upload'
+                                ) : (
+                                    limitadorDeTexto(formData.arquivo.name, 15)
+                                )
+                               } 
+                        </p>
+                        <div className='divCadastroAtividade'>
+                            <input
+                                onChange={(e) => { setFormData({ ...formData, arquivo: e.target.files[0] }) }}
+                                type={'file'}
+                                accept=".jpg, .jpeg, .png, .pdf"
+                                style={{display: 'none'}}
+                                id='arquivo'
+                                name='arquivo'
+                            />
+                        </div>
+                    </label>
+                </div>
                 <Button text={'Cadastrar'} tipo={'submit'} />
             </FormContainer>
         </>

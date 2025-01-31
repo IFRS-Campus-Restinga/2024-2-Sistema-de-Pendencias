@@ -12,7 +12,7 @@ def authenticate_google_drive(grupo):
     elif grupo in ['Professor', 'Coordenador']:
         SERVICE_ACCOUNT_FILE = f'{settings.BASE_DIR}/credentials/credentials_servidores.json'  # Caminho para o arquivo de credenciais dos professores/coordenadores
     elif grupo == 'Aluno':
-        raise ValueError("Grupo 'Aluno' não tem permissão para fazer upload.")
+        SERVICE_ACCOUNT_FILE = f'{settings.BASE_DIR}/credentials/credentials_alunos.json'  # Caminho para o arquivo de credenciais dos professores/coordenadores
     else:
         raise ValueError("Grupo inválido. Permissões de grupo desconhecidas.")
 
