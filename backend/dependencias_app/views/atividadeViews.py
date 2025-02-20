@@ -92,7 +92,7 @@ def vincular_atividades(request, pedId, modalidade):
         avaliacoes_existentes.exclude(atividade_id__in=atividades).delete()
 
         # Criar ou atualizar avaliações
-        for avaliacao in avaliacoes:
+        for avaliacao in avaliacoes:            
             serializer = serializer_class(data=avaliacao)
 
             if not serializer.is_valid(): raise Exception(serializer.errors)
@@ -103,6 +103,10 @@ def vincular_atividades(request, pedId, modalidade):
                 atividade_id=avaliacao['atividade'],
                 defaults={'data_entrega': avaliacao['data_entrega'], 'nota': avaliacao.get('nota', None)}
             )
+
+            if not created:
+                avaliacao_obj.status = 'Avaliada'
+                avaliacao_obj.save()
 
         return Response({'mensagem': 'Plano de atividades salvo com sucesso!'}, status=status.HTTP_201_CREATED)
 

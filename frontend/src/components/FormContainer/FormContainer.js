@@ -1,8 +1,10 @@
 import React, { useEffect, forwardRef, useState } from 'react';
 import './FormContainer.css';
+import InfoButton from '../InfoButton/InfoButton';
 
-const FormContainer = forwardRef(({ children, onSubmit, titulo, comprimento, encType }, formRef) => {
+const FormContainer = forwardRef(({ children, onSubmit, titulo, comprimento, encType, formRef, textoInfo }) => {
     const [largura, setLargura] = useState(window.innerWidth);
+    const [infoAberto, setInfoAberto] = useState(false)
 
     const setComprimento = (tela) => {
         if (tela <= 760) {
@@ -23,9 +25,28 @@ const FormContainer = forwardRef(({ children, onSubmit, titulo, comprimento, enc
         };
     }, []);
 
+    const abrirInfos = () => {
+        setInfoAberto(true)
+
+        setTimeout(() => {
+            setInfoAberto(false)
+        }, 3500);
+    }
+
     return (
         <form className="formContainer" onSubmit={onSubmit} style={{ width: setComprimento(largura) }} ref={formRef} encType={encType}>
-            <span className="tituloForm">{titulo}</span>
+            <span className="tituloForm">
+                <p>
+                    {titulo} 
+                </p>
+                {
+                    textoInfo ? (
+                        <InfoButton infos={textoInfo}/>
+                    ) : (
+                        <></>
+                    )
+                }
+            </span>
             <hr className="linha" />
             {children}
         </form>

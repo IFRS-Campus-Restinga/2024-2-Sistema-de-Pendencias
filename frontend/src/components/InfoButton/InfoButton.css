@@ -1,0 +1,46 @@
+.infoContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.infoCircle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #006b3f;
+    color: #006b3f;
+    position: relative;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.pInfos {
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    font-size: 10px;
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    min-width: 100px;
+    width: 250px;
+    padding: 8px;
+    min-height: 50px;
+    z-index: 20;
+    position: absolute;
+    top: 35px;
+    border-radius: 8px;
+    background-color: #fff;
+    white-space: pre-line;
+}
+
+.infoContainer:hover .pInfos {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.show {
+    opacity: 1;
+}
