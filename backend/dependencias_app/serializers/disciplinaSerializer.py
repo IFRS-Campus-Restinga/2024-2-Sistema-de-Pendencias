@@ -22,9 +22,15 @@ class DisciplinaSerializer(serializers.ModelSerializer):
         # Atualiza outros campos normalmente
         instance = super().update(instance, validated_data)
 
-        if cursos_data is not None:
-            # Define os cursos relacionados diretamente
-            instance.cursos.set(cursos_data)
+        if cursos_data is None:  
+            return serializers.ValidationError('A disciplina precisa estar vinculada a pelo menos um curso')
+
+        else:
+            # Extrai os IDs dos cursos (se você está recebendo objetos inteiros ou dicionários)
+            cursos_ids = [curso.id for curso in cursos_data] if isinstance(cursos_data, list) else [curso_data['id'] for curso_data in cursos_data]
+
+            # Atualiza os cursos relacionados com os IDs extraídos
+            instance.cursos.set(cursos_ids)
 
         return instance
 

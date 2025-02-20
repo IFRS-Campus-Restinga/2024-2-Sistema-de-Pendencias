@@ -73,6 +73,10 @@ def editar_disciplina(request, disciplinaId):
     try:
         disciplina = get_object_or_404(Disciplina, pk=disciplinaId)
 
+        cursos = request.data.pop('cursos')
+
+        request.data['cursos'] = [curso['id'] for curso in cursos]
+
         serializer = DisciplinaSerializer(disciplina, data=request.data)
 
         if not serializer.is_valid(): raise Exception(serializer.errors)

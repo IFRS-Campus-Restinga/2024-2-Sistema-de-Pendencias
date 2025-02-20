@@ -5,10 +5,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from dependencias_app.models.atividade import *
+from dependencias_app.models.avaliacao import *
+from dependencias_app.permissoes import *
 from dependencias_app.models.pedEMI import PED_EMI
 from dependencias_app.models.pedProEJA import PED_ProEJA
 from dependencias_app.serializers.atividadeSerializer import *
-from dependencias_app.permissoes import *
+from dependencias_app.serializers.avaliacaoSerializer import *
 from rest_framework.parsers import MultiPartParser, FormParser
 from dependencias_app.enums.situacaoDependencia import SituacaoDependencia
 from dependencias_app.enums.statusDependencia import StatusDependencia
@@ -52,17 +54,13 @@ def listar_atividades(request, pedId, modalidade):
     try:        
         # Busca o PED (emi ou proeja) a partir do tipo e ID
         if modalidade == "Integrado":
-            atividades = Atividade_EMI.objects.filter(ped=pedId).order_by('data_criacao')
+            atividades = Avaliacao_Atividade_EMI.objects.filter(ped=pedId).order_by('data_criacao')
 
-            if not atividades.exists(): raise Exception('Nenhuma atividade encontrada')
-
-            serializer = Atividade_EMI_Serializer(atividades)
+            serializer = Avaliacao_EMI_Serializer(atividades, many=True, context={'request': request})
         elif modalidade == "ProEJA":
-            atividades = Atividade_ProEJA.objects.filter(ped=pedId).order_by('data_criacao')
+            atividades = Avaliacao_Atividade_ProEJA.objects.filter(ped=pedId).order_by('data_criacao')
 
-            if not atividades.exists(): raise Exception('Nenhuma atividade encontrada')
-
-            serializer = Atividade_ProEJA_Serializer(atividades)
+            serializer = Avaliacao_ProEJA_Serializer(atividades, many=True, context={'request': request})
         else: 
             raise Exception('Modalidade inválida')
 
@@ -71,6 +69,46 @@ def listar_atividades(request, pedId, modalidade):
         # Retorna erro genérico em caso de falha
         return Response({"mensagem": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+@permission_classes([Professor])
+def vincular_atividades(request, pedId, modalidade):
+    try:
+        avaliacoes = request.data.get('avaliacoes', [])
+        atividades = [avaliacao['atividade'] for avaliacao in avaliacoes]
+
+        if modalidade == 'Integrado':
+            ped = get_object_or_404(PED_EMI, pk=pedId)
+            modelo = Avaliacao_Atividade_EMI
+            serializer_class = Avaliacao_EMI_Serializer
+        elif modalidade == 'ProEJA':
+            ped = get_object_or_404(PED_ProEJA, pk=pedId)
+            modelo = Avaliacao_Atividade_ProEJA
+            serializer_class = Avaliacao_ProEJA_Serializer
+        else:
+            raise Exception('Modalidade Inválida')
+        
+        # Excluir avaliações que não estão na nova lista
+        avaliacoes_existentes = modelo.objects.filter(ped=ped)
+        avaliacoes_existentes.exclude(atividade_id__in=atividades).delete()
+
+        # Criar ou atualizar avaliações
+        for avaliacao in avaliacoes:
+            serializer = serializer_class(data=avaliacao)
+
+            if not serializer.is_valid(): raise Exception(serializer.errors)
+
+            # Verifica se já existe uma avaliação com essa atividade
+            avaliacao_obj, created = modelo.objects.update_or_create(
+                ped=ped,
+                atividade_id=avaliacao['atividade'],
+                defaults={'data_entrega': avaliacao['data_entrega'], 'nota': avaliacao.get('nota', None)}
+            )
+
+        return Response({'mensagem': 'Plano de atividades salvo com sucesso!'}, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
 @permission_classes([Professor])
 def listar_atividades_professor(request, modalidade):
@@ -78,11 +116,11 @@ def listar_atividades_professor(request, modalidade):
         if modalidade == 'Integrado':
             atividades = get_list_or_404(Atividade_EMI, professor=request.user)
 
-            serializer = Atividade_EMI_Serializer(data=atividades)
+            serializer = Atividade_EMI_Serializer(atividades, many=True, context={'request': request})
         elif modalidade == 'ProEJA':
             atividades = get_list_or_404(Atividade_ProEJA, professor=request.user)
 
-            serializer = Atividade_ProEJA_Serializer(data=atividades)
+            serializer = Atividade_ProEJA_Serializer(atividades, many=True, context={'request': request})
         else:
             raise Exception('Modalidade inválida')
         
