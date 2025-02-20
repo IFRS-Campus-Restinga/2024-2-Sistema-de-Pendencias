@@ -64,6 +64,7 @@ import DetalhesObservacoes from './pages/base/Professor/detalhesObservacoes/Deta
 import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
 import CadastroAtividade from './pages/base/Professor/cadastroAtividade/CadastroAtividade'
+import ListarAtividadesProfessor from './pages/base/Professor/listarAtividades/ListarAtividadesProfessor'
 
 const router = createBrowserRouter([
     {
@@ -285,7 +286,7 @@ const router = createBrowserRouter([
             },
             {
                 path: ':idUsuario/atividades/',
-                element: <AtividadesPEDProfessor />
+                element: <ListarAtividadesProfessor />
             },
             {
                 path: ':idUsuario/peds/:modalidade/',

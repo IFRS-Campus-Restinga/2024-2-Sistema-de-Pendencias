@@ -18,8 +18,6 @@ const ListarDependencias = ({listaDependencias, tipo, modalidade, editar, visual
     const [status, setStatus] = useState('');
     const [situacao, setSituacao] = useState('');
     
-    console.log(dependenciasFiltradas)
-
     const navigate = useNavigate();
 
     const limparBusca = () => {
@@ -63,7 +61,7 @@ const ListarDependencias = ({listaDependencias, tipo, modalidade, editar, visual
         <>
             <FormContainer titulo={`Lista de ${tipo} ${modalidade ?? ''}`} comprimento='90%'>
                 <div className='containerBuscarPPT'>
-                    <div class="buscaBarPPT">
+                    <div className="buscaBarPPT">
                         <Input
                             tipo='search'
                             valor={filtroGeral}

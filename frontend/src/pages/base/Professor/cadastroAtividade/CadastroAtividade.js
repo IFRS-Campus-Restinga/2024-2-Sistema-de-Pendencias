@@ -77,6 +77,7 @@ const CadastroAtividade = () => {
         return texto;
       };
 
+
     return (
         <>
             <ToastContainer />
@@ -108,14 +109,14 @@ const CadastroAtividade = () => {
                     <p className='pCadastroAtividade'>
                         Escolha opcionalmente algum arquivo de conteúdo para a atividade
                     </p>
-                    <label className={formData.arquivo === '' ? "labelInputVazio" : "labelInputArquivo"} htmlFor='arquivo'>
-                        <img src={formData.arquivo === '' ? uploadCinza : uploadBranco} style={{width: '25px', height: '25px'}}/>
+                    <label className={!formData.arquivo ? "labelInputVazio" : "labelInputArquivo"} htmlFor='arquivo'>
+                        <img src={!formData.arquivo ? uploadCinza : uploadBranco} style={{width: '25px', height: '25px'}}/>
                         <p>
                                {
-                                formData.arquivo === '' ? (
+                                !formData.arquivo ? (
                                     'Fazer Upload'
                                 ) : (
-                                    limitadorDeTexto(formData.arquivo.name, 15)
+                                    limitadorDeTexto(formData?.arquivo?.name, 15)
                                 )
                                } 
                         </p>

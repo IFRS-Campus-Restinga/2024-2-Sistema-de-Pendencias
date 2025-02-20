@@ -111,20 +111,15 @@ def vincular_atividades(request, pedId, modalidade):
 
 @api_view(['GET'])
 @permission_classes([Professor])
-def listar_atividades_professor(request, modalidade):
+def listar_atividades_professor(request):
     try:
-        if modalidade == 'Integrado':
-            atividades = get_list_or_404(Atividade_EMI, professor=request.user)
+        atividades_emi = Atividade_EMI.objects.filter(professor=request.user)
+        atividades_proeja = Atividade_ProEJA.objects.filter(professor=request.user)
 
-            serializer = Atividade_EMI_Serializer(atividades, many=True, context={'request': request})
-        elif modalidade == 'ProEJA':
-            atividades = get_list_or_404(Atividade_ProEJA, professor=request.user)
+        serializer_emi = Atividade_EMI_Serializer(atividades_emi, many=True, context={'request': request})
+        serializer_proeja = Atividade_ProEJA_Serializer(atividades_proeja, many=True, context={'request': request})
 
-            serializer = Atividade_ProEJA_Serializer(atividades, many=True, context={'request': request})
-        else:
-            raise Exception('Modalidade inválida')
-        
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer_emi.data + serializer_proeja.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

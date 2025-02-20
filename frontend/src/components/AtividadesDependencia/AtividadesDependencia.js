@@ -12,30 +12,10 @@ import './AtividadesDependencia.css'
 import { jwtDecode } from "jwt-decode"
 
 
-const AtividadesDependencia = ({editar}) => {
-    const location = useLocation()
+const AtividadesDependencia = ({ editar, visualizar, atividades}) => {
     const navigate = useNavigate()
-    const {state} = location
-    const modalidade = location.pathname.split('/')[5]
-    const [atividadesFiltradas, setAtividadesFiltradas] = useState([])
-    const [isLoading, setIsLoading] = useState(true)
+    const [atividadesFiltradas, setAtividadesFiltradas] = useState(atividades)
     const [filtroGeral, setFiltroGeral] = useState(null)
-
-    const fetchAtividades = async () => {
-        let res
-        try {
-            if (state.id) res = await atividadeService.listarPorPED(state.id, modalidade)
-            else res = await atividadeService.listarPorProfessor(modalidade)
-
-            if (res.status !== 200) throw new Error(res)
-
-            setAtividadesFiltradas(res.data)
-        } catch (error) {
-            console.error(error)
-        } finally {
-            setIsLoading(false)
-        }
-    }
 
     const filtrarAtividades = () => {
         const atividadesFiltradas = atividadesFiltradas.filter(atividade => (
@@ -48,19 +28,16 @@ const AtividadesDependencia = ({editar}) => {
 
     const limparBusca = () => {
         setFiltroGeral('');
-        fetchAtividades();
     };
 
     useEffect(() => {
-        fetchAtividades()
-    }, [])
-
-    if (isLoading) return <LoadingIFRS/>
+        setAtividadesFiltradas(atividades)
+    }, [atividades])
 
     return (
-        <FormContainer titulo={state ? 'Atividades da Dependência' : 'Minhas Atividades'}>
+        <FormContainer titulo={'Minhas Atividades'}>
             <div className='divAtividadesDependencia'>
-                <div class="containerBusca">
+                <div className="containerBusca">
                     <Input
                     tipo='search'
                     valor={filtroGeral}
@@ -89,7 +66,7 @@ const AtividadesDependencia = ({editar}) => {
                     />
                 </div>       
             </div>
-            <Tabela editar={editar} visualizar={true} listaFiltrada={atividadesFiltradas}/>
+            <Tabela editar={editar}  visualizar={visualizar} listaFiltrada={atividadesFiltradas}/> 
         </FormContainer>
     )
 

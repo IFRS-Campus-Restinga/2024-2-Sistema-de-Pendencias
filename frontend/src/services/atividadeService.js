@@ -13,12 +13,8 @@ const atividadeService = {
     return res
   },
 
-  adicionar: async (pedId, modalidade, params) => {
-    const res = await api.post(`/api/plano-atividades/adicionar/${pedId}/${modalidade}/`, params, {
-      headers: {
-        "Content-Type": 'multipart/form-data'
-      }
-    }).catch((erro) => {
+  vincular: async (pedId, modalidade, params) => {
+    const res = await api.post(`/api/plano-atividades/vincular/${pedId}/${modalidade}/`, params).catch((erro) => {
       return erro
     })
 
@@ -26,15 +22,23 @@ const atividadeService = {
   },
 
   listarPorPED: async (pedId, modalidade) => {
-      const res = await api.get(`/api/plano-atividades/${pedId}/${modalidade}/`).catch((erro) => {
+      const res = await api.get(`/api/plano-atividades/${pedId}/${modalidade}/`, {
+        params: {
+          retorno: 'listar'
+        }
+      }).catch((erro) => {
         return erro
       });
 
       return res
   },
 
-  listarPorProfessor: async (modalidade) => {
-    const res = await api.get(`/api/atividade/listar/${modalidade}/`).catch((erro) => {
+  listarPorProfessor: async () => {
+    const res = await api.get(`/api/atividade/listar/`, {
+      params: {
+        retorno: 'listar'
+      }
+    }).catch((erro) => {
       return erro
     })
 

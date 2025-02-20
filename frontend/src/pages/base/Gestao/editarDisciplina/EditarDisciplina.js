@@ -15,7 +15,6 @@ const EditarDisciplina = () => {
     const { state } = location
     const [errors, setErrors] = useState([])
     const [cursos, setCursos] = useState([])
-    const [cursosVinculados, setCursosVinculados] = useState([])
     const [formData, setFormData] = useState({
         nome: '',
         carga_horaria: '',
@@ -60,24 +59,25 @@ const EditarDisciplina = () => {
         }
 
     }
-
-    const desvincularCurso = async (curso) => {
-        setFormData({
-            ...formData,
-            cursos: formData.cursos.filter((id) => id !== curso.id),
-        });
-        setCursos([...cursos, curso]);
-        setCursosVinculados(cursosVinculados.filter((c) => c.id !== curso.id));
-    };
     
-    const vincularCurso = async (curso) => {
+    const vincularCurso = (curso) => {
         setFormData({
             ...formData,
-            cursos: [...formData.cursos, curso.id],
+            cursos: [...formData.cursos, curso],
         });
-        setCursosVinculados([...cursosVinculados, curso]);
+
         setCursos(cursos.filter((c) => c.id !== curso.id));
     };
+
+    const desvincularCurso = (curso) => {
+        setFormData({
+            ...formData,
+            cursos: formData.cursos.filter((c) => c.id !== curso.id),
+        });
+
+        setCursos([...cursos, curso]);
+    };
+    
 
     const fetchDisciplina = async () => {
         try {
@@ -85,9 +85,13 @@ const EditarDisciplina = () => {
 
             if (res.status !== 200) throw new Error(res)
             
-            setFormData(res.data.disciplina)
+            setFormData({
+                nome: res.data.disciplina.nome,
+                carga_horaria: res.data.disciplina.carga_horaria,
+                cursos: res.data.cursos_vinculados
+            })
+
             setCursos(res.data.cursos)
-            setCursosVinculados(res.data.cursos_vinculados)
         } catch (error) {
             console.error(error)
         }
@@ -122,52 +126,53 @@ const EditarDisciplina = () => {
                 <section className="sectionEditarDisciplina">
                     <div className="containerTabelaEditarDisciplina">
                         <table>
-                            <thead>
-                                <tr>
-                                    <th>Cursos</th>
+                        <thead>
+                            <tr>
+                            <th>Cursos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                            cursos.map((curso) => (
+                                <tr onClick={() => vincularCurso(curso)}>
+                                <td>
+                                    <div className="divEditarDisciplina">
+                                        <p className="pEditarDisciplina">{curso.nome}</p>
+                                        <FontAwesomeIcon icon={faAnglesRight} />
+                                    </div>
+                                </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    cursos.map((curso) => (
-                                        <tr onClick={() => vincularCurso(curso)}>
-                                            <td>
-                                                <div className="divEditarDisciplina">
-                                                    <p className="pEditarDisciplina">{curso.nome}</p>
-                                                    <FontAwesomeIcon icon={faAnglesRight}/>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                }
-                            </tbody>
+                            ))
+                            }
+                        </tbody>
                         </table>
                     </div>
+
                     <div className="containerTabelaEditarDisciplina">
                         <table>
-                            <thead>
-                                <tr>
-                                    <th>Cursos da Disciplina</th>
+                        <thead>
+                            <tr>
+                                <th>Cursos da Disciplina</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                            formData.cursos.map((curso) => (
+                                <tr onClick={() => desvincularCurso(curso)}>
+                                    <td>
+                                        <div className="divEditarDisciplina">
+                                            <FontAwesomeIcon icon={faAnglesLeft} />
+                                            <p className="pEditarDisciplina">{curso.nome}</p>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    cursosVinculados.map((curso) => (
-                                        <tr onClick={() => desvincularCurso(curso)} className="trEditarDisciplina">
-                                            <td>
-                                            <div className="divEditarDisciplina">
-                                                    <FontAwesomeIcon icon={faAnglesLeft}/>
-                                                    <p className="pEditarDisciplina">{curso.nome}</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                }
-                            </tbody>
+                            ))
+                            }
+                        </tbody>
                         </table>
                     </div>
                 </section>
-                <Button text={'Salvar Alterações'} tipo={'submit'}/>
+              <Button text={'Salvar Alterações'} tipo={'submit'}/>
             </FormContainer>
         </>
     )

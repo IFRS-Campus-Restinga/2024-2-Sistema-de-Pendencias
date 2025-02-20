@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from dependencias_app.models.avaliacao import *
+import datetime
 
 import logging
 
@@ -11,6 +12,13 @@ class Avaliacao_EMI_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Avaliacao_Atividade_EMI
         fields = '__all__'
+
+    def validate(self, attrs):
+        data_entrega = datetime.strptime(self.validated_data.get('data_entrega'), "%Y-%m-%d").date()
+        
+        if data_entrega < datetime.today().date(): raise serializers.ValidationError('A data de entrega da atividade não pode ser inferior ao dia de hoje!')
+
+        return super().validate(attrs)
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
