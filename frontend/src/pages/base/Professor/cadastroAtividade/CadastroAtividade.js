@@ -2,7 +2,7 @@ import FormContainer from '../../../../components/FormContainer/FormContainer'
 import { ToastContainer, toast } from 'react-toastify'
 import './CadastroAtividade.css'
 import Input from '../../../../components/Input/Input'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import Button from '../../../../components/Button/Button'
 import { jwtDecode } from 'jwt-decode'
@@ -11,12 +11,19 @@ import atividadeService from '../../../../services/atividadeService'
 import Switch from '../../../../components/Switch/Switch'
 import uploadCinza from '../../../../assets/upload-cinza.png'
 import uploadBranco from '../../../../assets/upload-branco.png'
+import { faLock } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import LoadingIFRS from '../../../../components/LoadingIFRS/LoadingIFRS'
+import VisualizarPDF from '../../../../components/VisualizarPDF/VisualizarPDF'
 
 const CadastroAtividade = () => {
     const formRef = useRef()
     const location = useLocation()
     const { state } = location
-    const [modalidade, setModalidade] = useState(location.pathname.split('/')[5] ?? 'Integrado')
+    const [modalidade, setModalidade] = useState(state?.modalidade ?? 'Integrado')
+    const [pdfAberto, setPdfAberto] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
+    const [bytesArquivo, setBytesArquivo] = useState(null)
     const [errors, setErrors] = useState(null)
     const [formData, setFormData] = useState({
         titulo: '',
@@ -25,8 +32,39 @@ const CadastroAtividade = () => {
         professor: jwtDecode(sessionStorage.getItem('token')).idUsuario
     })
 
+    const base64 = (arquivo) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+      
+          reader.onload = (e) => {
+            resolve(e.target.result.split(',')[1]); // Remove o prefixo "data:..."
+          };
+      
+          reader.onerror = (error) => {
+            reject(error); // Caso ocorra algum erro
+          };
+      
+          reader.readAsDataURL(arquivo);
+        });
+    };
+
+    const setPdf = async () => {
+        try {
+            if (formData.arquivo) {
+                const res = await base64(formData.arquivo)
+                
+                setBytesArquivo(res)
+            }
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     const trocarModalidade = () => {
-        setModalidade(modalidade === 'Integrado' ? 'ProEJA' : 'Integrado')
+        if (!state) {
+            setModalidade(modalidade === 'Integrado' ? 'ProEJA' : 'Integrado')
+        }
     }
 
     const handleSubmit = async (e) => {
@@ -37,8 +75,12 @@ const CadastroAtividade = () => {
 
         if (!erro) {
             try {
-                console.log(formData)
-                const res = await atividadeService.criar(modalidade, formData)
+                let res
+                if (state) {
+                    res = await atividadeService.editar(state.id, modalidade, formData)
+                } else {
+                    res = await atividadeService.criar(modalidade, formData)
+                }
 
                 if (res.status !== 201) throw new Error(res)
 
@@ -75,64 +117,113 @@ const CadastroAtividade = () => {
           return texto.substring(0, limitador) + "...";
         }
         return texto;
-      };
+    }
 
+    const fetchAtividade = async () => {
+        try {
+            const res = await atividadeService.porId(state.id, modalidade)
+
+            if (res.status !== 200) throw new Error(res)
+
+            setFormData(res.data)
+            
+            setIsLoading(false)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    
+    useEffect(() => {
+        if (state) {
+            fetchAtividade()
+        } else {
+            setIsLoading(false)
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!formData.arquivo.data) setPdf()
+    }, [formData.arquivo])
+
+    if (isLoading) return <LoadingIFRS/>
 
     return (
         <>
             <ToastContainer />
-            <FormContainer titulo={'Nova Atividade'} onSubmit={handleSubmit} encType="multipart/form-data" ref={formRef}>
+            <FormContainer titulo={state ? 'Editar Atividade' : 'Cadastrar Atividade'} onSubmit={handleSubmit} encType="multipart/form-data" ref={formRef}>
                 <br />
-                <div className="divCadastroAtividade">
-                    <Switch valor1={'ProEJA'} valor2={'Integrado'} valor={modalidade} stateHandler={trocarModalidade} />
-                </div>
-                <label className="labelCadastroAtividade">
-                    Título *
-                    <Input
-                        onChange={(e) => { setFormData({ ...formData, titulo: e.target.value }) }}
-                        type={'text'}
-                        valor={formData.titulo}
-                        erro={errors?.titulo}
+                <span className="spanCadastroAtividade">
+                    <Switch 
+                        valor1={'ProEJA'} 
+                        valor2={'Integrado'} 
+                        valor={modalidade} 
+                        stateHandler={trocarModalidade} 
+                        imagemCustom={state ? <FontAwesomeIcon icon={faLock} size="xl" color={modalidade === 'Integrado' ? '#006b3f' : '#fff'}/> : <></>}
                     />
-                    {errors?.titulo ? (<p style={{ color: 'red', fontWeight: 400, fontSize: '12px' }}>{errors.titulo}</p>) : null}
-                </label>
-                <label className="labelCadastroAtividade">
-                    Descrição *
-                    <textarea
-                        onChange={(e) => { setFormData({ ...formData, descricao: e.target.value }) }}
-                        value={formData.descricao}
-                        className='textAreaCadastroAtividade'
-                    />
-                    {errors?.descricao ? (<p style={{ color: 'red', fontWeight: 400, fontSize: '12px' }}>{errors.descricao}</p>) : null}
-                </label>
-                <div className="divCadastroAtividade">
-                    <p className='pCadastroAtividade'>
-                        Escolha opcionalmente algum arquivo de conteúdo para a atividade
-                    </p>
-                    <label className={!formData.arquivo ? "labelInputVazio" : "labelInputArquivo"} htmlFor='arquivo'>
-                        <img src={!formData.arquivo ? uploadCinza : uploadBranco} style={{width: '25px', height: '25px'}}/>
-                        <p>
-                               {
-                                !formData.arquivo ? (
-                                    'Fazer Upload'
-                                ) : (
-                                    limitadorDeTexto(formData?.arquivo?.name, 15)
-                                )
-                               } 
-                        </p>
-                        <div className='divCadastroAtividade'>
+                </span>
+                <section className='sectionCadastroAtividade'>
+                    <div className='divCadastroAtividade'>
+                        <label className="labelCadastroAtividade">
+                            Título *
+                            <Input
+                                onChange={(e) => { setFormData({ ...formData, titulo: e.target.value }) }}
+                                type={'text'}
+                                valor={formData.titulo}
+                                erro={errors?.titulo}
+                            />
+                            {errors?.titulo ? (<p style={{ color: 'red', fontWeight: 400, fontSize: '12px' }}>{errors.titulo}</p>) : null}
+                        </label>
+                        <label className="labelTextArea">
+                            Descrição *
+                            <textarea
+                                onChange={(e) => { setFormData({ ...formData, descricao: e.target.value }) }}
+                                value={formData.descricao}
+                                className='textAreaCadastroAtividade'
+                            />
+                            {errors?.descricao ? (<p style={{ color: 'red', fontWeight: 400, fontSize: '12px' }}>{errors.descricao}</p>) : null}
+                        </label>
+                    </div>
+                    {
+                        state ? (
+                            <div className='divPDF'>
+                                {
+                                    formData.arquivo.data ?  (
+                                        <VisualizarPDF pdfData={formData.arquivo.data}/>
+                                    ) : bytesArquivo ? (
+                                        <VisualizarPDF pdfData={bytesArquivo}/>
+                                    ) : (<p>Nenhum arquivo para exibir</p>)
+                                }
+                            </div>
+                        ) : <></>
+                    }
+                </section>
+                <span className="spanCadastroAtividade">
+                    <span className='spanCadastroAtividade'>
+                        <label className={!formData.arquivo ? "labelInputVazio" : "labelInputArquivo"} htmlFor='arquivo'>
+                            <img src={!formData.arquivo ? uploadCinza : uploadBranco} style={{width: '25px', height: '25px'}}/>
+                            <p>
+                                {
+                                    !formData.arquivo ? (
+                                        'Fazer Upload'
+                                    ) : (
+                                        limitadorDeTexto(formData?.arquivo?.name, 15)
+                                    )
+                                } 
+                            </p>
                             <input
-                                onChange={(e) => { setFormData({ ...formData, arquivo: e.target.files[0] }) }}
+                                onChange={(e) => { 
+                                    setFormData({ ...formData, arquivo: e.target.files[0] }) 
+                                }}
                                 type={'file'}
                                 accept=".jpg, .jpeg, .png, .pdf"
                                 style={{display: 'none'}}
                                 id='arquivo'
                                 name='arquivo'
                             />
-                        </div>
-                    </label>
-                </div>
-                <Button text={'Cadastrar'} tipo={'submit'} />
+                        </label>
+                    </span>
+                </span>
+                <Button text={state ? 'Salvar' : 'Cadastrar'} tipo={'submit'} />
             </FormContainer>
         </>
     )

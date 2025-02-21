@@ -21,6 +21,18 @@ const atividadeService = {
     return res
   },
 
+  porId: async (atividadeId, modalidade) => {
+    const res = await api.get(`/api/plano-atividades/detalhes/${modalidade}/${atividadeId}/`, {
+      params: {
+        retorno: 'detalhes'
+      }
+    }).catch((erro) => {
+      return erro
+    })
+
+    return res
+  },
+
   listarPorPED: async (pedId, modalidade) => {
       const res = await api.get(`/api/plano-atividades/${pedId}/${modalidade}/`, {
         params: {
@@ -43,6 +55,24 @@ const atividadeService = {
     })
 
     return res
+  },
+
+  editar: async (atividadeId, modalidade, params) => {
+    try {
+      const response = await api.put(
+        `api/plano-atividades/ativida/editar/${atividadeId}/${modalidade}/`,
+        params, 
+        {
+          headers: {
+            "Content-Type": 'multipart/form-data'
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao editar a atividade:', error);
+      throw error;
+    }
   },
   
   atualizarNotaFinal: (pedTipo, pedId, notaFinal) => 
@@ -73,35 +103,6 @@ const atividadeService = {
       throw error; // Propaga o erro para ser tratado onde o método for chamado
     }
   },
-
-  buscarAtividade: async (pedTipo, pedId, atividadeId) => {
-    try {
-      const response = await api.get(`api/detalhes-atividade/${pedTipo}/${pedId}/${atividadeId}/`);
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao buscar detalhes da atividade:', error);
-      throw error;
-    }
-  },
-
-  editarAtividade: async (pedTipo, pedId, atividadeId, atividadeData) => {
-    try {
-      const response = await api.put(
-        `api/editar-atividade/${pedTipo}/${pedId}/${atividadeId}/`,
-        atividadeData, 
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao editar a atividade:', error);
-      throw error;
-    }
-  },
-
 
   deletarAtividade: async (pedTipo, pedId, atividadeId) => {
     try {

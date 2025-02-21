@@ -2,7 +2,7 @@ import React, { useEffect, forwardRef, useState } from 'react';
 import './FormContainer.css';
 import InfoButton from '../InfoButton/InfoButton';
 
-const FormContainer = forwardRef(({ children, onSubmit, titulo, comprimento, encType, formRef, textoInfo }) => {
+const FormContainer = forwardRef(({ children, onSubmit, titulo, comprimento, encType, textoInfo }, formRef) => {
     const [largura, setLargura] = useState(window.innerWidth);
     const [infoAberto, setInfoAberto] = useState(false)
 
@@ -24,14 +24,6 @@ const FormContainer = forwardRef(({ children, onSubmit, titulo, comprimento, enc
             window.removeEventListener('resize', handleResize);
         };
     }, []);
-
-    const abrirInfos = () => {
-        setInfoAberto(true)
-
-        setTimeout(() => {
-            setInfoAberto(false)
-        }, 3500);
-    }
 
     return (
         <form className="formContainer" onSubmit={onSubmit} style={{ width: setComprimento(largura) }} ref={formRef} encType={encType}>

@@ -289,6 +289,10 @@ const router = createBrowserRouter([
                 element: <ListarAtividadesProfessor />
             },
             {
+                path: ':idUsuario/atividades/:atividadeId/editar',
+                element: <CadastroAtividade />
+            },
+            {
                 path: ':idUsuario/peds/:modalidade/',
                 element: <ListarPEDProfessor />
             },
@@ -311,14 +315,6 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/peds/:modalidade/:pedId/atividades',
                 element: <AtividadesPEDProfessor />
-            },
-            {
-                path: ':idUsuario/peds/Integrado/:pedId/atividades/:atividadeId',
-                element: <DetalhesAtividade />
-            },
-            {
-                path: ':idUsuario/atividades/:pedTipo/:pedId/editarAtividade/:atividadeId',
-                element: <AdicionarAtividade />,
             },
             {
                 path: ':idUsuario/adicionarObservacao',

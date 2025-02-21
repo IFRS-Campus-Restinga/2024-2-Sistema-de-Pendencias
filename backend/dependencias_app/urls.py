@@ -90,6 +90,7 @@ urlpatterns = [
     path('plano-atividades/vincular/<int:pedId>/<str:modalidade>/', vincular_atividades),
     path('atividade/listar/', listar_atividades_professor),
     path('plano-atividades/<int:pedId>/<str:modalidade>/', listar_atividades),
+    path('plano-atividades/detalhes/<str:modalidade>/<int:atividadeId>/', buscar_atividade),
     path('atualizar-nota-final/<str:ped_tipo>/<int:ped_id>/', atualizar_nota_final, name='atualizar_nota_final'),
     path('detalhes-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', detalhes_atividade, name='detalhes_atividade'),
     path('editar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', editar_atividade, name='editar_atividade'),

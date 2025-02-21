@@ -17,7 +17,7 @@ from dependencias_app.enums.statusDependencia import StatusDependencia
 
 
 @api_view(['POST'])
-@permission_classes([Professor | Coordenador | GestaoEscolar])
+@permission_classes([Professor | GestaoEscolar])
 def cadastrar_atividade(request, modalidade):
     data = request.data.copy()
     
@@ -25,7 +25,7 @@ def cadastrar_atividade(request, modalidade):
         # Faz o upload do arquivo e obtém a URL
         if 'arquivo' in request.FILES:
             file = request.FILES.get('arquivo')
-            data['drive_id'] = upload_to_drive(file, data.get('titulo'), request.user.grupo.name)
+            data['drive_id'] = upload_to_drive(file, file.name, request.user.grupo.name)
 
         # Seleciona o serializer conforme a modalidade
         if modalidade == "Integrado":
@@ -47,6 +47,25 @@ def cadastrar_atividade(request, modalidade):
     except Exception as e:
         # Retorna erro genérico em caso de falha
         return Response({"mensagem": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([Professor | Aluno | GestaoEscolar])
+def buscar_atividade(request, modalidade, atividadeId):
+    try:
+        if modalidade == 'Integrado':
+            atividade = get_object_or_404(Atividade_EMI, pk=atividadeId)
+
+            serializer = Atividade_EMI_Serializer(atividade, context={'request': request})
+        elif modalidade == 'ProEJA':
+            atividade = get_object_or_404(Atividade_ProEJA, pk=atividadeId)
+
+            serializer = Atividade_ProEJA_Serializer(atividade, context={'request': request})
+        else:
+            raise Exception('Modalidade inválida')
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([Professor | GestaoEscolar | Coordenador | Aluno])
