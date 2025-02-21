@@ -78,14 +78,24 @@ const CadastroAtividade = () => {
                 let res
                 if (state) {
                     res = await atividadeService.editar(state.id, modalidade, formData)
-                } else {
-                    res = await atividadeService.criar(modalidade, formData)
+
+                    if (res.status !== 200) throw new Error(res)
+
+                    } else {
+                        res = await atividadeService.criar(modalidade, formData)
+                        
+                        if (res.status !== 201) throw new Error(res)
+                            
+                        setFormData({
+                            titulo: '',
+                            descricao: '',
+                            arquivo: '',
+                            professor: jwtDecode(sessionStorage.getItem('token')).idUsuario
+                        })
                 }
 
-                if (res.status !== 201) throw new Error(res)
-
                 toast.success(
-                    state?.plano_estudos ? "Atividade editada com sucesso!" : "Atividade cadastrada com sucesso!",
+                    state ? "Atividade editada com sucesso!" : "Atividade cadastrada com sucesso!",
                     {
                         position: "bottom-center",
                         autoClose: 3000,
@@ -97,15 +107,6 @@ const CadastroAtividade = () => {
                         progressStyle: { backgroundColor: "#fff" },
                     }
                 )
-
-                setFormData({
-                    titulo: '',
-                    descricao: '',
-                    arquivo: '',
-                    professor: jwtDecode(sessionStorage.getItem('token')).idUsuario
-                })
-
-                formRef.current.reset()
             } catch (error) {
                 console.error(error)
             }

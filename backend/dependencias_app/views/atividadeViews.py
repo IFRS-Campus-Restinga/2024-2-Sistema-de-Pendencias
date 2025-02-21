@@ -1,6 +1,6 @@
 import logging
 from django.shortcuts import *
-from dependencias_app.utils.upload_files import upload_to_drive
+from dependencias_app.utils.manage_files import *
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -148,6 +148,33 @@ def listar_atividades_professor(request):
 
 @api_view(['PUT'])
 @permission_classes([Professor])
+def editar_atividade(request, modalidade, atividadeId):
+    data = request.data.copy()
+    try:
+        if modalidade == 'Integrado':
+            atividade = get_object_or_404(Atividade_EMI, pk=atividadeId)
+            serializer = Atividade_EMI_Serializer
+        elif modalidade == 'ProEJA':
+            atividade = get_object_or_404(Atividade_ProEJA, pk=atividadeId)
+            serializer = Atividade_ProEJA_Serializer
+        else: raise Exception('Modalidade inválida')
+
+        if 'arquivo' in request.FILES:
+            file = request.FILES.get('arquivo')
+            data['drive_id'] = change_file(file, file.name, atividade.drive_id, request.user.grupo.name)
+
+        
+        atividade_serializer = serializer(atividade, data=data)
+        if not atividade_serializer.is_valid(): raise Exception(serializer.errors)
+            
+        atividade_serializer.save()
+        return Response({'mensagem': 'Atividade atualizada com sucesso!'}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+@api_view(['PUT'])
+@permission_classes([Professor])
 def atualizar_nota_final(request, ped_tipo, ped_id):
     try:
         nota_final = request.data.get('nota_final')
@@ -242,40 +269,6 @@ def detalhes_atividade(request, ped_tipo, ped_id, atividade_id):
         serializer = serializer_class(atividade)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    except Exception as e:
-        return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-@api_view(['PUT'])
-@permission_classes([Professor])
-def editar_atividade(request, ped_tipo, ped_id, atividade_id):
-    try:
-        if ped_tipo == "emi":
-            atividade = Atividade_EMI.objects.filter(id=atividade_id).first()
-        elif ped_tipo == "proeja":
-            atividade = Atividade_ProEJA.objects.filter(id=atividade_id).first()
-        else:
-            return Response({"erro": "Tipo de PED inválido."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if not atividade:
-            return Response({"erro": "Atividade não encontrada."}, status=status.HTTP_404_NOT_FOUND)
-
-        ped = atividade.ped_emi if ped_tipo == "emi" else atividade.ped_proeja
-        if ped.professor_ped != request.user:
-            return Response({"erro": "Acesso não autorizado."}, status=status.HTTP_403_FORBIDDEN)
-
-        # Usa o serializer adequado
-        if ped_tipo == "emi":
-            serializer = Atividade_EMI_Serializer(atividade, data=request.data, partial=True)  # "partial=True" para permitir update de campos
-        else:
-            serializer = Atividade_ProEJA_Serializer(atividade, data=request.data, partial=True)
-
-        if serializer.is_valid():
-            # A validação pode incluir 'nota' se for update, ou excluir caso contrário
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
     except Exception as e:
         return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     

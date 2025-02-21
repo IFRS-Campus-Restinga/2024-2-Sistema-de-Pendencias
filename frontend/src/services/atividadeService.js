@@ -60,7 +60,7 @@ const atividadeService = {
   editar: async (atividadeId, modalidade, params) => {
     try {
       const response = await api.put(
-        `api/plano-atividades/ativida/editar/${atividadeId}/${modalidade}/`,
+        `api/plano-atividades/editar/${modalidade}/${atividadeId}/`,
         params, 
         {
           headers: {
@@ -68,7 +68,7 @@ const atividadeService = {
           },
         }
       );
-      return response.data;
+      return response;
     } catch (error) {
       console.error('Erro ao editar a atividade:', error);
       throw error;
