@@ -1,0 +1,36 @@
+.pdfPreview {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    border: 2px solid #fff;
+    border-radius: 8px;
+}
+
+.viewContainer {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    min-height: 100%;
+    display: flex;
+    flex: 1;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 30;
+    overflow-y: scroll;
+    justify-content: center;
+    padding: 20px;
+    align-items: center;
+}
+
+.pdfContainer {
+    max-height: 600px;
+    width: min-content;
+    overflow-y: scroll;
+    position: relative;
+    gap: 20px;
+    padding: 0px 20px 0px 0px;
+}

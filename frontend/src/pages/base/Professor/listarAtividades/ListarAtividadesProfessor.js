@@ -25,7 +25,7 @@ const ListarAtividadesProfessor = () => {
     }, [])
 
     return (
-        <AtividadesDependencia atividades={atividades} editar={true} visualizar={true}/>
+        <AtividadesDependencia atividades={atividades} editar={true}/>
     )
 }
 

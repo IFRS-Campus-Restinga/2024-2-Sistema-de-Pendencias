@@ -26,7 +26,7 @@ def get_from_drive(file_id, grupo):
         # Retorna o nome do arquivo junto com o Base64
         return {
             "name": file_name,
-            "data": encoded_image
+            "data": encoded_image,
         }
 
     except Exception as e:

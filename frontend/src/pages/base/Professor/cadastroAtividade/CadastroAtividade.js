@@ -14,16 +14,15 @@ import uploadBranco from '../../../../assets/upload-branco.png'
 import { faLock } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import LoadingIFRS from '../../../../components/LoadingIFRS/LoadingIFRS'
-import VisualizarPDF from '../../../../components/VisualizarPDF/VisualizarPDF'
+import PDFPreview from '../../../../components/PDFPreview/PDFPreview'
 
 const CadastroAtividade = () => {
     const formRef = useRef()
     const location = useLocation()
     const { state } = location
     const [modalidade, setModalidade] = useState(state?.modalidade ?? 'Integrado')
-    const [pdfAberto, setPdfAberto] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
-    const [bytesArquivo, setBytesArquivo] = useState(null)
+    const [isSending, setIsSending] = useState(false)
     const [errors, setErrors] = useState(null)
     const [formData, setFormData] = useState({
         titulo: '',
@@ -31,35 +30,6 @@ const CadastroAtividade = () => {
         arquivo: '',
         professor: jwtDecode(sessionStorage.getItem('token')).idUsuario
     })
-
-    const base64 = (arquivo) => {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-      
-          reader.onload = (e) => {
-            resolve(e.target.result.split(',')[1]); // Remove o prefixo "data:..."
-          };
-      
-          reader.onerror = (error) => {
-            reject(error); // Caso ocorra algum erro
-          };
-      
-          reader.readAsDataURL(arquivo);
-        });
-    };
-
-    const setPdf = async () => {
-        try {
-            if (formData.arquivo) {
-                const res = await base64(formData.arquivo)
-                
-                setBytesArquivo(res)
-            }
-
-        } catch (error) {
-            console.error(error)
-        }
-    }
 
     const trocarModalidade = () => {
         if (!state) {
@@ -69,6 +39,7 @@ const CadastroAtividade = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setIsSending(true)
 
         const erro = validarFormAtividade(formData)
         setErrors(erro)
@@ -107,6 +78,8 @@ const CadastroAtividade = () => {
                         progressStyle: { backgroundColor: "#fff" },
                     }
                 )
+
+                setIsSending(false)
             } catch (error) {
                 console.error(error)
             }
@@ -141,10 +114,6 @@ const CadastroAtividade = () => {
             setIsLoading(false)
         }
     }, []);
-
-    useEffect(() => {
-        if (!formData.arquivo.data) setPdf()
-    }, [formData.arquivo])
 
     if (isLoading) return <LoadingIFRS/>
 
@@ -188,11 +157,9 @@ const CadastroAtividade = () => {
                         state ? (
                             <div className='divPDF'>
                                 {
-                                    formData.arquivo.data ?  (
-                                        <VisualizarPDF pdfData={formData.arquivo.data}/>
-                                    ) : bytesArquivo ? (
-                                        <VisualizarPDF pdfData={bytesArquivo}/>
-                                    ) : (<p>Nenhum arquivo para exibir</p>)
+                                    formData.arquivo ?  (
+                                        <PDFPreview pdfData={formData.arquivo?.data ?? formData.arquivo} pdfUrl={formData.arquivo?.image_url ?? null}/>
+                                    ) : <></>
                                 }
                             </div>
                         ) : <></>
@@ -224,7 +191,7 @@ const CadastroAtividade = () => {
                         </label>
                     </span>
                 </span>
-                <Button text={state ? 'Salvar' : 'Cadastrar'} tipo={'submit'} />
+                <Button text={state ? 'Salvar' : 'Cadastrar'} tipo={'submit'} disabled={isSending}/>
             </FormContainer>
         </>
     )
