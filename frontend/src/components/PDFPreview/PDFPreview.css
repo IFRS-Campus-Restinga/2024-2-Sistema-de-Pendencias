@@ -30,7 +30,24 @@
     max-height: 600px;
     width: min-content;
     overflow-y: scroll;
-    position: relative;
+    position: absolute;
     gap: 20px;
     padding: 0px 20px 0px 0px;
+}
+
+.download {
+    transition: filter 0.3s ease-in-out;
+    /* Adiciona uma transição suave */
+}
+
+.download:hover {
+    filter: brightness(50%);
+    cursor: pointer;
+    /* Reduz o brilho ao passar o mouse */
+}
+
+.downloadIcon {
+    transform: rotate(180deg);
+    position: absolute;
+    z-index: 50
 }

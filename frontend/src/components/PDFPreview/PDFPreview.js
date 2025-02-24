@@ -3,15 +3,17 @@ import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist/legacy/build/pdf.mj
 import './PDFPreview.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import VisualizarPDF from '../VisualizarPDF/VisualizarPDF';
+import downloadBranco from '../../assets/upload-branco.png'
 
 GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/legacy/build/pdf.worker.min.mjs', import.meta.url).toString();
 
 const PDFPreview = ({ pdfData }) => {
   const [imageUrl, setImageUrl] = useState(null);
   const [PDF, setPDF] = useState(null)
+  const [pdfURL, setPdfURL] = useState(null)
   const [paginasPDF, setPaginasPDF] = useState([])
   const [pdfAberto, setPdfAberto] = useState(false)
+  const [download, setDownload] = useState(false)
 
   const base64_ArrayBuffer = (base64) => {
     const binaryString = atob(base64);
@@ -73,7 +75,9 @@ const PDFPreview = ({ pdfData }) => {
 
   const renderPDF = async () => {
     try {
-      const pdf = await getDocument({ data: PDF }).promise;
+      const pdfCopy = PDF.slice(0)
+
+      const pdf = await getDocument({ data: pdfCopy }).promise;
       const numPages = pdf.numPages;
   
       const pagesArray = [];
@@ -100,6 +104,10 @@ const PDFPreview = ({ pdfData }) => {
       }
   
       setPaginasPDF(pagesArray);
+
+      const blob = new Blob([PDF], { type: "application/pdf" })
+
+      setPdfURL(URL.createObjectURL(blob))
     } catch (error) {
       console.error('Erro ao carregar o PDF:', error);
     }
@@ -108,11 +116,17 @@ const PDFPreview = ({ pdfData }) => {
   useEffect(() => {
     setImageUrl(null)
     renderPreview();
+
+    if (pdfURL) URL.revokeObjectURL(pdfURL);
+
   }, [pdfData]);
 
   useEffect(() => {
     if (PDF) renderPDF()
   }, [PDF])
+
+  useEffect(() => {
+  },[pdfURL])
 
   if (!pdfData) {
     return <FontAwesomeIcon icon={faSpinner} spin color='#006b3f'/>
@@ -126,19 +140,21 @@ const PDFPreview = ({ pdfData }) => {
             backgroundImage: `url(${imageUrl})`,
             backgroundSize: 'cover',
             width: '220px',
-            height: '300px'
+            height: '300px',
+            border: '1px dashed #006b3f'
         }}/>
     </div>
     {
       pdfAberto ? (
-        <div className='viewContainer'>
-          <div className='pdfContainer' onClick={() => setPdfAberto(false)}>
+        <div className='viewContainer' onClick={() => setPdfAberto(false)}>
+            <img src={downloadBranco} className='downloadIcon' style={{display: `${download ? 'block' : 'none'}`}}/>
+          <a href={pdfURL} className={`pdfContainer ${download ? 'download' : ''}`} download={'Atividade.pdf'} onMouseEnter={() => setDownload(true)} onMouseLeave={() => setDownload(false)}>
             {
               paginasPDF.map((pagina) => (
                 <img src={pagina} className='pdf'/>
               ))
             }
-          </div>
+          </a>
         </div>
       ) : <></>
     }
