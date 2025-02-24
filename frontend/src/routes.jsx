@@ -65,6 +65,7 @@ import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
 import CadastroAtividade from './pages/base/Professor/cadastroAtividade/CadastroAtividade'
 import ListarAtividadesProfessor from './pages/base/Professor/listarAtividades/ListarAtividadesProfessor'
+import DetalhesDependenciaAluno from './pages/base/Aluno/detalhesDependencia/DetalhesDependenciaAluno'
 
 const router = createBrowserRouter([
     {
@@ -350,10 +351,10 @@ const router = createBrowserRouter([
                 path: ':idUsuario/perfil',
                 element: <PerfilAluno />
             },
-            // {
-            //     path: ':idUsuario/:modalidade/:pedId/detalhes',
-            //     element: <DetalhesDependencia />
-            // },
+            {
+                path: ':idUsuario/:modalidade/:pedId/detalhes',
+                element: <DetalhesDependenciaAluno />
+            },
         ]
     },
 ])

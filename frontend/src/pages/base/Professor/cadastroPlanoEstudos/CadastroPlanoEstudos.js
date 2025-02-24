@@ -45,7 +45,7 @@ const CadastroPlanoEstudos = () => {
       try {
         let response;
         if (state.plano_estudos) {
-          response = await PlanoEstudosService.editar(state.plano_estudos, modalidade, formData);
+          response = await PlanoEstudosService.editar(state.plano_estudos.id, modalidade, formData);
         } else {
           response = await PlanoEstudosService.criar(formData, modalidade);
         }
@@ -92,22 +92,21 @@ const CadastroPlanoEstudos = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchPlanoEstudo = async () => {
-      if (state.plano_estudos) {
-        try {
-          const res = await PlanoEstudosService.buscar(state.plano_estudos, 'detalhes', modalidade);
+  const fetchPlanoEstudo = async () => {
+      try {
+        const res = await PlanoEstudosService.buscar(state.plano_estudos.id, 'detalhes', modalidade);
 
-          setFormData(res.data);
+        setFormData(res.data);
 
-          setDesabilitado(res.data.aprovado)
-        } catch (error) {
-          console.error("Erro ao buscar detalhes do plano de estudos", error);
-        }
+        setDesabilitado(res.data.aprovado)
+      } catch (error) {
+        console.error("Erro ao buscar detalhes do plano de estudos", error);
       }
-    };
+  };
 
-    fetchPlanoEstudo();
+
+  useEffect(() => {
+    if (state) fetchPlanoEstudo();
   }, [state]);
 
   return (

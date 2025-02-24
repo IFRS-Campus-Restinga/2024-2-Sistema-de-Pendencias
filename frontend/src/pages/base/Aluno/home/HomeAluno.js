@@ -73,7 +73,7 @@ const HomeAluno = () => {
 
   const handleNavigateToDetalhes = (dependencia) => {
     const modalidade = dependencia.turma_atual === undefined ? "ProEJA" : dependencia.turma_progressao ? "PPT" : "Integrado";
-    navigate(`${modalidade}/${dependencia.id}/detalhes`);
+    navigate(`${modalidade}/${dependencia.id}/detalhes`, {state: dependencia});
   };
 
   useEffect(() => {

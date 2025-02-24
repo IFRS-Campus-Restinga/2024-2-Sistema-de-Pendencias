@@ -70,24 +70,23 @@ def editar_plano_estudos(request, planoId, modalidade):
 
         if modalidade == 'Integrado':
             plano = get_object_or_404(PlanoEstudos_EMI, pk=planoId)
-
+            ped = get_object_or_404(PED_EMI, pk=plano.ped.id)
             serializer = PlanoEstudos_EMI_Serializer(plano, data=data, partial=True)
         
         elif modalidade == 'ProEJA':
             plano = get_object_or_404(PlanoEstudos_ProEJA, pk=planoId)
-
+            ped = get_object_or_404(PED_ProEJA, pk=plano.ped.id)
             serializer = PlanoEstudos_ProEJA_Serializer(plano, data=data, partial=True)
 
-        if serializer.is_valid():
-            serializer.save()
+        if not serializer.is_valid(): raise Exception(serializer.errors)
 
-            if data['aprovado'] == True:
-                threading.Thread(target=enviar_email, args=(serializer.instance.ped.aluno, template, 'Novo Plano de Estudos Cadastrado', serializer.instance.ped.aluno.grupo.name)).start()
+        if data['aprovado'] == True:
+            ped.status = 'Em Andamento'
+            ped.save()
+            threading.Thread(target=enviar_email, args=(serializer.instance.ped.aluno, template, 'Novo Plano de Estudos Cadastrado', serializer.instance.ped.aluno.grupo.name)).start()
 
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

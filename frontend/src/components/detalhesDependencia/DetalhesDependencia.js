@@ -112,7 +112,7 @@ const DetalhesDependencia = ({dependencia, tipo, modalidade, grupo}) => {
                       link: `atividades/`,
                       name: 'Atividades',
                       state: dependencia,
-                      desabilitado: dependencia.plano_estudo
+                      desabilitado: !dependencia.plano_estudos
                     },
                     {
                       link: 'editar',
@@ -121,7 +121,7 @@ const DetalhesDependencia = ({dependencia, tipo, modalidade, grupo}) => {
                       desabilitado: grupo !== 'Gestão Escolar'
                     },
                     {
-                      link: setLink(dependencia.plano_estudos, 'planoEstudos'),
+                      link: setLink(dependencia.plano_estudos?.id, 'planoEstudos'),
                       name: 'Plano de Estudos',
                       state: dependencia,
                       desabilitado: !(dependencia.plano_estudos) ? grupo !== 'Professor' : false
@@ -153,7 +153,7 @@ const DetalhesDependencia = ({dependencia, tipo, modalidade, grupo}) => {
               </>
             ) : (
               grupo === 'Aluno' ? (
-                <Button text={"Atividades"} onClick={() => redirect(``)} disabled={dependencia.plano_estudo}/>
+                <Button text={"Atividades"} onClick={() => redirect(``)} disabled={!dependencia.plano_estudos}/>
               ) : (<></>)
             )
           }

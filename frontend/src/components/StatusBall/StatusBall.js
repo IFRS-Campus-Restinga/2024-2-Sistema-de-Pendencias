@@ -9,20 +9,17 @@ const StatusBalls = ({ status, tipo, parecerLancado }) => {
     // Atualiza o status quando a prop 'status' mudar
     useEffect(() => {
         setActiveStatus(status);
-        console.log(status)
     }, [status]);
-
-    const listaProgresso = [1, 2, 3];
 
     // Função que retorna a classe 'active' dependendo do índice da bola
     const getStatusClass = (index) => {
         if (activeStatus === 'Finalizada') {
             return 'active';
         }
-        if (activeStatus === 'Em Andamento' && index < 2) {
+        if (activeStatus === 'Lançado' && index < 3) {
             return 'active';
         }
-        if (activeStatus === 'Lançado' && index < 3) {
+        if (activeStatus === 'Em Andamento' && index < 2) {
             return 'active';
         }
         if (activeStatus === 'Criada' && index === 0) {

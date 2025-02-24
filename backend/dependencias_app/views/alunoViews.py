@@ -73,6 +73,8 @@ def listar_alunos(request):
 @api_view(['GET'])
 @permission_classes([AlunoPermissao])
 def listar_dependencias_aluno(request):
+    peds_emi_serializer = peds_proeja_serializer = ppts_serializer = []
+
     try:
         aluno = request.user
 
@@ -80,11 +82,18 @@ def listar_dependencias_aluno(request):
         peds_proeja = PED_ProEJA.objects.filter(aluno=aluno).order_by('-data_criacao')
         ppts = PPT.objects.filter(aluno=aluno).order_by('-data_criacao')
 
-        peds_emi_serializer = PED_EMI_Serializer(peds_emi, many=True, context={"request": request})
-        peds_proeja_serializer = PED_ProEJA_Serializer(peds_proeja, many=True, context={"request": request})
-        ppts_serializer = PPTSerializer(ppts, many=True, context={'request': request})
+        if peds_emi: 
+            peds_emi_serializer = PED_EMI_Serializer(peds_emi, many=True, context={"request": request})
+        if peds_proeja: 
+            peds_proeja_serializer = PED_ProEJA_Serializer(peds_proeja, many=True, context={"request": request})
+        if ppts: 
+            ppts_serializer = PPTSerializer(ppts, many=True, context={'request': request})
 
-        dependencias = (peds_emi_serializer.data + peds_proeja_serializer.data + ppts_serializer.data)
+        dependencias = (
+            getattr(peds_emi_serializer, 'data', []) +
+            getattr(peds_proeja_serializer, 'data', []) +
+            getattr(ppts_serializer, 'data', [])
+        )
 
         return Response(dependencias, status=status.HTTP_200_OK)
 
@@ -95,6 +104,6 @@ def listar_dependencias_aluno(request):
         )
     except Exception as e:
         return Response(
-            {"erro": "Erro ao listar PEDs do aluno", "detalhes": str(e)},
+            {"erro": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

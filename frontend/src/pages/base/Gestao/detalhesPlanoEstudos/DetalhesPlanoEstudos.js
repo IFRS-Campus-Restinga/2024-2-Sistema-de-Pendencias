@@ -6,7 +6,6 @@ import Button from '../../../../components/Button/Button';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './DetalhesPlanoEstudos.css'
-import LogoIFRS from '../../../../assets/logo-ifrs-colorido.png';
 
 const DetalhesPlanoEstudos = () => {
   const location = useLocation();
@@ -19,7 +18,7 @@ const DetalhesPlanoEstudos = () => {
   useEffect(() => {
     const fetchDados = async () => {
       try {
-        const res = await PlanoEstudosService.buscar(state.plano_estudos, 'detalhes', modalidade);
+        const res = await PlanoEstudosService.buscar(state.plano_estudos.id, 'detalhes', modalidade);
 
         if (res.status !== 200) throw new Error(res)
 
@@ -39,7 +38,7 @@ const DetalhesPlanoEstudos = () => {
 
   const handleEditar = async () => {
     try {
-      const res = await PlanoEstudosService.editar(state.plano_estudos, modalidade, {aprovado: true})
+      const res = await PlanoEstudosService.editar(state.plano_estudos.id, modalidade, {aprovado: true})
 
       if (res.status !== 200) throw new Error(res)
       

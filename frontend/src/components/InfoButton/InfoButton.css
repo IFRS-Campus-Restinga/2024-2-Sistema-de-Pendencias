@@ -19,6 +19,7 @@
 
 .pInfos {
     opacity: 0;
+    display: none;
     transform: translateY(-5px);
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
     font-size: 10px;
@@ -39,6 +40,7 @@
 .infoContainer:hover .pInfos {
     opacity: 1;
     transform: translateY(0);
+    display: block;
 }
 
 .show {
