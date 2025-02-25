@@ -33,6 +33,18 @@ const atividadeService = {
     return res
   },
 
+  porAvaliacao: async (avaliacaoId, modalidade) => {
+    const res = await api.get(`/api/plano-atividades/avaliacao/${modalidade}/${avaliacaoId}/`, {
+      params: {
+        retorno: 'detalhes'
+      }
+    }).catch((erro) => {
+      return erro
+    })
+
+    return res
+  },
+
   listarPorPED: async (pedId, modalidade) => {
       const res = await api.get(`/api/plano-atividades/${pedId}/${modalidade}/`, {
         params: {

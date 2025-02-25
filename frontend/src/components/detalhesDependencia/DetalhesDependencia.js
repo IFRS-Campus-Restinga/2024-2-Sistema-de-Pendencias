@@ -153,7 +153,7 @@ const DetalhesDependencia = ({dependencia, tipo, modalidade, grupo}) => {
               </>
             ) : (
               grupo === 'Aluno' ? (
-                <Button text={"Atividades"} onClick={() => redirect(``)} disabled={!dependencia.plano_estudos}/>
+                <Button text={"Atividades"} onClick={() => redirect(`atividades`, {state: dependencia})} disabled={!dependencia.plano_estudos}/>
               ) : (<></>)
             )
           }

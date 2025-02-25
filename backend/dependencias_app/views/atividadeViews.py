@@ -68,6 +68,26 @@ def buscar_atividade(request, modalidade, atividadeId):
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@permission_classes([Aluno])
+def buscar_por_avaliacao(request, modalidade, avaliacaoId):
+    try:
+        if modalidade == 'Integrado':
+            atividade = Atividade_EMI.objects.get(dependencias_emi__id=avaliacaoId)
+
+            serializer = Atividade_EMI_Serializer(atividade, context={'request': request})
+        elif modalidade == 'ProEJA':
+            atividade = Atividade_ProEJA.objects.get(dependencias_proeja__id=avaliacaoId)
+
+            serializer = Atividade_ProEJA_Serializer(atividade, context={'request': request})
+        else:
+            raise Exception('Modalidade inválida')
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
 @permission_classes([Professor | GestaoEscolar | Coordenador | Aluno])
 def listar_atividades(request, pedId, modalidade):
     try:        

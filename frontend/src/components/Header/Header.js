@@ -147,7 +147,7 @@ const Header = ({homeUrl}) => {
                       {
                         notificacoes.length > 0 ? (
                           notificacoes.map((notificacao) => (
-                            <Link to={notificacao.url}>
+                            <Link className="aHeader" to={notificacao.url}>
                               <span className='notificacao' onClick={() => trocar_status(notificacao.id)}>
                                 <p>{new Date(notificacao.data).toLocaleDateString('pt-BR')}</p>
                                 <div className="conteudoNotif">

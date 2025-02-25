@@ -57,7 +57,7 @@
     text-decoration: underline;
 }
 
-a {
+.aHeader {
     display: flex;
     font-weight: bold;
     color: white;

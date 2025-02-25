@@ -66,6 +66,8 @@ import HomeAluno from './pages/base/Aluno/home/HomeAluno'
 import CadastroAtividade from './pages/base/Professor/cadastroAtividade/CadastroAtividade'
 import ListarAtividadesProfessor from './pages/base/Professor/listarAtividades/ListarAtividadesProfessor'
 import DetalhesDependenciaAluno from './pages/base/Aluno/detalhesDependencia/DetalhesDependenciaAluno'
+import ListarAtividadesAluno from './pages/base/Aluno/listarAtividades/ListarAtividadesAluno'
+import DetalhesAtividadeAluno from './pages/base/Aluno/detalhesAtividade/DetalhesAtividadeAluno'
 
 const router = createBrowserRouter([
     {
@@ -355,6 +357,14 @@ const router = createBrowserRouter([
                 path: ':idUsuario/:modalidade/:pedId/detalhes',
                 element: <DetalhesDependenciaAluno />
             },
+            {
+                path: ':idUsuario/:modalidade/:pedId/detalhes/atividades',
+                element: <ListarAtividadesAluno />
+            },
+            {
+                path: ':idUsuario/:modalidade/:pedId/detalhes/atividades/:atividadeId',
+                element: <DetalhesAtividadeAluno />
+            }
         ]
     },
 ])

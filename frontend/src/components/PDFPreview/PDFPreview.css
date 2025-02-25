@@ -30,9 +30,11 @@
     max-height: 600px;
     width: min-content;
     overflow-y: scroll;
+    display: grid;
     position: absolute;
     gap: 20px;
     padding: 0px 20px 0px 0px;
+    opacity: 1;
 }
 
 .download {
@@ -40,8 +42,8 @@
     /* Adiciona uma transição suave */
 }
 
-.download:hover {
-    filter: brightness(50%);
+.download:hover img {
+    filter: brightness(70%);
     cursor: pointer;
     /* Reduz o brilho ao passar o mouse */
 }
