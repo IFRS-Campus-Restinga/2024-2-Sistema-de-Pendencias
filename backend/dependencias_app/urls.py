@@ -88,7 +88,8 @@ urlpatterns = [
     #views para atividades da ped
     path('atividade/cadastro/<str:modalidade>/', cadastrar_atividade),
     path('plano-atividades/vincular/<int:pedId>/<str:modalidade>/', vincular_atividades),
-    path('atividade/listar/', listar_atividades_professor),
+    path('plano-atividades/professor/listar/', listar_atividades_professor),
+    path('plano-atividades/professor/listar/<str:modalidade>/', listar_atividades_professor),
     path('plano-atividades/<int:pedId>/<str:modalidade>/', listar_atividades),
     path('plano-atividades/detalhes/<str:modalidade>/<int:atividadeId>/', buscar_atividade),
     path('plano-atividades/editar/<str:modalidade>/<int:atividadeId>/', editar_atividade),

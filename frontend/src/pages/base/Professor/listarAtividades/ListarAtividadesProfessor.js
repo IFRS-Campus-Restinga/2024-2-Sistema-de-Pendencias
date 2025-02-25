@@ -9,7 +9,7 @@ const ListarAtividadesProfessor = () => {
 
     const fetchAtividades = async () => {
         try {
-            const res = await atividadeService.listarPorProfessor()
+            const res = await atividadeService.listarPorProfessor(null)
 
             if (res.status !== 200) throw new Error(res)
             

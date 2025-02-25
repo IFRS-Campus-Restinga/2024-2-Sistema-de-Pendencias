@@ -135,14 +135,25 @@ def vincular_atividades(request, pedId, modalidade):
 @api_view(['GET'])
 @permission_classes([Professor])
 def listar_atividades_professor(request):
+    lista_emi = lista_proeja = []
+
+    modalidade = request.GET.get('modalidade', None)
+
     try:
-        atividades_emi = Atividade_EMI.objects.filter(professor=request.user)
-        atividades_proeja = Atividade_ProEJA.objects.filter(professor=request.user)
+        if modalidade == 'Integrado' or modalidade == '':
+            atividades_emi = Atividade_EMI.objects.filter(professor=request.user)
+            serializer_emi = Atividade_EMI_Serializer(atividades_emi, many=True, context={'request': request})
+            
+            lista_emi = getattr(serializer_emi, 'data', [])
+            print(lista_emi)
 
-        serializer_emi = Atividade_EMI_Serializer(atividades_emi, many=True, context={'request': request})
-        serializer_proeja = Atividade_ProEJA_Serializer(atividades_proeja, many=True, context={'request': request})
+        if modalidade == 'ProEJA' or modalidade == '':
+            atividades_proeja = Atividade_ProEJA.objects.filter(professor=request.user)
+            serializer_proeja = Atividade_ProEJA_Serializer(atividades_proeja, many=True, context={'request': request})
 
-        return Response(serializer_emi.data + serializer_proeja.data, status=status.HTTP_200_OK)
+            lista_proeja = getattr(serializer_proeja, 'data', [])
+
+        return Response(lista_emi + lista_proeja, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

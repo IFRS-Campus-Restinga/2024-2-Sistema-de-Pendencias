@@ -19,7 +19,7 @@ class PlanoEstudos(BaseModel):
         verbose_name_plural = 'Planos de Estudos'
 
 class PlanoEstudos_EMI(PlanoEstudos):
-    ped = models.OneToOneField(PED_ProEJA, on_delete=models.DO_NOTHING, related_name='plano_estudos_emi')
+    ped = models.OneToOneField(PED_EMI, on_delete=models.DO_NOTHING, related_name='plano_estudos_emi')
 
     class Meta:
         abstract = False

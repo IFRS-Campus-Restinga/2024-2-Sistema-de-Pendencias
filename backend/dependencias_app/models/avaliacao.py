@@ -17,7 +17,7 @@ class Avaliacao_Atividade(BaseModel):
 
 class Avaliacao_Atividade_EMI(Avaliacao_Atividade):
     ped = models.ForeignKey(PED_ProEJA, on_delete=models.DO_NOTHING, related_name='atividades_emi')
-    atividade = models.ForeignKey(Atividade_ProEJA, on_delete=models.DO_NOTHING, related_name='dependencias_emi')
+    atividade = models.ForeignKey(Atividade_EMI, on_delete=models.DO_NOTHING, related_name='dependencias_emi')
 
     class Meta:
         abstract = False

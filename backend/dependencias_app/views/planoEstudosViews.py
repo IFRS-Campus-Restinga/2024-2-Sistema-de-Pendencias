@@ -21,6 +21,7 @@ template = os.path.join(
 def cadastrar_plano_estudos(request, modalidade):
     try:
         data = request.data
+        print(data)
 
         if modalidade == 'Integrado':
             serializer = PlanoEstudos_EMI_Serializer(data=data)

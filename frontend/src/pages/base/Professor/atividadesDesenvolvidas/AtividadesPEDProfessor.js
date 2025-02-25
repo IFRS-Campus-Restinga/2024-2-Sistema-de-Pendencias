@@ -230,16 +230,20 @@ const AtividadesPEDProfessor = () => {
             </thead>
             <tbody>
                 {
-                atividades.map((atividade) => (
-                    <tr style={{height: '35px'}}>
-                    <td style={{height: '35px'}}>
-                        <div className="divAtividadesPEDProfessor">
-                            <p className="pAtividadesPEDProfessor">{atividade.titulo}</p>
-                            <FontAwesomeIcon icon={faAnglesRight} onClick={() => vincularAtividade(atividade)}/>
-                        </div>
-                    </td>
-                    </tr>
-                ))
+                  atividades.length > 0 ? (
+                    atividades.map((atividade) => (
+                        <tr style={{height: '35px'}}>
+                        <td style={{height: '35px'}}>
+                            <div className="divAtividadesPEDProfessor">
+                                <p className="pAtividadesPEDProfessor">{atividade.titulo}</p>
+                                <FontAwesomeIcon icon={faAnglesRight} onClick={() => vincularAtividade(atividade)}/>
+                            </div>
+                        </td>
+                        </tr>
+                    ))
+                  ) : (
+                    <p style={{textAlign: 'center', marginTop: '15px', fontWeight: 600}}>Não existem atividades cadastradas para esta modalidade</p>
+                  )
                 }
             </tbody>
           </table>

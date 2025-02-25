@@ -20,17 +20,6 @@ class PlanoEstudos_EMI_Serializer(serializers.ModelSerializer):
         if ped_emi:
             aluno = ped_emi.aluno
 
-        if aluno:
-            Notificacao.objects.create(
-                usuario=aluno,
-                tipo='Plano de Estudos',
-                mensagem='Novo Plano de Estudos',
-                url=f'{settings.BASE_APP_URL}/sessao/Aluno/{aluno.id}/Integrado/{ped_emi.id}/planoEstudos/{plano.id}'
-            )
-
-        # Adicione lógica para notificação da gestão aqui, se necessário
-        # Notificacao.objects.create(...)
-
         return plano
         
     def to_representation(self, instance):
@@ -61,16 +50,6 @@ class PlanoEstudos_ProEJA_Serializer(serializers.ModelSerializer):
 
         if ped_proeja:
             aluno = ped_proeja.aluno
-
-        Notificacao.objects.create(
-            usuario=ped_proeja.aluno,
-            tipo='Plano de Estudos',
-            mensagem='Novo Plano de Estudos',
-            url=f'{settings.BASE_APP_URL}/sessao/Aluno/{ped_proeja.aluno.id}/ProEJA/{ped_proeja.id}/planoEstudos/{plano.id}'
-        )
-
-        # Adicione lógica para notificação da gestão aqui, se necessário
-        # Notificacao.objects.create(...)
 
         return plano
         

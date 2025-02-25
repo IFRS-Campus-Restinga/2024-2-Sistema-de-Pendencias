@@ -54,11 +54,6 @@ def get_aluno_infos (request, idAluno):
 @permission_classes([GestaoEscolar]) 
 def listar_alunos(request):
     try:
-        # Filtros adicionais
-        filtro_geral = request.GET.get('filtroGeral', None)
-        data_inicio = request.GET.get('data_inicio', None)
-        data_fim = request.GET.get('data_fim', None)
-
         # Listando todos os alunos
         alunos = UsuarioBase.objects.filter(grupo__name="Aluno")
 

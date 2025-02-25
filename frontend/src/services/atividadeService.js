@@ -45,10 +45,10 @@ const atividadeService = {
       return res
   },
 
-  listarPorProfessor: async () => {
-    const res = await api.get(`/api/atividade/listar/`, {
+  listarPorProfessor: async (modalidade) => {
+    const res = await api.get(`/api/plano-atividades/professor/listar/?modalidade=${modalidade ?? ''}`, {
       params: {
-        retorno: 'listar'
+        retorno: 'listar',
       }
     }).catch((erro) => {
       return erro
