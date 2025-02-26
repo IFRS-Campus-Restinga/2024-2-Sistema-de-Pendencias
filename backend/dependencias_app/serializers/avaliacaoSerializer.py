@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from dependencias_app.models.avaliacao import *
-import datetime
+from datetime import datetime
 
 import logging
 
@@ -15,24 +15,22 @@ class Avaliacao_EMI_Serializer(serializers.ModelSerializer):
 
     def validate(self, data):
         atividade_id = data.get('atividade')
-        ped = self.context['ped']
+        ped = data.get('ped')
         
-        try:
-            avaliacao_existente = Avaliacao_Atividade_EMI.objects.get(ped=ped, atividade_id=atividade_id)
-            if avaliacao_existente.DoesNotExist: raise serializers.ValidationError('Avaliação não existente')
+        avaliacao_existente = Avaliacao_Atividade_EMI.objects.filter(ped_id=ped, atividade_id=atividade_id).first()
 
-            # Se a avaliação já existe e a nota já foi definida
-            if avaliacao_existente.nota is not None:
-                nova_nota = data.get('nota')
-                if nova_nota is None or nova_nota == '':
-                    raise serializers.ValidationError(f"Não é permitido remover a nota de uma atividade após ser registrada.")
+        # Se a avaliação já existe e a nota já foi definida
+        if avaliacao_existente and avaliacao_existente.nota is not None:
+            nova_nota = data.get('nota')
+            if nova_nota is None or nova_nota == '':
+                raise serializers.ValidationError(f"Não é permitido remover a nota de uma atividade após ser registrada.")
 
-            data_entrega = datetime.strptime(self.validated_data.get('data_entrega'), "%Y-%m-%d").date()
-            
-            if data_entrega < datetime.today().date(): raise serializers.ValidationError('A data de entrega da atividade não pode ser inferior ao dia de hoje!')
+        data_entrega = data.get('data_entrega', None)
 
-        except Avaliacao_Atividade_EMI.DoesNotExist:
-            avaliacao_existente = None
+        print(data_entrega)
+        
+        if data_entrega < datetime.today().date() or data_entrega == None or data_entrega == '':
+            raise serializers.ValidationError('A data de entrega da atividade não pode estar vazia ou ser inferior ao dia de hoje!')
 
 
         return data
@@ -57,14 +55,13 @@ class Avaliacao_ProEJA_Serializer(serializers.ModelSerializer):
     
     def validate(self, data):
         atividade_id = data.get('atividade')
-        ped = self.context['ped']
+        ped = data.get('ped')
         
         try:
-            avaliacao_existente = Avaliacao_Atividade_EMI.objects.get(ped=ped, atividade_id=atividade_id)
-            if avaliacao_existente.DoesNotExist: raise serializers.ValidationError('Avaliação não existente')
+            avaliacao_existente = Avaliacao_Atividade_ProEJA.objects.filter(ped_id=ped, atividade_id=atividade_id).first()
 
             # Se a avaliação já existe e a nota já foi definida
-            if avaliacao_existente.nota is not None:
+            if avaliacao_existente and avaliacao_existente.nota is not None:
                 nova_nota = data.get('nota')
                 if nova_nota is None or nova_nota == '':
                     raise serializers.ValidationError(f"Não é permitido remover a nota de uma atividade após ser registrada.")
@@ -73,8 +70,8 @@ class Avaliacao_ProEJA_Serializer(serializers.ModelSerializer):
             
             if data_entrega < datetime.today().date(): raise serializers.ValidationError('A data de entrega da atividade não pode ser inferior ao dia de hoje!')
 
-        except Avaliacao_Atividade_EMI.DoesNotExist:
-            avaliacao_existente = None
+        except serializers.ValidationError as e:
+            return str(e)
 
 
         return data  

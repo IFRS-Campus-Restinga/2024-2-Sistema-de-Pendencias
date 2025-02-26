@@ -120,6 +120,10 @@
 .link {
   font-weight: 400;
   color: black;
+  display: flex;
+  font-weight: bold;
+  text-decoration-line: none;
+  align-items: center;
 }
 
 /* Responsividade */

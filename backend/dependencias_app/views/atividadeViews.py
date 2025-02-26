@@ -128,7 +128,8 @@ def vincular_atividades(request, pedId, modalidade):
         
         # Excluir avaliações que não estão na nova lista
         avaliacoes_existentes = modelo.objects.filter(ped=ped)
-        avaliacoes_existentes.exclude(atividade_id__in=atividades).delete()
+        if len(avaliacoes_existentes):
+            avaliacoes_existentes.exclude(atividade_id__in=atividades).delete()
 
         # Criar ou atualizar avaliações
         for avaliacao in avaliacoes:            
@@ -140,7 +141,7 @@ def vincular_atividades(request, pedId, modalidade):
             avaliacao_obj, created = modelo.objects.update_or_create(
                 ped=ped,
                 atividade_id=avaliacao['atividade'],
-                defaults={'data_entrega': avaliacao['data_entrega'], 'nota': avaliacao.get('nota', None)}
+                defaults={'data_entrega': avaliacao['data_entrega'], 'nota': avaliacao.get('nota')}
             )
 
             if not created:
@@ -148,7 +149,6 @@ def vincular_atividades(request, pedId, modalidade):
                 avaliacao_obj.save()
 
         return Response({'mensagem': 'Plano de atividades salvo com sucesso!'}, status=status.HTTP_201_CREATED)
-
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

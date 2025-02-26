@@ -104,7 +104,7 @@ const CadastroPPT = () => {
       try {
         const res = state
           ? await PPTService.editar(state.id, formData) // Atualiza PPT
-          : await PPTService.create(formData); // Cadastra PPT
+          : await PPTService.criar(formData); // Cadastra PPT
 
         if (res.status !== 200 && res.status !== 201) {
           console.log(res)
@@ -201,9 +201,10 @@ const CadastroPPT = () => {
               setControleInputs({...controleInputs, aluno: e.target.value})
               fetchAlunos(e)
 
+              console.log(e.target.value)
+
               if (opcoesAlunos) {
                 const param = e.target.value
-                console.log(e.target.value)
 
                 const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || param === aluno?.matricula || param === aluno.email)
 
@@ -232,12 +233,11 @@ const CadastroPPT = () => {
             nome='professor'
             valor={controleInputs.professor_ppt}
             onChange={(e) => {
-              setControleInputs({...formData, professor_ppt: e.target.value})
+              setControleInputs({...controleInputs, professor_ppt: e.target.value})
               fetchProfessores(e)
 
               if (opcoesProfessores) {
                 const param = e.target.value
-                console.log(e.target.value)
 
                 const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
 
@@ -272,7 +272,6 @@ const CadastroPPT = () => {
 
               if (opcoesProfessores) {
                 const param = e.target.value
-                console.log(e.target.value)
 
                 const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
 

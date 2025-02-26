@@ -314,7 +314,6 @@ const CadastroPED = () => {
   };
 
   useEffect(() => {
-    console.log(state)
     if (state) {
       if (state.observacao) {
         setControleInputs({
@@ -399,7 +398,6 @@ const CadastroPED = () => {
                           
                           if (opcoesAlunos) {
                             const param = e.target.value
-                            console.log(e.target.value)
           
                             const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || aluno.matricula|| aluno.email)
           
@@ -436,7 +434,6 @@ const CadastroPED = () => {
                         
                         if (opcoesProfessores) {
                           const param = e.target.value
-                          console.log(e.target.value)
           
                           const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
           
@@ -471,7 +468,6 @@ const CadastroPED = () => {
                         
                         if (opcoesProfessores) {
                           const param = e.target.value
-                          console.log(e.target.value)
           
                           const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
           
@@ -649,12 +645,10 @@ const CadastroPED = () => {
                   valor={controleInputs.aluno}
                   onChange={(e) => {
                     setControleInputs({...controleInputs, aluno: e.target.value})
-
                     fetchAlunos(e)
                     
                     if (opcoesAlunos) {
                       const param = e.target.value
-                      console.log(e.target.value)
     
                       const aluno = opcoesAlunos.find((aluno) => param === aluno.nome || aluno.matricula || aluno.email)
     
@@ -689,7 +683,6 @@ const CadastroPED = () => {
                         
                         if (opcoesProfessores) {
                           const param = e.target.value
-                          console.log(e.target.value)
           
                           const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
           
@@ -718,12 +711,11 @@ const CadastroPED = () => {
                   nome='professor'
                   valor={controleInputs.professor_disciplina}
                   onChange={(e) => {
-                    setControleInputs({...formData, professor_disciplina: e.target.value})
+                    setControleInputs({...controleInputs, professor_disciplina: e.target.value})
                     fetchProfessores(e)
                     
                     if (opcoesProfessores) {
                       const param = e.target.value
-                      console.log(e.target.value)
       
                       const professor = opcoesProfessores.find((professor) => param === professor.nome || param === professor.email)
       
@@ -756,7 +748,6 @@ const CadastroPED = () => {
                     const cursoId = e.target.value;
                   
                     const curso = cursos.find(curso => curso.id === Number(cursoId)); // Encontra o curso correspondente
-                    console.log(curso)
 
                     if (curso) {
                       setFormData({...formData, curso: Number(e.target.value)})

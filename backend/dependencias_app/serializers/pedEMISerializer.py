@@ -33,7 +33,7 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
         Notificacao.objects.create(usuario=formPED_EMI.aluno, tipo='PED Integrado', mensagem='Nova PED (Integrado) cadastrada', url=f'{settings.BASE_APP_URL}/sessao/Aluno/{formPED_EMI.aluno.id}/Integrado/{formPED_EMI.id}/detalhes')
 
         # cria notificação para o professor responsável
-        Notificacao.objects.create(usuario=formPED_EMI.professor_ped, tipo='PED Integrado', mensagem='Você foi registrado como professor responsável por uma PED (Integrado), clique aqui para preencher o Plano de Estudos', url=f'{settings.BASE_APP_URL}/sessao/Professor/{formPED_EMI.professor_ped.id}/peds-emi/{formPED_EMI.id}/planoEstudos')
+        Notificacao.objects.create(usuario=formPED_EMI.professor_ped, tipo='PED Integrado', mensagem='Você foi registrado como professor responsável por uma PED (Integrado), clique aqui para preencher o Plano de Estudos', url=f'{settings.BASE_APP_URL}/sessao/Professor/{formPED_EMI.professor_ped.id}/Integrado/{formPED_EMI.id}/planoEstudos')
         
         return formPED_EMI
     

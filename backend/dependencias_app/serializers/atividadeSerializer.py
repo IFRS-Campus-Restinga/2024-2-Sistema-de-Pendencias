@@ -17,7 +17,10 @@ class Atividade_EMI_Serializer(serializers.ModelSerializer):
         if retorno == 'listar':
             representation.pop('drive_id')
             representation.pop('professor')
-            retorno['modalidade'] = 'Integrado'
+            representation['modalidade'] = 'Integrado'
+        elif retorno == 'detalhes':
+            representation['arquivo'] = get_from_drive(representation['drive_id'], request.user.grupo.name)
+            representation.pop('drive_id')
 
         return representation
 

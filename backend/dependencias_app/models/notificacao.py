@@ -9,7 +9,7 @@ class Notificacao(BaseModel):
     url = models.CharField(null=False, blank=False, max_length=100)
     lida = models.BooleanField(default=False)
     tipo = models.CharField(null=False, blank=False, max_length=17, choices=TipoNotificacao.choices)
-    data = models.DateTimeField(auto_now_add=True)
+    data = models.DateField(auto_now_add=True)
 
     class Meta:
         abstract = False

@@ -31,7 +31,7 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
         Notificacao.objects.create(usuario=formPED_ProEJA.aluno, tipo='PED ProEJA', mensagem='Nova PED (ProEJA) cadastrada', url=f'{settings.BASE_APP_URL}/sessao/Aluno/{formPED_ProEJA.aluno.id}/ProEJA/{formPED_ProEJA.id}/detalhes')
 
         # cria notificação para o professor responsável
-        Notificacao.objects.create(usuario=formPED_ProEJA.professor_ped, tipo='PED ProEJA', mensagem='Você foi registrado como professor responsável por uma PED (ProEJA), não esqueça de preencher o Plano de Estudos.', url=f'{settings.BASE_APP_URL}/sessao/Professor/{formPED_ProEJA.professor_ped.id}/peds-proeja/{formPED_ProEJA.id}/planoEstudos')
+        Notificacao.objects.create(usuario=formPED_ProEJA.professor_ped, tipo='PED ProEJA', mensagem='Você foi registrado como professor responsável por uma PED (ProEJA), não esqueça de preencher o Plano de Estudos.', url=f'{settings.BASE_APP_URL}/sessao/Professor/{formPED_ProEJA.professor_ped.id}/ProEJA/{formPED_ProEJA.id}/planoEstudos')
         
         return formPED_ProEJA
     
