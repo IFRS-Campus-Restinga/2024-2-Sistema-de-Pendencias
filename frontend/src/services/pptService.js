@@ -2,50 +2,57 @@ import { api } from "../config/axiosConfig";
 
 export const PPTService = {
   criar: async (params) => {
-    const res = await api.post('/api/cadastrar-ppt/', params).catch((erro) => {
-      return erro
-    })
+    const res = await api.post('/api/ppt/cadastrar/', params)
 
-    return res
+    return {
+      status: res.status,
+      mensagem: res.mensagem
+    }
   },
   
   listar: async (retorno) => {
-    const res = await api.get('api/listar-ppt/', {
+    const res = await api.get('api/ppt/listar/', {
       params: {
         retorno
       }
-    }).catch((erro) => {
-        return erro
     })
 
-    return res
-  },
-
-  porId: async (pptId, retorno) => {
-    const res = await api.get(`api/ppt/${pptId}/`, {
-      params: {
-        retorno
-      }
-    }).catch((erro) => {
-      return erro
-    })
-
-    return res
-  },
-
-  editar: async (id, dadosAtualizados) => {
-    try {
-        const response = await api.put(`api/editar-ppt/${id}/`, dadosAtualizados); 
-        return response;
-    } catch (error) {
-        console.error('Erro ao editar PPT:', error);
-        throw error; 
+    return {
+      status: res.status,
+      mensagem: res.mensagem,
+      data: res.data
     }
   },
 
-  trocarStatus: async (pptId, status) => {
-    const res = await api.get(`api/ppt/${pptId}/trocar-status/`, status).catch((erro) => {
-      return erro
+  porId: async (pptId, retorno) => {
+    const res = await api.get(`api/ppt/detalhes/${pptId}/`, {
+      params: {
+        retorno
+      }
     })
+
+    return {
+      status: res.status,
+      mensagem: res.mensagem,
+      data: res.data
+    }  
+  },
+
+  editar: async (pptId, params) => {
+    const res = await api.patch(`api/ppt/editar/${pptId}/`, params);
+
+    return {
+      status: res.status,
+      mensagem: res.mensagem
+    }
+  },
+
+  trocarStatus: async (pptId, params) => {
+    const res = await api.patch(`api/ppt/status/${pptId}/`, params)
+
+    return {
+      status: res.status,
+      mensagem: res.mensagem
+    }
   }
 }

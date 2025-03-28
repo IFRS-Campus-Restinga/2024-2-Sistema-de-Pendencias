@@ -1,8 +1,8 @@
 from .base import BaseModel
 from django.db import models
 from .atividade import *
-from .pedEMI import PED_EMI
-from .pedProEJA import PED_ProEJA
+from .ped_EMI import PED_EMI
+from .ped_ProEJA import PED_ProEJA
 from dependencias_app.enums.statusAtividade import StatusAtividade
 
 class Avaliacao_Atividade(BaseModel):

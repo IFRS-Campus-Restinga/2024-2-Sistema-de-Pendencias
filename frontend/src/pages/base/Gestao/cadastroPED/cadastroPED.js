@@ -58,7 +58,6 @@ const CadastroPED = () => {
 
   const serieProgressao = ['1º Ano', '2º Ano','3º Ano','4º Ano']
 
-  // função para adicionar/remover trimestres do campo trimestre rec no form PED Integrado 
   const handleTrimestreRec = (e) => {
     const { checked, value } = e.target;
     let novoTrimestre = formData.trimestre_recuperar.split(', ');
@@ -156,30 +155,16 @@ const CadastroPED = () => {
       setErrors(erros)
     } else {
       try {
+        let res
         if (state) {
-          // verifica se já existe um state, para chamar a view de edição
-          if (modalidade === 'Integrado') {
-            const res = await PEDService.atualizar_EMI(formData, state.id)
-
-            if (res.status !== 200) throw new Error(res)
-          } else {
-            const res = await PEDService.atualizar_ProEJA(formData, state.id)
-
-            if (res.status !== 200) throw new Error(res)
-          }
+          res = await PEDService.editar(formData, state.id, modalidade)
         } else {
-          if (modalidade === 'Integrado') {
-            const res = await PEDService.create_EMI(formData)
-  
-            if (res.status !== 201) throw new Error(res)
-          } else {
-            const res = await PEDService.create_ProEJA(formData)
-  
-            if (res.status !== 201) throw new Error(res)
-          }
+          res = await PEDService.criar(formData, modalidade)
         }
+
+        if (res.status !== 200 && res.status !== 201) throw new Error(res.mensagem)
       
-        toast.success(state ? "Dependência atualizada com sucesso" : "Dependência Cadastrada com sucesso", {
+        toast.success(res.mensagem, {
           position: "bottom-center",
           autoClose: 3000,
           style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },

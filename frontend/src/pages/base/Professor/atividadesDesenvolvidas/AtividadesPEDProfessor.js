@@ -3,7 +3,6 @@ import FormContainer from "../../../../components/FormContainer/FormContainer";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Button from "../../../../components/Button/Button";
-import AtividadesDependencia from "../../../../components/AtividadesDependencia/AtividadesDependencia";
 import Input from "../../../../components/Input/Input";
 import './AtividadesPEDProfessor.css'
 import { faAnglesLeft, faAnglesRight } from "@fortawesome/free-solid-svg-icons";

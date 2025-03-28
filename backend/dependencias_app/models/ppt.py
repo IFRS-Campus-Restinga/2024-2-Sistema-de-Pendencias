@@ -1,11 +1,11 @@
 from django.db import models
-from .dependencia import *
+from .progressao import *
 from .turma import *
 from .disciplina import *
 from .curso import *
 from google_auth.models import UsuarioBase
 
-class PPT(Dependencia):
+class PPT(Progressao):
     turma_atual = models.ForeignKey(Turma, on_delete=models.DO_NOTHING, related_name='turma_atual')
     turma_progressao = models.ForeignKey(Turma, on_delete=models.DO_NOTHING, related_name='turma_progressao')
 

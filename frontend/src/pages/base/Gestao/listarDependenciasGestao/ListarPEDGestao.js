@@ -17,12 +17,9 @@ const ListarPEDGestao = () => {
         setIsLoading(true);
         setListaPED([]);
 
-        let res
         try {
-            if (modalidade === 'Integrado') res = await PEDService.listaEMI(null, 'lista')
+            const res = await PEDService.listar(null, 'lista', modalidade)
             
-            if (modalidade === 'ProEJA') res = await PEDService.listaProEJA(null, 'lista')
-
             if (res.status !== 200) throw new Error(res)
 
             setListaPED(res.data)

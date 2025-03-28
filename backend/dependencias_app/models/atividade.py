@@ -1,7 +1,7 @@
 from django.db import models
 from .base import BaseModel
-from dependencias_app.models.pedEMI import PED_EMI
-from dependencias_app.models.pedProEJA import PED_ProEJA
+from backend.dependencias_app.models.ped_EMI import PED_EMI
+from backend.dependencias_app.models.ped_ProEJA import PED_ProEJA
 from django.core.validators import MinLengthValidator
 from google_auth.models import UsuarioBase
 

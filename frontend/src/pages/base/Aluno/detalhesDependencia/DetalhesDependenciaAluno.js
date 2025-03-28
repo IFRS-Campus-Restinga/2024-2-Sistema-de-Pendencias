@@ -18,7 +18,7 @@ const DetalhesDependenciaAluno = () => {
     const fetchDependencia = async () => {
         let res
         try {
-            if (modalidade) {
+            if (modalidade === 'Integrado' || modalidade === 'ProEJA') {
                 res = await PEDService.porId(state.id, modalidade, 'aluno')
                 setTipo('PED')
             } else {

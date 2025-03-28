@@ -70,13 +70,14 @@
     border-radius: 3px;
     background-color: #fff;
     border: 1px solid #ccc;
+    margin-right: auto;
 }
 
 .labelContainerDisciplinas:hover {
     cursor: pointer;
 }
 
-.divTabela {
+.divTabelaCadastroDisciplina {
     display: flex;
     align-items: center;
     justify-content: center;

@@ -1,19 +1,19 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-from dependencias_app.views.observacaoViews import *
-from dependencias_app.views.usuarioBaseViews import *
-from dependencias_app.views.professorViews import *
+from backend.dependencias_app.views.observacao_views import *
+from dependencias_app.views.usuario_base_views import *
+from backend.dependencias_app.views.professor_views import *
 from dependencias_app.views.servidorViews import *
-from dependencias_app.views.alunoViews import *
-from dependencias_app.views.disciplinaViews import *
-from dependencias_app.views.cursoViews import *
-from dependencias_app.views.eventoViews import *
-from dependencias_app.views.pptViews import *
-from dependencias_app.views.pedViews import *
-from dependencias_app.views.atividadeViews import *
-from dependencias_app.views.planoEstudosViews import *
-from dependencias_app.views.notificacaoViews import *
+from dependencias_app.views.aluno_views import *
+from backend.dependencias_app.views.disciplina_views import *
+from dependencias_app.views.curso_views import *
+from backend.dependencias_app.views.evento_views import *
+from backend.dependencias_app.views.ppt_views import *
+from backend.dependencias_app.views.ped_views import *
+from dependencias_app.views.atividade_views import *
+from backend.dependencias_app.views.plano_estudos_views import *
+from backend.dependencias_app.views.notificacao_views import *
 
 
 urlpatterns = [
@@ -30,7 +30,6 @@ urlpatterns = [
     path('dados-adicionais-aluno/', infos_adicionais_aluno),
     path('dados-adicionais-professor/', infos_adicionais_professor),
     path('usuarios/<str:param>/<str:grupo>', listar_por_parametro),
-
 
     # views de curso
     path('cadastrar-curso/', cadastrar_curso),
@@ -61,31 +60,22 @@ urlpatterns = [
     path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
 
     # view de PPT
-    path('cadastrar-ppt/', cadastrar_ppt),
-    path('listar-ppt/', listar_ppt),
-    path('listar-ppt-registro/', listar_ppt_registro),
-    path('listar-ppt/<int:idPpt>/', listar_ppt_id),
-    path('editar-ppt/<int:idPpt>/', editar_ppt),
-    path('desativar-ppt/<int:idPpt>/', desativar_ppt),
-    path('ppt-em-andamento/<int:idPpt>/', ppt_em_andamento),
-    path('ppt-lancado/<int:idPpt>/', ppt_lancado),
+    path('ppt/cadastrar/', cadastrar_PPT),
+    path('ppt/listar/', listar_PPT),
+    path('ppt/detalhes/<int:pptId>/', detalhes_PPT),
+    path('ppt/editar/<int:pptId>/', editar_ppt),
+    path('ppt/status/<int:pptId>/', trocar_status),
     
     # views de PED
-    path('cadastrarPED-EMI/', cadastrar_PED_EMI),
-    path('cadastrarPED-ProEJA/', cadastrar_PED_ProEJA),
-    path('ped-emi/', listar_PED_EMI),
-    path('ped-proeja/', listar_PED_ProEJA),
-    path('ped-emi/<int:professorId>/', listar_PED_EMI),
-    path('ped-proeja/<int:professorId>/', listar_PED_ProEJA),
-    path('atualizar-emi/<int:pedId>/', atualizar_EMI),
-    path('atualizar-proeja/<int:pedId>/', atualizar_ProEJA),
-    path('ped/<int:pedId>/<str:modalidade>/', por_id),
-    path('desativar-ped/<int:pedId>/<str:modalidade>/', desativar_PED),
+    path('ped/<str:modalidade>/cadastrar/', cadastrar_PED),
+    path('ped/<str:modalidade>/listar/', listar_PED),
+    path('ped/<str:modalidade>/listar/<int:professorId>/', listar_PED),
+    path('ped/<str:modalidade>/detalhes/<int:pedId>/', detalhes_PED),
+    path('ped/<str:modalidade>/editar/<int:pedId>/', editar_PED),
+    path('ped/<str:modalidade>/desativar/<int:pedId>/', desativar_PED),
     path('aluno/dependencias/', listar_dependencias_aluno),
-    path('ped-emi/<int:coordenadorId>/', listar_PED_EMI),
-    path('ped-proeja/<int:coordenadorId>/', listar_PED_ProEJA),
 
-    #views para atividades da ped
+    #views para atividades/avaliações
     path('atividade/cadastro/<str:modalidade>/', cadastrar_atividade),
     path('plano-atividades/vincular/<int:pedId>/<str:modalidade>/', vincular_atividades),
     path('plano-atividades/professor/listar/', listar_atividades_professor),
@@ -94,12 +84,6 @@ urlpatterns = [
     path('plano-atividades/detalhes/<str:modalidade>/<int:atividadeId>/', buscar_atividade),
     path('plano-atividades/avaliacao/<str:modalidade>/<int:avaliacaoId>/', buscar_por_avaliacao),
     path('plano-atividades/editar/<str:modalidade>/<int:atividadeId>/', editar_atividade),
-    path('atualizar-nota-final/<str:ped_tipo>/<int:ped_id>/', atualizar_nota_final, name='atualizar_nota_final'),
-    path('detalhes-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', detalhes_atividade, name='detalhes_atividade'),
-    path('deletar-atividade/<str:ped_tipo>/<int:ped_id>/<int:atividade_id>/', delete_atividade, name='deletar_atividade'),
-    path('adicionar-plano-atividades/<str:ped_tipo>/<int:ped_id>/', adicionar_plano_atividades, name='adicionar_plano_atividades'),
-    path('exibir_nota_final/<str:ped_tipo>/<int:ped_id>/', exibir_nota_final, name='exibir_nota_final'),
-
 
     # views de plano de estudos
     path('plano-estudos/cadastrar/<str:modalidade>/', cadastrar_plano_estudos),

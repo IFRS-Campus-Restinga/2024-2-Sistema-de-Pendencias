@@ -207,7 +207,7 @@ const CadastroDisciplina = () => {
                           />
                         </td>
                         <td>
-                          <div className="divTabela">
+                          <div className="divTabelaCadastroDisciplina">
                             <Input
                               tipo="number"
                               valor={disciplina.carga_horaria}
@@ -258,7 +258,7 @@ const CadastroDisciplina = () => {
                             disciplinas.map((disciplina) => (
                               <tr>
                                 <td>
-                                  <div className="divTabela">
+                                  <div className="divTabelaCadastroDisciplina">
                                     <input type='checkbox' className='checkboxDisciplina' id={`checkbox-${disciplina.id}`} value={disciplina.id} onChange={vinculaDisciplina} hidden/>
                                     <label className='labelContainerDisciplinas' htmlFor={`checkbox-${disciplina.id}`} >
                                     </label>

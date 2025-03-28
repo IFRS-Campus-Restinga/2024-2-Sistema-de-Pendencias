@@ -50,7 +50,7 @@ const CadastroPPT = () => {
 
   const fetchPPT = async () => {
     try {
-      const res = await  PPTService.getById(state.id, 'detalhes')
+      const res = await  PPTService.porId(state.id, 'detalhes')
 
       if (res.status !== 200) throw new Error(res)
       
@@ -107,14 +107,11 @@ const CadastroPPT = () => {
           : await PPTService.criar(formData); // Cadastra PPT
 
         if (res.status !== 200 && res.status !== 201) {
-          console.log(res)
-          throw new Error(res.response.data.mensagem);
+          throw new Error(res.mensagem);
         }
 
         toast.success(
-          state
-            ? "Progressão em Turma atualizada com sucesso!"
-            : "Progressão em Turma cadastrada com sucesso!",
+          res.mensagem,
           {
             position: "bottom-center",
             autoClose: 3000,
@@ -137,8 +134,15 @@ const CadastroPPT = () => {
         formRef.current.reset();
         navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/ppts`);
       } catch (error) {
-        console.error("Erro ao salvar PPT: ", error);
-        toast.error("Erro ao salvar PPT. Verifique os dados e tente novamente.");
+        toast.success(
+          error.message,
+          {
+            position: "bottom-center",
+            autoClose: 3000,
+            style: { backgroundColor: "#f00", color: "#fff", textAlign: "center" },
+            progressStyle: { backgroundColor: "#fff" },
+          }
+        );
       }
     }
   };

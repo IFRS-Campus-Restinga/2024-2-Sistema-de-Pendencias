@@ -52,7 +52,7 @@ const LoginPage = () => {
     <ToastContainer/>
     <PageContainer usuario={{}}>
         <div className="login-container">
-          <h1 className="login-title">Sistema de Dependências</h1>
+          <h1 className="login-title">Sistema de Gerenciamento de Progressões</h1>
           <div className="login-content">
             <div className="login-left">
               <img src={logo} alt="Logo Campus" className="login-logo" />

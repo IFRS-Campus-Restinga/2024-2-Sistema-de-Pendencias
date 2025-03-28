@@ -45,7 +45,7 @@ const DetalhesDependencia = ({dependencia, tipo, modalidade, grupo}) => {
           <span className="dadosPED">
             <label className="labelDetalhesDependencia">
               Docente responsável pela progressão
-              <p className="pDetalhesDependencia">{dependencia.professor_ped.nome}</p>
+              <p className="pDetalhesDependencia">{dependencia.professor_ped?.nome || dependencia.professor_ppt?.nome}</p>
             </label>
             <label className="labelDetalhesDependencia">
               Docente que ministrou a disciplina
@@ -88,10 +88,10 @@ const DetalhesDependencia = ({dependencia, tipo, modalidade, grupo}) => {
               <>
                 <label className="labelDetalhesDependencia">
                   Turma Atual
-                  <p className="pDetalhesDependencia">{dependencia.turma_atual}</p>
+                  <p className="pDetalhesDependencia">{dependencia.turma_atual.numero}</p>
                 </label><label className="labelDetalhesDependencia">
                   Turma da Progressão
-                  <p className="pDetalhesDependencia">{dependencia.turma_progressao}</p>
+                  <p className="pDetalhesDependencia">{dependencia.turma_progressao.numero}</p>
                 </label>
               </>
             )
@@ -152,7 +152,7 @@ const DetalhesDependencia = ({dependencia, tipo, modalidade, grupo}) => {
                 />
               </>
             ) : (
-              grupo === 'Aluno' ? (
+              grupo === 'Aluno' && tipo !== 'PPT' ? (
                 <Button text={"Atividades"} onClick={() => redirect(`atividades`, {state: dependencia})} disabled={!dependencia.plano_estudos}/>
               ) : (<></>)
             )
