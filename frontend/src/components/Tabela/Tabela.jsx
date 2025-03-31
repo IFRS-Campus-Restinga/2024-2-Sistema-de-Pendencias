@@ -11,8 +11,7 @@ const Tabela = ({
   editar,
   visualizar,
   setPagina,
-  proximaPagina,
-  paginaAnterior,
+  proximaURL,
   carregando
 }) => {
   const [largura, setLargura] = useState(window.innerWidth);
@@ -23,6 +22,7 @@ const Tabela = ({
 
   const tableContainerRef = useRef(null);
   const lastItemRef = useRef(null);
+  const firstItemRef = useRef(null);
 
   const setLimiteCaracteres = () => {
     if (largura < 1000) {
@@ -84,41 +84,32 @@ const Tabela = ({
     const containerBottom = container.scrollTop + container.clientHeight;
     const lastItemTop = lastItem.offsetTop;
 
-    if (containerBottom >= lastItemTop && !carregando && proximaPagina) {
-      setPagina((prev) => prev + 1);
-    }
-  };
-
-  const verificarPrimeiroItemVisivel = () => {
-    if (!tableContainerRef.current || !lastItemRef.current || carregando) return;
-
-    const container = tableContainerRef.current;
-    const firstItem = tableContainerRef.current.querySelector('tr');
-
-    const containerTop = container.scrollTop;
-    const firstItemTop = firstItem.offsetTop;
-
-    if (containerTop <= firstItemTop && paginaAnterior) {
-      setPagina((prev) => prev - 1);
+    if (containerBottom >= lastItemTop && proximaURL) {
+      setPagina((prev) => {
+        return prev + 1
+      });
     }
   };
 
   useEffect(() => {
+    const handleScroll = () => {
+      verificarUltimoItemVisivel();
+    };
+
     if (tableContainerRef.current) {
-      tableContainerRef.current.addEventListener("scroll", verificarUltimoItemVisivel);
+      tableContainerRef.current.addEventListener("scroll", handleScroll);
     }
 
     return () => {
       if (tableContainerRef.current) {
-        tableContainerRef.current.removeEventListener("scroll", verificarUltimoItemVisivel);
+        tableContainerRef.current.removeEventListener("scroll", handleScroll);
       }
     };
   }, [carregando]);
 
   useEffect(() => {
     if (tableContainerRef.current && listaFiltrada.length) {
-      const lastItem = tableContainerRef.current.querySelector("tr:last-child");
-      lastItemRef.current = lastItem;
+      lastItemRef.current = tableContainerRef.current.querySelector("tr:last-child");
     }
   }, [listaFiltrada]);
 
@@ -238,20 +229,20 @@ const Tabela = ({
                 <div className={styles.acoes}>
                   {visualizar && (
                     <img
-                      className={styles.iconeAcao}
+                      className={styles.icone}
                       src={Lupa}
                       alt="Visualizar"
                       title="Visualizar"
-                      onClick={() => redirect(`${item.id}`, { state: item })}
+                      onClick={() => redirect(`${item.id}`, { state: item.id })}
                     />
                   )}
                   {editar && (
                     <img
-                      className={styles.iconeAcao}
+                      className={styles.icone}
                       src={Editar}
                       alt="Editar"
                       onClick={() =>
-                        redirect(`${item.id}/editar`, { state: item })
+                        redirect(`${item.id}/editar`, { state: item.id })
                       }
                       title="Editar"
                     />

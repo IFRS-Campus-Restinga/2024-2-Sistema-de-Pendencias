@@ -19,7 +19,7 @@ urlpatterns = [
     # views de usuários
     path('usuario/cadastrar/', cadastrar_usuario),
     path('usuarios/listar/<str:perfil>/', listar_usuarios_por_perfil),
-    path('usuario/<int:idUsuario>/', get_infos_usuario),
+    path('usuario/<str:idUsuario>/', get_infos_usuario),
     path('usuario/<int:idUsuario>/editar/', editar_usuario),
     path('listar-grupos/', listar_grupos),
 

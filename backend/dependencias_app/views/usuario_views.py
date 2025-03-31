@@ -1,5 +1,6 @@
 import os
 import threading
+import uuid
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.http import Http404
@@ -61,7 +62,7 @@ def listar_usuarios_por_perfil(request, perfil):
 
         if (perfil == 'servidores'):
             usuarios = Usuario.objects.exclude(grupo__name="Aluno")
-        elif (perfil == 'Alunos'):
+        elif (perfil == 'alunos'):
             usuarios = Usuario.objects.filter(grupo__name="Aluno")
         else:
             raise serializers.ValidationError('Perfil de busca inválido')
@@ -93,9 +94,14 @@ def listar_usuarios_por_perfil(request, perfil):
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar | RegistroEscolar | Coordenador | Professor | Aluno])
-def get_infos_usuario (request, idUsuario):
-    try:        
-        usuario = get_object_or_404(Usuario, pk=int(idUsuario))
+def get_infos_usuario(request, idUsuario):
+    try:
+        try:
+            uuid_usuario = uuid.UUID(idUsuario)
+        except ValueError:
+            return Response({'mensagem': 'Formato de ID inválido'}, status=status.HTTP_400_BAD_REQUEST)
+
+        usuario = get_object_or_404(Usuario, pk=uuid_usuario)
 
         serializer = Usuario_Serializer(usuario, context={'request': request})
 

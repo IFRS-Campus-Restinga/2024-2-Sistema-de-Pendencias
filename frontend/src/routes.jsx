@@ -25,14 +25,12 @@ import DetalhesCurso from './pages/base/Gestao/detalhesCurso/DetalhesCurso'
 import EditarDisciplina from './pages/base/Gestao/editarDisciplina/EditarDisciplina'
 import ListarDisciplina from './pages/base/Gestao/listarDisciplina/ListarDisciplina'
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
-import DetalhesServidor from './pages/base/Gestao/detalhesServidor/DetalhesServidor'
 import ListarPEDGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPEDGestao'
 import ListarPPTGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPPTGestao'
 import DetalhesPEDGestao from './pages/base/Gestao/detalhesDependenciaGestao/DetalhesPEDGestao'
 import DetalhesPPTGestao from './pages/base/Gestao/detalhesDependenciaGestao/DetalhesPPTGestao'
 import CadastroPPT from './pages/base/Gestao/cadastroPPT/cadastroPPT'
 import ListarAluno from './pages/base/Gestao/listarAluno/ListarAluno'
-import DetalhesAluno from './pages/base/Gestao/detalhesAluno/DetalhesAluno'
 import DetalhesPlanoEstudos from './pages/base/Gestao/detalhesPlanoEstudos/DetalhesPlanoEstudos'
 import AtividadesDesenvolvidasGestao from './pages/base/Gestao/atividadesDesenvolvidasGestao/atividadesDesenvolvidas'
 import DetalhesAtividadeGestao from './pages/base/Gestao/atividadesDesenvolvidasGestao/detalhesAtividade/detalhesAtividade'
@@ -67,6 +65,7 @@ import ListarAtividadesProfessor from './pages/base/Professor/listarAtividades/L
 import DetalhesDependenciaAluno from './pages/base/Aluno/detalhesDependencia/DetalhesDependenciaAluno'
 import ListarAtividadesAluno from './pages/base/Aluno/listarAtividades/ListarAtividadesAluno'
 import DetalhesAtividadeAluno from './pages/base/Aluno/detalhesAtividade/DetalhesAtividadeAluno'
+import EditarAluno from './pages/base/Gestao/EditarAluno/EditarAluno'
 
 const router = createBrowserRouter([
     {
@@ -92,10 +91,6 @@ const router = createBrowserRouter([
                 element: <ListarServidor />
             },
             {
-                path: ':idUsuario/servidores/:idServidor',
-                element: <DetalhesServidor />
-            },
-            {
                 path: ':idUsuario/servidores/:idServidor/editar',
                 element: <CadastroServidor />
             },
@@ -108,8 +103,8 @@ const router = createBrowserRouter([
                 element: <ListarAluno />
             },
             {
-                path: ':idUsuario/alunos/:idAluno',
-                element: <DetalhesAluno />
+                path: ':idUsuario/alunos/:idAluno/editar',
+                element: <EditarAluno />
             },
             {
                 path: ':idUsuario/cadastroCurso',

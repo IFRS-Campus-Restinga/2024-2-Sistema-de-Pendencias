@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UsuarioService } from "../../../../services/usuarioService";
-import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import BarraPesquisa from "../../../../components/BarraPesquisa/BarraPesquisa";
 import Tabela from "../../../../components/Tabela/Tabela";
@@ -15,24 +14,18 @@ const ListarServidor = () => {
   const [carregandoTabela, setCarregandoTabela] = useState(false)
   const [servidores, setServidores] = useState([]);
   const [pagina, setPagina] = useState(1);
-  const [proximaPagina, setProximaPagina] = useState(null)
-  const [paginaAnterior, setPaginaAnterior] = useState(null)
+  const [proximaURL, setProximaURL] = useState(null)
   const [filtroGeral, setFiltroGeral] = useState('');
   const navigate = useNavigate();
 
-  const fetchServidores = async () => {
+  const fetchServidoresPagina = async () => {
     setCarregandoTabela(true)
     try {
       const res = await UsuarioService.listarPorGrupo('servidores', filtroGeral, pagina);
 
-      if (servidores.length < 20) {
-        setServidores(prev => prev.concat(res.data.results))
-      } else {
-        setServidores(res.data.results);
-      }
+      setServidores((prev) => [...prev, ...res.data.results])
 
-      setProximaPagina(res.data.next)
-      setPaginaAnterior(res.data.previous)
+      setProximaURL(res.data.next)
     } catch (error) {
       console.error(error.mensagem);
     } finally {
@@ -41,19 +34,34 @@ const ListarServidor = () => {
     }
   };
 
-  useEffect(() => {
-    if (proximaPagina || paginaAnterior) fetchServidores();
+  const fetchServidoresFiltro = async () => {
+    setCarregandoTabela(true)
+    try {
+      const res = await UsuarioService.listarPorGrupo('servidores', filtroGeral, pagina);
 
+      setServidores(res.data.results)
+
+      setProximaURL(res.data.next)
+    } catch (error) {
+      console.error(error.mensagem);
+    } finally {
+      setCarregando(false);
+      setCarregandoTabela(false)
+    }
+  }
+
+  useEffect(() => {
+    if (proximaURL) fetchServidoresPagina();
   }, [pagina]);
 
   useEffect(() => {
-    if (filtroGeral === '') fetchServidores();
+    if (filtroGeral === '') fetchServidoresFiltro();
   }, [filtroGeral]);
 
   return (
     <FormContainer titulo="Lista de Servidores" comprimento="90%">
       <div className={styles.container}>
-        <BarraPesquisa setFiltro={setFiltroGeral} fetchDados={fetchServidores} filtro={filtroGeral} setPagina={setPagina} />
+        <BarraPesquisa setFiltro={setFiltroGeral} fetchDados={fetchServidoresFiltro} filtro={filtroGeral} setPagina={setPagina} />
         <div>
           <img
             className={styles.iconeAdicionarServidor}
@@ -71,10 +79,9 @@ const ListarServidor = () => {
             <Tabela
               listaFiltrada={servidores}
               editar={true}
-              visualizar={true}
+              visualizar={false}
               setPagina={setPagina}
-              proximaPagina={proximaPagina}
-              paginaAnterior={paginaAnterior}
+              proximaURL={proximaURL}
               carregando={carregandoTabela}
             />
           )

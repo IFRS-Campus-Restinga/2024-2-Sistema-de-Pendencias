@@ -94,7 +94,7 @@ const CadastroAluno = () => {
             </span>
           </Label>
           {errors.email !== '' ? <MensagemErro mensagem={errors.email} /> : null}
-          <Button tipo='submit' text='Cadastrar Aluno' />
+          <Button tipo='submit' texto='Cadastrar Aluno' />
         </div>
       </FormContainer>
     </>

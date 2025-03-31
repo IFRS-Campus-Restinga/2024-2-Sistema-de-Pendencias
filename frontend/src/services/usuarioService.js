@@ -15,11 +15,15 @@ export const UsuarioService = {
     },
 
     porId: async (idUsuario) => {
-        const res = await api.get(`api/usuario/${idUsuario}/`).catch((erro) => {
-            return erro
-        })
-
-        return res
+        try {
+            const res = await api.get(`api/usuario/${idUsuario}/`)
+            return res; 
+        } catch (error) {
+            if (error.response) {
+                throw new Error(error.response.data.mensagem || "Erro ao buscar usuário");
+            }
+            throw new Error("Erro inesperado ao buscar usuário");
+        }
     },
 
     buscarPorParametro: async (param, grupo) => {

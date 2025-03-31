@@ -6,43 +6,64 @@ import Tabela from '../../../../components/Tabela/Tabela';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import IconeAdicionar from "../../../../assets/icone-adicionar-usuario.png";
-import LoadingIFRS from '../../../../components/LoadingIFRS/LoadingIFRS';
-import loading from '../../../../assets/loading-usuarios.png'
 import { UsuarioService } from '../../../../services/usuarioService';
 import BarraPesquisa from '../../../../components/BarraPesquisa/BarraPesquisa';
 import Loading from '../../../../components/Loading/Loading';
 
 const ListarAluno = () => {
-  const [carregando, setCarregando] = useState(true)
+  const [carregando, setCarregando] = useState(true);
+  const [carregandoTabela, setCarregandoTabela] = useState(false)
   const [alunos, setAlunos] = useState([]);
-  const [pagina, setPagina] = useState(1)
-  const [proximaPagina, setProximaPagina] = useState(null)
-  const [filtroGeral, setFiltroGeral] = useState('')
-
+  const [pagina, setPagina] = useState(1);
+  const [proximaURL, setProximaURL] = useState(null)
+  const [filtroGeral, setFiltroGeral] = useState('');
   const navigate = useNavigate();
 
-  const fetchAlunos = async () => {
+  const fetchAlunosPagina = async () => {
+    setCarregandoTabela(true)
     try {
-      const res = await UsuarioService.listarPorGrupo('Alunos', filtroGeral, pagina)
+      const res = await UsuarioService.listarPorGrupo('alunos', filtroGeral, pagina);
+
+      setAlunos((prev) => [...prev, ...res.data.results])
+
+      setProximaURL(res.data.next)
+    } catch (error) {
+      console.error(error.mensagem);
+    } finally {
+      setCarregando(false);
+      setCarregandoTabela(false)
+    }
+  };
+
+  const fetchAlunosFiltro = async () => {
+    setCarregandoTabela(true)
+    try {
+      const res = await UsuarioService.listarPorGrupo('alunos', filtroGeral, pagina);
 
       setAlunos(res.data.results)
-      setProximaPagina(res.data.next)
+
+      setProximaURL(res.data.next)
     } catch (error) {
-      console.error(error.message)
+      console.error(error.mensagem);
     } finally {
-      setCarregando(false)
+      setCarregando(false);
+      setCarregandoTabela(false)
     }
   }
 
   useEffect(() => {
-    fetchAlunos();
+    if (proximaURL) fetchAlunosPagina();
   }, [pagina]);
+
+  useEffect(() => {
+    if (filtroGeral === '') fetchAlunosFiltro();
+  }, [filtroGeral]);
 
   return (
     <>
       <FormContainer titulo='Lista de Alunos' comprimento='90%'>
         <div className={styles.container}>
-          <BarraPesquisa setFiltro={setFiltroGeral} fetchDados={fetchAlunos} filtro={filtroGeral} />
+          <BarraPesquisa setFiltro={setFiltroGeral} fetchDados={fetchAlunosFiltro} filtro={filtroGeral} />
           <div>
             <img
               className={styles.iconeAdicionarAluno}
@@ -57,7 +78,14 @@ const ListarAluno = () => {
             carregando ? (
               <Loading border={'green'} />
             ) : (
-              <Tabela listaFiltrada={alunos} editar={true} visualizar={true} setPagina={setPagina} proximaPagina={proximaPagina} />
+              <Tabela
+                listaFiltrada={alunos}
+                editar={true}
+                visualizar={false}
+                setPagina={setPagina}
+                proximaURL={proximaURL}
+                carregando={carregandoTabela}
+              />
             )
           }
         </div>

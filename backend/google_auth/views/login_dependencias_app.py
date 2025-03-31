@@ -40,8 +40,9 @@ def login_view(request):
         # Faz login na aplicação
         login(request, user)
 
-        pictureCode = user_info.get('foto'),
+        pictureCode = user_info.get('foto')
 
+        # Agora o ID será um UUID serializado corretamente
         token = custom_token(user, pictureCode, user_info.get("nome"))
 
         response_data = {
@@ -52,7 +53,7 @@ def login_view(request):
     except Exception as e:
         logger.error(f"Erro ao fazer login: {str(e)}")
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    
+
 @login_required
 @api_view(['POST'])
 def logout_view(request):

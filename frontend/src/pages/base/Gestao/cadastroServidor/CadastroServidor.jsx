@@ -127,7 +127,7 @@ const CadastroServidor = () => {
                         />
                         {errors.email !== '' ? <MensagemErro mensagem={errors.email} /> : null}
                     </Label>
-                    <Button tipo='submit' text={state ? 'Salvar Alterações' : 'Cadastrar Servidor'} />
+                    <Button tipo='submit' texto={state ? 'Salvar Alterações' : 'Cadastrar Servidor'} />
                 </div>
             </FormContainer>
         </>

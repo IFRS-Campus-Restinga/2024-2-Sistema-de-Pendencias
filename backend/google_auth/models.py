@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 from django.db import models
+import uuid
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -19,7 +20,8 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password=None, **extra_fields)
 
 class Usuario(AbstractUser):
-    nome = models.CharField(max_length=100, help_text="Informe o nome", null=True, blank=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    nome = models.CharField(max_length=100, null=True, blank=True)
     primeiro_login = models.BooleanField(default=True)
     email = models.EmailField(unique=True)
     grupo = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name="usuarios", verbose_name="Grupo")
