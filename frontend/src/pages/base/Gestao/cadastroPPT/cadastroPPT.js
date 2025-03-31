@@ -9,9 +9,9 @@ import "./cadastroPPT.css";
 import { PPTService } from "../../../../services/pptService";
 import { cursoService } from "../../../../services/cursoService";
 import { validarFormularioPPT, validarTurmas } from "./validacoes";
-import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS";
 import loading from '../../../../assets/loading-disciplinas.png'
+import { UsuarioService } from "../../../../services/usuarioService";
 
 const CadastroPPT = () => {
   const formRef = useRef();
@@ -162,7 +162,7 @@ const CadastroPPT = () => {
 
   const fetchAlunos = async (e) => {
     try {
-      const res = await usuarioBaseService.buscarPorParametro(e.target.value, "Aluno");
+      const res = await UsuarioService.buscarPorParametro(e.target.value, "Aluno");
       setOpcoesAlunos(res.data);
     } catch (error) {
       console.log(error);
@@ -171,7 +171,7 @@ const CadastroPPT = () => {
 
   const fetchProfessores = async (e) => {
     try {
-      const res = await usuarioBaseService.buscarPorParametro(e.target.value, "Professor");
+      const res = await UsuarioService.buscarPorParametro(e.target.value, "Professor");
       setOpcoesProfessores(res.data);
     } catch (error) {
       console.log(error);

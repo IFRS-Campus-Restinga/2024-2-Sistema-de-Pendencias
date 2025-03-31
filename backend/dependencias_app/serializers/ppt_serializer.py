@@ -1,20 +1,19 @@
 from rest_framework import serializers
-from datetime import datetime
 from django.utils import timezone
-from google_auth.models import UsuarioBase
+from google_auth.models import Usuario
 from dependencias_app.models.curso import Curso
 from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.turma import Turma
 from dependencias_app.models.ppt import PPT
-from backend.dependencias_app.models.calendario_academico import CalendarioAcademico
+from dependencias_app.models.calendario_academico import Calendario_Academico
 from dependencias_app.models.notificacao import Notificacao
 from django.conf import settings
 
 class PPT_Serializer(serializers.ModelSerializer):
     # variáveis de entrada do serializer (POST), recebe as chaves primárias das tabelas que se relacionam com ppt
-    aluno = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Aluno'))
-    professor_ppt = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
-    professor_disciplina = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
+    aluno = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Aluno'))
+    professor_ppt = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Professor'))
+    professor_disciplina = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Professor'))
     curso = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.filter(modalidade='Integrado'))
     disciplina = serializers.PrimaryKeyRelatedField(queryset=Disciplina.objects.all())
     turma_atual = serializers.PrimaryKeyRelatedField(queryset=Turma.objects.all())
@@ -38,7 +37,7 @@ class PPT_Serializer(serializers.ModelSerializer):
     def create(self, validated_data):
         hoje = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)  # Hora ajustada para 00:00:00
 
-        calendario = CalendarioAcademico.objects.filter(data_inicio__gte=hoje, tipo_calendario='Integrado').order_by('data_inicio').first()
+        calendario = Calendario_Academico.objects.filter(data_inicio__gte=hoje, tipo_calendario='Integrado').order_by('data_inicio').first()
 
         if calendario:
             # Atualiza as datas de início e final com o calendário encontrado

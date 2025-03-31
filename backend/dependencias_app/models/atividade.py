@@ -1,9 +1,7 @@
 from django.db import models
 from .base import BaseModel
-from backend.dependencias_app.models.ped_EMI import PED_EMI
-from backend.dependencias_app.models.ped_ProEJA import PED_ProEJA
 from django.core.validators import MinLengthValidator
-from google_auth.models import UsuarioBase
+from google_auth.models import Usuario
 
 class Atividade(BaseModel):
     titulo = models.CharField(max_length=100, validators=[MinLengthValidator(3)], verbose_name="Título", help_text="Informe o título da atividade", blank=False, null=False)
@@ -14,14 +12,14 @@ class Atividade(BaseModel):
         abstract = True
 
 class Atividade_EMI(Atividade):
-    professor = models.ForeignKey(UsuarioBase, on_delete=models.CASCADE, related_name='atividades_emi')
+    professor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='atividades_emi')
     
     class Meta:
         abstract = False
         verbose_name_plural = 'Atividades EMI'
 
 class Atividade_ProEJA(Atividade):
-    professor = models.ForeignKey(UsuarioBase, on_delete=models.CASCADE, related_name='atividades_proeja')
+    professor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='atividades_proeja')
 
     class Meta:
         abstract = False

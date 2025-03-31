@@ -1,0 +1,49 @@
+.barraPesquisa {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #006b3f;
+    border: 1px solid #006b3f;
+    border-radius: 8px;
+    padding: 5px 10px;
+    width: 100%;
+    max-width: 400px;
+    height: 40px;
+}
+
+.barraPesquisa input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    outline: none;
+}
+
+.barraPesquisa input::placeholder {
+    flex: 1;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 15px;
+    outline: none;
+}
+
+.barraPesquisa .iconeAcao {
+    border-color: white;
+}
+
+.icone {
+    max-width: 15px;
+    max-height: 15px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.containerIcones {
+    width: 50px;
+    display: flex;
+    justify-content: space-between;
+}

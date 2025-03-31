@@ -18,12 +18,11 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(email, password=None, **extra_fields)
 
-class UsuarioBase(AbstractUser):
+class Usuario(AbstractUser):
     nome = models.CharField(max_length=100, help_text="Informe o nome", null=True, blank=True)
     primeiro_login = models.BooleanField(default=True)
     email = models.EmailField(unique=True)
     grupo = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name="usuarios", verbose_name="Grupo")
-    data_ingresso = models.DateField(verbose_name="data de Ingresso", null=True, blank=True)
     is_active = models.BooleanField(default=True)
     
     last_login = None
@@ -39,7 +38,7 @@ class UsuarioBase(AbstractUser):
     REQUIRED_FIELDS = []
 
     class Meta:
-        verbose_name = 'Usuário Base'
+        verbose_name = 'Usuário'
 
     def __str__(self) -> str:
         if self.grupo and self.grupo.name == 'Aluno':  # Verifica se o grupo existe e tem o atributo 'name'

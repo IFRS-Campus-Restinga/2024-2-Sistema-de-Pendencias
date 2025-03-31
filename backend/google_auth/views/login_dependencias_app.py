@@ -5,7 +5,7 @@ from rest_framework import status
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
-from google_auth.models import UsuarioBase
+from google_auth.models import Usuario
 from google_auth.token import *
 from google_auth.services.decode_token import verify_google_token
 import logging
@@ -30,7 +30,7 @@ def login_view(request):
         if user_info is None:
             raise Exception('Token inválido ou expirado')
 
-        user = UsuarioBase.objects.filter(email=user_info['email']).first()
+        user = Usuario.objects.filter(email=user_info['email']).first()
         if not user:
             raise Exception('Você necessita possuir um email institucional cadastrado para acessar!')
 

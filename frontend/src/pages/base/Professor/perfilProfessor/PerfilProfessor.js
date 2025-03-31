@@ -7,8 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Input from '../../../../components/Input/Input'
 import { validarFormulario } from './validacoes'
-import { usuarioBaseService } from '../../../../services/usuarioBaseService'
-import servidorService from '../../../../services/servidorService'
+import { UsuarioService } from '../../../../services/usuarioService'
 
 
 const PerfilProfessor = () => {
@@ -29,50 +28,11 @@ const PerfilProfessor = () => {
         e.preventDefault()
 
         const erros = validarFormulario(formData)
-
-        if (Object.keys(erros).length > 0) {
-            setErros(erros)
-        } else {
-            try {
-                const res = await servidorService.addInfos(formData)
-    
-                if (res.status === 201) {
-                    toast.success("Seus dados foram cadastrados com sucesso!, você será redirecionado", {
-                        position: "bottom-center",
-                        autoClose: 3000,
-                        style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center' },
-                        progressStyle: { backgroundColor: '#fff' }
-                    });
-        
-                    setTimeout(() => {
-                        redirect(`/sessao/${jwtDecode(sessionStorage.getItem('token')).grupo}/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`)
-                    }, 2000)
-                } else if (res.status === 200) {
-                    toast.success("Informações atualizadas com sucesso!", {
-                        position: "bottom-center",
-                        autoClose: 3000,
-                        style: { backgroundColor: '#28A745', color: '#fff', textAlign: 'center'},
-                        progressStyle: { backgroundColor: '#fff' }
-                    });
-                }
-    
-
-                setErros({})
-            } catch (erro) {
-                console.error('Erro ao cadastrar informações: ', erro)
-                toast.error("Falha na operação. Tente novamente.", {
-                    position: "bottom-center",
-                    autoClose: 3000,
-                    style: { backgroundColor: '#d11c28', color: '#fff', textAlign: 'center' },
-                    progressStyle: { backgroundColor: '#fff' }
-                });
-            }
-        }
     }
 
     const fetchProfessor = async () => {
         try {
-            const res = await usuarioBaseService.get(idUsuario)
+            const res = await UsuarioService.get(idUsuario)
 
             if (res.status !== 200) throw new Error(res.response.data.mensagem)
 

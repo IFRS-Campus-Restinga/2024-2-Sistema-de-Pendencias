@@ -3,12 +3,12 @@ from .progressao import Progressao
 from .calendario_academico import Calendario_Academico
 from .disciplina import Disciplina
 from .curso import Curso
-from google_auth.models import UsuarioBase
+from google_auth.models import Usuario
 from django.core.validators import FileExtensionValidator
 
 class PED_ProEJA(Progressao):
-    aluno = models.ForeignKey(UsuarioBase, on_delete=models.DO_NOTHING, related_name='aluno_ped_proeja')
-    professor_disciplina = models.ForeignKey(UsuarioBase, on_delete=models.DO_NOTHING, related_name='professor_disciplina_proeja')
+    aluno = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='peds_proeja')
+    professor_disciplina = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='proeja_professor_disciplina')
     disciplina = models.ForeignKey(Disciplina, on_delete=models.DO_NOTHING, related_name='disciplina_ped_proeja')
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, related_name='curso_ped_proeja')
     ano_semestre_reprov = models.CharField(null=False, blank=False, max_length=6)

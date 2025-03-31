@@ -1,29 +1,26 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-from backend.dependencias_app.views.observacao_views import *
-from dependencias_app.views.usuario_base_views import *
-from backend.dependencias_app.views.professor_views import *
-from dependencias_app.views.servidorViews import *
+from dependencias_app.views.observacao_views import *
+from dependencias_app.views.usuario_views import *
+from dependencias_app.views.professor_views import *
 from dependencias_app.views.aluno_views import *
-from backend.dependencias_app.views.disciplina_views import *
+from dependencias_app.views.disciplina_views import *
 from dependencias_app.views.curso_views import *
-from backend.dependencias_app.views.evento_views import *
-from backend.dependencias_app.views.ppt_views import *
-from backend.dependencias_app.views.ped_views import *
+from dependencias_app.views.evento_views import *
+from dependencias_app.views.ppt_views import *
+from dependencias_app.views.ped_views import *
 from dependencias_app.views.atividade_views import *
-from backend.dependencias_app.views.plano_estudos_views import *
-from backend.dependencias_app.views.notificacao_views import *
+from dependencias_app.views.plano_estudos_views import *
+from dependencias_app.views.notificacao_views import *
 
 
 urlpatterns = [
     # views de usuários
-    path('cadastrar-usuario/', cadastrar_usuario),
+    path('usuario/cadastrar/', cadastrar_usuario),
+    path('usuarios/listar/<str:perfil>/', listar_usuarios_por_perfil),
     path('usuario/<int:idUsuario>/', get_infos_usuario),
-    path('listar-servidores/', listar_servidores),
-    path('listar-alunos/', listar_alunos),
     path('usuario/<int:idUsuario>/editar/', editar_usuario),
-    path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
     path('listar-grupos/', listar_grupos),
 
     # cadastra informações adicionais dos alunos e professores
@@ -55,9 +52,6 @@ urlpatterns = [
     path('calendario-academico/<int:id_pacote>/eventos/', listar_eventos_do_calendario_academico, name='listar_eventos_do_calendario_academico'),
     path('atualizar-calendario-academico/<int:id_calendario>/', atualizar_calendario_academico, name='atualizar_calendario_academico'),
     path('obter-calendario-academico/<int:id_calendario>/', obter_calendario_academico, name='obter_calendario_academico'),
-
-    #views de visualizar cadastro
-    path('visualizar-servidor/', visualizar_servidor, name='visualizar_servidor'),
 
     # view de PPT
     path('ppt/cadastrar/', cadastrar_PPT),
@@ -101,10 +95,7 @@ urlpatterns = [
     #path('visualizar-observacao/', visualizar_observacao, name='visualizar_observacao'),
     path('listar-observacoes/', listar_observacoes, name='listar_observacoes'),
     path('editar-observacao/<int:id>/', editar_observacao, name='editar_observacao<id>'),
-
-    #view editar servidor
-    path('editar-servidor/<int:id>/', editar_servidor, name='editar_servidor'),
-
+    
     # Views de notificacao
     path('notificacoes/<int:idUsuario>/', buscar_notificacoes),
     path('notificacoes/troca-status/<int:idNotificacao>/', trocar_status),

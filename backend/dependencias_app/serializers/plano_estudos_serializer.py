@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from backend.dependencias_app.models.plano_estudos import *
+from dependencias_app.models.plano_estudos import *
 
 class Plano_Estudos_EMI_Serializer(serializers.ModelSerializer):
     class Meta:

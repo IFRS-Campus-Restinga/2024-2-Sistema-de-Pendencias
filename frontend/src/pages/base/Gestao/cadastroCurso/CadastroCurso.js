@@ -9,8 +9,8 @@ import Input from '../../../../components/Input/Input';
 import "./CadastroCurso.css";
 import Switch from "../../../../components/Switch/Switch";
 import { ToastContainer, toast } from "react-toastify";
-import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 import { useLocation, useNavigate } from "react-router-dom";
+import { UsuarioService } from "../../../../services/usuarioService";
 
 const CadastroCurso = () => {
   const formRef = useRef();
@@ -49,7 +49,7 @@ const CadastroCurso = () => {
   // Função para buscar coordenadores com base no valor digitado
   const fetchCoordenadores = async (e) => {
     try {
-      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Coordenador');
+      const res = await UsuarioService.buscarPorParametro(e.target.value, 'Coordenador');
       
       setOpcoesCoordenadores(res.data);  // Garantir que seja um array vazio em caso de erro ou resposta vazia
     } catch (error) {

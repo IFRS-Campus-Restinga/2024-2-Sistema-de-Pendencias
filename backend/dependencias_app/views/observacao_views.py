@@ -4,13 +4,10 @@ from rest_framework import status
 from django.shortcuts import *
 from dependencias_app.permissoes import *
 from dependencias_app.models.professor import Professor
-from backend.dependencias_app.models.ped_EMI import PED_EMI
-from backend.dependencias_app.models.ped_ProEJA import PED_ProEJA
-from backend.dependencias_app.serializers.observacao_serializer import Observacao_Serializer
+from dependencias_app.models.ped_EMI import PED_EMI
+from dependencias_app.models.ped_ProEJA import PED_ProEJA
+from dependencias_app.serializers.observacao_serializer import Observacao_Serializer
 from dependencias_app.models.observacao import Observacao
-from django.contrib.auth.models import Group
-from backend.dependencias_app.serializers.usuario_base_serializer import Usuario_Base_Serializer
-from django.contrib.auth.models import Group
 from rest_framework.permissions import IsAuthenticated
 import logging
 
@@ -64,17 +61,6 @@ def listar_observacoes(request):
     except Exception as e:
         return Response({'error': str(e)}, status=500)
 
-
-# @api_view(['GET'])
-# def visualizar_observacao(request, id):
-#     try:
-#         observacao = Observacao.objects.get(pk=id)
-#         observacao_serializer = Observacao_Serializer(observacao)
-#         return Response(observacao_serializer.data, status=status.HTTP_200_OK)
-#     except Observacao.DoesNotExist:
-#         return Response({'mensagem': 'Observação não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
-#     except Exception as e:
-#         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)    
 
 @api_view(['GET'])
 def visualizar_observacao(request, id):

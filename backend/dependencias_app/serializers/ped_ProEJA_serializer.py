@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from google_auth.models import UsuarioBase
+from google_auth.models import Usuario
 from dependencias_app.models.curso import Curso
 from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.ped_ProEJA import PED_ProEJA
@@ -10,9 +10,9 @@ from django.conf import settings
 
 class PED_ProEJA_Serializer(serializers.ModelSerializer):
     # variáveis de entrada do serializer (POST), recebe as chaves primárias para vincular as tabelas
-    aluno = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Aluno'))
-    professor_disciplina = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
-    professor_ped = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
+    aluno = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Aluno'))
+    professor_disciplina = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Professor'))
+    professor_ped = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Professor'))
     curso = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.filter(modalidade='ProEJA'))
     periodo_letivo = serializers.PrimaryKeyRelatedField(queryset=Calendario_Academico.objects.filter(tipo_calendario='ProEJA'))
     disciplina = serializers.PrimaryKeyRelatedField(queryset=Disciplina.objects.all())

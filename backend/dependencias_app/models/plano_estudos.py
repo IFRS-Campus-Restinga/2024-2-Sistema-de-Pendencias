@@ -2,13 +2,13 @@ from django.db import models
 from .base import BaseModel
 from .ped_EMI import PED_EMI
 from .ped_ProEJA import PED_ProEJA
-from backend.dependencias_app.models.progressao import *
-from dependencias_app.enums.formaOferta import FormaOferta
+from dependencias_app.models.progressao import *
+from dependencias_app.enums.forma_oferta import Forma_Oferta
 from dependencias_app.enums.turnos import Turnos
 
 class Plano_Estudos(BaseModel):
     campus = models.CharField(default='Restinga', max_length=20, null=False, blank=False)
-    forma_oferta = models.CharField(choices=FormaOferta.choices, max_length=20, null=False, blank=False)
+    forma_oferta = models.CharField(choices=Forma_Oferta.choices, max_length=20, null=False, blank=False)
     turno = models.CharField(choices=Turnos.choices, max_length=10, null=False, blank=False)
     parecer_pedagogico = models.TextField(blank=False, null=False)
     aprovado = models.BooleanField(default=False)

@@ -1,0 +1,107 @@
+.containerTabela {
+    width: 100%;
+    max-width: 100%;
+    max-height: 200px;
+    overflow: scroll;
+}
+
+.tabela {
+    width: 100%;
+    max-height: 350px;
+    border-collapse: collapse;
+    border-spacing: 0;
+
+    .th-ordenar {
+        display: flex;
+        align-items: center;
+    }
+
+    tbody {
+        font-size: 12px;
+    }
+
+    tr:hover {
+        cursor: pointer;
+        background-color: #ccc;
+        transition: .3s ease-in-out;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:nth-child(odd) {
+        background-color: white;
+    }
+
+    th {
+        cursor: pointer;
+        background-color: #006b3f;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 0;
+        padding: 5px;
+        white-space: nowrap;
+    }
+
+    td {
+        padding: 5px;
+        text-align: center;
+    }
+}
+
+.icone {
+    width: 15px;
+    height: 15px
+}
+
+.texto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.iconeAcao {
+    max-width: 15px;
+    max-height: 15px;
+    cursor: pointer;
+}
+
+.ordenar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.ordenadores span {
+    cursor: pointer;
+}
+
+.seta-cima,
+.seta-baixo {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+}
+
+.icone-container img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.acoes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.containerTabela {
+    justify-self: center;
+    flex: 1;
+}

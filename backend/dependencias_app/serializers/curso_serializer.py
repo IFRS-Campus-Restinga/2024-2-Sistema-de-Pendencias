@@ -1,14 +1,13 @@
 from rest_framework import serializers
 from dependencias_app.models.curso import Curso
-from dependencias_app.models.turma import Turma
-from google_auth.models import UsuarioBase
+from google_auth.models import Usuario
 from dependencias_app.serializers.disciplina_serializer import Disciplina_Serializer
 from dependencias_app.serializers.turma_serializer import TurmaSerializer
 
 class Curso_Serializer(serializers.ModelSerializer):
     turmas = TurmaSerializer(many=True, read_only=True)
     disciplinas = Disciplina_Serializer(many=True, read_only=True)
-    coordenador = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Coordenador')) 
+    coordenador = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Coordenador')) 
 
     class Meta:
         model = Curso

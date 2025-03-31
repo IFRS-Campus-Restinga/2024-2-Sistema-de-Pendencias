@@ -7,7 +7,6 @@ import { ToastContainer, toast } from 'react-toastify'
 import "./cadastroPED.css";
 import cursoService from "../../../../services/cursoService";
 import { validarFormularioPED, validarSerieTurma } from "./validacoes";
-import { usuarioBaseService } from "../../../../services/usuarioBaseService";
 import { PEDService } from "../../../../services/pedService";
 import { useLocation, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,6 +15,7 @@ import { calendarioAcademicoService } from "../../../../services/calendarioAcade
 import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS";
 import loadingEMI from '../../../../assets/loading-peds-emi.png'
 import loadingProEJA from '../../../../assets/loading-peds-proeja.png'
+import { UsuarioService } from "../../../../services/usuarioService";
 
 const CadastroPED = () => {
   const location = useLocation()
@@ -221,7 +221,7 @@ const CadastroPED = () => {
 
   const fetchAlunos = async (e) => {
     try {
-      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Aluno')
+      const res = await UsuarioService.buscarPorParametro(e.target.value, 'Aluno')
 
       setOpcoesAlunos(res.data)
     } catch (error) {
@@ -231,7 +231,7 @@ const CadastroPED = () => {
 
   const fetchProfessores = async (e) => {
     try {
-      const res = await usuarioBaseService.buscarPorParametro(e.target.value, 'Professor')
+      const res = await UsuarioService.buscarPorParametro(e.target.value, 'Professor')
 
       setOpcoesProfessores(res.data)
     } catch (error) {

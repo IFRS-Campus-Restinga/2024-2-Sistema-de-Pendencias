@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from dependencias_app.models.professor import Professor
-from google_auth.models import UsuarioBase
+from google_auth.models import Usuario
 
 class ProfessorSerializer(serializers.ModelSerializer):
-    usuario = serializers.PrimaryKeyRelatedField(queryset=UsuarioBase.objects.filter(grupo__name='Professor'))
+    usuario = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Professor'))
     
     class Meta:
         model = Professor

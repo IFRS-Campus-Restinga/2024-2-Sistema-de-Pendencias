@@ -4,11 +4,11 @@ from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import *
 from rest_framework.response import Response
 from rest_framework import status
-from backend.dependencias_app.models.plano_estudos import *
-from backend.dependencias_app.serializers.plano_estudos_serializer import *
+from dependencias_app.models.plano_estudos import *
+from dependencias_app.serializers.plano_estudos_serializer import *
 from dependencias_app.permissoes import *
 from dependencias_app.utils.enviar_email import enviar_email
-from google_auth.models import UsuarioBase
+from google_auth.models import Usuario
 
 template = os.path.join(
         os.path.dirname(os.path.dirname(__file__)),
@@ -30,7 +30,7 @@ def cadastrar_plano_estudos(request, modalidade):
         
         if not serializer.is_valid(): raise Exception(serializer.errors)
 
-        lista_gestao = UsuarioBase.objects.filter(grupo__name='Gestão Escolar')
+        lista_gestao = Usuario.objects.filter(grupo__name='Gestão Escolar')
 
         # envia email para os perfis de gestão do sistema de forma assíncrona
 

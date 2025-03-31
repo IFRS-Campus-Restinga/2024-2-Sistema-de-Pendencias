@@ -13,8 +13,8 @@ from dependencias_app.models.ped_EMI import PED_EMI
 from dependencias_app.models.ped_ProEJA import PED_ProEJA
 from dependencias_app.serializers.atividade_serializer import *
 from dependencias_app.serializers.avaliacao_serializer import *
-from dependencias_app.enums.situacaoDependencia import SituacaoDependencia
-from dependencias_app.enums.statusDependencia import StatusDependencia
+from dependencias_app.enums.situacao_dependencia import Situacao_Dependencia
+from dependencias_app.enums.status_dependencia import Status_Dependencia
 
 
 @api_view(['POST'])
@@ -239,10 +239,10 @@ def atualizar_nota_final(request, ped_tipo, ped_id):
 
         ped.nota_final = nota_final
         if nota_final >= 7:
-            ped.situacao = SituacaoDependencia.APROVADO
+            ped.situacao = Situacao_Dependencia.APROVADO
         else:
-            ped.situacao = SituacaoDependencia.REPROVADO
-        ped.status = StatusDependencia.FINALIZADO
+            ped.situacao = Situacao_Dependencia.REPROVADO
+        ped.status = Status_Dependencia.FINALIZADO
         ped.save()
 
         return Response({"nota_final": ped.nota_final}, status=status.HTTP_200_OK)

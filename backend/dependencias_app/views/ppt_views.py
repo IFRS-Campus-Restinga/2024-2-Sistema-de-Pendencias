@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from backend.dependencias_app.serializers.ppt_serializer import *
+from dependencias_app.serializers.ppt_serializer import *
 from dependencias_app.models.ppt import PPT
 from dependencias_app.permissoes import *
 from django.shortcuts import *

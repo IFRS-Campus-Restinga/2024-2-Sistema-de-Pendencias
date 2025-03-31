@@ -42,7 +42,6 @@ import HomeRegistro from './pages/base/Registro/home/homeRegistro'
 
 // Filhos de Coordenador
 import HomeCoordenador from './pages/base/Coordenador/home/HomeCoordenador'
-import PerfilCoordenador from './pages/base/Coordenador/perfilCoordenador/PerfilCoordenador'
 import ListarPEDEMICoordenador from './pages/base/Coordenador/listarPED_EMI/ListarPED_EMICoordenador'
 import ListarPEDProEJACoordenador from './pages/base/Coordenador/listarPED_ProEJACoordenador/ListarPED_ProEJACoordenador'
 import DetalhesPEDCoordenador from './pages/base/Coordenador/detalhesPED/DetalhesPEDCoordenador'
@@ -248,10 +247,6 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/',
                 element: <HomeCoordenador />
-            },
-            {
-                path: ':idUsuario/perfil/',
-                element: <PerfilCoordenador />
             },
             {
                 path: ':idUsuario/peds/Integrado',

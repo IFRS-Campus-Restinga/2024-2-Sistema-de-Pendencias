@@ -10,13 +10,13 @@ class Form_Encerramento(BaseModel):
         abstract = True
 
 class Form_Encerramento_EMI(Form_Encerramento):
-    ped = models.ForeignKey(PED_EMI, on_delete=models.DO_NOTHING, related_name='form_encerramento_emi')
+    ped = models.OneToOneField(PED_EMI, on_delete=models.DO_NOTHING, related_name='form_encerramento_emi')
 
     class Meta:
         abstract = False
 
 class Form_Encerramento_ProEJA(Form_Encerramento):
-    ped = models.ForeignKey(PED_ProEJA, on_delete=models.DO_NOTHING, related_name='form_encerramento_proeja')
+    ped = models.OneToOneField(PED_ProEJA, on_delete=models.DO_NOTHING, related_name='form_encerramento_proeja')
 
     class Meta:
         abstract = False

@@ -8,7 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Input from '../../../../components/Input/Input'
 import { validarFormulario } from './validacoes'
-import { usuarioBaseService } from '../../../../services/usuarioBaseService'
+import { UsuarioService } from '../../../../services/usuarioService'
 
 
 const PerfilAluno = () => {
@@ -74,7 +74,7 @@ const PerfilAluno = () => {
 
     const fetchAluno = async () => {
         try {
-            const res = await usuarioBaseService.get(idUsuario)
+            const res = await UsuarioService.get(idUsuario)
 
             if (res.status !== 200) throw new Error(res.response.data.mensagem)
 

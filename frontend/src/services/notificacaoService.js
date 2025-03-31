@@ -2,8 +2,8 @@ import { api } from "../config/axiosConfig"
 
 
 export const notificacaoService = {
-    buscar: async (idusuario) => {
-        const res = await api.get(`api/notificacoes/${idusuario}/`).catch((erro) => {
+    buscar: async () => {
+        const res = await api.get(`api/notificacoes/`).catch((erro) => {
             return erro
         })
 

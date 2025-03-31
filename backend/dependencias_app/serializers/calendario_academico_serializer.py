@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from backend.dependencias_app.models.calendario_academico import Calendario_Academico
+from dependencias_app.models.calendario_academico import Calendario_Academico
 
 class Calendario_Academico_Serializer(serializers.ModelSerializer):
     class Meta:

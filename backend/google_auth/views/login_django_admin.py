@@ -3,7 +3,7 @@ from django.conf import settings
 from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 from django.contrib.auth import login as auth_login
-from google_auth.models import UsuarioBase
+from google_auth.models import Usuario
 from django.contrib import messages
 from google.auth.transport import requests
 
@@ -29,7 +29,7 @@ def admin_login(request):
 
 def google_callback(request):
     flow = Flow.from_client_secrets_file(
-        f'{BASE_DIR}/client_secret.json',
+        f'{BASE_DIR}/credentials/client_secret.json',
         scopes=[
             'https://www.googleapis.com/auth/userinfo.email',
             'https://www.googleapis.com/auth/userinfo.profile',
@@ -47,7 +47,7 @@ def google_callback(request):
     email = id_info['email']
     name = id_info.get('name')
 
-    user, created = UsuarioBase.objects.get_or_create(email=email, defaults={'nome': name})
+    user, created = Usuario.objects.get_or_create(email=email, defaults={'nome': name})
 
     user.is_superuser = True  # Permite todas as permissões
     user.is_staff = True

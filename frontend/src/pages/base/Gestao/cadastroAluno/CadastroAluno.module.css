@@ -1,0 +1,13 @@
+.span {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+}
+
+.div {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-evenly
+}

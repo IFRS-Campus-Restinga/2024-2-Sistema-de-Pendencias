@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status, serializers
 from dependencias_app.permissoes import Aluno as Aluno_Permissao
 from dependencias_app.permissoes import *
-from dependencias_app.serializers.usuario_base_serializer import Usuario_Base_Serializer
+from dependencias_app.serializers.usuario_serializer import Usuario_Serializer
 from dependencias_app.serializers.aluno_serializer import Aluno_Serializer
 from dependencias_app.models.aluno import Aluno
 from dependencias_app.models.ped_EMI import PED_EMI
@@ -12,7 +12,7 @@ from dependencias_app.models.ppt import PPT
 from dependencias_app.serializers.ped_EMI_serializer import PED_EMI_Serializer
 from dependencias_app.serializers.ped_ProEJA_serializer import PED_ProEJA_Serializer
 from dependencias_app.serializers.ppt_serializer import PPT_Serializer
-from google_auth.models import UsuarioBase
+from google_auth.models import Usuario
 
 @api_view(['POST'])
 @permission_classes([GestaoEscolar | Aluno_Permissao])
@@ -48,20 +48,6 @@ def get_aluno_infos (request):
     except Aluno.DoesNotExist: return Response(data={}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)   
-
-@api_view(['GET'])
-@permission_classes([GestaoEscolar]) 
-def listar_alunos(request):
-    try:
-        # Listando todos os alunos
-        alunos = UsuarioBase.objects.filter(grupo__name="Aluno")
-
-        # Serialização dos dados
-        alunos_serializer = Usuario_Base_Serializer(alunos, many=True, context={'request': request})
-
-        return Response(alunos_serializer.data, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([Aluno_Permissao])

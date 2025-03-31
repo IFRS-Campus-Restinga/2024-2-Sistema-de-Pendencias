@@ -4,14 +4,18 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from backend.dependencias_app.models.ped_EMI import PED_EMI
-from backend.dependencias_app.models.ped_ProEJA import PED_ProEJA
-from dependencias_app.models.notificacao import Notificacao
-from backend.dependencias_app.serializers.ped_EMI_serializer import *
-from backend.dependencias_app.serializers.ped_ProEJA_serializer import *
+from dependencias_app.models.ped_EMI import PED_EMI
+from dependencias_app.models.ped_ProEJA import PED_ProEJA
+from dependencias_app.serializers.ped_EMI_serializer import *
+from dependencias_app.serializers.ped_ProEJA_serializer import *
 from dependencias_app.permissoes import *
 from dependencias_app.utils.enviar_email import enviar_email
 
+template = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    'templates_email',
+    'novaPED.html'
+    )
 
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
@@ -29,13 +33,6 @@ def cadastrar_PED(request, modalidade):
         if not serializer.is_valid(): raise Exception(serializer.errors)
 
         serializer.save()
-
-        # busca o caminho do template
-        template = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)),
-        'templates_email',
-        'novaPED.html'
-        )
 
         # envia email para o professor responsável e aluno da ped de forma assíncrona
         threading.Thread(target=enviar_email, args=(serializer.instance.aluno, template, 'Nova Dependência Cadastrada', serializer.instance.aluno.grupo.name)).start()

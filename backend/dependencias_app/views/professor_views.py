@@ -1,13 +1,9 @@
-import os
-import threading
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from django.contrib.auth.models import Group
-from backend.dependencias_app.serializers.usuario_base_serializer import UsuarioBaseSerializer
-from backend.dependencias_app.serializers.professor_serializer import ProfessorSerializer
+from dependencias_app.serializers.professor_serializer import ProfessorSerializer
 from dependencias_app.permissoes import *
-from google_auth.models import UsuarioBase
+from google_auth.models import Usuario
 
 @api_view(['POST'])
 @permission_classes([GestaoEscolar | Professor])
@@ -15,7 +11,7 @@ def infos_adicionais_professor (request):
     try:
         # Obter o ID do usuário enviado na requisição
         id = request.data.get('usuario', None)
-        usuario = UsuarioBase.objects.get(pk=id)  # Busca o aluno pelo ID do usuário
+        usuario = Usuario.objects.get(pk=id)  # Busca o aluno pelo ID do usuário
 
         # Atualizar os dados do aluno
         serializer_professor = ProfessorSerializer(data=request.data)

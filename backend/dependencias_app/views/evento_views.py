@@ -2,10 +2,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from dependencias_app.permissoes import *
-from backend.dependencias_app.serializers.evento_serializer import EventoSerializer
-from backend.dependencias_app.serializers.calendario_academico_serializer import CalendarioAcademicoSerializer
+from dependencias_app.serializers.evento_serializer import Evento_Serializer
+from dependencias_app.serializers.calendario_academico_serializer import Calendario_Academico_Serializer
 from dependencias_app.models.evento import Evento
-from backend.dependencias_app.models.calendario_academico import CalendarioAcademico
+from dependencias_app.models.calendario_academico import Calendario_Academico
 import logging
 from datetime import datetime
 from django.utils.timezone import make_aware
@@ -24,7 +24,7 @@ def cadastrar_evento(request):
         data_fim = make_aware(datetime.fromisoformat(data.get("data_fim")))
 
         # Verificar se existe um calendário acadêmico para o período
-        if not CalendarioAcademico.objects.filter(
+        if not Calendario_Academico.objects.filter(
             data_inicio__lte=data_inicio,
             data_fim__gte=data_fim,
             tipo_calendario=data.get("tipo_calendario")
@@ -34,7 +34,7 @@ def cadastrar_evento(request):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        serializer = EventoSerializer(data=data)
+        serializer = Evento_Serializer(data=data)
 
         # Validar dados do serializer
         if not serializer.is_valid():
@@ -58,7 +58,7 @@ def cadastrar_evento(request):
 def listar_eventos(request):
     try:
         eventos = Evento.objects.all()
-        serializer = EventoSerializer(eventos, many=True)
+        serializer = Evento_Serializer(eventos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         logger.error('Erro ao listar eventos: %s', str(e))
@@ -69,7 +69,7 @@ def listar_eventos(request):
 def atualizar_evento(request, evento_id):
     try:
         evento = Evento.objects.get(id=evento_id)
-        serializer = EventoSerializer(evento, data=request.data)
+        serializer = Evento_Serializer(evento, data=request.data)
         if serializer.is_valid():
             serializer.save()
             logger.info('Evento atualizado com sucesso: %s', serializer.data)
@@ -104,7 +104,7 @@ def deletar_evento(request, evento_id):
 def obter_evento(request, evento_id):
     try:
         evento = Evento.objects.get(id=evento_id)
-        serializer = EventoSerializer(evento)
+        serializer = Evento_Serializer(evento)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Evento.DoesNotExist:
         logger.error('Evento não encontrado: ID %s', evento_id)
@@ -120,7 +120,7 @@ def cadastrar_calendario_academico(request):
     """
     CADASTRA UM NOVO PACOTE DE EVENTOS COM BASE NOS DADOS FORNECIDOS
     """
-    serializer = CalendarioAcademicoSerializer(data=request.data)
+    serializer = Calendario_Academico_Serializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -131,8 +131,8 @@ def listar_calendarios_academicos(request):
     """
     LISTA TODOS OS PACOTES DE EVENTOS CADASTRADOS
     """
-    calendariosAcademicos = CalendarioAcademico.objects.all()
-    serializer = CalendarioAcademicoSerializer(calendariosAcademicos, many=True)
+    calendariosAcademicos = Calendario_Academico.objects.all()
+    serializer = Calendario_Academico_Serializer(calendariosAcademicos, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
@@ -141,21 +141,21 @@ def listar_eventos_do_calendario_academico(request, id_pacote):
     LISTA TODOS OS EVENTOS DENTRO DO INTERVALO DE UM PACOTE ESPECÍFICO
     """
     try:
-        pacote = CalendarioAcademico.objects.get(id=id_pacote)
+        pacote = Calendario_Academico.objects.get(id=id_pacote)
         eventos = Evento.objects.filter(
             data_inicio__gte=pacote.data_inicio,
             data_fim__lte=pacote.data_fim,
             tipo_calendario=pacote.tipo_calendario
         )
-        serializer = EventoSerializer(eventos, many=True)
+        serializer = Evento_Serializer(eventos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    except CalendarioAcademico.DoesNotExist:
+    except Calendario_Academico.DoesNotExist:
         return Response({"mensagem": "Pacote não encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['PUT'])
 def atualizar_calendario_academico(request, id_calendario):
     try:
-        calendario = CalendarioAcademico.objects.get(id=id_calendario)
+        calendario = Calendario_Academico.objects.get(id=id_calendario)
 
         # Converter datas do request para objetos datetime
         novo_inicio = request.data.get("data_inicio")
@@ -199,7 +199,7 @@ def atualizar_calendario_academico(request, id_calendario):
                 )
 
         # Atualizar o calendário acadêmico
-        serializer = CalendarioAcademicoSerializer(calendario, data=request.data)
+        serializer = Calendario_Academico_Serializer(calendario, data=request.data)
         if serializer.is_valid():
             serializer.save()
             logger.info('Calendário acadêmico atualizado com sucesso: %s', serializer.data)
@@ -208,7 +208,7 @@ def atualizar_calendario_academico(request, id_calendario):
         logger.error('Erro de validação na atualização do calendário acadêmico: %s', serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    except CalendarioAcademico.DoesNotExist:
+    except Calendario_Academico.DoesNotExist:
         logger.error('Calendário acadêmico não encontrado para atualização: ID %s', id_calendario)
         return Response({'mensagem': 'Calendário acadêmico não encontrado'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
@@ -218,10 +218,10 @@ def atualizar_calendario_academico(request, id_calendario):
 @api_view(['GET'])
 def obter_calendario_academico(request, id_calendario):
     try:
-        calendario = CalendarioAcademico.objects.get(id=id_calendario)
-        serializer = CalendarioAcademicoSerializer(calendario)
+        calendario = Calendario_Academico.objects.get(id=id_calendario)
+        serializer = Calendario_Academico_Serializer(calendario)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    except CalendarioAcademico.DoesNotExist:
+    except Calendario_Academico.DoesNotExist:
         logger.error('Calendário acadêmico não encontrado: ID %s', id_calendario)
         return Response({'mensagem': 'Calendário acadêmico não encontrado'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:

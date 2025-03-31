@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from backend.dependencias_app.models.form_encerramento import Form_Encerramento
+from dependencias_app.models.form_encerramento import Form_Encerramento
 
 class Form_Encerramento_Serializer(serializers.ModelSerializer):
     class Meta:

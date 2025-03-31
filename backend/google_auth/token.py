@@ -1,8 +1,8 @@
 import jwt
-from google_auth.models import UsuarioBase
+from google_auth.models import Usuario
 from django.conf import settings
 
-def custom_token(user: UsuarioBase, codFoto: str, nome: str):
+def custom_token(user: Usuario, codFoto: str, nome: str):
     payload = {
         'idUsuario': user.pk,
         'grupo': user.grupo.name,

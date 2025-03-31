@@ -5,8 +5,8 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.curso import Curso
-from backend.dependencias_app.serializers.disciplina_serializer import DisciplinaSerializer
-from backend.dependencias_app.serializers.curso_serializer import CursoSerializer
+from dependencias_app.serializers.disciplina_serializer import Disciplina_Serializer
+from dependencias_app.serializers.curso_serializer import Curso_Serializer
 
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
@@ -21,7 +21,7 @@ def cadastrar_disciplina(request):
 
         # Cria novas disciplinas e vincula ao curso
         for disciplina in novas_disciplinas:
-            serializer = DisciplinaSerializer(data={
+            serializer = Disciplina_Serializer(data={
                 'nome': disciplina.get('nome'),
                 'carga_horaria': disciplina.get('carga_horaria'),
                 'cursos': [curso.id]
@@ -49,7 +49,7 @@ def listar_disciplinas(request):
     Retorna uma lista de disciplinas em formato JSON ou um erro.
     """
     disciplinas = Disciplina.objects.all().order_by('nome')
-    serializer = DisciplinaSerializer(disciplinas, many=True, context={'request': request})
+    serializer = Disciplina_Serializer(disciplinas, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
@@ -57,13 +57,13 @@ def listar_disciplinas(request):
 def buscar_disciplina(request, disciplinaId):
     disciplina = get_object_or_404(Disciplina, pk=disciplinaId)
 
-    disciplina_serializer = DisciplinaSerializer(disciplina)
+    disciplina_serializer = Disciplina_Serializer(disciplina)
 
     cursos = Curso.objects.all().exclude(id__in=disciplina.cursos.values_list('id', flat=True))
     cursos_vinculados = Curso.objects.filter(id__in=disciplina.cursos.values_list('id', flat=True))
 
-    curso_serializer = CursoSerializer(cursos, many=True)
-    curso_vinculados_serializer = CursoSerializer(cursos_vinculados, many=True)
+    curso_serializer = Curso_Serializer(cursos, many=True)
+    curso_vinculados_serializer = Curso_Serializer(cursos_vinculados, many=True)
 
     return Response({'disciplina':disciplina_serializer.data, 'cursos': curso_serializer.data, 'cursos_vinculados': curso_vinculados_serializer.data}, status=status.HTTP_200_OK)
 
@@ -77,7 +77,7 @@ def editar_disciplina(request, disciplinaId):
 
         request.data['cursos'] = [curso['id'] for curso in cursos]
 
-        serializer = DisciplinaSerializer(disciplina, data=request.data)
+        serializer = Disciplina_Serializer(disciplina, data=request.data)
 
         if not serializer.is_valid(): raise Exception(serializer.errors)
 

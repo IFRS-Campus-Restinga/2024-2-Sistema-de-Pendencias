@@ -3,12 +3,12 @@ from django.db import models
 from .atividade import *
 from .ped_EMI import PED_EMI
 from .ped_ProEJA import PED_ProEJA
-from dependencias_app.enums.statusAtividade import StatusAtividade
+from dependencias_app.enums.status_atividade import Status_Atividade
 
 class Avaliacao_Atividade(BaseModel):
     data_entrega = models.DateField(null=True, blank=True)
     data_criacao = models.DateField(auto_now_add=True)
-    status = models.CharField(choices=StatusAtividade.choices, max_length=12, default='Não Avaliada')
+    status = models.CharField(choices=Status_Atividade.choices, max_length=12, default='Não Avaliada')
     nota = models.FloatField(null=True, blank=True, default=None)
 
     class Meta:
