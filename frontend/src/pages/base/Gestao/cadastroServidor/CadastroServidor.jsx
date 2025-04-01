@@ -40,17 +40,12 @@ const CadastroServidor = () => {
         const erros = validarForm()
 
         if (erros === '') {
-            let registroServidor
-            if (!state) {
-                registroServidor = UsuarioService.criar(formData)
-            } else {
-                registroServidor = UsuarioService.editar(formData)
-            }
+            const registroServidor = UsuarioService.criar(formData)
 
             toast.promise(
                 registroServidor,
                 {
-                    pending: state ? 'Salvando alterações...' : 'Realizando cadastro...',
+                    pending: 'Realizando cadastro...',
                     success: 'Registro realizado com sucesso!',
                     error: {
                         render({ data }) {
@@ -68,7 +63,7 @@ const CadastroServidor = () => {
             try {
                 const res = await registroServidor
 
-                if (res.status !== 201 && res.status !== 200) throw new Error(res.mensagem)
+                if (res.status !== 201) throw new Error(res.mensagem)
 
                 setErrors({ email: '' });
                 setFormData({ ...formData, email: '' });

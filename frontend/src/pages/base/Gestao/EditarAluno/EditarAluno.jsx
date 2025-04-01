@@ -7,7 +7,7 @@ import { UsuarioService } from '../../../../services/usuarioService';
 import LoadingIFRS from '../../../../components/LoadingIFRS/LoadingIFRS';
 import Label from '../../../../components/Label/Label';
 import Input from '../../../../components/Input/Input';
-import { validarCPF, validarData, validarEmailAluno, validarMatricula, validarNome, validarTelefone } from '../../../../utils/validacoes';
+import { validarCPF, validarData, validarEmail_Matricula, validarEmailAluno, validarMatricula, validarNome, validarTelefone } from '../../../../utils/validacoes';
 import MensagemErro from '../../../../components/MensagemErro/MensagemErro';
 import { getDataMaxima } from '../../../../utils/datas';
 import Button from '../../../../components/Button/Button';
@@ -28,7 +28,6 @@ const EditarAluno = () => {
         telefone: '',
         data_nascimento: '',
         is_active: true,
-
     })
     const [erros, setErros] = useState({
         nome: '',
@@ -37,13 +36,13 @@ const EditarAluno = () => {
         cpf: '',
         telefone: '',
         data_nascimento: '',
-        is_active: active === 'Ativo' ? true : false,
 
     })
 
     const validarForm = () => {
         let validado = true
         let erro
+        let erro2
         for (let campo in formData) {
             switch (campo) {
                 case 'nome':
@@ -55,8 +54,12 @@ const EditarAluno = () => {
                     break;
                 case 'email':
                     erro = validarEmailAluno(formData.email)
+                    erro2 = validarEmail_Matricula(formData.email, formData.matricula)
                     if (erro !== '') {
                         setErros({ ...erros, email: erro })
+                        validado = false
+                    } else if (erro2 !== '') {
+                        setErros({ ...erros, email: erro2 })
                         validado = false
                     }
                     break;
@@ -69,8 +72,12 @@ const EditarAluno = () => {
                     break;
                 case 'matricula':
                     erro = validarMatricula(formData.matricula)
+                    erro2 = validarEmail_Matricula(formData.email, formData.matricula)
                     if (erro !== '') {
                         setErros({ ...erros, matricula: erro })
+                        validado = false
+                    } else if (erro2 !== '') {
+                        setErros({ ...erros, matricula: erro2 })
                         validado = false
                     }
                     break;
@@ -101,7 +108,7 @@ const EditarAluno = () => {
             const res = await UsuarioService.porId(state)
 
             setFormData(res.data)
-            setActive(res.data.is_active)
+            setActive(res.data.is_active ? 'Ativo' : 'Inativo')
         } catch (error) {
             console.error(error.message)
         } finally {
@@ -109,23 +116,66 @@ const EditarAluno = () => {
         }
     }
 
+
+
     const handleEnviar = async (e) => {
         e.preventDefault()
 
-        if (validarForm()) {
-            setErros({})
+        if (true) {
+            const editarAluno = UsuarioService.editar(state, formData)
 
-            const res = UsuarioService.editar(state, formData)
+            toast.promise(
+                editarAluno,
+                {
+                    pending: 'Salvando dados do aluno...',
+                    success: 'Registro salvo com sucesso!',
+                    error: {
+                        render({ data }) {
+                            if (data instanceof Error) {
+                                const parsedError = JSON.parse(data.message);
 
+                                Object.values(parsedError).forEach(message => {
+                                    toast.error(message, {
+                                        autoClose: 3000,
+                                        position: 'bottom-center',
+                                        style: { textAlign: 'center' }
+                                    });
+                                });
+                            } else {
+                                toast.error("Erro ao cadastrar usuário", {
+                                    autoClose: 3000,
+                                    position: 'bottom-center',
+                                    style: { textAlign: 'center' }
+                                });
+                            }
+                        }
+                    }
+                },
+                {
+                    autoClose: 3000,
+                    position: 'bottom-center',
+                    style: { textAlign: 'center' }
+
+                }
+            )
 
             try {
+                const res = await editarAluno
 
+                if (res.status !== 200) throw new Error(res.mensagem)
 
+                setErros({
+                    cpf: '',
+                    data_nascimento: '',
+                    email: '',
+                    is_active: active,
+                    nome: '',
+                    matricula: '',
+                    telefone: ''
+                })
             } catch (error) {
-
+                console.error(error.message)
             }
-        } else {
-
         }
     }
 
@@ -140,7 +190,15 @@ const EditarAluno = () => {
             <ToastContainer />
             <FormContainer titulo={'Editar Aluno'} onSubmit={handleEnviar} textoInfo={'Preencha cada um dos campos conforme as orientações\n\nA idade mínima no campo de data é de 15 anos'}>
                 <div className={styles.formGroup}>
-                    <Switch stateHandler={setActive} valor1='Inativo' valor2='Ativo' valor={active} />
+                    <Switch
+                        stateHandler={(novoValor) => {
+                            setActive(novoValor);
+                            setFormData({ ...formData, is_active: novoValor === "Ativo" });
+                        }}
+                        valor1="Inativo"
+                        valor2="Ativo"
+                        valor={active}
+                    />
                 </div>
                 <div className={styles.formGroup}>
                     <Label titulo={'Nome'}>
@@ -192,7 +250,7 @@ const EditarAluno = () => {
                             textoAjuda={'Insira o a matricula do aluno (apenas números)'}
                             valor={formData.matricula ?? ''}
                             onChange={(e) => {
-                                if (!isNaN(Number(e.target.value)) || e.target.value === '') setFormData({ ...formData, cpf: e.target.value })
+                                if (!isNaN(Number(e.target.value)) || e.target.value === '') setFormData({ ...formData, matricula: e.target.value })
                             }}
                             onBlur={() => setErros({ ...erros, matricula: validarMatricula(formData.matricula) })}
                             erro={erros.matricula}

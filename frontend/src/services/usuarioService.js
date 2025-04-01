@@ -64,8 +64,20 @@ export const UsuarioService = {
     }, 
 
     editar: async (idUsuario, params) => {
-        const res = await api.post(`api/usuario/editar/${idUsuario}/`, params).catch((erro) => {
-            return erro
-        })
+        try {
+            const res = await api.put(`api/usuario/${idUsuario}/editar/`, params);
+            return res;
+        } catch (error) {
+            if (error.response) {
+                const errorMessage = error.response.data.mensagem;
+    
+                if (errorMessage && typeof errorMessage === 'object') {
+                    throw new Error(JSON.stringify(errorMessage)); 
+                }
+                
+                throw new Error(errorMessage || "Erro ao editar usuário");
+            }
+            throw new Error("Erro inesperado ao editar usuário");
+        }
     }
 }

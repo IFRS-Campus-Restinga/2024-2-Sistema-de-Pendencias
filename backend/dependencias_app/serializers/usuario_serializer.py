@@ -69,7 +69,6 @@ class Usuario_Serializer(serializers.ModelSerializer):
         if retorno == 'lista':
             fields_to_check = ['cpf', 'matricula', 'data_nascimento', 'telefone']
             for field in fields_to_check:
-                if representation.get(field) is None:
                     representation.pop(field)
 
             representation.pop('primeiro_login')

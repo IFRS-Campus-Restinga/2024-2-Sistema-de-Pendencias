@@ -17,6 +17,16 @@ export const validarEmailAluno = (email) => {
     return ''
 }
 
+export const validarEmail_Matricula = (email, matricula) => {
+    if (email) {
+        const emailMatricula = email.split('@')[0]
+
+        if (emailMatricula !== matricula) return 'Título do email e matricula devem ser iguais'
+
+        return ''
+    }
+}
+
 export const validarEmailServidor = (email) => {
     const regexEmail = /^[^@]+@+restinga\.ifrs\.edu\.br$/;
 
