@@ -24,9 +24,9 @@ const LoginPage = () => {
       const decoded = jwtDecode(res.data.token)
 
       if (decoded.primeiroLogin === true && (decoded.grupo === 'Aluno' || decoded.grupo === 'Professor')) {
-        redirect(`sessao/${decoded.grupo}/${decoded.idUsuario}/perfil`)
+        redirect(`${decoded.grupo}/perfil`)
       } else {
-        redirect(`sessao/${decoded.grupo}/${decoded.idUsuario}`)
+        redirect(`${decoded.grupo}`)
       }
 
     } catch (error) {

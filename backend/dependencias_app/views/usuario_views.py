@@ -151,10 +151,15 @@ def editar_usuario(request, idUsuario):
         
         data = request.data
 
+        grupo = get_object_or_404(Group, name=data['grupo'])
+
+        data['grupo'] = grupo.id
+
         usuario_data = {
             'email': data.pop('email', None),
             'nome': data.pop('nome', None),
-            'is_active': data.pop('is_active', None)
+            'is_active': data.pop('is_active', None),
+            'grupo': data.pop('grupo', None)
         }
 
         usuario = get_object_or_404(Usuario, pk=uuid_usuario)

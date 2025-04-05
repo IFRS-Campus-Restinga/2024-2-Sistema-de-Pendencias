@@ -1,6 +1,5 @@
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import PageContainer from "../../../components/PageContainer/PageContainer";
-import MainContainer from "../../../components/MainContainer/mainContainer"
 import Dropdown from '../../../components/Dropdown/Dropdown'
 import { validaUsuario } from "../validaUsuario";
 import { useEffect, useState } from "react";
@@ -11,14 +10,14 @@ import { jwtDecode } from "jwt-decode";
 
 const BaseGestao = () => {
   const redirect = useNavigate()
-  const homeUrl = `/sessao/${jwtDecode(sessionStorage.getItem('token')).grupo}/${jwtDecode(sessionStorage.getItem('token')).idUsuario}`
+  const homeUrl = `/${jwtDecode(sessionStorage.getItem('token')).grupo}`
   
     const validaGestao = () => {
       const res = validaUsuario('Gestão Escolar')
 
       if (!res.status) {
           if (res.grupo === undefined) redirect('/')
-          else redirect(`/sessao/${res.grupo}/${res.idUsuario}`)
+          else redirect(`/${res.grupo}`)
       }
     }
 

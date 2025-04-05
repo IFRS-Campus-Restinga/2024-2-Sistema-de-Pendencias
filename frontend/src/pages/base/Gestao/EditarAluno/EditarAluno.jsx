@@ -19,7 +19,7 @@ const EditarAluno = () => {
     const location = useLocation()
     const { state } = location
     const [carregando, setCarregando] = useState(true)
-    const [active, setActive] = useState('Ativo')
+    const [ativo, setAtivo] = useState('Ativo')
     const [formData, setFormData] = useState({
         nome: '',
         email: '',
@@ -108,7 +108,7 @@ const EditarAluno = () => {
             const res = await UsuarioService.porId(state)
 
             setFormData(res.data)
-            setActive(res.data.is_active ? 'Ativo' : 'Inativo')
+            setAtivo(res.data.is_active ? 'Ativo' : 'Inativo')
         } catch (error) {
             console.error(error.message)
         } finally {
@@ -121,43 +121,31 @@ const EditarAluno = () => {
     const handleEnviar = async (e) => {
         e.preventDefault()
 
-        if (true) {
+        if (validarForm()) {
             const editarAluno = UsuarioService.editar(state, formData)
 
             toast.promise(
                 editarAluno,
                 {
-                    pending: 'Salvando dados do aluno...',
-                    success: 'Registro salvo com sucesso!',
+                    pending: 'Realizando cadastro...',
+                    success: 'Registro realizado com sucesso!',
                     error: {
                         render({ data }) {
                             if (data instanceof Error) {
                                 const parsedError = JSON.parse(data.message);
-
-                                Object.values(parsedError).forEach(message => {
-                                    toast.error(message, {
-                                        autoClose: 3000,
-                                        position: 'bottom-center',
-                                        style: { textAlign: 'center' }
-                                    });
-                                });
-                            } else {
-                                toast.error("Erro ao cadastrar usuário", {
-                                    autoClose: 3000,
-                                    position: 'bottom-center',
-                                    style: { textAlign: 'center' }
-                                });
+                                return Object.values(parsedError).join('\n'); // ← mostra todas as mensagens num único toast
                             }
+                            return 'Erro ao cadastrar usuário';
                         }
                     }
                 },
                 {
-                    autoClose: 3000,
                     position: 'bottom-center',
-                    style: { textAlign: 'center' }
-
+                    autoClose: 3000,
+                    style: { textAlign: 'center', whiteSpace: 'pre-line' }
                 }
-            )
+            );
+
 
             try {
                 const res = await editarAluno
@@ -168,7 +156,7 @@ const EditarAluno = () => {
                     cpf: '',
                     data_nascimento: '',
                     email: '',
-                    is_active: active,
+                    is_active: ativo,
                     nome: '',
                     matricula: '',
                     telefone: ''
@@ -192,12 +180,12 @@ const EditarAluno = () => {
                 <div className={styles.formGroup}>
                     <Switch
                         stateHandler={(novoValor) => {
-                            setActive(novoValor);
+                            setAtivo(novoValor);
                             setFormData({ ...formData, is_active: novoValor === "Ativo" });
                         }}
                         valor1="Inativo"
                         valor2="Ativo"
-                        valor={active}
+                        valor={ativo}
                     />
                 </div>
                 <div className={styles.formGroup}>

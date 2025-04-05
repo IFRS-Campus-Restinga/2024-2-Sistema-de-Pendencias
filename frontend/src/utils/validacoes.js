@@ -1,6 +1,14 @@
-
 export const validarMatricula = (matricula) => {
     const regexMatricula = /^\d{10}$/
+
+    if (!matricula || matricula.trim().length === 0) return 'Campo obrigatório'
+    if (!regexMatricula.test(matricula)) return 'Matrícula inválida'
+
+    return ''
+}
+
+export const validarMatriculaServidor = (matricula) => {
+    const regexMatricula = /^\d{7,8}$/
 
     if (!matricula || matricula.trim().length === 0) return 'Campo obrigatório'
     if (!regexMatricula.test(matricula)) return 'Matrícula inválida'

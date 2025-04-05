@@ -16,10 +16,6 @@ class Usuario_Serializer(serializers.ModelSerializer):
         fields = ['id', 'nome', 'email', 'primeiro_login', 'grupo', 'is_active', 'matricula', 'cpf', 'data_nascimento', 'telefone']
 
     def validate_email(self, value):
-        """
-        Valida o formato do e-mail caso o grupo do usuário seja 'Aluno'.
-        Funciona tanto para criação quanto para edição.
-        """
         usuario = self.instance  # Usuário existente (caso seja edição)
         grupo_id = self.initial_data.get('grupo')  # Grupo enviado na requisição
 
@@ -28,12 +24,25 @@ class Usuario_Serializer(serializers.ModelSerializer):
         else:
             grupo = usuario.grupo if usuario else None
 
-        regex_email = r'^\d{10}@aluno\.restinga\.ifrs\.edu\.br$'
+        regex_email_aluno = r'^\d{10}@aluno\.restinga\.ifrs\.edu\.br$'
+        regex_email_servidores = r'^[^@]+@restinga\.ifrs\.edu\.br$'
 
         if grupo and grupo.name == 'Aluno':
-            if not re.match(regex_email, value):
+            if not re.match(regex_email_aluno, value):
                 raise serializers.ValidationError("O e-mail deve seguir o formato: 0000000000@aluno.restinga.ifrs.edu.br")
+        else:
+            if not re.match(regex_email_servidores, value):
+                raise serializers.ValidationError("O email deve estar no domínio @restinga.ifrs.edu.br")
 
+        return value
+    
+    def validate_grupo(self, value):
+        usuario = self.instance
+        
+        if usuario and usuario.grupo.name == 'Professor':
+            if value != usuario.grupo and hasattr(usuario, 'professor'):
+                raise serializers.ValidationError('Professores com dados adicionais não podem ter seu grupo alterado')
+        
         return value
 
     def get_cpf(self, obj):
