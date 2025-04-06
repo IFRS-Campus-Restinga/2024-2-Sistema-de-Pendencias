@@ -114,7 +114,7 @@ const Tabela = ({
   }, [listaFiltrada]);
 
   useEffect(() => {
-    if (listaFiltrada.length > 0) {
+    if (listaFiltrada?.length > 0) {
       const modeloColunas = listaFiltrada.reduce((maior, atual) => {
         return Object.keys(atual).length > Object.keys(maior).length
           ? atual
@@ -138,7 +138,7 @@ const Tabela = ({
     };
   }, []);
 
-  return listaFiltrada.length ? (
+  return listaFiltrada?.length ? (
     <div className={styles.containerTabela} ref={tableContainerRef}>
       <table className={styles.tabela}>
         <thead className={styles.cabecalho}>

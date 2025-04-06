@@ -3,25 +3,43 @@ import { api } from '../config/axiosConfig';
 export const cursoService = {
     criar: async (data) => {
         try {
-            const response = await api.post('/api/cadastrar-curso/', data);
+            const response = await api.post('/api/curso/cadastrar/', data);
             return response;
         } catch (error) {
-            console.error('Erro ao criar curso:', error);
-            throw error; // Lança o erro para que o chamador possa lidar com ele
+            if (error.response?.data?.mensagem) {
+                const mensagem = error.response.data.mensagem;
+    
+                if (Array.isArray(mensagem)) {
+                    throw new Error(JSON.stringify(mensagem));
+                }
+    
+                if (typeof mensagem === 'string') {
+                    throw new Error(JSON.stringify([mensagem]));
+                }
+            }
+    
+            throw new Error(JSON.stringify(["Erro inesperado ao cadastrar curso."]));
         }
-    },
+    },    
 
-    listar: async (retorno) => {
+    listar: async (retorno, param, pagina) => {
         try {
-            const response = await api.get(`/api/listar-cursos/`, {
+            const res = await api.get(`/api/cursos/listar`, {
                 params: {
-                    retorno
+                    retorno,
+                    page: pagina,
+                    page_size: 10,
+                    busca: param
                 }
             });
-            return response;
+
+            return res;
         } catch (error) {
-            console.error('Erro ao listar cursos:', error);
-            throw error; // Lança o erro
+            if (error.response) {
+                throw new Error(error.response.data.mensagem || "Erro ao buscar cursos");
+            }
+
+            throw new Error("Erro inesperado ao buscar cursos");
         }
     },
 

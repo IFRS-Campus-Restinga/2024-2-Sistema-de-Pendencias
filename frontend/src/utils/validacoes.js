@@ -109,3 +109,27 @@ export const validarData = (data) => {
     return ''
 }
 
+export const validarCargaHoraria = (cargaHoraria) => {
+    if (!cargaHoraria || cargaHoraria.toString().trim().length === 0) return 'Campo obrigatório'
+
+    if (!/^\d+$/.test(cargaHoraria)) {
+        return 'A Carga horária deve conter apenas números inteiros.';
+    }
+
+    if (Number(cargaHoraria) <= 0) {
+        return 'A Carga horária de um curso deve ser maior que 0 horas';
+    }
+
+    return '';
+
+}
+
+export const validarTurma = (turma) => {
+    const regexTurma = /^\d{3}$/
+    if (!turma || turma.toString().trim().length === 0) return 'Campo obrigatório'
+
+    if (!regexTurma.test(turma)) return 'Formato inválido'
+
+    return ''
+}
+

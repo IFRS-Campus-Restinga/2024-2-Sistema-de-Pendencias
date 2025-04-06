@@ -116,8 +116,6 @@ const EditarAluno = () => {
         }
     }
 
-
-
     const handleEnviar = async (e) => {
         e.preventDefault()
 

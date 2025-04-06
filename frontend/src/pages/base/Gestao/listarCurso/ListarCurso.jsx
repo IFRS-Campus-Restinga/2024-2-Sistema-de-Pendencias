@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import styles from './ListarAluno.module.css';
+import styles from './ListarCurso.module.css';
 import FormContainer from '../../../../components/FormContainer/FormContainer';
 import 'react-toastify/dist/ReactToastify.css';
 import Tabela from '../../../../components/Tabela/Tabela';
 import { useNavigate } from 'react-router-dom';
-import IconeAdicionar from "../../../../assets/icone-adicionar-usuario.png";
-import { UsuarioService } from '../../../../services/usuarioService';
+import IconeAdicionar from "../../../../assets/icone-adicionar-curso.png";
 import BarraPesquisa from '../../../../components/BarraPesquisa/BarraPesquisa';
 import Loading from '../../../../components/Loading/Loading';
+import cursoService from '../../../../services/cursoService';
 
-const ListarAluno = () => {
+const ListarCurso = () => {
   const [carregando, setCarregando] = useState(true);
   const [carregandoTabela, setCarregandoTabela] = useState(false)
-  const [alunos, setAlunos] = useState([]);
+  const [cursos, setCursos] = useState([]);
   const [pagina, setPagina] = useState(1);
   const [proximaURL, setProximaURL] = useState(null)
   const [filtroGeral, setFiltroGeral] = useState('');
   const navigate = useNavigate();
 
-  const fetchAlunosPagina = async () => {
+  const fetchCursosPagina = async () => {
     setCarregandoTabela(true)
     try {
-      const res = await UsuarioService.listarPorGrupo('alunos', filtroGeral, pagina);
+      const res = await cursoService.listar('cursos', filtroGeral, pagina);
 
-      setAlunos((prev) => [...prev, ...res.data.results])
+      setCursos((prev) => [...prev, ...res.data.results])
 
       setProximaURL(res.data.next)
     } catch (error) {
@@ -34,12 +34,12 @@ const ListarAluno = () => {
     }
   };
 
-  const fetchAlunosFiltro = async () => {
+  const fetchCursosFiltro = async () => {
     setCarregandoTabela(true)
     try {
-      const res = await UsuarioService.listarPorGrupo('alunos', filtroGeral, pagina);
+      const res = await cursoService.listar('lista', filtroGeral, pagina);
 
-      setAlunos(res.data.results)
+      setCursos(res.data.results)
 
       setProximaURL(res.data.next)
     } catch (error) {
@@ -51,24 +51,24 @@ const ListarAluno = () => {
   }
 
   useEffect(() => {
-    if (proximaURL) fetchAlunosPagina();
+    if (proximaURL) fetchCursosPagina();
   }, [pagina]);
 
   useEffect(() => {
-    if (filtroGeral === '') fetchAlunosFiltro();
+    if (filtroGeral === '') fetchCursosFiltro();
   }, [filtroGeral]);
 
   return (
     <>
-      <FormContainer titulo='Lista de Alunos' comprimento='90%'>
+      <FormContainer titulo='Lista de cursos' comprimento='90%'>
         <div className={styles.container}>
-          <BarraPesquisa setFiltro={setFiltroGeral} fetchDados={fetchAlunosFiltro} filtro={filtroGeral} />
+          <BarraPesquisa setFiltro={setFiltroGeral} fetchDados={fetchCursosFiltro} filtro={filtroGeral} />
           <div>
             <img
-              className={styles.iconeAdicionarAluno}
+              className={styles.iconeAdicionarCurso}
               src={IconeAdicionar}
-              onClick={() => navigate(`/Gestão Escolar/cadastroAluno`)}
-              title='Cadastrar Aluno'
+              onClick={() => navigate(`/Gestão Escolar/cadastroCurso`)}
+              title='Cadastrar Curso'
             />
           </div>
         </div>
@@ -78,7 +78,7 @@ const ListarAluno = () => {
               <Loading border={'green'} />
             ) : (
               <Tabela
-                listaFiltrada={alunos}
+                listaFiltrada={cursos}
                 editar={true}
                 visualizar={false}
                 setPagina={setPagina}
@@ -93,4 +93,4 @@ const ListarAluno = () => {
   );
 };
 
-export default ListarAluno;
+export default ListarCurso;

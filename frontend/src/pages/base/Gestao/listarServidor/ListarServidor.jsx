@@ -4,7 +4,6 @@ import { UsuarioService } from "../../../../services/usuarioService";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import BarraPesquisa from "../../../../components/BarraPesquisa/BarraPesquisa";
 import Tabela from "../../../../components/Tabela/Tabela";
-import { jwtDecode } from "jwt-decode";
 import styles from './ListarServidor.module.css'
 import iconeAdicionar from '../../../../assets/icone-adicionar-usuario.png'
 import Loading from "../../../../components/Loading/Loading";
@@ -66,7 +65,7 @@ const ListarServidor = () => {
           <img
             className={styles.iconeAdicionarServidor}
             src={iconeAdicionar}
-            onClick={() => navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/cadastroServidor`)}
+            onClick={() => navigate(`/Gestão Escolar/cadastroServidor`)}
             title="Cadastrar Servidor"
           />
         </div>

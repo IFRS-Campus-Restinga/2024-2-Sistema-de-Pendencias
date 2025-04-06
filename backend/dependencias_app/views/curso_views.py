@@ -15,26 +15,40 @@ def cadastrar_curso(request):
         turmas = request.data.pop('turmas', [])
         data = request.data
 
-        if (data['modalidade'] == 'Integrado' and turmas == []): raise Exception('Os cursos de modalidade Integrado devem possuir turmas cadastradas')
+        if data.get('modalidade') == 'Integrado' and not turmas:
+            raise serializers.ValidationError('Os cursos de modalidade Integrado devem possuir turmas cadastradas.')
 
         serializer_curso = Curso_Serializer(data=data)
 
-        if not serializer_curso.is_valid(): raise Exception(serializer_curso.errors)
+        if not serializer_curso.is_valid():
+            raise serializers.ValidationError(serializer_curso.errors)
 
         serializer_curso.save()
 
-        if (serializer_curso.instance.modalidade == 'Integrado'):
+        if serializer_curso.instance.modalidade == 'Integrado':
             for turma in turmas:
-                turma['curso'] = serializer_curso.instance
-                serializer_turma = TurmaSerializer(turma)
+                turma['curso'] = str(serializer_curso.instance.id)
+                serializer_turma = TurmaSerializer(data=turma)
 
-                if not serializer_turma.is_valid(): raise serializers.ValidationError(serializer_turma.errors)
+                if not serializer_turma.is_valid():
+                    raise serializers.ValidationError(serializer_turma.errors)
 
-                serializer_turma.save()   
+                serializer_turma.save()
 
         return Response({'message': 'Curso cadastrado com sucesso!'}, status=status.HTTP_201_CREATED)
+
     except serializers.ValidationError as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        error_details = e.detail
+        mensagens = []
+
+        if isinstance(error_details, dict):
+            for campo, erros in error_details.items():  # CORREÇÃO AQUI
+                for erro in erros:
+                    mensagens.append(f"{campo}: {str(erro)}")
+        else:
+            mensagens.append(str(e))
+
+        return Response({'mensagem': mensagens}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

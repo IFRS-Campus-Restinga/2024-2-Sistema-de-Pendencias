@@ -12,13 +12,51 @@ class Curso_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Curso
         fields = '__all__'
-
-    def save(self, **kwargs):
-        formCurso = super().save(**kwargs)
-        formCurso.full_clean()
-        formCurso.save()
-        return formCurso
     
+    def validate(self, data):
+        coordenador = data.get('coordenador')
+
+        # Só executa se o coordenador veio na requisição
+        if coordenador:
+            curso_existente = Curso.objects.filter(coordenador=coordenador)
+
+            # Se for edição, ignora o próprio curso
+            if self.instance:
+                curso_existente = curso_existente.exclude(id=self.instance.id)
+
+            if curso_existente.exists():
+                raise serializers.ValidationError({
+                    'coordenador': 'Este coordenador já está vinculado a outro curso.'
+                })
+
+        return data
+
+    def validate_nome(self, value):
+        nome = value.strip()
+
+        if len(nome) < 3:
+            raise serializers.ValidationError("O nome do curso deve ter pelo menos 3 caracteres.")
+
+        if len(nome) > 30:
+            raise serializers.ValidationError("O nome do curso deve ter no máximo 30 caracteres.")
+
+        if not nome:
+            raise serializers.ValidationError("O nome do curso não pode estar vazio ou conter apenas espaços.")
+
+        return nome
+
+    def validate_carga_horaria(self, value):
+        if int(value) <= 0:
+            raise serializers.ValidationError("A carga horária deve ser maior que 0.")
+
+        return value
+    
+    def validate_coordenador(self, value):
+        if value == '' or not value:
+            raise serializers.ValidationError('O curso deve possuir um coordenador')
+        
+        return value
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
@@ -34,10 +72,8 @@ class Curso_Serializer(serializers.ModelSerializer):
 
         elif retorno == 'dependencia':
             if hasattr(instance, 'turmas'):
-                # Aqui, você usa o Serializador de Turma para representar as turmas corretamente
                 representation['turmas'] = TurmaSerializer(instance.turmas.all(), many=True).data
             if hasattr(instance, 'disciplinas'):
-                # Serializa as disciplinas também
                 representation['disciplinas'] = Disciplina_Serializer(instance.disciplinas.all().order_by('nome'), many=True).data
 
         return representation

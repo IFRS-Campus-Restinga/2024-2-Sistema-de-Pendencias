@@ -71,7 +71,7 @@ const CadastroServidor = () => {
                         render({ data }) {
                             if (data instanceof Error) {
                                 const parsedError = JSON.parse(data.message);
-                                return Object.values(parsedError).join('\n'); // ← mostra todas as mensagens num único toast
+                                return Object.values(parsedError).join('\n');
                             }
                             return 'Erro ao cadastrar usuário';
                         }
@@ -80,7 +80,7 @@ const CadastroServidor = () => {
                 {
                     position: 'bottom-center',
                     autoClose: 3000,
-                    style: { textAlign: 'center', whiteSpace: 'pre-line' } // quebra de linha se tiver \n
+                    style: { textAlign: 'center', whiteSpace: 'pre-line' }
                 }
             );
 
@@ -212,7 +212,7 @@ const CadastroServidor = () => {
                     )
                 }
                 {
-                    !servidor?.matricula || !servidor?.cpf ? (
+                    servidor?.matricula || servidor?.cpf ? (
                         <>
                         </>
                     ) : (

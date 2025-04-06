@@ -29,7 +29,7 @@ urlpatterns = [
     path('usuarios/<str:param>/<str:grupo>', listar_por_parametro),
 
     # views de curso
-    path('cadastrar-curso/', cadastrar_curso),
+    path('curso/cadastrar/', cadastrar_curso),
     path('listar-cursos/', listar_cursos),
     path('listar-cursos/<str:modalidade>/', listar_por_modalidade),
     path('cursos/<int:cursoId>/', obter_curso),
