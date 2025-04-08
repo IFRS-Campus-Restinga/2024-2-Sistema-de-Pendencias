@@ -2,10 +2,10 @@ from rest_framework import serializers
 from dependencias_app.models.curso import Curso
 from google_auth.models import Usuario
 from dependencias_app.serializers.disciplina_serializer import Disciplina_Serializer
-from dependencias_app.serializers.turma_serializer import TurmaSerializer
+from dependencias_app.serializers.turma_serializer import Turma_Serializer
 
 class Curso_Serializer(serializers.ModelSerializer):
-    turmas = TurmaSerializer(many=True, read_only=True)
+    turmas = Turma_Serializer(many=True, read_only=True)
     disciplinas = Disciplina_Serializer(many=True, read_only=True)
     coordenador = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Coordenador')) 
 
@@ -16,11 +16,9 @@ class Curso_Serializer(serializers.ModelSerializer):
     def validate(self, data):
         coordenador = data.get('coordenador')
 
-        # Só executa se o coordenador veio na requisição
         if coordenador:
             curso_existente = Curso.objects.filter(coordenador=coordenador)
 
-            # Se for edição, ignora o próprio curso
             if self.instance:
                 curso_existente = curso_existente.exclude(id=self.instance.id)
 
@@ -72,8 +70,15 @@ class Curso_Serializer(serializers.ModelSerializer):
 
         elif retorno == 'dependencia':
             if hasattr(instance, 'turmas'):
-                representation['turmas'] = TurmaSerializer(instance.turmas.all(), many=True).data
+                representation['turmas'] = Turma_Serializer(instance.turmas.all(), many=True).data
             if hasattr(instance, 'disciplinas'):
                 representation['disciplinas'] = Disciplina_Serializer(instance.disciplinas.all().order_by('nome'), many=True).data
+            
+            representation.pop('coordenador')
+
+        elif retorno == 'detalhes':
+            representation['coordenador'] = {"id": instance.coordenador.id, "email": instance.coordenador.email}
+            representation['turmas'] = Turma_Serializer(instance.turmas.all(), many=True).data
+
 
         return representation

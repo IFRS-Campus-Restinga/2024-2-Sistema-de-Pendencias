@@ -18,7 +18,7 @@ from dependencias_app.views.notificacao_views import *
 urlpatterns = [
     # views de usuários
     path('usuario/cadastrar/', cadastrar_usuario),
-    path('usuarios/listar/<str:perfil>/', listar_usuarios_por_perfil),
+    path('usuario/listar/<str:perfil>/', listar_usuarios_por_perfil),
     path('usuario/<str:idUsuario>/', get_infos_usuario),
     path('usuario/<str:idUsuario>/editar/', editar_usuario),
     path('listar-grupos/', listar_grupos),
@@ -26,14 +26,14 @@ urlpatterns = [
     # cadastra informações adicionais dos alunos e professores
     path('dados-adicionais-aluno/', infos_adicionais_aluno),
     path('dados-adicionais-professor/', infos_adicionais_professor),
-    path('usuarios/<str:param>/<str:grupo>', listar_por_parametro),
+    path('usuario/<str:param>/<str:grupo>', listar_por_parametro),
 
     # views de curso
     path('curso/cadastrar/', cadastrar_curso),
-    path('listar-cursos/', listar_cursos),
-    path('listar-cursos/<str:modalidade>/', listar_por_modalidade),
-    path('cursos/<int:cursoId>/', obter_curso),
-    path('curso/<int:cursoId>/editar', editar_curso),
+    path('curso/listar/', listar_cursos),
+    path('curso/listar/<str:modalidade>/', listar_por_modalidade),
+    path('curso/<str:cursoId>/', obter_curso),
+    path('curso/<str:cursoId>/editar/', editar_curso),
 
     # views de disciplinas
     path('cadastrar-disciplina/', cadastrar_disciplina),

@@ -62,7 +62,7 @@ const ListarCurso = () => {
     <>
       <FormContainer titulo='Lista de cursos' comprimento='90%'>
         <div className={styles.container}>
-          <BarraPesquisa setFiltro={setFiltroGeral} fetchDados={fetchCursosFiltro} filtro={filtroGeral} />
+          <BarraPesquisa setFiltro={setFiltroGeral} fetchDados={fetchCursosFiltro} filtro={filtroGeral} setPagina={setPagina} />
           <div>
             <img
               className={styles.iconeAdicionarCurso}

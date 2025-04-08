@@ -2,7 +2,7 @@ import styles from './EditarAluno.module.css'
 import { ToastContainer, toast } from 'react-toastify';
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import { useEffect, useState } from 'react';
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { UsuarioService } from '../../../../services/usuarioService';
 import LoadingIFRS from '../../../../components/LoadingIFRS/LoadingIFRS';
 import Label from '../../../../components/Label/Label';
@@ -16,6 +16,7 @@ import Switch from '../../../../components/Switch/Switch';
 
 
 const EditarAluno = () => {
+    const redirect = useNavigate()
     const location = useLocation()
     const { state } = location
     const [carregando, setCarregando] = useState(true)
@@ -117,53 +118,77 @@ const EditarAluno = () => {
     }
 
     const handleEnviar = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
-        if (validarForm()) {
-            const editarAluno = UsuarioService.editar(state, formData)
+        if (true) {
+            const req = UsuarioService.editar(state, formData);
 
             toast.promise(
-                editarAluno,
+                (async () => {
+                    const res = await req;
+
+                    if (res.status !== 200) {
+                        throw new Error(JSON.stringify(["Erro ao editar usuário."]));
+                    }
+
+                    setErros({
+                        cpf: '',
+                        data_nascimento: '',
+                        email: '',
+                        is_active: ativo,
+                        nome: '',
+                        matricula: '',
+                        telefone: ''
+                    });
+
+                    // Redirecionar após um tempo
+                    setTimeout(() => {
+                        redirect('/Gestão Escolar/alunos/');
+                    }, 3000);
+
+                    return res;
+                })(),
                 {
                     pending: 'Realizando cadastro...',
                     success: 'Registro realizado com sucesso!',
                     error: {
                         render({ data }) {
                             if (data instanceof Error) {
-                                const parsedError = JSON.parse(data.message);
-                                return Object.values(parsedError).join('\n'); // ← mostra todas as mensagens num único toast
+                                try {
+                                    const mensagens = JSON.parse(data.message);
+
+                                    if (Array.isArray(mensagens)) {
+                                        mensagens.forEach((mensagem, index) => {
+                                            if (index > 0) {
+                                                toast.error(mensagem, {
+                                                    autoClose: 3000,
+                                                    position: 'bottom-center',
+                                                    style: { textAlign: 'center', whiteSpace: 'pre-line' },
+                                                });
+                                            }
+                                        });
+
+                                        return mensagens[0];
+                                    }
+
+                                    return 'Erro ao registrar usuário.';
+                                } catch (e) {
+                                    return 'Erro inesperado ao processar mensagens.';
+                                }
                             }
-                            return 'Erro ao cadastrar usuário';
+
+                            return 'Erro ao registrar usuário.';
                         }
                     }
                 },
                 {
-                    position: 'bottom-center',
                     autoClose: 3000,
+                    position: 'bottom-center',
                     style: { textAlign: 'center', whiteSpace: 'pre-line' }
                 }
             );
-
-
-            try {
-                const res = await editarAluno
-
-                if (res.status !== 200) throw new Error(res.mensagem)
-
-                setErros({
-                    cpf: '',
-                    data_nascimento: '',
-                    email: '',
-                    is_active: ativo,
-                    nome: '',
-                    matricula: '',
-                    telefone: ''
-                })
-            } catch (error) {
-                console.error(error.message)
-            }
         }
-    }
+    };
 
     useEffect(() => {
         fetchAluno()

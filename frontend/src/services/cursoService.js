@@ -24,7 +24,7 @@ export const cursoService = {
 
     listar: async (retorno, param, pagina) => {
         try {
-            const res = await api.get(`/api/cursos/listar`, {
+            const res = await api.get(`/api/curso/listar`, {
                 params: {
                     retorno,
                     page: pagina,
@@ -43,16 +43,31 @@ export const cursoService = {
         }
     },
 
-    // Método para atualizar um curso
-    editar: async (cursoId, params) => {
+    editar: async (cursoId, data) => {
         try {
-            const res = await api.put(`api/curso/${cursoId}/editar`, params); // Endpoint de edição de curso
-            return res;
-        } catch (erro) {
-            console.error("Erro ao atualizar curso:", erro);
-            throw erro;
+            const response = await api.put(`/api/curso/${cursoId}/editar/`, data);
+            return response;
+        } catch (error) {
+            console.log(error)
+            if (error.response?.data?.mensagem) {
+                const mensagem = error.response.data.mensagem;
+                console.log(mensagem)
+                if (Array.isArray(mensagem)) {
+                  throw new Error(JSON.stringify(mensagem));
+                }
+          
+                if (typeof mensagem === 'object') {
+                  throw new Error(JSON.stringify(Object.values(mensagem).flat()));
+                }
+          
+                if (typeof mensagem === 'string') {
+                  throw new Error(JSON.stringify([mensagem]));
+                }
+              }
+          
+              throw new Error(JSON.stringify(["Erro inesperado ao editar curso."]));
         }
-    },
+    },    
 
     porModalidade: async (modalidade, retorno) => {
         const res = await api.get(`api/listar-cursos/${modalidade}`,{
@@ -67,13 +82,13 @@ export const cursoService = {
     },
 
     // Método para obter um curso pelo ID
-    getCursoById: async (cursoId, retorno) => {
+    porId: async (cursoId) => {
         try {
-            const res = await api.get(`api/cursos/${cursoId }/`, {
+            const res = await api.get(`api/curso/${cursoId}/`, {
                 params: {
-                    retorno
+                    retorno: 'detalhes'
                 }
-            }); // Endpoint para pegar curso por ID
+            });
             return res;
         } catch (erro) {
             console.error("Erro ao buscar curso:", erro);

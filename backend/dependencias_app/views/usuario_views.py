@@ -194,9 +194,16 @@ def editar_usuario(request, idUsuario):
         }, status=status.HTTP_200_OK)
     
     except serializers.ValidationError as e:
-        error_details = e.detail 
-        errors = {key: value[0] for key, value in error_details.items()}
-        
-        return Response({'mensagem': errors}, status=status.HTTP_400_BAD_REQUEST)
+        error_details = e.detail
+        mensagens = []
+
+        if isinstance(error_details, dict):
+            for campo, erros in error_details.items():
+                for erro in erros:
+                    mensagens.append(f"{campo}: {str(erro)}")
+        else:
+            mensagens.append(str(e))
+
+        return Response({'mensagem': mensagens}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

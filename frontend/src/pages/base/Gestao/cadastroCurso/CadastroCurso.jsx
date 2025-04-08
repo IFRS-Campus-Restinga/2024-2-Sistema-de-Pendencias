@@ -57,46 +57,46 @@ const CadastroCurso = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleEnviar = async (e) => {
     e.preventDefault();
 
-    if (true) {
-      let req;
-
+    if (validarForm()) {
+      let req
       if (state) {
         req = cursoService.editar(state, formData);
       } else {
-        req = cursoService.criar(formData);
+        req = cursoService.criar(formData)
       }
 
       toast.promise(
         (async () => {
           const res = await req;
 
-          if (res.status !== 200 && res.status !== 201) {
-            // Isso só é chamado se o erro não for capturado dentro de `cursoService`
-            throw new Error(JSON.stringify(["Erro inesperado ao cadastrar curso"]));
+          if (res.status !== 200) {
+            throw new Error(JSON.stringify(["Erro ao cadastrar usuário"]));
           }
 
-          // Resetar erros após sucesso
           setErros({
             nome: '',
             carga_horaria: '',
             coordenador: '',
+            modalidade: '',
             turmas: []
           });
 
-          formRef.current.reset()
+          // Resetar formulário
+          formRef.current.reset();
 
+          // Redirecionar após um tempo
           setTimeout(() => {
-            redirect('/Gestão Escolar/cursos/')
+            redirect('/Gestão Escolar/cursos/');
           }, 3000);
 
           return res;
         })(),
         {
-          pending: 'Registrando curso...',
-          success: 'Curso registrado com sucesso!',
+          pending: 'Realizando cadastro...',
+          success: 'Registro realizado com sucesso!',
           error: {
             render({ data }) {
               if (data instanceof Error) {
@@ -114,20 +114,18 @@ const CadastroCurso = () => {
                       }
                     });
 
-                    // Retorna só a primeira mensagem como o toast principal
                     return mensagens[0];
                   }
 
-                  return 'Erro ao cadastrar curso.';
+                  return 'Erro ao registrar curso.';
                 } catch (e) {
                   return 'Erro inesperado ao processar mensagens.';
                 }
               }
 
-              return 'Erro ao cadastrar curso.';
-            },
-          },
-
+              return 'Erro ao registrar curso.';
+            }
+          }
         },
         {
           autoClose: 3000,
@@ -198,7 +196,6 @@ const CadastroCurso = () => {
     return validado;
   };
 
-
   const addTurma = () => {
     setFormData((prevData) => ({
       ...prevData,
@@ -220,11 +217,19 @@ const CadastroCurso = () => {
 
   const fetchCurso = async () => {
     try {
-      const res = await cursoService.getCursoById(state.id)
+      const res = await cursoService.porId(state)
 
       if (res.status !== 200) throw new Error(res)
 
-      setFormData(res.data)
+      setCoordenador(res.data.coordenador.email)
+      setModalidade(res.data.modalidade)
+      setFormData({
+        carga_horaria: res.data.carga_horaria,
+        coordenador: res.data.coordenador.id,
+        modalidade: res.data.modalidade,
+        nome: res.data.nome,
+        turmas: res.data.turmas
+      })
     } catch (error) {
       console.error(error)
     }
@@ -237,7 +242,7 @@ const CadastroCurso = () => {
   return (
     <>
       <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo={state ? 'Editar Curso' : 'Cadastrar Curso'} comprimento='70%' ref={formRef}>
+      <FormContainer onSubmit={handleEnviar} titulo={state ? 'Editar Curso' : 'Cadastrar Curso'} comprimento='70%' ref={formRef}>
         {Object.values(erros).some(
           (erro) => (typeof erro === 'string' && erro !== '') ||
             (Array.isArray(erro) && erro.some(e => e !== ''))

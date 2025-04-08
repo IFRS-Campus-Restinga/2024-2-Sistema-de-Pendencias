@@ -27,7 +27,7 @@ export const UsuarioService = {
     },
 
     buscarPorParametro: async (param, grupo) => {
-        const res = await api.get(`api/usuarios/${param}/${grupo}`).catch((erro) => {
+        const res = await api.get(`api/usuario/${param}/${grupo}`).catch((erro) => {
             return erro
         })
 
@@ -44,7 +44,7 @@ export const UsuarioService = {
 
     listarPorGrupo: async (perfil, param, pagina) => {
         try {
-            const res = await api.get(`api/usuarios/listar/${perfil}/`, {
+            const res = await api.get(`api/usuario/listar/${perfil}/`, {
                 params: {
                     retorno: 'lista',
                     page: pagina,
@@ -65,19 +65,28 @@ export const UsuarioService = {
 
     editar: async (idUsuario, params) => {
         try {
-            const res = await api.put(`api/usuario/${idUsuario}/editar/`, params);
-            return res;
+          const response = await api.put(`/api/usuario/${idUsuario}/editar/`, params);
+          return response;
         } catch (error) {
-            if (error.response) {
-                const errorMessage = error.response.data.mensagem;
-    
-                if (errorMessage && typeof errorMessage === 'object') {
-                    throw new Error(JSON.stringify(errorMessage)); 
-                }
-                
-                throw new Error(errorMessage || "Erro ao editar usuário");
+            console.log(error)
+          if (error.response?.data?.mensagem) {
+            const mensagem = error.response.data.mensagem;
+            console.log(mensagem)
+            if (Array.isArray(mensagem)) {
+              throw new Error(JSON.stringify(mensagem));
             }
-            throw new Error("Erro inesperado ao editar usuário");
+      
+            if (typeof mensagem === 'object') {
+              throw new Error(JSON.stringify(Object.values(mensagem).flat()));
+            }
+      
+            if (typeof mensagem === 'string') {
+              throw new Error(JSON.stringify([mensagem]));
+            }
+          }
+      
+          throw new Error(JSON.stringify(["Erro inesperado ao editar usuário."]));
         }
-    }
+      }
+      
 }
