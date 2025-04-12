@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.decorators import api_view, permission_classes
 from dependencias_app.permissoes import *
 from rest_framework.generics import get_object_or_404
@@ -11,35 +11,39 @@ from dependencias_app.serializers.curso_serializer import Curso_Serializer
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
 def cadastrar_disciplina(request):
-    curso_id = request.data.get('curso', None)
-    disciplinas = request.data.get('disciplinas', None)
-    novas_disciplinas = request.data.get('novasDisciplinas', None)
-
+    cursos = request.data.pop('cursos', None)
+    data = request.data
     try:
-        print(request.data)
-        curso = get_object_or_404(Curso, pk=curso_id)
+        uuid_cursos = []
 
-        # Cria novas disciplinas e vincula ao curso
-        for disciplina in novas_disciplinas:
-            serializer = Disciplina_Serializer(data={
-                'nome': disciplina.get('nome'),
-                'carga_horaria': disciplina.get('carga_horaria'),
-                'cursos': [curso.id]
-            })
+        for curso in cursos:
+            uuid_cursos.append(curso.get('id'))
 
-            if not serializer.is_valid(): raise Exception(serializer.errors)
+        data['cursos'] = uuid_cursos
+    
+        serializer = Disciplina_Serializer(data=request.data)
 
-            serializer.save()
+        if not serializer.is_valid(): raise serializers.ValidationError(serializer.errors)
 
-        # busca disciplinas já existentes para vincular
-        for id in disciplinas:
-            disciplina = get_object_or_404(Disciplina, pk=id)
-            disciplina.cursos.add(curso)
+        serializer.save()
+        return Response({'mensagem': 'Disciplina registrada com sucesso!'}, status=status.HTTP_201_CREATED)
+    except serializers.ValidationError as e:
+        error_details = e.detail
+        mensagens = []
 
-        return Response({'mensagem': 'Disciplinas cadastradas com sucesso!'}, status=status.HTTP_201_CREATED)
+        if isinstance(error_details, dict):
+            for campo, erros in error_details.items():
+                for erro in erros:
+                    mensagens.append(f"{campo}: {str(erro)}")
+        elif isinstance(error_details, list):
+            for erro in error_details:
+                mensagens.append(str(erro))
+        else:
+            mensagens.append(str(error_details))
 
+        return Response({'mensagem': mensagens}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar])

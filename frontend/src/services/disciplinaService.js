@@ -1,17 +1,31 @@
 import { api } from "../config/axiosConfig"
-import EditarDisciplina from "../pages/base/Gestao/editarDisciplina/EditarDisciplina"
+import EditarDisciplina from "../pages/base/Gestao/cadastroDisciplina/CadastroDisciplina"
 
 export const disciplinaService = {
-  create: async (params) => {
-    const res = await api.post('api/cadastrar-disciplina/', params).catch((erro) => {
-      return erro
-    })
+  criar: async (params) => {
+    try {
+      const res = await api.post('api/disciplina/cadastrar/', params)
 
-    return res
+      return res
+    } catch (error) {
+        if (error.response?.data?.mensagem) {
+          const mensagem = error.response.data.mensagem;
+
+          if (Array.isArray(mensagem)) {
+              throw new Error(JSON.stringify(mensagem));
+          }
+
+          if (typeof mensagem === 'string') {
+              throw new Error(JSON.stringify([mensagem]));
+          }
+      }
+
+      throw new Error(JSON.stringify(["Erro inesperado ao cadastrar curso."]));
+    }
   },
 
-  list: async () => {
-    const res = await api.get('api/listar-disciplinas/', {
+  listar: async () => {
+    const res = await api.get('api/disciplina/listar/', {
       params: {
         retorno: 'lista'
       }
@@ -31,10 +45,27 @@ export const disciplinaService = {
   },
 
   editar: async (params, disciplinaId) => {
-    const res = await api.post(`api/disciplina/editar/${disciplinaId}/`, params).catch((erro) => {
-      return erro
-    })
-
-    return res
+    try {
+      const res = await api.put(`api/disciplina/editar/${disciplinaId}/`, params)
+      
+      return res
+    } catch (error) {
+      if (error.response?.data?.mensagem) {
+        const mensagem = error.response.data.mensagem;
+        if (Array.isArray(mensagem)) {
+          throw new Error(JSON.stringify(mensagem));
+        }
+  
+        if (typeof mensagem === 'object') {
+          throw new Error(JSON.stringify(Object.values(mensagem).flat()));
+        }
+  
+        if (typeof mensagem === 'string') {
+          throw new Error(JSON.stringify([mensagem]));
+        }
+      }
+  
+      throw new Error(JSON.stringify(["Erro inesperado ao editar curso."]));
+    }
   }
 }

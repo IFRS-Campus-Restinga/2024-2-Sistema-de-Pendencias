@@ -80,5 +80,8 @@ class Curso_Serializer(serializers.ModelSerializer):
             representation['coordenador'] = {"id": instance.coordenador.id, "email": instance.coordenador.email}
             representation['turmas'] = Turma_Serializer(instance.turmas.all(), many=True).data
 
+        elif retorno == 'disciplina':
+            representation = {"id": instance.id, "nome": instance.nome}
+
 
         return representation

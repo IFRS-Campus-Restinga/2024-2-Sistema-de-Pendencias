@@ -36,8 +36,8 @@ urlpatterns = [
     path('curso/<str:cursoId>/editar/', editar_curso),
 
     # views de disciplinas
-    path('cadastrar-disciplina/', cadastrar_disciplina),
-    path('listar-disciplinas/', listar_disciplinas, name='listar_disciplinas'),
+    path('disciplina/cadastrar/', cadastrar_disciplina),
+    path('disciplina/listar/', listar_disciplinas),
     path('disciplina/<int:disciplinaId>/', buscar_disciplina),
     path('disciplina/editar/<int:disciplinaId>/', editar_disciplina),
 

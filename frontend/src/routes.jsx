@@ -25,7 +25,6 @@ import DetalhesCurso from './pages/base/Gestao/detalhesCurso/DetalhesCurso'
 // Disciplina
 import CadastroDisciplina from "./pages/base/Gestao/cadastroDisciplina/CadastroDisciplina"
 import ListarDisciplina from './pages/base/Gestao/listarDisciplina/ListarDisciplina'
-import EditarDisciplina from './pages/base/Gestao/editarDisciplina/EditarDisciplina'
 // Calendario
 import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
 import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendario/eventoCalendario"
@@ -136,12 +135,12 @@ const router = createBrowserRouter([
                 element: <CadastroDisciplina />
             },
             {
-                path: '/Gestão Escolar/disciplinas',
-                element: <ListarDisciplina />
+                path: '/Gestão Escolar/disciplinas/:idDisciplina/editar',
+                element: <CadastroDisciplina />
             },
             {
-                path: '/Gestão Escolar/disciplinas/:idDisciplina/editar',
-                element: <EditarDisciplina />
+                path: '/Gestão Escolar/disciplinas',
+                element: <ListarDisciplina />
             },
             {
                 path: '/Gestão Escolar/calendario',

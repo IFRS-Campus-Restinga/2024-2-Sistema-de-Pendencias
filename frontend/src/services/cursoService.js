@@ -48,10 +48,8 @@ export const cursoService = {
             const response = await api.put(`/api/curso/${cursoId}/editar/`, data);
             return response;
         } catch (error) {
-            console.log(error)
             if (error.response?.data?.mensagem) {
                 const mensagem = error.response.data.mensagem;
-                console.log(mensagem)
                 if (Array.isArray(mensagem)) {
                   throw new Error(JSON.stringify(mensagem));
                 }

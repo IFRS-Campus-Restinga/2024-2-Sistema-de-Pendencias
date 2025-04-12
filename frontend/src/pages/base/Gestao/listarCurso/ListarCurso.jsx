@@ -21,7 +21,7 @@ const ListarCurso = () => {
   const fetchCursosPagina = async () => {
     setCarregandoTabela(true)
     try {
-      const res = await cursoService.listar('cursos', filtroGeral, pagina);
+      const res = await cursoService.listar('lista', filtroGeral, pagina);
 
       setCursos((prev) => [...prev, ...res.data.results])
 

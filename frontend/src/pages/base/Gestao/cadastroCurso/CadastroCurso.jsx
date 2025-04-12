@@ -16,7 +16,6 @@ import { validarCargaHoraria, validarNome, validarTurma } from "../../../../util
 import OpcoesBusca from "../../../../components/OpcoesBusca.jsx/OpcoesBusca";
 
 const CadastroCurso = () => {
-  const formRef = useRef();
   const redirect = useNavigate()
   const location = useLocation();
   const { state } = location || {};
@@ -73,7 +72,7 @@ const CadastroCurso = () => {
           const res = await req;
 
           if (res.status !== 200) {
-            throw new Error(JSON.stringify(["Erro ao cadastrar usuário"]));
+            throw new Error(JSON.stringify(["Erro ao registrar curso"]));
           }
 
           setErros({
@@ -84,9 +83,6 @@ const CadastroCurso = () => {
             turmas: []
           });
 
-          // Resetar formulário
-          formRef.current.reset();
-
           // Redirecionar após um tempo
           setTimeout(() => {
             redirect('/Gestão Escolar/cursos/');
@@ -95,7 +91,7 @@ const CadastroCurso = () => {
           return res;
         })(),
         {
-          pending: 'Realizando cadastro...',
+          pending: 'Realizando registro...',
           success: 'Registro realizado com sucesso!',
           error: {
             render({ data }) {
@@ -242,7 +238,7 @@ const CadastroCurso = () => {
   return (
     <>
       <ToastContainer />
-      <FormContainer onSubmit={handleEnviar} titulo={state ? 'Editar Curso' : 'Cadastrar Curso'} comprimento='70%' ref={formRef}>
+      <FormContainer onSubmit={handleEnviar} titulo={state ? 'Editar Curso' : 'Cadastrar Curso'} comprimento='70%'>
         {Object.values(erros).some(
           (erro) => (typeof erro === 'string' && erro !== '') ||
             (Array.isArray(erro) && erro.some(e => e !== ''))

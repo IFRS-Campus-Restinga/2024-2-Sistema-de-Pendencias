@@ -8,40 +8,52 @@ class Disciplina_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Disciplina
         fields = '__all__'
-    
+
     def save(self, **kwargs):
-        formDisciplina = super().save(**kwargs)
+        cursos = self.validated_data.pop('cursos', None)
 
-        formDisciplina.full_clean()
-        formDisciplina.save()
-        return formDisciplina
-    
-    def update(self, instance, validated_data):
-        cursos_data = validated_data.pop('cursos', None)
+        if not cursos:
+            raise serializers.ValidationError({'cursos': 'A disciplina precisa estar vinculada a pelo menos um curso'})
 
-        # Atualiza outros campos normalmente
-        instance = super().update(instance, validated_data)
+        instance = super().save(**kwargs)
 
-        if cursos_data is None:  
-            return serializers.ValidationError('A disciplina precisa estar vinculada a pelo menos um curso')
-
-        else:
-            # Extrai os IDs dos cursos (se você está recebendo objetos inteiros ou dicionários)
-            cursos_ids = [curso.id for curso in cursos_data] if isinstance(cursos_data, list) else [curso_data['id'] for curso_data in cursos_data]
-
-            # Atualiza os cursos relacionados com os IDs extraídos
-            instance.cursos.set(cursos_ids)
+        instance.cursos.set(cursos)
 
         return instance
+    
+    def validate_nome(self, value):
+        nome = value.strip()
+
+        if len(nome) < 3:
+            raise serializers.ValidationError("O nome da disciplina deve ter pelo menos 3 caracteres.")
+
+        if len(nome) > 30:
+            raise serializers.ValidationError("O nome da disciplina deve ter no máximo 30 caracteres.")
+
+        if not nome:
+            raise serializers.ValidationError("O nome da disciplina não pode estar vazio ou conter apenas espaços.")
+
+        return nome
+
+    def validate_carga_horaria(self, value):
+        if int(value) <= 0:
+            raise serializers.ValidationError("A carga horária deve ser maior que 0.")
+        elif int(value) >= 100:
+            raise serializers.ValidationError("A carga horária deve ser menor que 100.")
+
+        return value
+
+    def validate_cursos(self, value):
+        if not value or len(value) == 0:
+            raise serializers.ValidationError('A disciplina precisa estar vinculada a pelo menos um curso.')
+        return value
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-
         request = self.context.get('request', None)
         retorno = request and request.query_params.get('retorno')
 
-        if retorno == 'lista':
-            if hasattr(instance, 'cursos'):
-                representation['cursos'] = ", ".join([curso.nome for curso in instance.cursos.all()])
+        if retorno == 'lista' and hasattr(instance, 'cursos'):
+            representation['cursos'] = ", ".join([curso.nome for curso in instance.cursos.all()])
 
         return representation
