@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework import status, serializers
 from rest_framework.pagination import PageNumberPagination
 
-class CursoPaginatio (PageNumberPagination):
+class CursoPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100 
 
@@ -78,7 +78,7 @@ def listar_cursos(request):
             )
 
         # Paginação
-        paginator = CursoPaginatio ()
+        paginator = CursoPagination()
         paginator.page_size = page_size  # Define o tamanho da página recebido na requisição
         result_page = paginator.paginate_queryset(cursos, request)
         

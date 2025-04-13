@@ -38,8 +38,8 @@ urlpatterns = [
     # views de disciplinas
     path('disciplina/cadastrar/', cadastrar_disciplina),
     path('disciplina/listar/', listar_disciplinas),
-    path('disciplina/<int:disciplinaId>/', buscar_disciplina),
-    path('disciplina/editar/<int:disciplinaId>/', editar_disciplina),
+    path('disciplina/<str:disciplinaId>/', buscar_disciplina),
+    path('disciplina/editar/<str:disciplinaId>/', editar_disciplina),
 
     # views de evento/calendario
     path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),

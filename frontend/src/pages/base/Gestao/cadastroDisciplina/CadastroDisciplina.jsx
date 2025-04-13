@@ -30,7 +30,7 @@ const CadastroDisciplina = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        if (validarForm()) {
+        if (true) {
             let req
 
             if (state) {
@@ -55,7 +55,7 @@ const CadastroDisciplina = () => {
 
                     // Redirecionar após um tempo
                     setTimeout(() => {
-                        redirect('/Gestão Escolar/cursos/');
+                        redirect('/Gestão Escolar/disciplinas/');
                     }, 3000);
 
                     return res;
@@ -122,7 +122,7 @@ const CadastroDisciplina = () => {
 
     const fetchDisciplina = async () => {
         try {
-            const res = await disciplinaService.porId(state.id)
+            const res = await disciplinaService.porId(state)
 
             if (res.status !== 200) throw new Error(res)
 
@@ -135,6 +135,8 @@ const CadastroDisciplina = () => {
             setCursos(res.data.cursos)
         } catch (error) {
             console.error(error)
+        } finally {
+            setCarregando(false)
         }
     }
 
@@ -202,7 +204,7 @@ const CadastroDisciplina = () => {
     return (
         <>
             <ToastContainer />
-            <FormContainer titulo={state ? 'Editar Disciplina' : 'Cadastrar Disciplina'} onSubmit={handleSubmit}>
+            <FormContainer titulo={state ? 'Editar Disciplina' : 'Cadastrar Disciplina'} onSubmit={handleSubmit} textoInfo={'Informe o nome e carga horária da disciplina\n\nToda disciplina deve ser vinculada a pelo menos um curso\n\nCaso existam progressões vinculadas a esta disciplina, ela não poderá ser desvinculada dos cursos atuais'}>
                 {
                     carregando ? (
                         <Loading border={'green'} />

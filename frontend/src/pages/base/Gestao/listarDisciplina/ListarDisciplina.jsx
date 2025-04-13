@@ -59,7 +59,7 @@ const ListarDisciplinas = () => {
 
     return (
         <>
-            <FormContainer titulo='Lista de cursos' comprimento='90%'>
+            <FormContainer titulo='Lista de Disciplinas' comprimento='90%'>
                 <div className={styles.container}>
                     <BarraPesquisa setFiltro={setFiltroGeral} fetchDados={fetchDisciplinasFiltro} filtro={filtroGeral} setPagina={setPagina} />
                     <div>
