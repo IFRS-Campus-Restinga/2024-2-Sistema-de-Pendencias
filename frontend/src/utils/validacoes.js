@@ -133,13 +133,46 @@ export const validarTurma = (turma) => {
     return ''
 }
 
-export const validarComparacaoDatas = (data1, data2) => {
+export const validarComparacaoDatas = (data1, data2, datasIguais) => {
     if (!data1 || data1 === '' || !data2 || data2 === '') return 'Campo obrigatório'
 
     if (data2 < data1) return 'Data final não pode ser inferior a data de início'
 
-    if (data1 === data2) return 'As datas de início e final não podem ser iguais'
+    if (data1 === data2 && !datasIguais) return 'As datas de início e final não podem ser iguais'
 
     return ''
 }
+
+export const validarHorario = (horario) => {
+   if (!horario || typeof horario !== "string") return 'Campo obrigatório';
+  
+    const regex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+  
+    if (!regex.test(horario)) return 'Formato de horário inválido';
+
+    return ''
+};
+
+export const validarComparacaoHorario = (horario1, horario2) => {
+    if (!horario1 || !horario2) return 'Horários obrigatórios';
+
+    const regex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+    if (!regex.test(horario1) || !regex.test(horario2)) {
+        return 'Formato de horário inválido';
+    }
+
+    const [h1, m1] = horario1.split(':').map(Number);
+    const [h2, m2] = horario2.split(':').map(Number);
+
+    const minutos1 = h1 * 60 + m1;
+    const minutos2 = h2 * 60 + m2;
+
+    if (minutos1 >= minutos2) {
+        return 'Horário de início deve ser menor que o horário de fim';
+    }
+
+    return '';
+};
+
 

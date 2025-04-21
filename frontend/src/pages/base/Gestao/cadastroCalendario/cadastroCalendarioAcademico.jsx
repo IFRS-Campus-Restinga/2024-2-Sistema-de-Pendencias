@@ -47,7 +47,7 @@ const CadastroCalendario = () => {
           novosErros.data_inicio = validarData(formData.data_inicio)
           break;
         case 'data_fim':
-          novosErros.data_fim = validarComparacaoDatas(formData.data_inicio, formData.data_fim)
+          novosErros.data_fim = validarComparacaoDatas(formData.data_inicio, formData.data_fim, false)
           break;
         default:
           break;
@@ -74,7 +74,7 @@ const CadastroCalendario = () => {
           const res = await req;
 
           if (res.status !== 201 && res.status !== 200) {
-            throw new Error(JSON.stringify(["Erro ao registrar curso"]));
+            throw new Error(JSON.stringify(["Erro ao registrar calendário"]));
           }
 
           setErros({});

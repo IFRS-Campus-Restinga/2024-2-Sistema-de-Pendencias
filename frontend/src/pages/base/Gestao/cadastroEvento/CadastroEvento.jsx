@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useredirect, useLocation, useParams } from 'react-router-dom';
+import { useredirect, useLocation, useParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { eventoCalendarioService } from '../../../../services/eventoCalendarioService';
@@ -7,6 +7,10 @@ import styles from './CadastroEvento.module.css';
 import Button from "../../../../components/Button/Button";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import Input from '../../../../components/Input/Input';
+import MensagemErro from '../../../../components/MensagemErro/MensagemErro';
+import Label from '../../../../components/Label/Label';
+import { validarComparacaoDatas, validarComparacaoHorario, validarData, validarHorario, validarNome } from '../../../../utils/validacoes';
+import { calendarioAcademicoService } from '../../../../services/calendarioAcademicoService';
 
 const CadastroEvento = () => {
   const location = useLocation()
@@ -18,153 +22,231 @@ const CadastroEvento = () => {
     descricao: '',
     data_inicio: '',
     data_fim: '',
-    dia_todo: true,
+    hora_inicio: '',
+    hora_fim: '',
+    dia_todo: false,
+    calendario: state.calendario
   });
 
-  useEffect(() => {
+  const fetchEvento = async () => {
+    try {
+      const res = await calendarioAcademicoService.eventoPorId(state.evento)
 
-  }, [idEvento]);
+      if (res.status !== 200) throw Error(res.message)
+
+      setFormData(res.data)
+    } catch (error) {
+      console.error(error.message)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (validarForm()) {
+      let req
 
-  };
+      if (state.evento) {
+        req = calendarioAcademicoService.editarEvento(formData)
+      } else {
+        req = calendarioAcademicoService.criarEvento(formData)
+      }
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+      toast.promise(
+        (async () => {
+          const res = await req;
 
-    if (name === "data_inicio") {
-      setFormData((prevState) => {
-        if (prevState.data_fim && prevState.data_fim < value) {
-          return { ...prevState, data_inicio: value, data_fim: value };
+          if (res.status !== 201 && res.status !== 200) {
+            throw new Error(JSON.stringify(["Erro ao registrar evento"]));
+          }
+
+          setErros({});
+
+          // Redirecionar após um tempo
+          setTimeout(() => {
+            redirect(`/Gestão Escolar/calendarios/${state.calendario}/`, { state: state.calendario });
+          }, 3000);
+
+          return res;
+        })(),
+        {
+          pending: 'Realizando registro...',
+          success: 'Registro realizado com sucesso!',
+          error: {
+            render({ data }) {
+              if (data instanceof Error) {
+                try {
+                  const mensagens = JSON.parse(data.message);
+
+                  if (Array.isArray(mensagens)) {
+                    mensagens.forEach((mensagem, index) => {
+                      if (index > 0) {
+                        toast.error(mensagem, {
+                          autoClose: 3000,
+                          position: 'bottom-center',
+                          style: { textAlign: 'center', whiteSpace: 'pre-line' },
+                        });
+                      }
+                    });
+
+                    return mensagens[0];
+                  }
+
+                  return 'Erro ao registrar evento.';
+                } catch (e) {
+                  return 'Erro inesperado ao processar mensagens.';
+                }
+              }
+
+              return 'Erro ao registrar evento.';
+            }
+          }
+        },
+        {
+          autoClose: 3000,
+          position: 'bottom-center',
+          style: { textAlign: 'center', whiteSpace: 'pre-line' }
         }
-        return { ...prevState, data_inicio: value };
-      });
-    } else {
-      setFormData({ ...formData, [name]: value });
+      );
     }
   };
 
-  const toggleDiaTodo = () => {
-    setFormData({ ...formData, dia_todo: !formData.dia_todo });
-  };
+  const validarForm = () => {
+    let novosErros = {
+      titulo: '',
+      descricao: '',
+      data_inicio: '',
+      data_fim: '',
+      hora_inicio: '',
+      hora_fim: '',
+    }
+
+    for (let campo in formData) {
+      switch (campo) {
+        case 'titulo':
+          novosErros.titulo = validarNome(formData.titulo)
+          break;
+        case 'descricao':
+          novosErros.descricao = validarNome(formData.descricao)
+          break;
+        case 'data_inicio':
+          novosErros.data_inicio = validarData(formData.data_inicio)
+          break;
+        case 'data_fim':
+          novosErros.data_fim = validarComparacaoDatas(formData.data_inicio, formData.data_fim, true)
+          break;
+        case 'hora_inicio':
+          if (!formData.dia_todo) novosErros.hora_inicio = validarHorario(formData.hora_inicio)
+          break;
+        case 'hora_fim':
+          if (!formData.dia_todo) novosErros.hora_fim = validarComparacaoHorario(formData.hora_inicio, formData.hora_fim)
+          break;
+
+        default:
+          break;
+      }
+    }
+
+    setErros(novosErros)
+    return !Object.values(novosErros).some((erro) => erro !== '')
+  }
+
+  useEffect(() => {
+    setFormData({ ...formData, data_inicio: state.dataSelecionada, data_fim: state.dataSelecionada })
+
+    if (state.evento) {
+      fetchEvento()
+    }
+  }, [state]);
 
   return (
     <div className='perfilContainer'>
       <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo="Cadastro de Evento" >
-        {showErrorMessage && <p style={{ color: 'red' }}>* Preencha todos os campos obrigatórios</p>}
+      <FormContainer onSubmit={handleSubmit} titulo="Cadastro de Evento" textoInfo={'Caso o evento tenha mais de um dia de duração, podem ser fornecidos dias diferentes para datas de início e fim\n\nCaso não seja necessário fornecer um horário para o evento, marque a caixa "Evento dura o dia todo"'}>
+        {Object.values(erros).some((erro) => erro !== '') ? <MensagemErro mensagem={'*Preencha todos os campos obrigatórios'} /> : null}
 
-        <label className='labelCustomizado'>Título
-          <Input
-            id="titulo"
-            type='text'
-            name="titulo"
-            value={formData.titulo}
-            onChange={handleChange}
-            style={{ borderColor: erros.titulo ? 'red' : '' }}
-          />
-          {erros.titulo && <p className="erros">{erros.titulo}</p>}
-        </label>
-
-        <label className='labelCustomizado'>Descrição
-          <textarea
-            id="descricao"
-            name="descricao"
-            value={formData.descricao}
-            onChange={handleChange}
-            style={{ borderColor: erros.descricao ? 'red' : '' }}
-          />
-          {erros.descricao && <p className="erros">{erros.descricao}</p>}
-        </label>
-
-        <label className='labelCustomizado'>Data Início
-          <Input
-            id="data_inicio"
-            type="date"
-            name="data_inicio"
-            value={formData.data_inicio}
-            onChange={(e) => {
-              handleChange(e);
-              const novaDataInicio = e.target.value;
-              setFormData((prevState) => {
-                if (prevState.data_fim && prevState.data_fim < novaDataInicio) {
-                  return { ...prevState, data_fim: novaDataInicio };
-                }
-                return prevState;
-              });
-            }}
-            style={{ borderColor: erros.data_inicio ? 'red' : '' }}
-          />
-          {erros.data_inicio && <p className="erros">{erros.data_inicio}</p>}
-        </label>
-
-        {!formData.dia_todo && (
-          <label className='labelCustomizado'>Horário Início:
+        <div className={styles.formGroup}>
+          <Label titulo={'Título'}>
             <Input
-              id='hora_inicio'
-              type="time"
-              name="hora_inicio"
-              value={formData.hora_inicio}
-              onChange={handleChange}
-              style={{ borderColor: erros.hora_inicio ? 'red' : '' }}
+              tipo={'text'}
+              valor={formData.titulo}
+              max={100}
+              onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
+              onBlur={() => setErros({ ...erros, titulo: validarNome(formData.titulo) })}
+              erro={erros.titulo}
             />
-          </label>
-        )}
-
-        <label className='labelCustomizado'>Data Fim
-          <Input
-            id="data_fim"
-            type="date"
-            name="data_fim"
-            value={formData.data_fim}
-            onChange={handleChange}
-            min={formData.data_inicio || new Date().toISOString().split('T')[0]} // Define o limite mínimo
-            style={{ borderColor: erros.data_fim ? 'red' : '' }}
-          />
-          {erros.data_fim && <p className="erros">{erros.data_fim}</p>}
-        </label>
-
-        {!formData.dia_todo && (
-          <label className='labelCustomizado'>Horário Fim:
+            {erros.titulo !== '' ? <MensagemErro mensagem={erros.titulo} /> : null}
+          </Label>
+        </div>
+        <div className={styles.formGroup}>
+          <Label titulo={'Data Início'}>
             <Input
-              id='hora_fim'
-              type="time"
-              name="hora_fim"
-              value={formData.hora_fim}
-              onChange={handleChange}
-              style={{ borderColor: erros.hora_fim ? 'red' : '' }}
+              tipo={'date'}
+              valor={formData.data_inicio}
+              dataMinima={new Date().toISOString().split('T')[0]}
+              onChange={(e) => setFormData({ ...formData, data_inicio: e.target.value })}
+              onBlur={() => setErros({ ...erros, data_inicio: validarData(formData.data_inicio) })}
+              erro={erros.data_inicio}
             />
-          </label>
-        )}
-
-        <label className='labelCustomizado'>
-          <input
-            id='dia_todo'
-            type="checkbox"
-            checked={formData.dia_todo}
-            onChange={toggleDiaTodo}
-          />
-          Dia Todo
-        </label>
-
-        <label className='labelCustomizado'>Tipo de Calendário
-          <select
-            id="tipo_calendario"
-            name="tipo_calendario"
-            value={formData.tipo_calendario}
-            onChange={handleChange}
-            style={{ borderColor: erros.tipo_calendario ? 'red' : '' }}
-          >
-            <option value="Integrado">Integrado</option>
-            <option value="ProEJA">ProEJA</option>
-          </select>
-          {erros.tipo_calendario && <p className="erros">{erros.tipo_calendario}</p>}
-        </label>
-
-        <Button tipo='submit' text='Salvar Evento' />
-        {idEvento && <Button tipo='button' text='Excluir Evento' onClick={handleDelete} />}
+            {erros.data_inicio !== '' ? <MensagemErro mensagem={erros.data_inicio} /> : null}
+          </Label>
+          <Label titulo={'Data Fim'}>
+            <Input
+              tipo={'date'}
+              valor={formData.data_fim}
+              dataMinima={new Date().toISOString().split('T')[0]}
+              onChange={(e) => setFormData({ ...formData, data_fim: e.target.value })}
+              onBlur={() => setErros({ ...erros, data_fim: validarData(formData.data_fim) })}
+              erro={erros.data_fim}
+            />
+            {erros.data_fim !== '' ? <MensagemErro mensagem={erros.data_fim} /> : null}
+          </Label>
+        </div>
+        {
+          !formData.dia_todo ? (
+            <div className={styles.formGroup}>
+              <Label titulo={'Hora Início'}>
+                <Input
+                  tipo={'time'}
+                  valor={formData.hora_inicio}
+                  onChange={(e) => setFormData({ ...formData, hora_inicio: e.target.value })}
+                  onBlur={() => setErros({ ...erros, hora_inicio: validarHorario(formData.hora_inicio) })}
+                  erro={erros.hora_inicio}
+                />
+                {erros.hora_inicio !== '' ? <MensagemErro mensagem={erros.hora_inicio} /> : null}
+              </Label>
+              <Label titulo={'Hora Fim'}>
+                <Input
+                  tipo={'time'}
+                  valor={formData.hora_fim}
+                  onChange={(e) => setFormData({ ...formData, hora_fim: e.target.value })}
+                  onBlur={() => setErros({ ...erros, hora_fim: validarHorario(formData.hora_fim) })}
+                  erro={erros.hora_fim}
+                />
+                {erros.hora_fim !== '' ? <MensagemErro mensagem={erros.hora_fim} /> : null}
+              </Label>
+            </div>
+          ) : null
+        }
+        <div className={styles.formGroup}>
+          <Label titulo={'Descrição'}>
+            <textarea
+              className={erros.descricao ? styles.textAreaErro : styles.textArea}
+              value={formData.descricao}
+              max={300}
+              minLength={10}
+              onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
+              onBlur={() => setErros({ ...erros, descricao: validarNome(formData.descricao) })}
+            />
+            {erros.descricao !== '' ? <MensagemErro mensagem={erros.descricao} /> : null}
+          </Label>
+        </div>
+        <div className={styles.labelContainer}>
+          <input id='dia_todo' type="checkbox" checked={formData.dia_todo} className={styles.checkbox} />
+          <label className={styles.label} htmlFor='dia_todo' onClick={() => setFormData({ ...formData, dia_todo: !formData.dia_todo })} />
+          Evento dura o dia todo
+        </div>
+        <Button tipo='submit' texto='Salvar Evento' />
       </FormContainer>
     </div>
   );

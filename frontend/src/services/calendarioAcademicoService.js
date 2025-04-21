@@ -43,29 +43,20 @@ export const calendarioAcademicoService  = {
       }
   },
 
-    listarEventos: async (idCalendario, mes, ano) => {
-        try {
-            const res = await api.get(`/api/calendario/${idCalendario}/eventos/`, {
-              params: {
-                mes,
-                ano
-              }
-            });
-            return res;
-        } catch (error) {
-            console.error("Erro ao listar eventos do calendário acadêmico:", error);
-            throw error;
-        }
-    },
-
-    porId: async (idCalendario) => {
-    try {
-      const res = await api.get(`/api/obter-calendario-academico/${idCalendario}/`);
-      return res;
-    } catch (error) {
-      console.error("Erro ao obter calendário acadêmico:", error);
-      throw error;
-    }
+  porId: async (idCalendario, mes, ano) => {
+      try {
+          const res = await api.get(`/api/calendario/${idCalendario}/eventos/`, {
+            params: {
+              mes,
+              ano,
+              retorno: 'detalhes'
+            }
+          });
+          return res;
+      } catch (error) {
+          console.error("Erro ao obter calendário acadêmico:", error);
+          throw error;
+      }
   },
 
   editar: async (idCalendario, params) => {
@@ -77,5 +68,47 @@ export const calendarioAcademicoService  = {
       throw error;
     }
   },
+
+  criarEvento: async (params) => {
+    try {
+      const res = await api.post('/api/evento/cadastrar/', params);
+      return res;
+    } catch (error) {
+      if (error.response?.data?.mensagem) {
+        const mensagem = error.response.data.mensagem;
+
+        if (Array.isArray(mensagem)) {
+            throw new Error(JSON.stringify(mensagem));
+        }
+
+        if (typeof mensagem === 'string') {
+            throw new Error(JSON.stringify([mensagem]));
+        }
+      }
+
+      throw new Error(JSON.stringify(["Erro inesperado ao cadastrar evento."]));
+    }
+  },
+
+  editarEvento: async (eventoId, params) => {
+    try {
+      const res = await api.post(`/api/evento/${eventoId}/editar/`, params);
+      return res;
+    } catch (error) {
+      if (error.response?.data?.mensagem) {
+        const mensagem = error.response.data.mensagem;
+
+        if (Array.isArray(mensagem)) {
+            throw new Error(JSON.stringify(mensagem));
+        }
+
+        if (typeof mensagem === 'string') {
+            throw new Error(JSON.stringify([mensagem]));
+        }
+      }
+
+      throw new Error(JSON.stringify(["Erro inesperado ao editar evento."]));
+    }
+  }
 
 };

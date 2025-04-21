@@ -78,6 +78,45 @@ def listar_calendarios(request):
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['PUT'])
+@permission_classes([GestaoEscolar])
+def editar_calendario(request, calendarioId):
+    try:
+        uuid_calendario = uuid.UUID(calendarioId)
+
+        calendario = get_object_or_404(Calendario_Academico, pk=uuid_calendario)
+
+        if calendario.DoesNotExist: return Response({'mensagem': 'Calendário não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = Calendario_Academico_Serializer(calendario, data=request.data)
+
+        if not serializer.is_valid(): raise serializers.ValidationError(serializer.errors)
+
+        serializer.save()
+        return Response({'mensagem': 'Calendário editado com sucesso'}, status=status.HTTP_200_OK)
+    except serializers.ValidationError as e:
+        error_details = e.detail
+        mensagens = []
+
+        if isinstance(error_details, dict):
+            for campo, erros in error_details.items():
+                if campo == "non_field_errors":
+                    for erro in erros:
+                        mensagens.append(str(erro))
+                else:
+                    for erro in erros:
+                        mensagens.append(f"{campo}: {str(erro)}")
+        elif isinstance(error_details, list):
+            for erro in error_details:
+                mensagens.append(str(erro))
+        else:
+            mensagens.append(str(error_details))
+
+        return Response({'mensagem': mensagens}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+
+
 @api_view(['GET'])
 @permission_classes([GestaoEscolar])
 def listar_eventos_calendario(request, calendarioId):
@@ -86,6 +125,7 @@ def listar_eventos_calendario(request, calendarioId):
         uuid_calendario = uuid.UUID(calendarioId)
 
         calendario = get_object_or_404(Calendario_Academico, pk=uuid_calendario)
+        serializer_calendario = Calendario_Academico_Serializer(calendario)
 
         mes = request.query_params.get('mes')
         ano = request.query_params.get('ano')
@@ -121,11 +161,11 @@ def listar_eventos_calendario(request, calendarioId):
             Q(data_fim__month=mes, data_fim__year=ano)
         ).order_by('data_inicio')
 
-        if Evento.DoesNotExist: return Response({'mensagem': 'Nenhum evento encontrado para este mês'}, status=status.HTTP_200_OK)
+        if not eventos: return Response({'calendario': serializer_calendario.data, 'mensagem': 'Nenhum evento encontrado para este mês'}, status=status.HTTP_200_OK)
 
         serializer_eventos = Evento_Serializer(eventos, many=True, context={'request': request})
 
-        return Response(serializer_eventos, status=status.HTTP_200_OK)
+        return Response({'calendario': serializer_calendario.data,'eventos': serializer_eventos.data}, status=status.HTTP_200_OK)
     except Http404 as e:
         return Response(
             {'mensagem': str(e)},
@@ -140,14 +180,62 @@ def listar_eventos_calendario(request, calendarioId):
 @api_view(['POST'])
 @permission_classes([GestaoEscolar])
 def cadastrar_evento(request):
+    data = request.data
     try:
-        serializer_evento = Evento_Serializer(data=request.data)
+        print(data)
+        uuid_calendario = uuid.UUID(data.get('calendario', None))
+        data['calendario'] = uuid_calendario
+
+        serializer_evento = Evento_Serializer(data=data)
 
         if not serializer_evento.is_valid(): raise serializers.ValidationError(serializer_evento.errors)
 
         serializer_evento.save()
 
         return Response({'mensagem': 'Evento cadastrado com sucesso'}, status=status.HTTP_201_CREATED)
+    except serializers.ValidationError as e:
+        error_details = e.detail
+        mensagens = []
+
+        if isinstance(error_details, dict):
+            for campo, erros in error_details.items():
+                if campo == "non_field_errors":
+                    for erro in erros:
+                        mensagens.append(str(erro))
+                else:
+                    for erro in erros:
+                        mensagens.append(f"{campo}: {str(erro)}")
+        elif isinstance(error_details, list):
+            for erro in error_details:
+                mensagens.append(str(erro))
+        else:
+            mensagens.append(str(error_details))
+
+        return Response({'mensagem': mensagens}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['PUT'])
+@permission_classes([GestaoEscolar])
+def editar_evento(request, eventoId):
+    data = request.data
+
+    try:
+        uuid_evento = uuid.UUID(eventoId)
+        uuid_calendario = uuid.UUID(request.data.get('calendario', None))
+
+        data['calendario'] = uuid_calendario
+        evento = get_object_or_404(Evento, pk=uuid_evento)
+
+        if evento.DoesNotExist: return Response({'mensagem': 'Evento não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = Evento_Serializer(evento, data=data)
+
+        if not serializer.is_valid(): raise serializers.ValidationError(serializer.errors)
+
+        serializer.save()
+
+        return Response({'mensagem': 'Evento atualizado com sucesso'}, status=status.HTTP_200_OK)
     except serializers.ValidationError as e:
         error_details = e.detail
         mensagens = []

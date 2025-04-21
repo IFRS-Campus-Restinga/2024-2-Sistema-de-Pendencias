@@ -9,6 +9,9 @@ class Evento(BaseModel):
     descricao = models.CharField(max_length=300, validators=[MinLengthValidator(10)], null=False, blank=False)
     data_inicio = models.DateField(null=False, blank=False)
     data_fim = models.DateField(null=False, blank=False)
+    hora_inicio = models.TimeField(null=True, blank=True)
+    hora_fim = models.TimeField(null=True, blank=True)
+    dia_todo = models.BooleanField(default=True)
     calendario = models.ForeignKey(Calendario_Academico, on_delete=models.DO_NOTHING, null=False, blank=False, related_name='eventos')
 
     class Meta:
