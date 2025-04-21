@@ -49,14 +49,14 @@ table {
 
     tbody {
         font-size: 12px;
+
+        tr:hover {
+            cursor: pointer;
+            transition: all;
+            transition-duration: 0.3s;
+        }
     }
 
-    tr:hover {
-        cursor: pointer;
-        scale: calc(1.03);
-        transition: all;
-        transition-duration: 0.3s;
-    }
 
     tr:nth-child(even) {
         background-color: #f9f9f9;

@@ -1,29 +1,56 @@
 import { api } from "../config/axiosConfig";
 
 export const calendarioAcademicoService  = {
-   criarCalendarioAcademico: async (params) => {
+   criar: async (params) => {
         try {
-            const res = await api.post('/api/cadastrar-calendario-academico/', params);
+            const res = await api.post('/api/calendario/cadastrar/', params);
             return res;
         } catch (error) {
-            console.error("Erro ao cadastrar calendário acadêmico:", error);
-            throw error;
+          if (error.response?.data?.mensagem) {
+            const mensagem = error.response.data.mensagem;
+
+            if (Array.isArray(mensagem)) {
+                throw new Error(JSON.stringify(mensagem));
+            }
+
+            if (typeof mensagem === 'string') {
+                throw new Error(JSON.stringify([mensagem]));
+            }
+        }
+
+        throw new Error(JSON.stringify(["Erro inesperado ao cadastrar calendário."]));
         }
     },
 
-    listarCalendariosAcademicos: async () => {
-        try {
-            const res = await api.get('/api/listar-calendarios-academicos/');
-            return res;
-        } catch (error) {
-            console.error("Erro ao listar calendários acadêmicos:", error);
-            throw error;
-        }
-    },
+    listar: async (retorno, param, pagina) => {
+      try {
+          const res = await api.get(`/api/calendario/listar/`, {
+              params: {
+                  retorno,
+                  page: pagina,
+                  page_size: 10,
+                  busca: param
+              }
+          });
 
-    listarEventosDoCalendario: async (idCalendario) => {
+          return res;
+      } catch (error) {
+          if (error.response) {
+              throw new Error(error.response.data.mensagem || "Erro ao buscar calendarios");
+          }
+
+          throw new Error("Erro inesperado ao buscar calendarios");
+      }
+  },
+
+    listarEventos: async (idCalendario, mes, ano) => {
         try {
-            const res = await api.get(`/api/calendario-academico/${idCalendario}/eventos/`);
+            const res = await api.get(`/api/calendario/${idCalendario}/eventos/`, {
+              params: {
+                mes,
+                ano
+              }
+            });
             return res;
         } catch (error) {
             console.error("Erro ao listar eventos do calendário acadêmico:", error);
@@ -31,7 +58,7 @@ export const calendarioAcademicoService  = {
         }
     },
 
-    obterCalendarioAcademico: async (idCalendario) => {
+    porId: async (idCalendario) => {
     try {
       const res = await api.get(`/api/obter-calendario-academico/${idCalendario}/`);
       return res;
@@ -41,7 +68,7 @@ export const calendarioAcademicoService  = {
     }
   },
 
-  atualizarCalendarioAcademico: async (idCalendario, params) => {
+  editar: async (idCalendario, params) => {
     try {
       const res = await api.put(`/api/atualizar-calendario-academico/${idCalendario}/`, params);
       return res;

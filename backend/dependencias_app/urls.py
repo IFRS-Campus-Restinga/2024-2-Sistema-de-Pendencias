@@ -7,7 +7,7 @@ from dependencias_app.views.professor_views import *
 from dependencias_app.views.aluno_views import *
 from dependencias_app.views.disciplina_views import *
 from dependencias_app.views.curso_views import *
-from dependencias_app.views.evento_views import *
+from dependencias_app.views.calendario_views import *
 from dependencias_app.views.ppt_views import *
 from dependencias_app.views.ped_views import *
 from dependencias_app.views.atividade_views import *
@@ -41,17 +41,13 @@ urlpatterns = [
     path('disciplina/<str:disciplinaId>/', buscar_disciplina),
     path('disciplina/editar/<str:disciplinaId>/', editar_disciplina),
 
-    # views de evento/calendario
-    path('cadastrar-evento/', cadastrar_evento, name='cadastrar_evento'),
-    path('listar-eventos/', listar_eventos, name='listar_eventos'),
-    path('editar-evento/<int:evento_id>/', atualizar_evento, name='atualizar_evento'),
-    path('deletar-evento/<int:evento_id>/', deletar_evento, name='deletar_evento'),
-    path('eventos/<int:evento_id>/', obter_evento, name='obter_evento'),
-    path('cadastrar-calendario-academico/', cadastrar_calendario_academico, name='cadastrar_calendario_academico'),
-    path('listar-calendarios-academicos/', listar_calendarios_academicos, name='listar_calendarios_academicos'),
-    path('calendario-academico/<int:id_pacote>/eventos/', listar_eventos_do_calendario_academico, name='listar_eventos_do_calendario_academico'),
-    path('atualizar-calendario-academico/<int:id_calendario>/', atualizar_calendario_academico, name='atualizar_calendario_academico'),
-    path('obter-calendario-academico/<int:id_calendario>/', obter_calendario_academico, name='obter_calendario_academico'),
+    # views de calendarios
+    path('calendario/cadastrar/', cadastrar_calendario),
+    path('calendario/listar/', listar_calendarios),
+
+    # views de eventos
+    path('eventos/cadastrar/', cadastrar_evento),
+    path('calendario/<str:calendarioId>/eventos/', listar_eventos_calendario),
 
     # view de PPT
     path('ppt/cadastrar/', cadastrar_PPT),

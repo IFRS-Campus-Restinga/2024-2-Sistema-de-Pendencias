@@ -26,10 +26,10 @@ import DetalhesCurso from './pages/base/Gestao/detalhesCurso/DetalhesCurso'
 import CadastroDisciplina from "./pages/base/Gestao/cadastroDisciplina/CadastroDisciplina"
 import ListarDisciplina from './pages/base/Gestao/listarDisciplina/ListarDisciplina'
 // Calendario
-import CalendarioPage from "./pages/base/Gestao/calendario/calendario"
-import EventoCalendarioPage from "./pages/base/Gestao/calendario/eventoCalendario/eventoCalendario"
-import CadastroCalendarioAcademicoPage from './pages/base/Gestao/calendario/calendarioAcademico/cadastroCalendarioAcademico'
-import ListarCalendariosAcademicosPage from './pages/base/Gestao/calendario/calendarioAcademico/listaCalendariosAcademicos'
+import CadastroCalendario from './pages/base/Gestao/cadastroCalendario/cadastroCalendarioAcademico'
+import ListarCalendario from './pages/base/Gestao/listarCalendarios/ListarCalendarios'
+import Calendario from './pages/base/Gestao/calendario/calendario'
+import CadastroEvento from "./pages/base/Gestao/cadastroEvento/CadastroEvento"
 // PED
 import CadastroPED from './pages/base/Gestao/cadastroPED/cadastroPED'
 import DetalhesPEDGestao from './pages/base/Gestao/detalhesDependenciaGestao/DetalhesPEDGestao'
@@ -143,28 +143,28 @@ const router = createBrowserRouter([
                 element: <ListarDisciplina />
             },
             {
-                path: '/Gestão Escolar/calendario',
-                element: <CalendarioPage />
+                path: '/Gestão Escolar/cadastroCalendario',
+                element: <CadastroCalendario />
             },
             {
-                path: '/Gestão Escolar/cadastroCalendarioAcademico',
-                element: <CadastroCalendarioAcademicoPage />
+                path: '/Gestão Escolar/calendarios',
+                element: <ListarCalendario />
             },
             {
-                path: '/Gestão Escolar/calendario/:idCalendario/editar',
-                element: <CadastroCalendarioAcademicoPage />
+                path: '/Gestão Escolar/calendarios/:idCalendario/',
+                element: <Calendario />
             },
             {
-                path: '/Gestão Escolar/CalendariosAcademicos',
-                element: <ListarCalendariosAcademicosPage />
+                path: '/Gestão Escolar/calendarios/:idCalendario/editar',
+                element: <CadastroCalendario />
             },
             {
-                path: '/Gestão Escolar/eventoCalendario',
-                element: <EventoCalendarioPage />
+                path: '/Gestão Escolar/cadastroEvento/',
+                element: <CadastroEvento />
             },
             {
-                path: '/Gestão Escolar/calendario/evento/:idEvento',
-                element: <EventoCalendarioPage />
+                path: '/Gestão Escolar/calendarios/evento/:idEvento/',
+                element: <CadastroEvento />
             },
             {
                 path: '/Gestão Escolar/cadastroPED',

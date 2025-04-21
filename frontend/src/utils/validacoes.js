@@ -133,3 +133,13 @@ export const validarTurma = (turma) => {
     return ''
 }
 
+export const validarComparacaoDatas = (data1, data2) => {
+    if (!data1 || data1 === '' || !data2 || data2 === '') return 'Campo obrigatório'
+
+    if (data2 < data1) return 'Data final não pode ser inferior a data de início'
+
+    if (data1 === data2) return 'As datas de início e final não podem ser iguais'
+
+    return ''
+}
+
