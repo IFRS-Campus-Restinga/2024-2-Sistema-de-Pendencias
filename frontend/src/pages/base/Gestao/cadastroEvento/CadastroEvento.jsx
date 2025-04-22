@@ -32,19 +32,40 @@ const CadastroEvento = () => {
   });
 
   const fetchEvento = async () => {
+    let req;
     try {
-      const res = await calendarioAcademicoService.eventoPorId(state.evento, 'detalhes')
+      if (state.evento) {
+        req = Promise.all([
+          calendarioAcademicoService.eventoPorId(state.evento, 'detalhes'),
+          calendarioAcademicoService.porId(state.calendario)
+        ]);
+      } else {
+        req = calendarioAcademicoService.porId(state.calendario);
+      }
 
-      if (res.status !== 200) throw Error(res.message)
+      const res = await req;
 
-      setFormData({ ...res.data.evento, calendario: state.calendario })
-      setCalendario(res.data.calendario)
+      // Verifica se é um array e se as respostas são bem-sucedidas
+      if (Array.isArray(res)) {
+        const [eventoResponse, calendarioResponse] = res;
+
+        if (eventoResponse.status !== 200) throw new Error(eventoResponse.message);
+        if (calendarioResponse.status !== 200) throw new Error(calendarioResponse.message);
+
+        setFormData({ ...eventoResponse.data, calendario: state.calendario });
+        setCalendario(calendarioResponse.data);
+      } else {
+        if (res.status !== 200) throw new Error(res.message);
+        setCalendario(res.data);
+      }
+
     } catch (error) {
-      console.error(error.message)
+      console.error('Erro ao buscar evento:', error.message);
     } finally {
-      setCarregando(false)
+      setCarregando(false);
     }
-  }
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -157,17 +178,9 @@ const CadastroEvento = () => {
   }
 
   useEffect(() => {
-    if (state.evento) {
-      fetchEvento()
-    } else {
-      setFormData({ ...formData, data_inicio: state.dataSelecionada, data_fim: state.dataSelecionada })
-      setCarregando(false)
-    }
+    fetchEvento()
+    setFormData({ ...formData, data_inicio: state.dataSelecionada, data_fim: state.dataSelecionada })
   }, [state]);
-
-  useEffect(() => {
-    console.log(formData)
-  }, [formData])
 
   return (
     <div className='perfilContainer'>
@@ -199,7 +212,7 @@ const CadastroEvento = () => {
                     tipo={'date'}
                     valor={formData.data_inicio}
                     dataMinima={new Date().toISOString().split('T')[0]}
-                    max={new Date(calendario.data_fim).toISOString().split('T')[0]}
+                    dataMaxima={calendario.data_fim}
                     onChange={(e) => setFormData({ ...formData, data_inicio: e.target.value })}
                     onBlur={() => setErros({ ...erros, data_inicio: validarData(formData.data_inicio) })}
                     erro={erros.data_inicio}
@@ -211,7 +224,7 @@ const CadastroEvento = () => {
                     tipo={'date'}
                     valor={formData.data_fim}
                     dataMinima={new Date().toISOString().split('T')[0]}
-                    max={new Date(calendario.data_fim).toISOString().split('T')[0]}
+                    dataMaxima={calendario.data_fim}
                     onChange={(e) => setFormData({ ...formData, data_fim: e.target.value })}
                     onBlur={() => setErros({ ...erros, data_fim: validarData(formData.data_fim) })}
                     erro={erros.data_fim}

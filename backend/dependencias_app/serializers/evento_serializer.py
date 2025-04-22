@@ -75,25 +75,6 @@ class Evento_Serializer(serializers.ModelSerializer):
             representation.pop('hora_inicio', None)
             representation.pop('hora_fim', None)
             representation.pop('dia_todo', None)
-        else:
-            representation['evento'] = {
-                'titulo': instance.titulo,
-                'descricao': instance.descricao,
-                'data_inicio': instance.data_inicio,
-                'data_fim': instance.data_fim,
-                'hora_inicio': instance.hora_inicio,
-                'hora_fim': instance.hora_fim,
-                'dia_todo': instance.dia_todo,
-            }
-            representation['calendario'] = Calendario_Academico_Serializer(instance.calendario).data
-
-            representation.pop('data_inicio')
-            representation.pop('data_fim')
-            representation.pop('hora_inicio')
-            representation.pop('hora_fim')
-            representation.pop('titulo')
-            representation.pop('dia_todo')
-            representation.pop('descricao')
     
 
         return representation

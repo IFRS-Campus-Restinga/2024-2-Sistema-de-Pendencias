@@ -1,6 +1,6 @@
 import styles from './Input.module.css'
 
-const Input = ({ tipo, textoAjuda, erro, onChange, onBlur, valor, desabilitado, alinharCentro, nome, dataMinima, lista, tiposDeArquivo, fonte, id, max, cor }) => {
+const Input = ({ tipo, textoAjuda, erro, onChange, onBlur, valor, desabilitado, alinharCentro, nome, dataMinima, lista, tiposDeArquivo, fonte, id, max, cor, dataMaxima }) => {
   return (
     <input
       id={id}
@@ -18,6 +18,7 @@ const Input = ({ tipo, textoAjuda, erro, onChange, onBlur, valor, desabilitado, 
       }}
       min={dataMinima}
       maxLength={max}
+      max={dataMaxima}
       list={lista}
       accept={tiposDeArquivo}
     />

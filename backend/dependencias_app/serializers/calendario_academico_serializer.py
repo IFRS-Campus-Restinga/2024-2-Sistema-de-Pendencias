@@ -1,3 +1,5 @@
+
+from django.db.models import Q
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from dependencias_app.models.calendario_academico import Calendario_Academico
@@ -49,10 +51,9 @@ class Calendario_Academico_Serializer(serializers.ModelSerializer):
         if instance is not None:
             queryset = queryset.exclude(pk=instance.pk)
 
-        # Verificar sobreposição de datas
         overlapping_calendars = queryset.filter(
-            data_inicio__lte=data_final,
-            data_fim__gte=data_inicio
+             Q (data_inicio__lte=data_final, data_fim__gte=data_inicio) | 
+             Q (data_inicio__gte=data_inicio, data_fim__lte=data_final)
         ).exists()
 
         if overlapping_calendars:
