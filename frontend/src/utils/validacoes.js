@@ -146,7 +146,7 @@ export const validarComparacaoDatas = (data1, data2, datasIguais) => {
 export const validarHorario = (horario) => {
    if (!horario || typeof horario !== "string") return 'Campo obrigatório';
   
-    const regex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+   const regex = /^([01]\d|2[0-3]):([0-5]\d)(:([0-5]\d))?$/;
   
     if (!regex.test(horario)) return 'Formato de horário inválido';
 
@@ -156,7 +156,7 @@ export const validarHorario = (horario) => {
 export const validarComparacaoHorario = (horario1, horario2) => {
     if (!horario1 || !horario2) return 'Horários obrigatórios';
 
-    const regex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    const regex = /^([01]\d|2[0-3]):([0-5]\d)(:([0-5]\d))?$/;
 
     if (!regex.test(horario1) || !regex.test(horario2)) {
         return 'Formato de horário inválido';

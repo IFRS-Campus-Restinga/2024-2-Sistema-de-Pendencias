@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from dependencias_app.models.evento import Evento
+from dependencias_app.serializers.calendario_academico_serializer import Calendario_Academico_Serializer
 import datetime
 
 class Evento_Serializer(serializers.ModelSerializer):
@@ -21,6 +22,7 @@ class Evento_Serializer(serializers.ModelSerializer):
         hora_inicio = data.get('hora_inicio')
         hora_fim = data.get('hora_fim')
         dia_todo = data.get('dia_todo')
+        instance = self.instance
 
         if data_fim and data_inicio and data_fim < data_inicio:
             raise serializers.ValidationError('Data final não pode ser inferior à data de início do evento')
@@ -31,43 +33,67 @@ class Evento_Serializer(serializers.ModelSerializer):
             
             if data_inicio == data_fim and hora_inicio >= hora_fim:
                 raise serializers.ValidationError('Horário de início deve ser anterior ao horário de fim')
+            
+        if instance and hasattr(instance, 'calendario'):
+            if data_inicio > instance.calendario.data_fim or data_inicio < instance.calendario.data_inicio or data_fim < instance.calendario.data_inicio or data_fim > instance.calendario.data_fim:
+                raise serializers.ValidationError('As datas de início e fim de um evento devem estar dentro do calendário ao qual pertencem.')
 
         return data
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        data_inicio = instance.data_inicio
-        data_fim = instance.data_fim
-        hora_inicio = instance.hora_inicio
-        hora_fim = instance.hora_fim
+        request = self.context.get('request', None)
+        retorno = request and request.query_params.get('retorno')
 
-        if data_inicio and hora_inicio:
-            # Junta data + hora para 'start'
-            start_datetime = datetime.datetime.combine(data_inicio, hora_inicio)
-            representation['start'] = start_datetime.strftime('%Y-%m-%dT%H:%M:%S')
-        elif data_inicio:
-            representation['start'] = data_inicio.strftime('%Y-%m-%dT%H:%M:%S')
+
+        if retorno != 'detalhes':
+            data_inicio = instance.data_inicio
+            data_fim = instance.data_fim
+            hora_inicio = instance.hora_inicio
+            hora_fim = instance.hora_fim
+
+            if data_inicio and hora_inicio:
+                # Junta data + hora para 'start'
+                data_inicio_datetime = datetime.datetime.combine(data_inicio, hora_inicio)
+                representation['data_inicio'] = data_inicio_datetime.strftime('%Y-%m-%dT%H:%M:%S')
+            elif data_inicio:
+                representation['data_inicio'] = data_inicio.strftime('%Y-%m-%dT%H:%M:%S')
+            else:
+                representation['data_inicio'] = None
+
+            if data_fim and hora_fim:
+                data_fim_datetime = datetime.datetime.combine(data_fim, hora_fim)
+                representation['data_fim'] = data_fim_datetime.strftime('%Y-%m-%dT%H:%M:%S')
+            elif data_fim:
+                representation['data_fim'] = data_fim.strftime('%Y-%m-%dT%H:%M:%S')
+            else:
+                representation['data_fim'] = None
+
+            representation['allDay'] = instance.dia_todo
+
+            representation.pop('hora_inicio', None)
+            representation.pop('hora_fim', None)
+            representation.pop('dia_todo', None)
         else:
-            representation['start'] = None
+            representation['evento'] = {
+                'titulo': instance.titulo,
+                'descricao': instance.descricao,
+                'data_inicio': instance.data_inicio,
+                'data_fim': instance.data_fim,
+                'hora_inicio': instance.hora_inicio,
+                'hora_fim': instance.hora_fim,
+                'dia_todo': instance.dia_todo,
+            }
+            representation['calendario'] = Calendario_Academico_Serializer(instance.calendario).data
 
-        if data_fim and hora_fim:
-            end_datetime = datetime.datetime.combine(data_fim, hora_fim)
-            representation['end'] = end_datetime.strftime('%Y-%m-%dT%H:%M:%S')
-        elif data_fim:
-            representation['end'] = data_fim.strftime('%Y-%m-%dT%H:%M:%S')
-        else:
-            representation['end'] = None
-
-        representation['allDay'] = instance.dia_todo
-        representation['title'] = instance.titulo
-
-        # Remove campos originais
-        representation.pop('data_inicio', None)
-        representation.pop('data_fim', None)
-        representation.pop('hora_inicio', None)
-        representation.pop('hora_fim', None)
-        representation.pop('titulo', None)
-        representation.pop('dia_todo', None)
+            representation.pop('data_inicio')
+            representation.pop('data_fim')
+            representation.pop('hora_inicio')
+            representation.pop('hora_fim')
+            representation.pop('titulo')
+            representation.pop('dia_todo')
+            representation.pop('descricao')
+    
 
         return representation

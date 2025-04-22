@@ -8,6 +8,7 @@
 .textArea,
 .textAreaErro {
     border-radius: 8px;
+    padding: 8px;
 
     &:focus {
         outline: none;

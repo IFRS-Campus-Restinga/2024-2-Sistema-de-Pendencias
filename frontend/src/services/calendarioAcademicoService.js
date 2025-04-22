@@ -44,14 +44,21 @@ export const calendarioAcademicoService  = {
   },
 
   porId: async (idCalendario, mes, ano) => {
+    let req
+
+    if (mes && ano) {
+      req = api.get(`/api/calendario/${idCalendario}/eventos/`, {
+        params: {
+          mes,
+          ano,
+          retorno: 'detalhes'
+        }
+      });
+    } else {
+      req = api.get(`api/calendario/${idCalendario}/`)
+    }
       try {
-          const res = await api.get(`/api/calendario/${idCalendario}/eventos/`, {
-            params: {
-              mes,
-              ano,
-              retorno: 'detalhes'
-            }
-          });
+          const res = await req
           return res;
       } catch (error) {
           console.error("Erro ao obter calendário acadêmico:", error);
@@ -61,11 +68,22 @@ export const calendarioAcademicoService  = {
 
   editar: async (idCalendario, params) => {
     try {
-      const res = await api.put(`/api/atualizar-calendario-academico/${idCalendario}/`, params);
+      const res = await api.put(`/api/calendario/${idCalendario}/editar/`, params);
       return res;
     } catch (error) {
-      console.error("Erro ao atualizar calendário acadêmico:", error);
-      throw error;
+      if (error.response?.data?.mensagem) {
+        const mensagem = error.response.data.mensagem;
+
+        if (Array.isArray(mensagem)) {
+            throw new Error(JSON.stringify(mensagem));
+        }
+
+        if (typeof mensagem === 'string') {
+            throw new Error(JSON.stringify([mensagem]));
+        }
+      }
+
+      throw new Error(JSON.stringify(["Erro inesperado ao cadastrar calendário."]));
     }
   },
 
@@ -90,9 +108,26 @@ export const calendarioAcademicoService  = {
     }
   },
 
-  editarEvento: async (eventoId, params) => {
+  eventoPorId: async (eventoId) => {
     try {
-      const res = await api.post(`/api/evento/${eventoId}/editar/`, params);
+      const res = await api.get(`api/evento/${eventoId}/`, 
+        {
+          params: {
+            retorno: 'detalhes'
+          }
+        }
+      )
+
+      return res
+    } catch (error) {
+      console.error("Erro ao obter evento:", error);
+      throw error;
+    }
+  },
+
+  editarEvento: async (params, eventoId) => {
+    try {
+      const res = await api.put(`/api/evento/${eventoId}/editar/`, params);
       return res;
     } catch (error) {
       if (error.response?.data?.mensagem) {

@@ -163,7 +163,7 @@ const router = createBrowserRouter([
                 element: <CadastroEvento />
             },
             {
-                path: '/Gestão Escolar/calendarios/evento/:idEvento/',
+                path: '/Gestão Escolar/calendarios/:idCalendario/eventos/:idEvento/editar',
                 element: <CadastroEvento />
             },
             {

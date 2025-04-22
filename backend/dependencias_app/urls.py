@@ -44,11 +44,13 @@ urlpatterns = [
     # views de calendarios
     path('calendario/cadastrar/', cadastrar_calendario),
     path('calendario/listar/', listar_calendarios),
+    path('calendario/<str:calendarioId>/', obter_calendario),
     path('calendario/<str:calendarioId>/editar/', editar_calendario),
 
     # views de eventos
     path('evento/cadastrar/', cadastrar_evento),
     path('calendario/<str:calendarioId>/eventos/', listar_eventos_calendario),
+    path('evento/<str:eventoId>/', obter_evento),
     path('evento/<str:eventoId>/editar/', editar_evento),
 
     # view de PPT

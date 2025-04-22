@@ -36,7 +36,7 @@ class Calendario_Academico_Serializer(serializers.ModelSerializer):
         data_inicio = data.get('data_inicio')
         data_final = data.get('data_fim')
         tipo_calendario = data.get('tipo_calendario')
-        instance = self.instance  # Para verificar se é uma atualização
+        instance = self.instance 
 
         if data_inicio == data_final: 
             raise serializers.ValidationError('As datas de início e fim de um calendário não podem ser iguais')
@@ -59,5 +59,10 @@ class Calendario_Academico_Serializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Já existe um calendário deste tipo com datas que se sobrepõem ao período informado'
             )
-
+        
+        if instance and hasattr(instance, 'eventos'):
+            for evento in instance.eventos.all():
+                if evento.data_inicio < data_inicio or evento.data_inicio > data_final:
+                    raise serializers.ValidationError('Existem eventos cadastrados em períodos fora das datas de início e final fornecidos.')
+        
         return data

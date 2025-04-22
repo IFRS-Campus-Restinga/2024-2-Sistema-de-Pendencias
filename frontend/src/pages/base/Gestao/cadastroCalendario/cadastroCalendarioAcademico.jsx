@@ -31,6 +31,18 @@ const CadastroCalendario = () => {
     });
   };
 
+  const fetchCalendario = async () => {
+    try {
+      const res = await calendarioAcademicoService.porId(state)
+
+      if (res.status !== 200) throw new Error(res.message)
+
+      setFormData(res.data)
+    } catch (error) {
+      console.error(error.message)
+    }
+  }
+
   const validarForm = () => {
     let novosErros = {
       titulo: '',
@@ -127,6 +139,10 @@ const CadastroCalendario = () => {
       );
     }
   };
+
+  useEffect(() => {
+    fetchCalendario()
+  }, [state])
 
   return (
     <div className="perfilContainer">

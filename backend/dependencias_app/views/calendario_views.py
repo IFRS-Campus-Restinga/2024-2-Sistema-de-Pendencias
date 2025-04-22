@@ -86,14 +86,17 @@ def editar_calendario(request, calendarioId):
 
         calendario = get_object_or_404(Calendario_Academico, pk=uuid_calendario)
 
-        if calendario.DoesNotExist: return Response({'mensagem': 'Calendário não encontrado'}, status=status.HTTP_404_NOT_FOUND)
-
         serializer = Calendario_Academico_Serializer(calendario, data=request.data)
 
         if not serializer.is_valid(): raise serializers.ValidationError(serializer.errors)
 
         serializer.save()
         return Response({'mensagem': 'Calendário editado com sucesso'}, status=status.HTTP_200_OK)
+    except Http404 as e:
+        return Response(
+            {'mensagem': str(e)},
+            status=status.HTTP_404_NOT_FOUND
+        )
     except serializers.ValidationError as e:
         error_details = e.detail
         mensagens = []
@@ -116,6 +119,27 @@ def editar_calendario(request, calendarioId):
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
 
+@api_view(['GET'])
+@permission_classes([GestaoEscolar])
+def obter_calendario(request, calendarioId):
+    try:
+        uuid_calendario = uuid.UUID(calendarioId)
+
+        calendario = get_object_or_404(Calendario_Academico, pk=uuid_calendario)
+
+        serializer = Calendario_Academico_Serializer(calendario)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Http404 as e:
+        return Response(
+            {'mensagem': str(e)},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        return Response(
+            {'mensagem': f'Um erro inesperado ocorreu: {str(e)}'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar])
@@ -163,7 +187,7 @@ def listar_eventos_calendario(request, calendarioId):
 
         if not eventos: return Response({'calendario': serializer_calendario.data, 'mensagem': 'Nenhum evento encontrado para este mês'}, status=status.HTTP_200_OK)
 
-        serializer_eventos = Evento_Serializer(eventos, many=True, context={'request': request})
+        serializer_eventos = Evento_Serializer(eventos, many=True)
 
         return Response({'calendario': serializer_calendario.data,'eventos': serializer_eventos.data}, status=status.HTTP_200_OK)
     except Http404 as e:
@@ -215,6 +239,28 @@ def cadastrar_evento(request):
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['GET'])
+@permission_classes([GestaoEscolar])
+def obter_evento(request, eventoId):
+    try:
+        uuid_evento = uuid.UUID(eventoId)
+
+        evento = get_object_or_404(Evento, pk=uuid_evento)
+
+        serializer = Evento_Serializer(evento, context={'request': request})
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Http404 as e:
+        return Response(
+            {'mensagem': str(e)},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        return Response(
+            {'mensagem': f'Um erro inesperado ocorreu: {str(e)}'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
 @api_view(['PUT'])
 @permission_classes([GestaoEscolar])
 def editar_evento(request, eventoId):
@@ -226,8 +272,6 @@ def editar_evento(request, eventoId):
 
         data['calendario'] = uuid_calendario
         evento = get_object_or_404(Evento, pk=uuid_evento)
-
-        if evento.DoesNotExist: return Response({'mensagem': 'Evento não encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = Evento_Serializer(evento, data=data)
 

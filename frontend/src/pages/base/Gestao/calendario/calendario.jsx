@@ -5,7 +5,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ptBR } from 'date-fns/locale';
-import { format, parse, startOfWeek, getDay, isAfter } from 'date-fns';
+import { format, parse, startOfWeek, getDay, isAfter, parseISO } from 'date-fns';
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import styles from './calendario.module.css';
 import { calendarioAcademicoService } from '../../../../services/calendarioAcademicoService';
@@ -42,11 +42,17 @@ const Calendario = () => {
 
             if (res.status !== 200) throw new Error(res.message)
 
-            if (res.data.eventos?.length > 0) setEventos(res.data.eventos);
+            if (res.data.eventos?.length > 0) {
+                setEventos(res.data.eventos.map(e => ({
+                    ...e,
+                    start: parseISO(e.data_inicio),
+                    end: parseISO(e.data_fim),
+                })));
+            };
             setCalendario(res.data.calendario)
 
             const hoje = new Date();
-            const dataInicio = parse(res.data.calendario.data_inicio, 'dd/MM/yyyy', new Date());
+            const dataInicio = new Date(res.data.calendario.data_inicio);
 
             const data = isAfter(hoje, dataInicio) ? hoje : dataInicio
 
@@ -60,12 +66,13 @@ const Calendario = () => {
 
     const handleNavigate = (novaData, view) => {
         setDataAtual(novaData);
+        setEventos([])
     };
 
     const handleDayClick = (slotInfo) => {
         const dataSelecionada = slotInfo.start;
 
-        const fim = parse(calendario.data_fim, 'dd/MM/yyyy', new Date());
+        const fim = new Date(calendario.data_fim);
 
         if (dataSelecionada < dataMinima || dataSelecionada > fim) {
             toast.warn("Data fora do período do calendário");
@@ -79,13 +86,6 @@ const Calendario = () => {
             },
         });
     };
-
-    const formattedEvents = eventos.map(event => ({
-        ...event,
-        start: new Date(event.start),
-        end: event.end ? new Date(event.end) : new Date(event.start),
-        allDay: event.allDay
-    }));
 
     useEffect(() => {
         fetchCalendario();
@@ -102,18 +102,19 @@ const Calendario = () => {
                         <div className={styles.calendarioContainer}>
                             <Calendar
                                 localizer={localizer}
-                                events={formattedEvents}
+                                events={eventos}
                                 startAccessor="start"
                                 endAccessor="end"
+                                titleAccessor="titulo"
                                 style={{ height: 500 }}
                                 min={dataMinima}
-                                max={parse(calendario.data_fim, 'dd/MM/yyyy', new Date())}
+                                max={new Date(calendario.data_fim)}
                                 culture="pt-BR"
                                 onNavigate={handleNavigate}
                                 selectable
                                 onSelectSlot={handleDayClick}
                                 dayPropGetter={(date) => {
-                                    const fim = parse(calendario.data_fim, 'dd/MM/yyyy', new Date());
+                                    const fim = new Date(calendario.data_fim)
 
                                     const isInRange = date >= dataMinima && date <= fim;
 
@@ -150,17 +151,19 @@ const Calendario = () => {
                         <ul className={styles.containerEventos}>
                             Lista de eventos
                             {
-                                formattedEvents.length > 0 ? (
-                                    formattedEvents.map((evento) => (
+                                eventos.length > 0 ? (
+                                    eventos.map((evento) => (
                                         <li className={styles.evento}>
-                                            <Link to={`eventos/${evento.id}/`} style={{ textDecoration: 'none' }}>
+                                            <Link to={`eventos/${evento.id}/editar/`} state={{ evento: evento.id, calendario: state }} style={{ textDecoration: 'none' }}>
                                                 <p className={styles.tituloEvento}>
-                                                    {evento.title}
+                                                    {evento.titulo}
                                                 </p>
                                             </Link>
                                         </li>
                                     ))
-                                ) : null
+                                ) : (
+                                    <p className={styles.mensagem}>Nenhum evento encontrado para este mês</p>
+                                )
                             }
                         </ul>
                     </div>

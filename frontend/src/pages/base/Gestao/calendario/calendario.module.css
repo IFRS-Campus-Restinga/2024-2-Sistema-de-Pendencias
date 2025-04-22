@@ -18,6 +18,8 @@
     height: 100%;
     margin-top: 50px;
     align-items: center;
+    font-weight: 700;
+    color: #333;
 }
 
 .evento {
@@ -29,24 +31,23 @@
     font-size: 12px;
     border-radius: 8px;
     padding: 12px;
+
+    &:hover {
+        cursor: pointer;
+        transition: all;
+        transition-duration: 0.2s;
+        background-color: #ccc;
+
+        .tituloEvento {
+            color: white;
+        }
+    }
 }
 
 .tituloEvento {
     font-family: 'Roboto';
     text-align: center;
     color: #333;
-}
-
-.evento:hover {
-    cursor: pointer;
-    scale: calc(1.03);
-    transition: all;
-    transition-duration: 0.2s;
-    background-color: #ccc;
-
-    &:hover .tituloEvento {
-        color: white;
-    }
 }
 
 .slotValido {
@@ -61,4 +62,14 @@
 
 .slotDesabilitado {
     cursor: not-allowed;
+}
+
+.mensagem {
+    font-size: 12px;
+    color: #333;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #ccc;
+    text-align: center;
 }
