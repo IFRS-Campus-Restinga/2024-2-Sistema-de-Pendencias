@@ -71,10 +71,9 @@ class Curso_Serializer(serializers.ModelSerializer):
         elif retorno == 'dependencia':
             if hasattr(instance, 'turmas'):
                 representation['turmas'] = Turma_Serializer(instance.turmas.all(), many=True).data
-            if hasattr(instance, 'disciplinas'):
-                representation['disciplinas'] = Disciplina_Serializer(instance.disciplinas.all().order_by('nome'), many=True).data
             
             representation.pop('coordenador')
+            representation.pop('disciplinas')
 
         elif retorno == 'detalhes':
             representation['coordenador'] = {"id": instance.coordenador.id, "email": instance.coordenador.email}

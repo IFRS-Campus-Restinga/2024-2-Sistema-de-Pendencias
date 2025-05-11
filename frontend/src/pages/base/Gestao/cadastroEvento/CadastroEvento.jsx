@@ -45,7 +45,6 @@ const CadastroEvento = () => {
 
       const res = await req;
 
-      // Verifica se é um array e se as respostas são bem-sucedidas
       if (Array.isArray(res)) {
         const [eventoResponse, calendarioResponse] = res;
 

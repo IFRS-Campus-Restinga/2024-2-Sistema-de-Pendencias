@@ -13,6 +13,7 @@
 .listaOpcoes {
     display: flex;
     flex-direction: column;
+    list-style: none;
 }
 
 .listaOpcoes li:first-child {

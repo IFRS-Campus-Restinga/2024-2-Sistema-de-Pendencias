@@ -92,11 +92,11 @@ def listar_cursos(request):
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar])
-def listar_por_modalidade(request, modalidade):
+def buscar_por_modalidade(request, modalidade, nome):
     try:
-        cursos = Curso.objects.filter(modalidade=modalidade)
+        cursos = Curso.objects.filter(modalidade=modalidade).filter(nome__icontains=nome)
 
-        serializer = Curso_Serializer(cursos, many=True)
+        serializer = Curso_Serializer(cursos, many=True, context={'request': request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:

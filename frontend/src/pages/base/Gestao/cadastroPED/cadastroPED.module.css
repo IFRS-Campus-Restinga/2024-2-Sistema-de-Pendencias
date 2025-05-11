@@ -1,10 +1,10 @@
-.sectionCadastroPED {
+.section {
     width: 100%;
     display: flex;
     align-items: center;
 }
 
-.spanCadastroPED {
+.span {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -12,43 +12,25 @@
     justify-content: center;
 }
 
-.pCadastroPED {
+.p {
     font-size: 15px;
     margin: 10px;
     font-weight: bold;
 }
 
-.divCadastroPED {
+.formGroup {
     width: 50%;
     padding: 7px;
-}
-
-.labelCadastroPED {
     display: flex;
     flex-direction: column;
-    font-size: 15px;
-    font-weight: bold;
-    margin-top: 7px;
+    gap: 10px;
 }
 
-.selectCadastroPED,
-.errorSelectCadastroPED {
-    font-size: 15px;
-    border: 1px solid #ccc;
-    padding: 7px;
-    border-radius: 8px;
-    margin-top: 5px;
+.inputContainer {
+    position: relative;
 }
 
-.selectCadastroPED {
-    border: 1px solid #ccc;
-}
-
-.errorSelectCadastroPED {
-    border: 2px solid #f00;
-}
-
-.textAreaCadastroPED {
+.textArea {
     font-family: Arial, Helvetica, sans-serif;
     padding: 5px;
     margin-top: 7px;
@@ -56,8 +38,8 @@
     border-radius: 8px;
 }
 
-.selectCadastroPED:focus,
-.textAreaCadastroPED:focus {
+.select:focus,
+.textArea:focus {
     border: 1px solid #797979;
 }
 
@@ -77,6 +59,22 @@
     transition: ease-in-out .2s;
     cursor: pointer;
 
+}
+
+.selectCadastroPED,
+.errorSelectCadastroPED {
+    font-size: 15px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.selectCadastroPED {
+    border: 1px solid #ccc;
+}
+
+.errorSelectCadastroPED {
+    border: 1px solid #f00;
 }
 
 .divTrimestreRec {

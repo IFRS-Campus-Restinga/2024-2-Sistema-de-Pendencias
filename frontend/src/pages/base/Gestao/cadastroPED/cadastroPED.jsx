@@ -1,0 +1,725 @@
+import styles from "./cadastroPED.module.css";
+import Input from "../../../../components/Input/Input";
+import Button from "../../../../components/Button/Button";
+import FormContainer from "../../../../components/FormContainer/FormContainer"; // Importe o FormContainer
+import Switch from '../../../../components/Switch/Switch'
+import OpcoesBusca from "../../../../components/OpcoesBusca.jsx/OpcoesBusca";
+import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS";
+import loadingEMI from '../../../../assets/loading-peds-emi.png'
+import loadingProEJA from '../../../../assets/loading-peds-proeja.png'
+import Label from "../../../../components/Label/Label";
+import MensagemErro from "../../../../components/MensagemErro/MensagemErro";
+import { ToastContainer, toast } from 'react-toastify'
+import React, { useEffect, useState } from "react";
+import cursoService from "../../../../services/cursoService";
+import { PEDService } from "../../../../services/pedService";
+import { useLocation } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
+import { calendarioAcademicoService } from "../../../../services/calendarioAcademicoService";
+import { UsuarioService } from "../../../../services/usuarioService";
+import { validarAnoSemestreReprov, validarCampoUUID4, validarSerieProgressao } from "../../../../utils/validacoes";
+import { disciplinaService } from "../../../../services/disciplinaService";
+
+const CadastroPED = () => {
+  const location = useLocation()
+  const { state } = location || {}
+  const tipoPed = location.pathname.split('/')[5];
+  const [carregando, setCarregando] = useState(true)
+  const [modalidade, setModalidade] = useState(tipoPed ?? 'Integrado')
+  const [turmas, setTurmas] = useState([])
+  const [opcoesAlunos, setOpcoesAlunos] = useState([])
+  const [opcoesProfessoresPED, setOpcoesProfessoresPED] = useState([])
+  const [opcoesProfessoresDisciplina, setOpcoesProfessoresDisciplina] = useState([])
+  const [opcoesCalendarios, setOpcoesCalendarios] = useState([])
+  const [opcoesCursos, setOpcoesCursos] = useState([])
+  const [opcoesDisciplinas, setOpcoesDisciplinas] = useState([])
+  const [erros, setErros] = useState({});
+  const [desabilitado, setDesabilitado] = useState(false)
+  const [formData, setFormData] = useState({
+    aluno: '',
+    professor_ped: '',
+    professor_disciplina: '',
+    curso: '',
+    disciplina: '',
+    turma_atual: '',
+    periodo_letivo: '',
+    serie_progressao: '',
+    trimestre_recuperar: '',
+    observacao: '',
+  });
+
+  const [controleInputs, setControleInputs] = useState({
+    aluno: '',
+    professor_ped: '',
+    professor_disciplina: '',
+    curso: '',
+    disciplina: '',
+    turma_atual: '',
+    ano_semestre_reprov: '',
+    serie_progressao: '',
+    trimestre_recuperar: '',
+    periodo_letivo: '',
+  })
+
+  const serieProgressao = ['1º Ano', '2º Ano', '3º Ano', '4º Ano']
+
+  const handleTrimestreRec = (e) => {
+    const { checked, value } = e.target;
+    let novoTrimestre = formData.trimestre_recuperar.split(', ');
+
+    if (checked) {
+      if (!novoTrimestre.includes(value)) {
+        novoTrimestre.push(value);
+      }
+    } else {
+      novoTrimestre = novoTrimestre.filter(item => item !== value);
+    }
+    novoTrimestre = novoTrimestre.filter(item => item.trim() !== '');
+
+    novoTrimestre.sort();
+
+    setFormData({
+      ...formData,
+      trimestre_recuperar: novoTrimestre.join(', '),
+    });
+
+    setControleInputs({ ...controleInputs, trimestre_recuperar: novoTrimestre.join(', ') })
+  };
+
+  const verificaTrimestres = (trimestre) => {
+    if (modalidade === 'Integrado' && formData.trimestre_recuperar) return formData.trimestre_recuperar.includes(trimestre)
+  }
+
+  const trocaModalidade = (novoValor) => {
+    if (!state) {
+      setModalidade(novoValor);
+      setOpcoesCalendarios(opcoesCalendarios.filter((calendario) => calendario.tipo_calendario === novoValor))
+
+      if (novoValor === 'Integrado') {
+        setFormData({
+          aluno: '',
+          professor_ped: '',
+          professor_disciplina: '',
+          curso: '',
+          disciplina: '',
+          turma_atual: '',
+          serie_progressao: '',
+          trimestre_recuperar: '',
+          observacao: '',
+        })
+
+        setControleInputs({
+          aluno: '',
+          professor_ped: '',
+          professor_disciplina: '',
+          curso: '',
+          disciplina: '',
+          turma_atual: '',
+          serie_progressao: '',
+          trimestre_recuperar: '',
+          observacao: '',
+        })
+      } else {
+        setFormData({
+          aluno: '',
+          professor_ped: '',
+          professor_disciplina: '',
+          curso: '',
+          disciplina: '',
+          ano_semestre_reprov: '',
+          observacao: ''
+        })
+
+        setControleInputs({
+          aluno: '',
+          professor_ped: '',
+          professor_disciplina: '',
+          curso: '',
+          disciplina: '',
+          ano_semestre_reprov: '',
+          observacao: '',
+        })
+      }
+    }
+
+    setErros({})
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  };
+
+  const fetchAlunos = async (e) => {
+    try {
+      const res = await UsuarioService.buscarPorParametro(e.target.value, 'Aluno')
+
+      setOpcoesAlunos(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const fetchProfessores = async (e, tipo) => {
+    try {
+      const res = await UsuarioService.buscarPorParametro(e.target.value, 'Professor')
+
+      if (res.status !== 200) throw new Error(res)
+
+      if (tipo === 'ped') setOpcoesProfessoresPED(res.data)
+      if (tipo === 'disciplina') setOpcoesProfessoresDisciplina(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const fetchCalendarios = async (e) => {
+    try {
+      const res = await calendarioAcademicoService.buscar(modalidade, e.target.value)
+
+      if (res.status !== 200) throw new Error(res)
+
+      setOpcoesCalendarios(res.data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const fetchCurso = async (e) => {
+    try {
+      const res = await cursoService.buscar(e.target.value, modalidade)
+
+      if (res.status !== 200) throw new Error(res)
+
+      setOpcoesCursos(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const fetchDisciplina = async (e) => {
+    try {
+      if (!formData.curso || formData.curso === '') {
+        setErros({ ...erros, disciplina: 'É necessário selecionar um curso antes de buscar uma disciplina' })
+      } else {
+        const res = await disciplinaService.buscar(formData.curso, e.target.value)
+
+        if (res.status !== 200) throw new Error(res)
+
+        setOpcoesDisciplinas(res.data)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const fetchPED = async () => {
+    try {
+      const res = await PEDService.porId(state, tipoPed, "detalhes");
+
+      if (res.status !== 200) throw new Error(res);
+
+    } catch (error) {
+      console.error("Erro ao buscar detalhes da PED:", error.message);
+    } finally {
+      setCarregando(false)
+    }
+  };
+
+  const validarForm = () => {
+
+  }
+
+  useEffect(() => {
+    if (state) {
+      fetchPED()
+    } else {
+      setCarregando(false)
+    }
+  }, [modalidade, state])
+
+  useEffect(() => {
+    console.log(erros)
+  }, [erros])
+
+  if (carregando) return <LoadingIFRS icone={modalidade === 'Integrado' ? loadingEMI : loadingProEJA} />
+
+  return (
+    <>
+      <ToastContainer />
+      <FormContainer onSubmit={handleSubmit} titulo={state ? 'Editar PED' : 'Cadastro PED'}>
+        {Object.keys(erros).length > 0 ? <MensagemErro mensagem={'*Preencha os campos obrigatórios'} /> : null}
+        <span className={styles.span}>
+          <p className={styles.p}>
+            Modalidade
+          </p>
+          <Switch
+            valor1='ProEJA'
+            valor2='Integrado'
+            valor={modalidade}
+            stateHandler={trocaModalidade}
+            imagemCustom={state ? <FontAwesomeIcon icon={faLock} size="xl" color={modalidade === 'Integrado' ? '#006b3f' : '#fff'} /> : <></>}
+          />
+        </span>
+        {
+          modalidade === 'Integrado' ? (
+            <>
+              <section className={styles.section}>
+                <div className={styles.formGroup}>
+                  <Label titulo={'Aluno *'}>
+                    <div className={styles.inputContainer}>
+                      <Input
+                        tipo='text'
+                        nome='aluno'
+                        valor={controleInputs.aluno}
+                        onChange={(e) => {
+                          fetchAlunos(e)
+                          setControleInputs({ ...controleInputs, aluno: e.target.value })
+                        }}
+                        erro={erros.aluno}
+                        textoAjuda='Insira nome ou matrícula do aluno'
+                        desabilitado={desabilitado}
+                      />
+                      {
+                        opcoesAlunos?.length > 0 ? (
+                          <OpcoesBusca
+                            opcoes={opcoesAlunos}
+                            setValor={(opcao) => {
+                              setFormData({ ...formData, aluno: opcao.id })
+                              setControleInputs({ ...controleInputs, aluno: opcao.nome ?? opcao.email })
+                              setOpcoesAlunos([])
+                            }}
+                            chave={opcoesAlunos.every((opcao) => opcao.nome !== null) ? 'nome' : 'email'}
+                          />
+                        ) : null
+                      }
+                    </div>
+                    {erros.aluno !== '' ? <MensagemErro mensagem={erros.aluno} /> : null}
+                  </Label>
+                  <Label titulo={'Docente responsável pela progressão *'}>
+                    <div className={styles.inputContainer}>
+                      <Input
+                        tipo='text'
+                        nome='professor'
+                        valor={controleInputs.professor_ped}
+                        onChange={(e) => {
+                          fetchProfessores(e, 'ped')
+                          setControleInputs({ ...controleInputs, professor_ped: e.target.value })
+                        }}
+                        erro={erros.professor_ped}
+                        textoAjuda='Insira o email ou nome do professor'
+                      />
+                      {
+                        opcoesProfessoresPED?.length > 0 ? (
+                          <OpcoesBusca
+                            opcoes={opcoesProfessoresPED}
+                            setValor={(opcao) => {
+                              setFormData({ ...formData, professor_ped: opcao.id })
+                              setControleInputs({ ...controleInputs, professor_ped: opcao.nome ?? opcao.email })
+                              setOpcoesProfessoresPED([])
+                            }}
+                            chave={opcoesProfessoresPED.every((opcao) => opcao.nome !== null) ? 'nome' : 'email'}
+                          />
+                        ) : null
+                      }
+                    </div>
+                    {erros.professor_ped !== '' ? <MensagemErro mensagem={erros.professor_ped} /> : null}
+                  </Label>
+                  <Label titulo={'Docente que ministrou a disciplina *'}>
+                    <div className={styles.inputContainer}>
+                      <Input
+                        tipo='text'
+                        nome='professor'
+                        valor={controleInputs.professor_disciplina}
+                        onChange={(e) => {
+                          fetchProfessores(e, 'disciplina')
+                          setControleInputs({ ...controleInputs, professor_disciplina: e.target.value })
+                        }}
+                        erro={erros.professor_disciplina}
+                        textoAjuda='Insira o email ou nome do professor'
+                        desabilitado={desabilitado}
+                      />
+                      {
+                        opcoesProfessoresDisciplina?.length > 0 ? (
+                          <OpcoesBusca
+                            opcoes={opcoesProfessoresDisciplina}
+                            setValor={(opcao) => {
+                              setFormData({ ...formData, professor_disciplina: opcao.id })
+                              setControleInputs({ ...controleInputs, professor_disciplina: opcao.nome ?? opcao.email })
+                              setOpcoesProfessoresDisciplina([])
+                            }}
+                            chave={opcoesProfessoresDisciplina.every((opcao) => opcao.nome !== null) ? 'nome' : 'email'}
+                          />
+                        ) : null
+                      }
+                    </div>
+                    {erros.professor_disciplina !== '' ? <MensagemErro mensagem={erros.professor_disciplina} /> : null}
+                  </Label>
+                </div>
+                <div className={styles.formGroup}>
+                  <Label titulo={"Trimestres a Recuperar *"}>
+                    <div className={styles.divTrimestreRec}>
+                      <input className={desabilitado ? styles.checkboxTrimestreDesab : styles.checkboxTrimestre} onChange={handleTrimestreRec} type="checkbox" checked={verificaTrimestres('1º')} value='1º' id="1" hidden disabled={desabilitado} />
+                      <label className={styles.labelTrimestreRec} htmlFor="1">1º Trimestre</label>
+                      <input className={desabilitado ? styles.checkboxTrimestreDesab : styles.checkboxTrimestre} onChange={handleTrimestreRec} type="checkbox" checked={verificaTrimestres('2º')} value='2º' id="2" hidden disabled={desabilitado} />
+                      <label className={styles.labelTrimestreRec} htmlFor="2">2º Trimestre</label>
+                      <input className={desabilitado ? styles.checkboxTrimestreDesab : styles.checkboxTrimestre} onChange={handleTrimestreRec} type="checkbox" checked={verificaTrimestres('3º')} value='3º' id='3' hidden disabled={desabilitado} />
+                      <label className={styles.labelTrimestreRec} htmlFor="3">3º Trimestre</label>
+                    </div>
+                    {erros.trimestre_recuperar !== '' ? <MensagemErro mensagem={erros.trimestre_recuperar} /> : null}
+                  </Label>
+                  <Label titulo={'Período Letivo *'}>
+                    <div className={styles.inputContainer}>
+                      <Input
+                        tipo={'text'}
+                        valor={controleInputs.periodo_letivo}
+                        onChange={(e) => {
+                          setControleInputs({ ...controleInputs, periodo_letivo: e.target.value })
+                          fetchCalendarios(e)
+                        }}
+                        erro={erros.periodo_letivo}
+                        textoAjuda={'Pesquise o calendário escolar'}
+                        desabilitado={desabilitado}
+                      />
+                      {
+                        opcoesCalendarios?.length > 0 ? (
+                          <OpcoesBusca
+                            opcoes={opcoesCalendarios}
+                            setValor={(opcao) => {
+                              setFormData({ ...formData, periodo_letivo: opcao.id })
+                              setControleInputs({ ...controleInputs, periodo_letivo: opcao.titulo })
+                              setOpcoesCalendarios([])
+                            }}
+                            chave={'titulo'}
+                          />
+                        ) : null
+                      }
+                    </div>
+                    {erros.periodo_letivo !== '' ? <MensagemErro mensagem={erros.periodo_letivo} /> : null}
+                  </Label>
+                </div>
+              </section>
+              <section className={styles.section}>
+                <div className={styles.formGroup}>
+                  <Label titulo={'Curso *'}>
+                    <div className={styles.inputContainer}>
+                      <Input
+                        tipo={'text'}
+                        valor={controleInputs.curso}
+                        onChange={(e) => {
+                          setControleInputs({ ...controleInputs, curso: e.target.value })
+                          fetchCurso(e)
+                        }}
+                        erro={erros.curso}
+                        textoAjuda={'Pesquise o Curso'}
+                        desabilitado={desabilitado}
+                      />
+                      {
+                        opcoesCursos?.length > 0 ? (
+                          <OpcoesBusca
+                            opcoes={opcoesCursos}
+                            setValor={(opcao) => {
+                              setFormData({ ...formData, curso: opcao.id })
+                              setControleInputs({ ...controleInputs, curso: opcao.nome })
+                              setTurmas(opcao.turmas)
+                              setOpcoesCursos([])
+                            }}
+                            chave={'nome'}
+                          />
+                        ) : null
+                      }
+                    </div>
+                    {erros.curso !== '' ? <MensagemErro mensagem={erros.curso} /> : null}
+                  </Label>
+                  <Label titulo={'Disciplina *'}>
+                    <div className={styles.inputContainer}>
+                      <Input
+                        tipo={'text'}
+                        valor={controleInputs.disciplina}
+                        onChange={(e) => {
+                          setControleInputs({ ...controleInputs, disciplina: e.target.value })
+                          fetchDisciplina(e)
+                        }}
+                        erro={erros.disciplina}
+                        textoAjuda={'Pesquise a disciplina'}
+                        desabilitado={desabilitado}
+                      />
+                      {
+                        opcoesDisciplinas?.length > 0 ? (
+                          <OpcoesBusca
+                            opcoes={opcoesDisciplinas}
+                            setValor={(opcao) => {
+                              setFormData({ ...formData, disciplina: opcao.id })
+                              setControleInputs({ ...controleInputs, disciplina: opcao.nome })
+                              setOpcoesDisciplinas([])
+                            }}
+                            chave={'nome'}
+                          />
+                        ) : null
+                      }
+                    </div>
+                    {erros.disciplina !== '' ? <MensagemErro mensagem={erros.disciplina} /> : null}
+                  </Label>
+                </div>
+                <div className={styles.formGroup}>
+                  <Label titulo={'Série da Progressão *'}>
+                    <select
+                      className={erros.serie_progressao || erros.turma_serie ? styles.erroselectCadastroPED : styles.selectCadastroPED}
+                      value={formData.serie_progressao}
+                      onChange={(e) => {
+                        setFormData({ ...formData, serie_progressao: e.target.value })
+                      }}
+                      onBlur={() => setErros({ ...erros, serie_progressao: validarSerieProgressao(formData.serie_progressao) })}
+                      disabled={desabilitado}
+                    >
+                      {
+                        !state ? (
+                          <option value=''>{'Selecione uma serie para progressão'}</option>
+                        ) : (<></>)
+                      }
+                      {
+                        serieProgressao.map((serie, index) => (
+                          <option value={serie.id} key={index}>{serie}</option>
+                        ))
+                      }
+                    </select>
+                    {erros.turma_serie !== '' ? <MensagemErro mensagem={erros.turma_serie} /> : null}
+                  </Label>
+                  <Label titulo={'Turma *'}>
+                    <select
+                      className={erros.turma_atual || erros.turma_serie ? styles.erroselectCadastroPED : styles.selectCadastroPED}
+                      value={formData.turma_atual}
+                      onChange={(e) => {
+                        const selectedValue = e.target.value;
+                        const selectedText = e.target.options[e.target.selectedIndex].text;
+
+                        setFormData({ ...formData, turma_atual: selectedValue });
+                        setControleInputs({ ...controleInputs, turma_atual: selectedText });
+                      }}
+                      disabled={desabilitado}
+                    >
+                      {!state && <option value="">{'Selecione uma turma'}</option>}
+                      {turmas?.map((turma, index) => (
+                        <option value={turma.id} key={index}>{turma.numero}</option>
+                      ))}
+                    </select>
+                    {erros.turma_serie !== '' ? <MensagemErro mensagem={erros.turma_serie} /> : null}
+                  </Label>
+                </div>
+              </section>
+            </>
+          ) : (
+            <>
+              <Label titulo={'Aluno *'}>
+                <div className={styles.inputContainer}>
+                  <Input
+                    tipo='text'
+                    nome='aluno'
+                    valor={controleInputs.aluno}
+                    onChange={(e) => {
+                      fetchAlunos(e)
+                      setControleInputs({ ...controleInputs, aluno: e.target.value })
+                    }}
+                    erro={erros.aluno}
+                    textoAjuda='Insira nome ou matrícula do aluno'
+                    desabilitado={desabilitado}
+                  />
+                  {
+                    opcoesAlunos?.length > 0 ? (
+                      <OpcoesBusca
+                        opcoes={opcoesAlunos}
+                        setValor={(opcao) => {
+                          setFormData({ ...formData, aluno: opcao.id })
+                          setControleInputs({ ...controleInputs, aluno: opcao.nome ?? opcao.email })
+                          setOpcoesAlunos([])
+                        }}
+                        chave={opcoesAlunos.every((opcao) => opcao.nome !== null) ? 'nome' : 'email'}
+                      />
+                    ) : null
+                  }
+                </div>
+                {erros.aluno !== '' ? <MensagemErro mensagem={erros.aluno} /> : null}
+              </Label>
+              <Label titulo={'Docente responsável pela progressão *'}>
+                <div className={styles.inputContainer}>
+                  <Input
+                    tipo='text'
+                    nome='professor'
+                    valor={controleInputs.professor_ped}
+                    onChange={(e) => {
+                      fetchProfessores(e, 'ped')
+                      setControleInputs({ ...controleInputs, professor_ped: e.target.value })
+                    }}
+                    erro={erros.professor_ped}
+                    textoAjuda='Insira o email ou nome do professor'
+                  />
+                  {
+                    opcoesProfessoresPED?.length > 0 ? (
+                      <OpcoesBusca
+                        opcoes={opcoesProfessoresPED}
+                        setValor={(opcao) => {
+                          setFormData({ ...formData, professor_ped: opcao.id })
+                          setControleInputs({ ...controleInputs, professor_ped: opcao.nome ?? opcao.email })
+                          setOpcoesProfessoresPED([])
+                        }}
+                        chave={opcoesProfessoresPED.every((opcao) => opcao.nome !== null) ? 'nome' : 'email'}
+                      />
+                    ) : null
+                  }
+                </div>
+                {erros.professor_ped !== '' ? <MensagemErro mensagem={erros.professor_ped} /> : null}
+              </Label>
+              <Label titulo={'Docente que ministrou a disciplina *'}>
+                <div className={styles.inputContainer}>
+                  <Input
+                    tipo='text'
+                    nome='professor'
+                    valor={controleInputs.professor_disciplina}
+                    onChange={(e) => {
+                      fetchProfessores(e, 'disciplina')
+                      setControleInputs({ ...controleInputs, professor_disciplina: e.target.value })
+                    }}
+                    erro={erros.professor_disciplina}
+                    textoAjuda='Insira o email ou nome do professor'
+                    desabilitado={desabilitado}
+                  />
+                  {
+                    opcoesProfessoresDisciplina?.length > 0 ? (
+                      <OpcoesBusca
+                        opcoes={opcoesProfessoresDisciplina}
+                        setValor={(opcao) => {
+                          setFormData({ ...formData, professor_disciplina: opcao.id })
+                          setControleInputs({ ...controleInputs, professor_disciplina: opcao.nome ?? opcao.email })
+                          setOpcoesProfessoresDisciplina([])
+                        }}
+                        chave={opcoesProfessoresDisciplina.every((opcao) => opcao.nome !== null) ? 'nome' : 'email'}
+                      />
+                    ) : null
+                  }
+                </div>
+                {erros.professor_ped !== '' ? <MensagemErro mensagem={erros.professor_ped} /> : null}
+              </Label>
+              <Label titulo={'Curso *'}>
+                <div className={styles.inputContainer}>
+                  <Input
+                    tipo={'text'}
+                    valor={controleInputs.curso}
+                    onChange={(e) => {
+                      setControleInputs({ ...controleInputs, curso: e.target.value })
+                      fetchCurso(e)
+                    }}
+                    erro={erros.curso}
+                    textoAjuda={'Pesquise o Curso'}
+                    desabilitado={desabilitado}
+                  />
+                  {
+                    opcoesCursos?.length > 0 ? (
+                      <OpcoesBusca
+                        opcoes={opcoesCursos}
+                        setValor={(opcao) => {
+                          setFormData({ ...formData, curso: opcao.id })
+                          setControleInputs({ ...controleInputs, curso: opcao.nome })
+                          setOpcoesCursos([])
+                        }}
+                        chave={'nome'}
+                      />
+                    ) : null
+                  }
+                </div>
+                {erros.curso !== '' ? <MensagemErro mensagem={erros.curso} /> : null}
+              </Label>
+              <Label titulo={'Disciplina *'}>
+                <div className={styles.inputContainer}>
+                  <Input
+                    tipo={'text'}
+                    valor={controleInputs.disciplina}
+                    onChange={(e) => {
+                      setControleInputs({ ...controleInputs, disciplina: e.target.value })
+                      fetchDisciplina(e)
+                    }}
+                    erro={erros.disciplina}
+                    textoAjuda={'Pesquise a disciplina'}
+                    desabilitado={desabilitado}
+                  />
+                  {
+                    opcoesDisciplinas?.length > 0 ? (
+                      <OpcoesBusca
+                        opcoes={opcoesDisciplinas}
+                        setValor={(opcao) => {
+                          setFormData({ ...formData, disciplina: opcao.id })
+                          setControleInputs({ ...controleInputs, disciplina: opcao.nome ?? opcao.email })
+                          setOpcoesDisciplinas([])
+                        }}
+                        chave={'nome'}
+                      />
+                    ) : null
+                  }
+                </div>
+                {erros.disciplina !== '' ? <MensagemErro mensagem={erros.disciplina} /> : null}
+              </Label>
+              <Label titulo={'Ano/Semestre de reprovação *'}>
+                <Input
+                  tipo='text'
+                  disabled={desabilitado}
+                  onChange={(e) => {
+                    setFormData({ ...formData, ano_semestre_reprov: e.target.value })
+                  }}
+                  onBlur={() => setErros({ ...erros, ano_semestre_reprov: validarAnoSemestreReprov(formData.ano_semestre_reprov) })}
+                  valor={formData.ano_semestre_reprov}
+                  erro={erros.ano_semestre_reprov}
+                  textoAjuda='Insira no formato Ano/Semestre - xxxx/x'
+                  desabilitado={desabilitado}
+                />
+                {erros.ano_semestre_reprov !== '' ? <MensagemErro mensagem={erros.ano_semestre_reprov} /> : null}
+              </Label>
+              <Label titulo={'Período Letivo *'}>
+                <div className={styles.inputContainer}>
+                  <Input
+                    tipo={'text'}
+                    valor={controleInputs.periodo_letivo}
+                    onChange={(e) => {
+                      setControleInputs({ ...controleInputs, periodo_letivo: e.target.value })
+                      fetchCalendarios(e)
+                    }}
+                    erro={erros.periodo_letivo}
+                    textoAjuda={'Pesquise o calendário escolar'}
+                    desabilitado={desabilitado}
+                  />
+                  {
+                    opcoesCalendarios?.length > 0 ? (
+                      <OpcoesBusca
+                        opcoes={opcoesCalendarios}
+                        setValor={(opcao) => {
+                          setFormData({ ...formData, periodo_letivo: opcao.id })
+                          setControleInputs({ ...controleInputs, periodo_letivo: opcao.nome ?? opcao.email })
+                          setOpcoesCalendarios([])
+                        }}
+                        chave={'titulo'}
+                      />
+                    ) : null
+                  }
+                </div>
+                {erros.periodo_letivo !== '' ? <MensagemErro mensagem={erros.periodo_letivo} /> : null}
+              </Label>
+            </>
+          )
+        }
+        <Label titulo={'Observacao (opcional)'}>
+          <textarea
+            className={styles.textArea}
+            onChange={(e) => {
+
+              setFormData({ ...formData, observacao: e.target.value })
+            }}
+            name="observacao"
+            value={formData.observacao}
+            placeholder="Caso haja alguma observação sobre o aluno, insira aqui"
+          />
+        </Label>
+        <Button color="#006b3f" texto={state ? 'Salvar Alterações' : 'Cadastrar'} tipo="submit" />
+      </FormContainer >
+    </>
+  );
+};
+
+export default CadastroPED;

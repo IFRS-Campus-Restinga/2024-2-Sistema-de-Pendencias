@@ -122,7 +122,7 @@ def listar_por_parametro(request, param, grupo):
             Q(email__icontains=param, grupo__name=grupo) | Q(nome__icontains=param, grupo__name=grupo)
         )
 
-        serializer = Usuario_Serializer(usuarios, many=True)
+        serializer = Usuario_Serializer(usuarios, many=True, context={'request': request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:

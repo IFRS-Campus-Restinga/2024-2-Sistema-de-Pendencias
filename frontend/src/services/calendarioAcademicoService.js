@@ -22,7 +22,7 @@ export const calendarioAcademicoService  = {
         }
     },
 
-    listar: async (retorno, param, pagina) => {
+  listar: async (retorno, param, pagina) => {
       try {
           const res = await api.get(`/api/calendario/listar/`, {
               params: {
@@ -42,6 +42,20 @@ export const calendarioAcademicoService  = {
           throw new Error("Erro inesperado ao buscar calendarios");
       }
   },
+
+  buscar: async (modalidade, param) => {
+    try {
+        const res = await api.get(`/api/calendario/buscar/${modalidade}/${param}/`);
+
+        return res;
+    } catch (error) {
+        if (error.response) {
+            throw new Error(error.response.data.mensagem || "Erro ao buscar calendarios");
+        }
+
+        throw new Error("Erro inesperado ao buscar calendarios");
+    }
+},
 
   porId: async (idCalendario, mes, ano) => {
     let req

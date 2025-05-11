@@ -78,6 +78,21 @@ def listar_calendarios(request):
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['GET'])
+@permission_classes([GestaoEscolar])
+def buscar_por_titulo(request, modalidade, titulo):
+    try:
+        calendarios = Calendario_Academico.objects.filter(titulo__icontains=titulo, tipo_calendario=modalidade)
+
+        if len(calendarios) == 0:
+            return Response([], status=status.HTTP_200_OK)
+        
+        serializer = Calendario_Academico_Serializer(calendarios, context={'request': request}, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 @api_view(['PUT'])
 @permission_classes([GestaoEscolar])
 def editar_calendario(request, calendarioId):

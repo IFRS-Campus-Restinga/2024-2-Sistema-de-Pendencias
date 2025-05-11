@@ -31,19 +31,21 @@ urlpatterns = [
     # views de curso
     path('curso/cadastrar/', cadastrar_curso),
     path('curso/listar/', listar_cursos),
-    path('curso/listar/<str:modalidade>/', listar_por_modalidade),
+    path('curso/buscar/<str:modalidade>/<str:nome>/', buscar_por_modalidade),
     path('curso/<str:cursoId>/', obter_curso),
     path('curso/<str:cursoId>/editar/', editar_curso),
 
     # views de disciplinas
     path('disciplina/cadastrar/', cadastrar_disciplina),
     path('disciplina/listar/', listar_disciplinas),
+    path('disciplina/buscar/<str:cursoId>/<str:nome>/', buscar_por_curso),
     path('disciplina/<str:disciplinaId>/', buscar_disciplina),
     path('disciplina/editar/<str:disciplinaId>/', editar_disciplina),
 
     # views de calendarios
     path('calendario/cadastrar/', cadastrar_calendario),
     path('calendario/listar/', listar_calendarios),
+    path('calendario/buscar/<str:modalidade>/<str:titulo>/', buscar_por_titulo),
     path('calendario/<str:calendarioId>/', obter_calendario),
     path('calendario/<str:calendarioId>/editar/', editar_calendario),
 

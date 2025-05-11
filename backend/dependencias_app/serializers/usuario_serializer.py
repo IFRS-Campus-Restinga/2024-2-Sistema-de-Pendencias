@@ -84,6 +84,8 @@ class Usuario_Serializer(serializers.ModelSerializer):
             representation.pop('is_active')
 
             representation['ativo'] = 'Ativo' if instance.is_active else 'Inativo'
+        elif retorno == 'dependencia':
+            representation = {'id': instance.id, 'nome': instance.nome, 'email': instance.email}
 
         representation['grupo'] = instance.grupo.name if instance.grupo else None
         return representation

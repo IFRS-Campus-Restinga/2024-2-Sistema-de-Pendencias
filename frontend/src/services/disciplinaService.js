@@ -36,6 +36,18 @@ export const disciplinaService = {
     return res
   },
 
+  buscar: async (cursoId, nome) => {
+    const res = await api.get(`api/disciplina/buscar/${cursoId}/${nome}/`, {
+      params: {
+        retorno: 'dependencia'
+      }
+    }).catch((erro) => {
+      throw new Error(erro.message)
+    })
+
+    return res
+  },
+
   porId: async (disciplinaId) => {
     const res = await api.get(`api/disciplina/${disciplinaId}/`).catch((erro) => {
       return erro

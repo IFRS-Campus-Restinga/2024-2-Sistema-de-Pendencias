@@ -61,10 +61,6 @@ const BaseGestao = () => {
         <div className="navItemContainer">
           <Dropdown titulo='Calendário' itens={[
             {
-              name: "Gerenciar Eventos",
-              link: `${homeUrl}/eventos`
-            },
-            {
               name: "Gerenciar Calendário",
               link: `${homeUrl}/calendarios`
             }

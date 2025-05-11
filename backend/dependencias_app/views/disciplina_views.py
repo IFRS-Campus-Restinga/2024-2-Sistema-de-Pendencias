@@ -82,6 +82,25 @@ def listar_disciplinas(request):
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar])
+def buscar_por_curso(request, cursoId, nome):
+    try:
+        uuid_curso = uuid.UUID(cursoId)
+
+        disciplinas = Disciplina.objects.filter(nome__icontains=nome, cursos__id=uuid_curso)
+
+        print(disciplinas)
+
+        if len(disciplinas) == 0:
+            return Response({'disciplinas': []}, status=status.HTTP_200_OK)
+        
+        serializer = Disciplina_Serializer(disciplinas, context={'request': request}, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([GestaoEscolar])
 def buscar_disciplina(request, disciplinaId):
     disciplina = get_object_or_404(Disciplina, pk=disciplinaId)
 

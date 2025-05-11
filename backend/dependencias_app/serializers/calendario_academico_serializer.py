@@ -1,6 +1,4 @@
-
 from django.db.models import Q
-from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from dependencias_app.models.calendario_academico import Calendario_Academico
 
@@ -67,3 +65,17 @@ class Calendario_Academico_Serializer(serializers.ModelSerializer):
                     raise serializers.ValidationError('Existem eventos cadastrados em períodos fora das datas de início e final fornecidos.')
         
         return data
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        request = self.context.get('request', None)
+        retorno = request and request.query_params.get('retorno')
+
+        if retorno == 'dependencia':
+            representation = {
+                'id': instance.id,
+                'titulo': instance.titulo
+            }
+
+        return representation

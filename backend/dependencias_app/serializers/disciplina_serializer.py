@@ -56,4 +56,10 @@ class Disciplina_Serializer(serializers.ModelSerializer):
         if retorno == 'lista' and hasattr(instance, 'cursos'):
             representation['cursos'] = ", ".join([curso.nome for curso in instance.cursos.all()])
 
+        elif retorno == 'dependencia':
+            representation = {
+                "id": instance.id,
+                "nome": instance.nome
+            }
+
         return representation

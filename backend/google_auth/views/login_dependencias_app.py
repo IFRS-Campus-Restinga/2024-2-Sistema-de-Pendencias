@@ -33,6 +33,9 @@ def login_view(request):
         user = Usuario.objects.filter(email=user_info['email']).first()
         if not user:
             raise Exception('Você necessita possuir um email institucional cadastrado para acessar!')
+        
+        if user.is_active == False:
+            raise Exception('Apenas contas ativas podem efetuar login')
 
         user.nome = f'{user_info.get("nome")} {user_info.get("sobrenome")}'
         user.save()

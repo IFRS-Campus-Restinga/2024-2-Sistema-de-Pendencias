@@ -65,18 +65,6 @@ export const cursoService = {
           
               throw new Error(JSON.stringify(["Erro inesperado ao editar curso."]));
         }
-    },    
-
-    porModalidade: async (modalidade, retorno) => {
-        const res = await api.get(`api/listar-cursos/${modalidade}`,{
-            params: {
-                retorno
-            }
-        }).catch((erro) => {
-            return erro
-        })
-
-        return res
     },
 
     // Método para obter um curso pelo ID
@@ -93,6 +81,20 @@ export const cursoService = {
             throw erro;
         }
     },
+
+    buscar: async (nome, modalidade) => {
+        try {
+            const res = await api.get(`api/curso/buscar/${modalidade}/${nome}/`, {
+                params: {
+                    retorno: 'dependencia'
+                }
+            })
+            
+            return res
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
 };
 
 export default cursoService;
