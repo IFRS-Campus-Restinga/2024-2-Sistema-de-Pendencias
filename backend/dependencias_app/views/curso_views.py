@@ -23,7 +23,7 @@ def cadastrar_curso(request):
         turmas = request.data.pop('turmas', [])
         data = request.data
 
-        if data.get('modalidade') == 'Integrado' and not turmas:
+        if data.get('modalidade') == 'Integrado' and len(turmas) == 0:
             raise serializers.ValidationError('Os cursos de modalidade Integrado devem possuir turmas cadastradas.')
 
         serializer_curso = Curso_Serializer(data=data)

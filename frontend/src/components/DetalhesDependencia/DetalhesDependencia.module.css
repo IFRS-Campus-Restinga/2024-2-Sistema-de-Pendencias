@@ -1,16 +1,16 @@
-.sectionDetalhesDependencia {
+.section {
     width: 100%;
     display: flex;
     justify-content: flex-start;
 }
 
-.divDetalhesDependencia {
+.div {
     width: fit-content;
     display: flex;
     flex-direction: column;
 }
 
-.divStatusPED {
+.containerStatus {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -28,7 +28,7 @@
     min-height: 24px;
 }
 
-.labelDetalhesDependencia {
+.label {
     display: flex;
     flex-direction: column;
     font-weight: bold;
@@ -36,28 +36,24 @@
     margin: 10px;
 }
 
-.nomeAlunoPED {
-    font-size: 15px;
-    margin-left: 10px;
-}
-
-.pDetalhesDependencia {
+.p,
+.ul {
     font-weight: 400;
     font-size: 15px;
     margin: 5px;
 }
 
-.spanDetalhesDependencia {
+.span {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
 }
 
-.labelStatusPED {
+.status {
     margin: auto;
 }
 
-.labelCabecalhoDetalhesDependencia {
+.cabecalho {
     background-color: #006b3f;
     color: white;
     font-size: 20px;
@@ -70,7 +66,27 @@
     border-radius: 10px;
 }
 
-.buttons-ped {
+.ul {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+}
+
+.li {
+    display: flex;
+    gap: 5px;
+}
+
+.resp {
+    padding: 3px;
+    font-size: 12px;
+    background-color: #006b3f;
+    color: white;
+    border-radius: 5px;
+    width: fit-content;
+}
+
+.containerBotoes {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -78,42 +94,42 @@
 }
 
 @media (max-width: 1260px) {
-    .divStatusPED {
+    .containerStatus {
         height: 300px;
     }
 
-    .labelDetalhesDependencia {
+    .label {
         font-size: 15px;
     }
 
-    .pDetalhesDependencia {
+    .p {
         font-size: 12px;
     }
 }
 
 @media (max-width: 1000px) {
-    .sectionDetalhesDependencia {
+    .section {
         flex-direction: column;
         align-items: center;
         justify-content: center;
     }
 
-    .labelStatusPED {
+    .status {
         display: none;
     }
 
-    .dadosPED {
+    .dados {
         display: flex;
     }
 
-    .divStatusPED {
+    .containerStatus {
         width: 100%;
         height: max-content;
         flex: none;
         margin: 0;
     }
 
-    .divDetalhesDependencia {
+    .div {
         margin: 10px;
         border: 2px solid #ccc;
         border-radius: 10px;
@@ -127,7 +143,7 @@
 }
 
 @media (max-width: 680px) {
-    .labelDetalhesDependencia {
+    .label {
         font-size: 12px;
     }
 }

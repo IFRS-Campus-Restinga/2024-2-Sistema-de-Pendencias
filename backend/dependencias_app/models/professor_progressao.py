@@ -1,12 +1,17 @@
 from django.db import models
 from .base import BaseModel
 from .ped_EMI import PED_EMI
-from ped_ProEJA import PED_ProEJA
+from .ped_ProEJA import PED_ProEJA
 from google_auth.models import Usuario
+import uuid
 
 class Professor_Progressao(BaseModel):
-    professor = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='progressoes')
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    professor = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='peds')
     responsavel_atual = models.BooleanField(default=True)
+
+    class Meta:
+        abstract = True
 
 
 class Professor_Progressao_EMI(Professor_Progressao):

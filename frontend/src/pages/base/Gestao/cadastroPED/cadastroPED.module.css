@@ -23,11 +23,11 @@
     padding: 7px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
 }
 
 .inputContainer {
     position: relative;
+    margin-bottom: 10px;
 }
 
 .textArea {
@@ -62,7 +62,7 @@
 }
 
 .selectCadastroPED,
-.errorSelectCadastroPED {
+.erroSelectCadastroPED {
     font-size: 15px;
     border: 1px solid #ccc;
     padding: 5px;
@@ -73,7 +73,7 @@
     border: 1px solid #ccc;
 }
 
-.errorSelectCadastroPED {
+.erroSelectCadastroPED {
     border: 1px solid #f00;
 }
 

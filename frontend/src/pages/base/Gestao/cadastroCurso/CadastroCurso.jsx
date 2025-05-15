@@ -71,7 +71,7 @@ const CadastroCurso = () => {
         (async () => {
           const res = await req;
 
-          if (res.status !== 200) {
+          if (res.status !== 201 && res.status !== 200) {
             throw new Error(JSON.stringify(["Erro ao registrar curso"]));
           }
 

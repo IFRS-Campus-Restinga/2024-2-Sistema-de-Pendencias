@@ -8,12 +8,11 @@ import loadingProEJA from '../../../../assets/loading-peds-proeja.png'
 import { jwtDecode } from "jwt-decode"
 
 
-const DetalhesPEDGestao
- = () => {
+const DetalhesPEDGestao = () => {
     const [PED, setPED] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
-    const modalidade = useLocation().pathname.split('/')[5]
-    const pedId = useLocation().state.id
+    const modalidade = useLocation().pathname.split('/')[3]
+    const pedId = useLocation().state
 
     const fetchDetalhesPED = async () => {
         try {
@@ -32,10 +31,10 @@ const DetalhesPEDGestao
         fetchDetalhesPED()
     }, [])
 
-    if (isLoading) return <LoadingIFRS icone={modalidade === 'Integrado' ? loadingEMI : loadingProEJA}/>
+    if (isLoading) return <LoadingIFRS icone={modalidade === 'Integrado' ? loadingEMI : loadingProEJA} />
 
     return (
-        <DetalhesDependencia dependencia={PED} modalidade={modalidade} tipo={'PED'} grupo={jwtDecode(sessionStorage.getItem('token')).grupo}/>
+        <DetalhesDependencia dependencia={PED} modalidade={modalidade} tipo={'PED'} grupo={jwtDecode(sessionStorage.getItem('token')).grupo} />
     )
 }
 

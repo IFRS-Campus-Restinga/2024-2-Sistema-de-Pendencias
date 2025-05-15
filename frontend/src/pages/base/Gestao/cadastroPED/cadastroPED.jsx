@@ -13,7 +13,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import React, { useEffect, useState } from "react";
 import cursoService from "../../../../services/cursoService";
 import { PEDService } from "../../../../services/pedService";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { calendarioAcademicoService } from "../../../../services/calendarioAcademicoService";
@@ -23,8 +23,9 @@ import { disciplinaService } from "../../../../services/disciplinaService";
 
 const CadastroPED = () => {
   const location = useLocation()
+  const redirect = useNavigate()
   const { state } = location || {}
-  const tipoPed = location.pathname.split('/')[5];
+  const tipoPed = location.pathname.split('/')[3];
   const [carregando, setCarregando] = useState(true)
   const [modalidade, setModalidade] = useState(tipoPed ?? 'Integrado')
   const [turmas, setTurmas] = useState([])
@@ -106,6 +107,7 @@ const CadastroPED = () => {
           turma_atual: '',
           serie_progressao: '',
           trimestre_recuperar: '',
+          periodo_letivo: '',
           observacao: '',
         })
 
@@ -119,6 +121,7 @@ const CadastroPED = () => {
           serie_progressao: '',
           trimestre_recuperar: '',
           observacao: '',
+          periodo_letivo: ''
         })
       } else {
         setFormData({
@@ -128,6 +131,7 @@ const CadastroPED = () => {
           curso: '',
           disciplina: '',
           ano_semestre_reprov: '',
+          periodo_letivo: '',
           observacao: ''
         })
 
@@ -139,6 +143,7 @@ const CadastroPED = () => {
           disciplina: '',
           ano_semestre_reprov: '',
           observacao: '',
+          periodo_letivo: ''
         })
       }
     }
@@ -148,11 +153,79 @@ const CadastroPED = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (validarForm()) {
+      let req
+      if (state) {
+        req = PEDService.editar(formData, state, modalidade)
+      } else {
+        req = PEDService.criar(formData, modalidade);
+      }
+
+      toast.promise(
+        (async () => {
+          const res = await req;
+
+          if (res.status !== 200 && res.status !== 201) {
+            throw new Error(JSON.stringify(["Erro ao registrar PED"]));
+          }
+
+          setErros({});
+
+          // Redirecionar após um tempo
+          setTimeout(() => {
+            redirect(`/Gestão Escolar/peds/${modalidade}`);
+          }, 3000);
+
+          return res;
+        })(),
+        {
+          pending: 'Realizando registro...',
+          success: 'Registro realizado com sucesso!',
+          error: {
+            render({ data }) {
+              if (data instanceof Error) {
+                try {
+                  const mensagens = JSON.parse(data.message);
+
+                  if (Array.isArray(mensagens)) {
+                    mensagens.forEach((mensagem, index) => {
+                      if (index > 0) {
+                        toast.error(mensagem, {
+                          autoClose: 3000,
+                          position: 'bottom-center',
+                          style: { textAlign: 'center', whiteSpace: 'pre-line' },
+                        });
+                      }
+                    });
+
+                    return mensagens[0];
+                  }
+
+                  return 'Erro ao registrar PED.';
+                } catch (e) {
+                  return 'Erro inesperado ao processar mensagens.';
+                }
+              }
+
+              return 'Erro ao registrar PED.';
+            }
+          }
+        },
+        {
+          autoClose: 3000,
+          position: 'bottom-center',
+          style: { textAlign: 'center', whiteSpace: 'pre-line' }
+        }
+      );
+    }
   };
 
   const fetchAlunos = async (e) => {
     try {
       const res = await UsuarioService.buscarPorParametro(e.target.value, 'Aluno')
+
+      console.log(res.data)
 
       setOpcoesAlunos(res.data)
     } catch (error) {
@@ -202,6 +275,7 @@ const CadastroPED = () => {
       if (!formData.curso || formData.curso === '') {
         setErros({ ...erros, disciplina: 'É necessário selecionar um curso antes de buscar uma disciplina' })
       } else {
+        setErros({ ...erros, disciplina: '' })
         const res = await disciplinaService.buscar(formData.curso, e.target.value)
 
         if (res.status !== 200) throw new Error(res)
@@ -214,11 +288,16 @@ const CadastroPED = () => {
   }
 
   const fetchPED = async () => {
+    console.log(state)
     try {
-      const res = await PEDService.porId(state, tipoPed, "detalhes");
+      const res = await PEDService.porId(state, modalidade, "edicao");
 
       if (res.status !== 200) throw new Error(res);
 
+      setFormData(res.data.ids)
+      setControleInputs(res.data.valores)
+      setTurmas([{ id: res.data.ids.turma_atual, numero: res.data.valores.turma_atual }])
+      setDesabilitado(true)
     } catch (error) {
       console.error("Erro ao buscar detalhes da PED:", error.message);
     } finally {
@@ -227,10 +306,31 @@ const CadastroPED = () => {
   };
 
   const validarForm = () => {
+    let novosErros = {}
 
+    for (let campo in formData) {
+      if (campo !== 'observacao' && campo !== 'trimestre_recuperar' && campo !== 'serie_progressao' && campo !== 'ano_semestre_reprov') novosErros[campo] = validarCampoUUID4(formData[campo])
+
+      if (campo === 'serie_progressao') {
+        if (formData.serie_progressao === '') novosErros.serie_progressao = 'Campo obrigatório'
+
+        if (formData.serie_progressao[0] >= controleInputs.turma_atual[0]) novosErros.turma_serie = 'Turma atual deve ser superior à série de progressão'
+      }
+
+      if (campo === 'trimestre_recuperar') {
+        if (formData.trimestre_recuperar === '') novosErros.trimestre_recuperar = 'Campo obrigatório'
+      }
+
+      if (campo === 'ano_semestre_reprov') novosErros.ano_semestre_reprov = validarAnoSemestreReprov(formData.ano_semestre_reprov)
+    }
+
+    setErros(novosErros)
+
+    return Object.values(novosErros).every((erro) => erro === '') ?? Object.keys(novosErros).length === 0
   }
 
   useEffect(() => {
+    console.log(state)
     if (state) {
       fetchPED()
     } else {
@@ -238,17 +338,13 @@ const CadastroPED = () => {
     }
   }, [modalidade, state])
 
-  useEffect(() => {
-    console.log(erros)
-  }, [erros])
-
   if (carregando) return <LoadingIFRS icone={modalidade === 'Integrado' ? loadingEMI : loadingProEJA} />
 
   return (
     <>
       <ToastContainer />
       <FormContainer onSubmit={handleSubmit} titulo={state ? 'Editar PED' : 'Cadastro PED'}>
-        {Object.keys(erros).length > 0 ? <MensagemErro mensagem={'*Preencha os campos obrigatórios'} /> : null}
+        {Object.values(erros).some((erro) => erro !== '') ? <MensagemErro mensagem={'*Preencha os campos obrigatórios'} /> : null}
         <span className={styles.span}>
           <p className={styles.p}>
             Modalidade
@@ -457,14 +553,14 @@ const CadastroPED = () => {
                           />
                         ) : null
                       }
+                      {erros.disciplina !== '' ? <MensagemErro mensagem={erros.disciplina} /> : null}
                     </div>
-                    {erros.disciplina !== '' ? <MensagemErro mensagem={erros.disciplina} /> : null}
                   </Label>
                 </div>
                 <div className={styles.formGroup}>
                   <Label titulo={'Série da Progressão *'}>
                     <select
-                      className={erros.serie_progressao || erros.turma_serie ? styles.erroselectCadastroPED : styles.selectCadastroPED}
+                      className={erros.serie_progressao || erros.turma_serie ? styles.erroSelectCadastroPED : styles.selectCadastroPED}
                       value={formData.serie_progressao}
                       onChange={(e) => {
                         setFormData({ ...formData, serie_progressao: e.target.value })
@@ -487,7 +583,7 @@ const CadastroPED = () => {
                   </Label>
                   <Label titulo={'Turma *'}>
                     <select
-                      className={erros.turma_atual || erros.turma_serie ? styles.erroselectCadastroPED : styles.selectCadastroPED}
+                      className={erros.turma_atual || erros.turma_serie ? styles.erroSelectCadastroPED : styles.selectCadastroPED}
                       value={formData.turma_atual}
                       onChange={(e) => {
                         const selectedValue = e.target.value;
@@ -537,8 +633,8 @@ const CadastroPED = () => {
                       />
                     ) : null
                   }
+                  {erros.aluno !== '' ? <MensagemErro mensagem={erros.aluno} /> : null}
                 </div>
-                {erros.aluno !== '' ? <MensagemErro mensagem={erros.aluno} /> : null}
               </Label>
               <Label titulo={'Docente responsável pela progressão *'}>
                 <div className={styles.inputContainer}>
@@ -566,8 +662,8 @@ const CadastroPED = () => {
                       />
                     ) : null
                   }
+                  {erros.professor_ped !== '' ? <MensagemErro mensagem={erros.professor_ped} /> : null}
                 </div>
-                {erros.professor_ped !== '' ? <MensagemErro mensagem={erros.professor_ped} /> : null}
               </Label>
               <Label titulo={'Docente que ministrou a disciplina *'}>
                 <div className={styles.inputContainer}>
@@ -596,8 +692,8 @@ const CadastroPED = () => {
                       />
                     ) : null
                   }
+                  {erros.professor_ped !== '' ? <MensagemErro mensagem={erros.professor_ped} /> : null}
                 </div>
-                {erros.professor_ped !== '' ? <MensagemErro mensagem={erros.professor_ped} /> : null}
               </Label>
               <Label titulo={'Curso *'}>
                 <div className={styles.inputContainer}>
@@ -625,8 +721,8 @@ const CadastroPED = () => {
                       />
                     ) : null
                   }
+                  {erros.curso !== '' ? <MensagemErro mensagem={erros.curso} /> : null}
                 </div>
-                {erros.curso !== '' ? <MensagemErro mensagem={erros.curso} /> : null}
               </Label>
               <Label titulo={'Disciplina *'}>
                 <div className={styles.inputContainer}>
@@ -654,23 +750,25 @@ const CadastroPED = () => {
                       />
                     ) : null
                   }
+                  {erros.disciplina !== '' ? <MensagemErro mensagem={erros.disciplina} /> : null}
                 </div>
-                {erros.disciplina !== '' ? <MensagemErro mensagem={erros.disciplina} /> : null}
               </Label>
               <Label titulo={'Ano/Semestre de reprovação *'}>
-                <Input
-                  tipo='text'
-                  disabled={desabilitado}
-                  onChange={(e) => {
-                    setFormData({ ...formData, ano_semestre_reprov: e.target.value })
-                  }}
-                  onBlur={() => setErros({ ...erros, ano_semestre_reprov: validarAnoSemestreReprov(formData.ano_semestre_reprov) })}
-                  valor={formData.ano_semestre_reprov}
-                  erro={erros.ano_semestre_reprov}
-                  textoAjuda='Insira no formato Ano/Semestre - xxxx/x'
-                  desabilitado={desabilitado}
-                />
-                {erros.ano_semestre_reprov !== '' ? <MensagemErro mensagem={erros.ano_semestre_reprov} /> : null}
+                <div className={styles.inputContainer}>
+                  <Input
+                    tipo='text'
+                    disabled={desabilitado}
+                    onChange={(e) => {
+                      setFormData({ ...formData, ano_semestre_reprov: e.target.value })
+                    }}
+                    onBlur={() => setErros({ ...erros, ano_semestre_reprov: validarAnoSemestreReprov(formData.ano_semestre_reprov) })}
+                    valor={formData.ano_semestre_reprov}
+                    erro={erros.ano_semestre_reprov}
+                    textoAjuda='Insira no formato Ano/Semestre - xxxx/x'
+                    desabilitado={desabilitado}
+                  />
+                  {erros.ano_semestre_reprov !== '' ? <MensagemErro mensagem={erros.ano_semestre_reprov} /> : null}
+                </div>
               </Label>
               <Label titulo={'Período Letivo *'}>
                 <div className={styles.inputContainer}>
@@ -691,15 +789,15 @@ const CadastroPED = () => {
                         opcoes={opcoesCalendarios}
                         setValor={(opcao) => {
                           setFormData({ ...formData, periodo_letivo: opcao.id })
-                          setControleInputs({ ...controleInputs, periodo_letivo: opcao.nome ?? opcao.email })
+                          setControleInputs({ ...controleInputs, periodo_letivo: opcao.titulo })
                           setOpcoesCalendarios([])
                         }}
                         chave={'titulo'}
                       />
                     ) : null
                   }
+                  {erros.periodo_letivo !== '' ? <MensagemErro mensagem={erros.periodo_letivo} /> : null}
                 </div>
-                {erros.periodo_letivo !== '' ? <MensagemErro mensagem={erros.periodo_letivo} /> : null}
               </Label>
             </>
           )

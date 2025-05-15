@@ -8,11 +8,11 @@ from django.core.validators import FileExtensionValidator
 
 class PED_ProEJA(Progressao):
     aluno = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='peds_proeja')
-    professor_disciplina = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='proeja_professor_disciplina')
-    disciplina = models.ForeignKey(Disciplina, on_delete=models.DO_NOTHING, related_name='disciplina_ped_proeja')
-    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, related_name='curso_ped_proeja')
+    professor_disciplina = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='peds_proeja_prof_disciplina')
+    disciplina = models.ForeignKey(Disciplina, on_delete=models.DO_NOTHING, related_name='peds_proeja_discplina')
+    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, related_name='peds_proeja_curso')
     ano_semestre_reprov = models.CharField(null=False, blank=False, max_length=6)
-    periodo_letivo = models.ForeignKey(Calendario_Academico, on_delete=models.DO_NOTHING, related_name='periodo_letivo_proeja')
+    periodo_letivo = models.ForeignKey(Calendario_Academico, on_delete=models.DO_NOTHING, related_name='peds_proeja_periodo_letivo')
 
     class Meta:
         abstract = False

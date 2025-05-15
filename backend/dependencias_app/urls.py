@@ -26,7 +26,7 @@ urlpatterns = [
     # cadastra informações adicionais dos alunos e professores
     path('dados-adicionais-aluno/', infos_adicionais_aluno),
     path('dados-adicionais-professor/', infos_adicionais_professor),
-    path('usuario/<str:param>/<str:grupo>', listar_por_parametro),
+    path('usuario/listar/param/<str:grupo>/', listar_por_parametro),
 
     # views de curso
     path('curso/cadastrar/', cadastrar_curso),
@@ -58,17 +58,17 @@ urlpatterns = [
     # view de PPT
     path('ppt/cadastrar/', cadastrar_PPT),
     path('ppt/listar/', listar_PPT),
-    path('ppt/detalhes/<int:pptId>/', detalhes_PPT),
-    path('ppt/editar/<int:pptId>/', editar_ppt),
-    path('ppt/status/<int:pptId>/', trocar_status),
+    path('ppt/detalhes/<str:pptId>/', detalhes_PPT),
+    path('ppt/editar/<str:pptId>/', editar_ppt),
+    path('ppt/status/<str:pptId>/', trocar_status),
     
     # views de PED
     path('ped/<str:modalidade>/cadastrar/', cadastrar_PED),
     path('ped/<str:modalidade>/listar/', listar_PED),
-    path('ped/<str:modalidade>/listar/<int:professorId>/', listar_PED),
-    path('ped/<str:modalidade>/detalhes/<int:pedId>/', detalhes_PED),
-    path('ped/<str:modalidade>/editar/<int:pedId>/', editar_PED),
-    path('ped/<str:modalidade>/desativar/<int:pedId>/', desativar_PED),
+    path('ped/<str:modalidade>/listar/<str:professorId>/', listar_PED),
+    path('ped/<str:modalidade>/detalhes/<str:pedId>/', detalhes_PED),
+    path('ped/<str:modalidade>/editar/<str:pedId>/', editar_PED),
+    path('ped/<str:modalidade>/desativar/<str:pedId>/', desativar_PED),
     path('aluno/dependencias/', listar_dependencias_aluno),
 
     #views para atividades/avaliações

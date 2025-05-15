@@ -55,7 +55,7 @@ export const calendarioAcademicoService  = {
 
         throw new Error("Erro inesperado ao buscar calendarios");
     }
-},
+  },
 
   porId: async (idCalendario, mes, ano) => {
     let req

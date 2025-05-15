@@ -13,7 +13,6 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
     # variáveis de entrada do serializer (POST), recebe as chaves primárias para vincular as tabelas
     aluno = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Aluno'))
     professor_disciplina = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Professor'))
-    professor_ped = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Professor'))
     curso = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.filter(modalidade='Integrado'))
     disciplina = serializers.PrimaryKeyRelatedField(queryset=Disciplina.objects.all())
     periodo_letivo = serializers.PrimaryKeyRelatedField(queryset=Calendario_Academico.objects.filter(tipo_calendario='Integrado'))
@@ -22,20 +21,6 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
     class Meta:
         model = PED_EMI
         fields = '__all__'
-
-    def save(self, **kwargs):
-        formPED_EMI = super().save(**kwargs)
-
-        formPED_EMI.full_clean()
-        formPED_EMI.save()
-
-        # cria notificação para o aluno
-        Notificacao.objects.create(usuario=formPED_EMI.aluno, tipo='PED Integrado', mensagem='Nova PED (Integrado) cadastrada', url=f'{settings.BASE_APP_URL}/sessao/Aluno/{formPED_EMI.aluno.id}/Integrado/{formPED_EMI.id}/detalhes')
-
-        # cria notificação para o professor responsável
-        Notificacao.objects.create(usuario=formPED_EMI.professor_ped, tipo='PED Integrado', mensagem='Você foi registrado como professor responsável por uma PED (Integrado), clique aqui para preencher o Plano de Estudos', url=f'{settings.BASE_APP_URL}/sessao/Professor/{formPED_EMI.professor_ped.id}/Integrado/{formPED_EMI.id}/planoEstudos')
-        
-        return formPED_EMI
     
     def validate(self, attrs):
         validated_data = super().validate(attrs)
@@ -44,19 +29,24 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
         disciplina = validated_data.get('disciplina', None)
         turma_atual = validated_data.get('turma_atual', None)
         serie_progressao = validated_data.get('serie_progressao', None)
+        aluno = validated_data.get('aluno', None)
+
+        if not self.instance:
+        
+            if aluno:
+                peds_emi = aluno.peds_emi.exclude(status='Desativada')
+                peds_proeja = aluno.peds_proeja.exclude(status='Desativada')
+
+                if peds_proeja.exists():
+                    raise serializers.ValidationError({"aluno": "Este aluno possui progressões ativas registradas na modalidade ProEJA"})
+                elif peds_emi.exists() and len(peds_emi) == 2:
+                    raise serializers.ValidationError({"aluno": "O aluno alcançou o número máximo de progressões ativas"})
 
         if not disciplina.cursos.filter(id=curso.id).exists(): raise serializers.ValidationError("Disciplina não vinculada ao curso da PED")
         if not turma_atual.curso == curso: raise serializers.ValidationError("Turma atual não vinculada ao curso da PED")
         if int(turma_atual.numero[0]) <= int(serie_progressao[0]): raise serializers.ValidationError("Série de Progressão não pode ser igual ou superior à turma atual")
 
         return validated_data 
-    
-    
-    def set_disabled(self, ped):
-        ped.status = 'Desativado'
-        ped.save()
-
-        return ped
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -65,46 +55,82 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
         request = self.context.get('request', None)
         retorno = request and request.query_params.get('retorno')
 
+        professor_ped = instance.professores_emi.filter(responsavel_atual=True).first()
+
         if retorno == 'lista':
             # Inclui apenas os campos `id` e os campos configurados manualmente
             representation = {
                 'id': instance.id,
                 'aluno': str(instance.aluno),
                 'professor_disciplina': str(instance.professor_disciplina),
-                'professor_ped': str(instance.professor_ped),
+                'professor_ped': str(professor_ped.professor),
                 'curso': str(instance.curso),
                 'disciplina': str(instance.disciplina),
-                'turma_atual': str(instance.turma_atual),
                 'status': instance.status
             }
         
-        elif retorno == 'detalhes':
-            representation['aluno'] = {'id': instance.aluno.id, 'nome': str(instance.aluno)}
-            representation['professor_disciplina'] = {'id': instance.professor_disciplina.id, 'nome': str(instance.professor_disciplina)}
-            representation['professor_ped'] = {'id': instance.professor_ped.id, 'nome': str(instance.professor_ped)}
-            representation['curso'] = {'id': instance.curso.id, 'nome': instance.curso.nome}
-            representation['disciplina'] = {'id': instance.disciplina.id, 'nome': instance.disciplina.nome}
-            representation['turma_atual'] = {'id': instance.turma_atual.id, 'numero': instance.turma_atual.numero}
-            representation['periodo_letivo'] = {'id': instance.periodo_letivo.id, 'titulo': instance.periodo_letivo.titulo}
-            
-            plano_estudos = getattr(instance, 'plano_estudos_emi', None)
-
-            if plano_estudos:
-                representation['plano_estudos'] = {
-                    'id': plano_estudos.id,
-                    'aprovado': plano_estudos.aprovado
+        elif retorno == 'edicao':
+            representation = {
+                'ids': {
+                    'aluno': instance.aluno.id,
+                    'professor_ped': professor_ped.professor.id,
+                    'professor_disciplina': instance.professor_disciplina.id,
+                    'curso': instance.curso.id,
+                    'disciplina': instance.disciplina.id,
+                    'trimestre_recuperar': instance.trimestre_recuperar,
+                    'serie_progressao': instance.serie_progressao,
+                    'periodo_letivo': instance.periodo_letivo.id,
+                    'turma_atual': instance.turma_atual.id
+                },
+                'valores': {
+                    'aluno': str(instance.aluno),
+                    'professor_ped': str(professor_ped.professor),
+                    'professor_disciplina': str(instance.professor_disciplina),
+                    'curso': instance.curso.nome,
+                    'disciplina': instance.disciplina.nome,
+                    'trimestre_recuperar': instance.trimestre_recuperar,
+                    'serie_progressao': instance.serie_progressao,
+                    'periodo_letivo': instance.periodo_letivo.titulo,
+                    'turma_atual': instance.turma_atual.numero
                 }
+            }
 
-            representation.pop('data_criacao')
+        elif retorno == 'detalhes':
+            professores_ped = instance.professores_emi.all()
+
+            representation = {
+                'id': instance.id,
+                'aluno': str(instance.aluno),
+                'professor_disciplina': str(instance.professor_disciplina),
+                'curso': instance.curso.nome,
+                'disciplina': instance.disciplina.nome,
+                'trimestre_recuperar': instance.trimestre_recuperar,
+                'serie_progressao': instance.serie_progressao,
+                'periodo_letivo': instance.periodo_letivo.titulo,
+                'turma_atual': instance.turma_atual.numero,
+                'observacao': instance.observacao,
+                'status': instance.status,
+                'professores': [
+                    {
+                        'nome': str(p.professor),
+                        'responsavel_atual': p.responsavel_atual
+                    } for p in professores_ped
+                ]            
+            }
 
         elif retorno == 'aluno':
-            representation['aluno'] = {'id': instance.aluno.id, 'nome': str(instance.aluno)}
-            representation['professor_disciplina'] = {'id': instance.professor_disciplina.id, 'nome': str(instance.professor_disciplina)}
-            representation['professor_ped'] = {'id': instance.professor_ped.id, 'nome': str(instance.professor_ped)}
-            representation['curso'] = {'id': instance.curso.id, 'nome': instance.curso.nome}
-            representation['disciplina'] = {'id': instance.disciplina.id, 'nome': instance.disciplina.nome}
-            representation['turma_atual'] = {'id': instance.turma_atual.id, 'numero': instance.turma_atual.numero}
-            representation['periodo_letivo'] = instance.periodo_letivo.data_inicio
+            representation = {
+                'aluno': str(instance.aluno),
+                'professor_ped': str(professor_ped.professor),
+                'professor_disciplina': str(instance.professor_disciplina),
+                'curso': instance.curso.nome,
+                'disciplina': instance.disciplina.nome,
+                'trimestre_recuperar': instance.trimestre_recuperar,
+                'serie_progressao': instance.serie_progressao,
+                'periodo_letivo': instance.periodo_letivo.titulo,
+                'turma_atual': instance.turma_atual.numero,
+                'status': instance.status
+            }
 
             plano_estudos = getattr(instance, 'plano_estudos_emi', None)
 
@@ -113,7 +139,6 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
                     'aprovado': plano_estudos.aprovado
                 }
 
-            representation.pop('data_criacao')
-
-
         return representation
+    
+

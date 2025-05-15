@@ -9,14 +9,14 @@ from dependencias_app.enums.trimestres_rec import Trimestre_Rec
 from dependencias_app.enums.serie_progressao import Serie_Progressao
 
 class PED_EMI(Progressao):
-    aluno = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='aluno_ped_emi')
-    professor_disciplina = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='professor_disciplina_emi')
-    disciplina = models.ForeignKey(Disciplina, on_delete=models.DO_NOTHING, related_name='disciplina_ped_emi')
-    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, related_name='curso_ped_emi')
+    aluno = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='peds_emi')
+    professor_disciplina = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='peds_emi_prof_disciplina')
+    disciplina = models.ForeignKey(Disciplina, on_delete=models.DO_NOTHING, related_name='peds_emi_disciplina')
+    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, related_name='peds_emi_curso')
     trimestre_recuperar = models.CharField(null=False, blank=False, choices=Trimestre_Rec.choices, max_length=10)
     serie_progressao = models.CharField(null=False, blank=False, choices=Serie_Progressao.choices, max_length=6)
     turma_atual = models.ForeignKey(Turma, on_delete=models.DO_NOTHING)
-    periodo_letivo = models.ForeignKey(Calendario_Academico, on_delete=models.DO_NOTHING, related_name='periodo_letivo_emi')    
+    periodo_letivo = models.ForeignKey(Calendario_Academico, on_delete=models.DO_NOTHING, related_name='peds_emi_periodo_letivo')    
 
     class Meta:
         abstract = False

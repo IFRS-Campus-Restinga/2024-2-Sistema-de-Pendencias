@@ -116,8 +116,14 @@ def get_infos_usuario(request, idUsuario):
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar | RegistroEscolar])
-def listar_por_parametro(request, param, grupo):
+def listar_por_parametro(request, grupo):
+    param = request.query_params.get('param', None)
+
+    print(param)
     try:
+        if param == '':
+            return Response([], status=status.HTTP_200_OK)
+        
         usuarios = Usuario.objects.filter(
             Q(email__icontains=param, grupo__name=grupo) | Q(nome__icontains=param, grupo__name=grupo)
         )

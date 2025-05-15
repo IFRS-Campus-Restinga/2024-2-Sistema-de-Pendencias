@@ -27,9 +27,10 @@ export const UsuarioService = {
     },
 
     buscarPorParametro: async (param, grupo) => {
-        const res = await api.get(`api/usuario/${param}/${grupo}`, {
+        const res = await api.get(`api/usuario/listar/param/${grupo}/`, {
             params: {
-                retorno: 'dependencia'
+                param,
+                retorno: 'dependencia',
             }
         }).catch((erro) => {
             return erro
