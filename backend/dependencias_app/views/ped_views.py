@@ -166,10 +166,11 @@ def editar_PED(request, modalidade, pedId):
 
         ped = get_object_or_404(modelo, pk=pedId)
 
-        # Atualiza os dados principais da PED
         serializer_ped = serializer_class(ped, data=data)
+
         if not serializer_ped.is_valid():
             raise serializers.ValidationError(serializer_ped.errors)
+        
         serializer_ped.save()
 
         # Cria o novo vínculo de professor responsável

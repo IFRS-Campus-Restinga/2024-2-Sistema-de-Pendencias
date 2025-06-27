@@ -40,12 +40,6 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
         if not disciplina.cursos.filter(id=curso.id).exists(): raise serializers.ValidationError("Disciplina não vinculada ao curso da PED")
 
         return validated_data
-    
-    def set_disabled(self, ped):
-        ped.status = 'Desativado'
-        ped.save()
-
-        return ped
      
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -76,10 +70,8 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
                     'professor_disciplina': instance.professor_disciplina.id,
                     'curso': instance.curso.id,
                     'disciplina': instance.disciplina.id,
-                    'trimestre_recuperar': instance.trimestre_recuperar,
-                    'serie_progressao': instance.serie_progressao,
+                    'ano_semestre_reprov': instance.ano_semestre_reprov,              
                     'periodo_letivo': instance.periodo_letivo.id,
-                    'turma_atual': instance.turma_atual.id
                 },
                 'valores': {
                     'aluno': str(instance.aluno),
@@ -87,10 +79,8 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
                     'professor_disciplina': str(instance.professor_disciplina),
                     'curso': instance.curso.nome,
                     'disciplina': instance.disciplina.nome,
-                    'trimestre_recuperar': instance.trimestre_recuperar,
-                    'serie_progressao': instance.serie_progressao,
+                    'ano_semestre_reprov': instance.ano_semestre_reprov,
                     'periodo_letivo': instance.periodo_letivo.titulo,
-                    'turma_atual': instance.turma_atual.numero
                 }
             }
 
@@ -103,12 +93,10 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
                 'professor_disciplina': str(instance.professor_disciplina),
                 'curso': instance.curso.nome,
                 'disciplina': instance.disciplina.nome,
-                'trimestre_recuperar': instance.trimestre_recuperar,
-                'serie_progressao': instance.serie_progressao,
                 'periodo_letivo': instance.periodo_letivo.titulo,
-                'turma_atual': instance.turma_atual.numero,
                 'observacao': instance.observacao,
                 'status': instance.status,
+                'ano_semestre_reprov': instance.ano_semestre_reprov,
                 'professores': [
                     {
                         'nome': str(p.professor),
@@ -124,10 +112,8 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
                 'professor_disciplina': str(instance.professor_disciplina),
                 'curso': instance.curso.nome,
                 'disciplina': instance.disciplina.nome,
-                'trimestre_recuperar': instance.trimestre_recuperar,
-                'serie_progressao': instance.serie_progressao,
+                'ano_semestre_reprov': instance.ano_semestre_reprov,
                 'periodo_letivo': instance.periodo_letivo.titulo,
-                'turma_atual': instance.turma_atual.numero,
                 'status': instance.status
             }
 

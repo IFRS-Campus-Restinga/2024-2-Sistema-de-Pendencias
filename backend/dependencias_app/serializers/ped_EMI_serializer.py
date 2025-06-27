@@ -32,7 +32,7 @@ class PED_EMI_Serializer(serializers.ModelSerializer):
         aluno = validated_data.get('aluno', None)
 
         if not self.instance:
-        
+         
             if aluno:
                 peds_emi = aluno.peds_emi.exclude(status='Desativada')
                 peds_proeja = aluno.peds_proeja.exclude(status='Desativada')

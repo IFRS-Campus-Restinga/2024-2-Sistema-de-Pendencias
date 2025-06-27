@@ -4,7 +4,6 @@ from .calendario_academico import Calendario_Academico
 from .disciplina import Disciplina
 from .curso import Curso
 from google_auth.models import Usuario
-from django.core.validators import FileExtensionValidator
 
 class PED_ProEJA(Progressao):
     aluno = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='peds_proeja')

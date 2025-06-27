@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from django.utils import timezone
-from google_auth.models import Usuario
 from dependencias_app.models.curso import Curso
 from dependencias_app.models.disciplina import Disciplina
 from dependencias_app.models.turma import Turma
@@ -11,9 +10,9 @@ from django.conf import settings
 
 class PPT_Serializer(serializers.ModelSerializer):
     # variáveis de entrada do serializer (POST), recebe as chaves primárias das tabelas que se relacionam com ppt
-    aluno = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Aluno'))
-    professor_ppt = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Professor'))
-    professor_disciplina = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(grupo__name='Professor'))
+    aluno = serializers.PrimaryKeyRelatedField()
+    professor_ppt = serializers.PrimaryKeyRelatedField()
+    professor_disciplina = serializers.PrimaryKeyRelatedField()
     curso = serializers.PrimaryKeyRelatedField(queryset=Curso.objects.filter(modalidade='Integrado'))
     disciplina = serializers.PrimaryKeyRelatedField(queryset=Disciplina.objects.all())
     turma_atual = serializers.PrimaryKeyRelatedField(queryset=Turma.objects.all())

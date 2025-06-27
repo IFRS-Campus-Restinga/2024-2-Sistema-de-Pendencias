@@ -6,6 +6,7 @@ from .ped_ProEJA import PED_ProEJA
 from dependencias_app.enums.status_atividade import Status_Atividade
 
 class Avaliacao_Atividade(BaseModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     data_entrega = models.DateField(null=True, blank=True)
     data_criacao = models.DateField(auto_now_add=True)
     status = models.CharField(choices=Status_Atividade.choices, max_length=12, default='Não Avaliada')

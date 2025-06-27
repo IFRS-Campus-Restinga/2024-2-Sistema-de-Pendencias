@@ -78,12 +78,13 @@ export const PEDService = {
     }
   },
 
-  desativar: async (pedId, params, modalidade) => {
-    const res = await api.post(`api/ped/${modalidade}/desativar/${pedId}/`, params);
+  desativar: async (modalidade, pedId) => {
+    try {
+      const res = await api.put(`api/ped/desativar/${modalidade}/${pedId}/`);
       
-    return {
-      status: res.status,
-      mensagem: res.mensagem
+      return res
+    } catch (error) {
+      throw new Error(error.message)
     }
   }
 }

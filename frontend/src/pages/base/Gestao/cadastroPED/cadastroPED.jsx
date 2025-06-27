@@ -37,6 +37,7 @@ const CadastroPED = () => {
   const [opcoesDisciplinas, setOpcoesDisciplinas] = useState([])
   const [erros, setErros] = useState({});
   const [desabilitado, setDesabilitado] = useState(false)
+  const [botaoDesabilitado, setBotaoDesabilitado] = useState(false)
   const [formData, setFormData] = useState({
     aluno: '',
     professor_ped: '',
@@ -154,6 +155,8 @@ const CadastroPED = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setBotaoDesabilitado(true)
+
     if (validarForm()) {
       let req
       if (state) {
@@ -219,6 +222,8 @@ const CadastroPED = () => {
         }
       );
     }
+
+    setBotaoDesabilitado(false)
   };
 
   const fetchAlunos = async (e) => {
@@ -288,7 +293,6 @@ const CadastroPED = () => {
   }
 
   const fetchPED = async () => {
-    console.log(state)
     try {
       const res = await PEDService.porId(state, modalidade, "edicao");
 
@@ -330,7 +334,6 @@ const CadastroPED = () => {
   }
 
   useEffect(() => {
-    console.log(state)
     if (state) {
       fetchPED()
     } else {
@@ -814,7 +817,7 @@ const CadastroPED = () => {
             placeholder="Caso haja alguma observação sobre o aluno, insira aqui"
           />
         </Label>
-        <Button color="#006b3f" texto={state ? 'Salvar Alterações' : 'Cadastrar'} tipo="submit" />
+        <Button color="#006b3f" texto={state ? 'Salvar Alterações' : 'Cadastrar'} tipo="submit" disabled={botaoDesabilitado} />
       </FormContainer >
     </>
   );

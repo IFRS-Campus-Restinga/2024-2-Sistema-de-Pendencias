@@ -17,39 +17,6 @@ class CursoPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100 
 
-@api_view(['POST'])
-@permission_classes([GestaoEscolar])
-def cadastrar_calendario(request):
-    try:
-        serializer = Calendario_Academico_Serializer(data=request.data)
-
-        if not serializer.is_valid(): raise serializers.ValidationError(serializer.errors)
-
-        serializer.save()
-    
-        return Response({'message': 'Calendário cadastrado com sucesso!'}, status=status.HTTP_201_CREATED)
-    except serializers.ValidationError as e:
-        error_details = e.detail
-        mensagens = []
-
-        if isinstance(error_details, dict):
-            for campo, erros in error_details.items():
-                if campo == "non_field_errors":
-                    for erro in erros:
-                        mensagens.append(str(erro))
-                else:
-                    for erro in erros:
-                        mensagens.append(f"{campo}: {str(erro)}")
-        elif isinstance(error_details, list):
-            for erro in error_details:
-                mensagens.append(str(erro))
-        else:
-            mensagens.append(str(error_details))
-
-        return Response({'mensagem': mensagens}, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
 @api_view(['GET'])
 @permission_classes([GestaoEscolar])
 def listar_calendarios(request):
@@ -92,47 +59,6 @@ def buscar_por_titulo(request, modalidade, titulo):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-@api_view(['PUT'])
-@permission_classes([GestaoEscolar])
-def editar_calendario(request, calendarioId):
-    try:
-        uuid_calendario = uuid.UUID(calendarioId)
-
-        calendario = get_object_or_404(Calendario_Academico, pk=uuid_calendario)
-
-        serializer = Calendario_Academico_Serializer(calendario, data=request.data)
-
-        if not serializer.is_valid(): raise serializers.ValidationError(serializer.errors)
-
-        serializer.save()
-        return Response({'mensagem': 'Calendário editado com sucesso'}, status=status.HTTP_200_OK)
-    except Http404 as e:
-        return Response(
-            {'mensagem': str(e)},
-            status=status.HTTP_404_NOT_FOUND
-        )
-    except serializers.ValidationError as e:
-        error_details = e.detail
-        mensagens = []
-
-        if isinstance(error_details, dict):
-            for campo, erros in error_details.items():
-                if campo == "non_field_errors":
-                    for erro in erros:
-                        mensagens.append(str(erro))
-                else:
-                    for erro in erros:
-                        mensagens.append(f"{campo}: {str(erro)}")
-        elif isinstance(error_details, list):
-            for erro in error_details:
-                mensagens.append(str(erro))
-        else:
-            mensagens.append(str(error_details))
-
-        return Response({'mensagem': mensagens}, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
 
 @api_view(['GET'])
 @permission_classes([GestaoEscolar])

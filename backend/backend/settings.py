@@ -13,9 +13,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,11 +31,7 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:3000"]
-CSRF_ALLOWED_ORIGINS = ["http://127.0.0.1:3000"]
-CORS_ORIGINS_WHITELIST = ["http://127.0.0.1:3000"]
-CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:3000"]
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -48,14 +44,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'dependencias_app',
-    'google_auth',
     'rest_framework',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -69,7 +64,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            f'{BASE_DIR}/backend/google_auth/templates',  # Para o Google Auth
             os.path.join(BASE_DIR, 'dependencias_app', 'templates_email')  # Para templates de e-mail
         ],
         'APP_DIRS': True,
@@ -86,11 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
-MEDIA_URL = '/media/'  # URL pública para acessar os arquivos
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Diretório local onde os arquivos serão armazenados
-
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -103,27 +92,7 @@ DATABASES = {
 
 CORS_ALLOWED_HEADERS = [
     'Content-Type',
-    'X-CSRFToken',
 ]
-
-CSRF_COOKIE_SAMESITE = 'Lax'  
-SESSION_COOKIE_SAMESITE = 'Lax' 
-
-CSRF_COOKIE_SECURE = False  
-SESSION_COOKIE_SECURE = False 
-
-CSRF_COOKIE_HTTPONLY = False
-SESSION_COOKIE_HTTPONLY = True
-
-AUTH_USER_MODEL = 'google_auth.Usuario'
-
-SESSION_COOKIE_AGE = 86400 
-CSRF_COOKIE_AGE = 86400
-
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-CSRF_ESPIRE_AT_BROWSER_CLOSE = True
-
-CORS_ALLOW_CREDENTIALS = True
 
 # Configuração de email do sistema
 
@@ -131,9 +100,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False  # Não use SSL se estiver usando TLS
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  # Coloque o email no .env
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # Coloque a senha de app no .env
+EMAIL_USE_SSL = False 
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -180,7 +149,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 GOOGLE_OAUTH2_CLIENT_ID = os.getenv('GOOGLE_OAUTH2_CLIENT_ID')
 GOOGLE_OAUTH2_CLIENT_SECRET = os.getenv('GOOGLE_OAUTH2_CLIENT_SECRET')
 GOOGLE_OAUTH2_PROJECT_ID = os.getenv('GOOGLE_OAUTH2_PROJECT_ID')
-REDIRECT_URI = os.getenv('REDIRECT_URI')
-BASE_APP_URL = os.getenv('BASE_APP_URL')
-BASE_API_URL = os.getenv('BASE_API_URL')
-LOGIN_URL = os.getenv('LOGIN_URL')
+BASE_SYSTEM_URL = os.getenv('BASE_SYSTEM_URL')

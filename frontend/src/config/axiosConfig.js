@@ -1,5 +1,4 @@
 import axios from "axios";
-import Cookies from 'js-cookie'
 
 // Criação da instância do axios
 export const api = axios.create({
@@ -11,15 +10,35 @@ export const api = axios.create({
 });
 
 // Interceptor para adicionar o token JWT em cada requisição
-api.interceptors.request.use(
-  (config) => {
-    const csrftoken = Cookies.get('csrftoken') // Obtendo o token
-    if (csrftoken) {
-      config.headers['X-CSRFToken'] = `${csrftoken}`; // Nome correto do header
+api.interceptors.response.use(
+    response => response,
+    async error => {
+        const originalRequest = error.config;
+
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+
+            try {
+                const refreshResponse = await axios.post(
+                    `${import.meta.env.VITE_API_URL}/api/token/refresh/`,
+                    null,
+                    { withCredentials: true }
+                );
+
+                const newAccessToken = refreshResponse.data.access;
+                sessionStorage.setItem("access", newAccessToken);
+                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+                return api(originalRequest);
+            } catch (err) {
+                console.log("Erro ao renovar o token:", err);
+                return Promise.reject(err);
+            }
+        }
+
+        return Promise.reject(error);
     }
-    return config; // Retorna a configuração da requisição
-  },
-  (erro) => {
-    return Promise.reject(erro); // Retorna erro, se houver
-  }
 );
+
+
+export default api;

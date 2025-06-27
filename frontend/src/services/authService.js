@@ -1,19 +1,15 @@
-import {api} from '../config/axiosConfig'
+import api from "../config/axiosConfig";
 
 export const authService = {
-    login: async (params) => {
-        const res = await api.post('/auth/api/login/google/', params).catch((erro) => {
-            return erro
-        })
+  obterTokens: async (user, system) => {
+    const res = await api.get(`/tokens/`, {
+      withCredentials: true,
+      params: {
+        system,
+        user,
+      },
+    });
 
-        return res
-    },
-
-    logout: async () => {
-        const res = await api.post(`/auth/api/logout/google/`).catch((erro) => {
-            return erro
-        })
-
-        return res
-    }
-}
+    return res;
+  },
+};

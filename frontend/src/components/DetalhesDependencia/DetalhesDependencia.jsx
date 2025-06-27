@@ -7,17 +7,15 @@ import Dropdown from "../Dropdown/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import Modal from '../Modal/Modal'
+import { PEDService } from "../../services/pedService";
+import { PPTService } from "../../services/pptService";
+import { toast } from "react-toastify";
 
 const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
   const redirect = useNavigate()
+  const [botaoDesabilitado, setBotaoDesabilitado] = useState(false)
   const [modalAberto, setModalAberto] = useState(false);
-  const [modalConfirmacaoAberto, setModalConfirmacaoAberto] = useState(false);
-
-  const abrirModal = () => setModalAberto(true);
-  const fecharModal = () => setModalAberto(false);
-
-  const abrirModalConfirmacao = () => setModalConfirmacaoAberto(true);
-  const fecharModalConfirmacao = () => setModalConfirmacaoAberto(false);
 
   const setLink = (id, nome) => {
     if (id) return `${nome}/${id}`
@@ -27,9 +25,66 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
     return null
   }
 
-  useEffect(() => {
-    console.log(dependencia)
-  }, [dependencia])
+  const desativarDependencia = async () => {
+    let req
+
+    setBotaoDesabilitado(true)
+
+    if (tipo === 'PED') req = PEDService.desativar(modalidade, dependencia.id)
+    if (tipo === 'PPT') req = PPTService.trocarStatus(dependencia.id, { status: 'Desativada' })
+
+    toast.promise(
+      (async () => {
+        const res = await req;
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error(JSON.stringify(["Erro ao desativar progressão"]));
+        }
+
+        return res;
+      })(),
+      {
+        pending: 'Desativando progressão...',
+        success: 'Progressão desativada com sucesso!',
+        error: {
+          render({ data }) {
+            if (data instanceof Error) {
+              try {
+                const mensagens = JSON.parse(data.message);
+
+                if (Array.isArray(mensagens)) {
+                  mensagens.forEach((mensagem, index) => {
+                    if (index > 0) {
+                      toast.error(mensagem, {
+                        autoClose: 3000,
+                        position: 'bottom-center',
+                        style: { textAlign: 'center', whiteSpace: 'pre-line' },
+                      });
+                    }
+                  });
+
+                  return mensagens[0];
+                }
+
+                return 'Erro ao desativar progressão.';
+              } catch (e) {
+                return 'Erro inesperado ao processar mensagens.';
+              }
+            }
+
+            return 'Erro ao desativar progressão.';
+          }
+        }
+      },
+      {
+        autoClose: 3000,
+        position: 'bottom-center',
+        style: { textAlign: 'center', whiteSpace: 'pre-line' }
+      }
+    );
+
+    setBotaoDesabilitado(false)
+  }
 
   return (
     <FormContainer
@@ -175,30 +230,6 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
           </div>
         </div>
       </section>
-
-      {/* <Modal
-        estaAberto={modalAberto}
-        aoFechar={fecharModal}
-        mensagem="Você tem certeza que deseja desativar a PED?"
-        textoCancelar="Não"
-        textoOk="Desativar"
-        colorButton={"red"}
-        onClick={handleDesativarClick}
-      />
-
-      <Modal
-        estaAberto={modalConfirmacaoAberto}
-        aoFechar={fecharModalConfirmacao}
-        mensagem="Você tem certeza que deseja encerrar a PED? Essa ação é irreversível."
-        textoCancelar="Não"
-        textoOk="Encerrar"
-        colorButton={"red"}
-        onClick={async () => {
-          fecharModalConfirmacao();
-          await handleEncerrarClick();
-        }}
-      /> */}
-
     </FormContainer>
   );
 };

@@ -7,13 +7,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faCalendarDays, faClipboardList, faHouse, } from "@fortawesome/free-solid-svg-icons";
 import './BaseGestao.css'
 import { jwtDecode } from "jwt-decode";
+import { verificarGrupos } from "../../../utils/permissões";
 
 const BaseGestao = () => {
   const redirect = useNavigate()
-  const homeUrl = `/${jwtDecode(sessionStorage.getItem('token')).grupo}`
+  const homeUrl = `/${verificarGrupos(JSON.parse(sessionStorage.getItem('user')).groups)}`
 
   const validaGestao = () => {
-    const res = validaUsuario('Gestão Escolar')
+    const res = validaUsuario('gestao_escolar')
 
     if (!res.status) {
       if (res.grupo === undefined) redirect('/')

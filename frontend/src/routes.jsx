@@ -11,25 +11,11 @@ import BaseAluno from './pages/base/Aluno/BaseAluno'
 
 // Filhos de Gestao
 import HomeGestao from './pages/base/Gestao/home/HomeGestao'
-// Servidor
-import CadastroServidor from './pages/base/Gestao/cadastroServidor/CadastroServidor'
-import ListarServidor from './pages/base/Gestao/listarServidor/ListarServidor'
-// Aluno
-import CadastroAluno from './pages/base/Gestao/cadastroAluno/CadastroAluno'
-import ListarAluno from './pages/base/Gestao/listarAluno/ListarAluno'
-import EditarAluno from './pages/base/Gestao/editarAluno/EditarAluno'
-// Curso
-import CadastroCurso from './pages/base/Gestao/cadastroCurso/CadastroCurso'
-import ListarCurso from './pages/base/Gestao/listarCurso/ListarCurso'
-import DetalhesCurso from './pages/base/Gestao/detalhesCurso/DetalhesCurso'
-// Disciplina
-import CadastroDisciplina from "./pages/base/Gestao/cadastroDisciplina/CadastroDisciplina"
-import ListarDisciplina from './pages/base/Gestao/listarDisciplina/ListarDisciplina'
-// Calendario
-import CadastroCalendario from './pages/base/Gestao/cadastroCalendario/cadastroCalendarioAcademico'
+
 import ListarCalendario from './pages/base/Gestao/listarCalendarios/ListarCalendarios'
 import Calendario from './pages/base/Gestao/calendario/calendario'
 import CadastroEvento from "./pages/base/Gestao/cadastroEvento/CadastroEvento"
+
 // PED
 import CadastroPED from './pages/base/Gestao/cadastroPED/cadastroPED'
 import DetalhesPEDGestao from './pages/base/Gestao/detalhesDependenciaGestao/DetalhesPEDGestao'
@@ -55,7 +41,6 @@ import DetalhesPEDCoordenador from './pages/base/Coordenador/detalhesPED/Detalhe
 
 // Filhos de Professor
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
-import PerfilProfessor from './pages/base/Professor/perfilProfessor/PerfilProfessor'
 import ListarPEDProfessor from './pages/base/Professor/listarDependenciasProfessor/ListarPEDProfessor'
 import DetalhesPEDProfessor from './pages/base/Professor/detalhesDependenciaProfessor/DetalhesPEDProfessor'
 import CadastroPlanoEstudos from './pages/base/Professor/cadastroPlanoEstudos/CadastroPlanoEstudos'
@@ -67,7 +52,6 @@ import ListarObservacoes from './pages/base/Professor/listarObservacoes/ListarOb
 import DetalhesObservacoes from './pages/base/Professor/detalhesObservacoes/DetalhesObservacoes'
 
 // Filhos de Aluno
-import PerfilAluno from './pages/base/Aluno/perfilAluno/PerfilAluno'
 import HomeAluno from './pages/base/Aluno/home/HomeAluno'
 import CadastroAtividade from './pages/base/Professor/cadastroAtividade/CadastroAtividade'
 import ListarAtividadesProfessor from './pages/base/Professor/listarAtividades/ListarAtividadesProfessor'
@@ -77,149 +61,88 @@ import DetalhesAtividadeAluno from './pages/base/Aluno/detalhesAtividade/Detalhe
 
 const router = createBrowserRouter([
     {
-        path: '/',
+        path: '/redirect/',
         element: <LoginPage />,
     },
     // Rotas do perfil de Gestao Escolar
     {
-        path: '/Gestão Escolar',
+        path: '/gestao_escolar',
         element: <BaseGestao />,
         children: [
             {
-                path: '/Gestão Escolar',
+                path: '/gestao_escolar',
                 element: <HomeGestao />
             },
-            // Rotas de Servidores
             {
-                path: '/Gestão Escolar/cadastroServidor',
-                element: <CadastroServidor />
-            },
-            {
-                path: '/Gestão Escolar/servidores',
-                element: <ListarServidor />
-            },
-            {
-                path: '/Gestão Escolar/servidores/:idServidor/editar',
-                element: <CadastroServidor />
-            },
-            {
-                path: '/Gestão Escolar/cadastroAluno',
-                element: <CadastroAluno />
-            },
-            {
-                path: '/Gestão Escolar/alunos',
-                element: <ListarAluno />
-            },
-            {
-                path: '/Gestão Escolar/alunos/:idAluno/editar',
-                element: <EditarAluno />
-            },
-            {
-                path: '/Gestão Escolar/cadastroCurso',
-                element: <CadastroCurso />
-            },
-            {
-                path: '/Gestão Escolar/cursos',
-                element: <ListarCurso />
-            },
-            {
-                path: '/Gestão Escolar/cursos/:idCurso',
-                element: <DetalhesCurso />
-            },
-            {
-                path: '/Gestão Escolar/cursos/:idCurso/editar',
-                element: <CadastroCurso />
-            },
-            {
-                path: '/Gestão Escolar/cadastroDisciplina',
-                element: <CadastroDisciplina />
-            },
-            {
-                path: '/Gestão Escolar/disciplinas/:idDisciplina/editar',
-                element: <CadastroDisciplina />
-            },
-            {
-                path: '/Gestão Escolar/disciplinas',
-                element: <ListarDisciplina />
-            },
-            {
-                path: '/Gestão Escolar/cadastroCalendario',
-                element: <CadastroCalendario />
-            },
-            {
-                path: '/Gestão Escolar/calendarios',
+                path: '/gestao_escolar/calendarios',
                 element: <ListarCalendario />
             },
             {
-                path: '/Gestão Escolar/calendarios/:idCalendario/',
+                path: '/gestao_escolar/calendarios/:idCalendario/',
                 element: <Calendario />
             },
             {
-                path: '/Gestão Escolar/calendarios/:idCalendario/editar',
-                element: <CadastroCalendario />
-            },
-            {
-                path: '/Gestão Escolar/cadastroEvento/',
+                path: '/gestao_escolar/cadastroEvento/',
                 element: <CadastroEvento />
             },
             {
-                path: '/Gestão Escolar/calendarios/:idCalendario/eventos/:idEvento/editar',
+                path: '/gestao_escolar/calendarios/:idCalendario/eventos/:idEvento/editar',
                 element: <CadastroEvento />
             },
             {
-                path: '/Gestão Escolar/cadastroPED',
+                path: '/gestao_escolar/cadastroPED',
                 element: <CadastroPED />
             },
             {
-                path: '/Gestão Escolar/peds/Integrado',
+                path: '/gestao_escolar/peds/Integrado',
                 element: <ListarPEDGestao />
             },
             {
-                path: '/Gestão Escolar/peds/ProEJA',
+                path: '/gestao_escolar/peds/ProEJA',
                 element: <ListarPEDGestao />
             },
             {
-                path: '/Gestão Escolar/peds/Integrado/:idPed',
+                path: '/gestao_escolar/peds/Integrado/:idPed',
                 element: <DetalhesPEDGestao />
             },
             {
-                path: '/Gestão Escolar/peds/ProEJA/:idPed',
+                path: '/gestao_escolar/peds/ProEJA/:idPed',
                 element: <DetalhesPEDGestao />
             },
             {
-                path: '/Gestão Escolar/peds/Integrado/:idPed/editar',
+                path: '/gestao_escolar/peds/Integrado/:idPed/editar',
                 element: <CadastroPED />
             },
             {
-                path: '/Gestão Escolar/peds/ProEJA/:idPed/editar',
+                path: '/gestao_escolar/peds/ProEJA/:idPed/editar',
                 element: <CadastroPED />
             },
             {
-                path: '/Gestão Escolar/cadastroPPT',
+                path: '/gestao_escolar/cadastroPPT',
                 element: <CadastroPPT />
             },
             {
-                path: '/Gestão Escolar/ppts',
+                path: '/gestao_escolar/ppts',
                 element: <ListarPPTGestao />
             },
             {
-                path: '/Gestão Escolar/ppts/:idPpt',
+                path: '/gestao_escolar/ppts/:idPpt',
                 element: <DetalhesPPTGestao />
             },
             {
-                path: '/Gestão Escolar/ppts/:idPpt/editar',
+                path: '/gestao_escolar/ppts/:idPpt/editar',
                 element: <CadastroPPT />
             },
             {
-                path: '/Gestão Escolar/peds/:modalidade/:idPed/planoEstudos/:planoId/',
+                path: '/gestao_escolar/peds/:modalidade/:idPed/planoEstudos/:planoId/',
                 element: <DetalhesPlanoEstudos />
             },
             {
-                path: '/Gestão Escolar/atividades/:pedTipo/:idPed',
+                path: '/gestao_escolar/atividades/:pedTipo/:idPed',
                 element: <AtividadesDesenvolvidasGestao />
             },
             {
-                path: '/Gestão Escolar/atividades/:pedTipo/:idPed/detalhes/:atividadeId',
+                path: '/gestao_escolar/atividades/:pedTipo/:idPed/detalhes/:atividadeId',
                 element: <DetalhesAtividadeGestao />
             },
 
@@ -282,10 +205,6 @@ const router = createBrowserRouter([
 
             },
             {
-                path: ':idUsuario/perfil/',
-                element: <PerfilProfessor />
-            },
-            {
                 path: ':idUsuario/atividades/',
                 element: <ListarAtividadesProfessor />
             },
@@ -333,8 +252,6 @@ const router = createBrowserRouter([
                 path: ':idUsuario/editarObservacao/:idObservacao',
                 element: <AdicionarObservacao />,
             },
-
-
         ]
     },
     //   Rotas de Aluno
@@ -346,10 +263,6 @@ const router = createBrowserRouter([
             {
                 path: ':idUsuario/',
                 element: <HomeAluno />
-            },
-            {
-                path: ':idUsuario/perfil',
-                element: <PerfilAluno />
             },
             {
                 path: ':idUsuario/:modalidade/:pedId/detalhes',

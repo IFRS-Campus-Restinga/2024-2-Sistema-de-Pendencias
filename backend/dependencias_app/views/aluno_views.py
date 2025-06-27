@@ -11,43 +11,7 @@ from dependencias_app.models.ped_ProEJA import PED_ProEJA
 from dependencias_app.models.ppt import PPT
 from dependencias_app.serializers.ped_EMI_serializer import PED_EMI_Serializer
 from dependencias_app.serializers.ped_ProEJA_serializer import PED_ProEJA_Serializer
-from dependencias_app.serializers.ppt_serializer import PPT_Serializer
-from google_auth.models import Usuario
-
-@api_view(['POST'])
-@permission_classes([GestaoEscolar | Aluno_Permissao])
-def infos_adicionais_aluno(request):
-    usuario_id = request.user.id
-
-    try:
-        aluno = Aluno.objects.get(usuario_id=usuario_id)
-
-        if aluno:
-            serializer_aluno = Aluno_Serializer(aluno, data=request.data, partial=True)
-        else:
-            serializer_aluno = Aluno_Serializer(data=request.data)
-
-        if not serializer_aluno.is_valid(): raise serializers.ValidationError(serializer_aluno.errors)
-
-        serializer_aluno.save()
-        return Response(serializer_aluno.data, status=status.HTTP_200_OK)
-    except serializers.ValidationError as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-@api_view(['GET'])
-@permission_classes([GestaoEscolar | Aluno_Permissao])
-def get_aluno_infos (request):
-    try:
-        aluno = Aluno.objects.get(usuario_id=request.user.id)
-
-        serializer_aluno = Aluno_Serializer(aluno)
-
-        return Response(data=serializer_aluno.data, status=status.HTTP_200_OK)
-    except Aluno.DoesNotExist: return Response(data={}, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)   
+from dependencias_app.serializers.ppt_serializer import PPT_Serializer  
 
 @api_view(['GET'])
 @permission_classes([Aluno_Permissao])

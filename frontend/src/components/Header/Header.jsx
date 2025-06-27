@@ -9,6 +9,7 @@ import { jwtDecode } from "jwt-decode";
 import { authService } from '../../services/authService'
 import { useNavigate } from "react-router-dom";
 import Notificacoes from "../Notificacoes/Notificacoes";
+import { validaUsuario } from "../../pages/base/validaUsuario";
 
 const Header = ({ homeUrl }) => {
   const [notificAberta, setNotificAberta] = useState(false)
@@ -32,16 +33,15 @@ const Header = ({ homeUrl }) => {
   };
 
   const escreveNome = () => {
-    const token = sessionStorage.getItem('token')
+    const user = JSON.parse(sessionStorage.getItem('user'))
 
     try {
-      if (!token) throw new Error('Token inválido')
+      if (!user) throw new Error('Token inválido')
 
-      const decoded = jwtDecode(token)
-      setNome(`${decoded.nome}`)
+      setNome(`${user.username}`)
 
     } catch (error) {
-      console.error(error.message)
+      redirect('/')
     }
   }
 
@@ -53,19 +53,19 @@ const Header = ({ homeUrl }) => {
     <header className={styles.header}>
       <img src={logo} alt="Logo do Site" className={styles.logo} />
       {
-        sessionStorage.getItem('token') ? (
+        sessionStorage.getItem('user') ? (
           <div className={styles.menu}>
             <span className={styles.titulo}>
               <h2 className={styles.saudacao}>
                 Bem vindo,
               </h2>
               <p className={styles.nome}>{nome}</p>
-              <p className={styles.grupo}>({jwtDecode(sessionStorage.getItem('token')).grupo})</p>
+              <p className={styles.grupo}>{validaUsuario(JSON.parse(sessionStorage.getItem('user')).groups).grupo}</p>
             </span>
             <Dropdown
               tipo={'usuario'}
               icone={
-                <img src={jwtDecode(sessionStorage.getItem('token')).fotoPerfil} className={styles.fotoPerfil} />
+                <img src={JSON.parse(sessionStorage.getItem('user')).profile_picture} className={styles.fotoPerfil} />
               }
               itens={[
                 {

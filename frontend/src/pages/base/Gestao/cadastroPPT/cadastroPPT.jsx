@@ -1,14 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Input from "../../../../components/Input/Input";
 import Button from "../../../../components/Button/Button";
-import FormContainer from "../../../../components/FormContainer/FormContainer"; // Importe o FormContainer
+import FormContainer from "../../../../components/FormContainer/FormContainer";
 import { ToastContainer, toast } from "react-toastify";
-import {jwtDecode} from 'jwt-decode'
-import "./cadastroPPT.css";
+import { jwtDecode } from 'jwt-decode'
+import styles from "./cadastroPPT.module.css";
 import { PPTService } from "../../../../services/pptService";
 import { cursoService } from "../../../../services/cursoService";
-import { validarFormularioPPT, validarTurmas } from "./validacoes";
 import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS";
 import loading from '../../../../assets/loading-disciplinas.png'
 import { UsuarioService } from "../../../../services/usuarioService";
@@ -19,7 +18,7 @@ const CadastroPPT = () => {
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(true)
   const [desabilitado, setDesabilitado] = useState(false)
-  const { state } = location || {}; // Dados enviados via navegação
+  const { state } = location || {};
   const [cursos, setCursos] = useState([]);
   const [disciplinas, setDisciplinas] = useState([]);
   const [opcoesAlunos, setOpcoesAlunos] = useState([]);
@@ -49,108 +48,19 @@ const CadastroPPT = () => {
   })
 
   const fetchPPT = async () => {
-    try {
-      const res = await  PPTService.porId(state.id, 'detalhes')
 
-      if (res.status !== 200) throw new Error(res)
-      
-      setControleInputs({
-        aluno: res.data.aluno.nome,
-        professor_ppt: res.data.professor_ppt.nome,
-        professor_disciplina: res.data.professor_disciplina.nome,
-        curso: res.data.curso.id,
-        disciplina: res.data.disciplina.id,
-        turma_atual: res.data.turma_atual.id,
-        turma_progressao: res.data.turma_progressao.id,
-        observacao: res.data.observacao
-      })
-
-      setCursos([res.data.curso])
-      setTurmas([res.data.turma_atual, res.data.turma_progressao])
-      setDisciplinas([res.data.disciplina])
-
-      setFormData({
-        aluno: res.data.aluno.id,
-        professor_ppt: res.data.professor_ppt.id,
-        professor_disciplina: res.data.professor_disciplina.id,
-        curso: res.data.curso.id,
-        disciplina: res.data.disciplina.id,
-        turma_atual: res.data.turma_atual.id,
-        turma_progressao: res.data.turma_progressao.id,
-        observacao: res.data.observacao
-      })
-
-      setIsLoading(false)
-    } catch (error) {
-      console.error(error)
-    }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setErrors({});
 
-    const erros = validarFormularioPPT(formData);
-    const erroTurmas = validarTurmas(
-      turmas.find((turma) => formData.turma_atual === turma.id),
-      turmas.find((turma) => formData.turma_progressao === turma.id)
-    );
-
-    if (Object.keys(erros).length !== 0 || erroTurmas) {
-      erros.turmas = erroTurmas;
-      setErrors(erros);
-    } else {
-      try {
-        const res = state
-          ? await PPTService.editar(state.id, formData) // Atualiza PPT
-          : await PPTService.criar(formData); // Cadastra PPT
-
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error(res.mensagem);
-        }
-
-        toast.success(
-          res.mensagem,
-          {
-            position: "bottom-center",
-            autoClose: 3000,
-            style: { backgroundColor: "#28A745", color: "#fff", textAlign: "center" },
-            progressStyle: { backgroundColor: "#fff" },
-          }
-        );
-
-        setFormData({
-          aluno: "",
-          professor_disciplina: "",
-          professor_ppt: "",
-          curso: "",
-          disciplina: "",
-          turma_origem: "",
-          turma_progressao: "",
-          observacao: "",
-        });
-
-        formRef.current.reset();
-        navigate(`/sessao/Gestão Escolar/${jwtDecode(sessionStorage.getItem('token')).idUsuario}/ppts`);
-      } catch (error) {
-        toast.success(
-          error.message,
-          {
-            position: "bottom-center",
-            autoClose: 3000,
-            style: { backgroundColor: "#f00", color: "#fff", textAlign: "center" },
-            progressStyle: { backgroundColor: "#fff" },
-          }
-        );
-      }
-    }
   };
 
   const fetchCursos = async () => {
     try {
       const res = await cursoService.porModalidade("Integrado", 'dependencia');
-      
+
       setCursos(res.data);
 
       setIsLoading(false)
@@ -179,15 +89,15 @@ const CadastroPPT = () => {
   };
 
   useEffect(() => {
-      if (state) {
-        fetchPPT()
-        setDesabilitado(true)
-      }else {
-        fetchCursos()
-      }
+    if (state) {
+      fetchPPT()
+      setDesabilitado(true)
+    } else {
+      fetchCursos()
+    }
   }, [state]);
-  
-  if (isLoading) return <LoadingIFRS icone={loading}/>
+
+  if (isLoading) return <LoadingIFRS icone={loading} />
 
   return (
     <>
@@ -202,7 +112,7 @@ const CadastroPPT = () => {
             valor={controleInputs.aluno}
             desabilitado={desabilitado}
             onChange={(e) => {
-              setControleInputs({...controleInputs, aluno: e.target.value})
+              setControleInputs({ ...controleInputs, aluno: e.target.value })
               fetchAlunos(e)
 
               console.log(e.target.value)
@@ -237,7 +147,7 @@ const CadastroPPT = () => {
             nome='professor'
             valor={controleInputs.professor_ppt}
             onChange={(e) => {
-              setControleInputs({...controleInputs, professor_ppt: e.target.value})
+              setControleInputs({ ...controleInputs, professor_ppt: e.target.value })
               fetchProfessores(e)
 
               if (opcoesProfessores) {
@@ -271,7 +181,7 @@ const CadastroPPT = () => {
             valor={controleInputs.professor_disciplina}
             desabilitado={desabilitado}
             onChange={(e) => {
-              setControleInputs({...controleInputs, professor_disciplina: e.target.value})
+              setControleInputs({ ...controleInputs, professor_disciplina: e.target.value })
               fetchProfessores(e)
 
               if (opcoesProfessores) {
@@ -308,9 +218,9 @@ const CadastroPPT = () => {
                 disabled={desabilitado}
                 onChange={(e) => {
                   const cursoId = e.target.value;
-                  
+
                   const curso = cursos.find(curso => curso.id === Number(cursoId));
-                  
+
                   if (curso) {
                     setFormData({ ...formData, curso: Number(cursoId) });
                     setDisciplinas(curso.disciplinas); // Atualiza as disciplinas

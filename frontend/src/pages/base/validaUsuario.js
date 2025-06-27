@@ -1,21 +1,19 @@
-import {jwtDecode} from 'jwt-decode'
+import { jwtDecode } from "jwt-decode";
+import { verificarGrupos } from "../../utils/permissões";
 
 export const validaUsuario = (grupoPagina) => {
-    const token = sessionStorage.getItem('token')
+  const user = JSON.parse(sessionStorage.getItem("user"));
 
-    if (token === null || token === undefined) return {status: false}
-    
-    const decoded = jwtDecode(token)
+  const grupo = verificarGrupos(user.groups);
 
-    if (decoded.grupo !== grupoPagina) {
-         return {
-            status: false,
-            grupo: decoded.grupo,
-            idUsuario: decoded.idUsuario
-        }
-    } else {
-        return {
-            status: true
-        }
-    }
-}
+  if (grupo !== grupoPagina) {
+    return {
+      status: false,
+      grupo: grupo,
+    };
+  } else {
+    return {
+      status: true,
+    };
+  }
+};

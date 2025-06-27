@@ -1,6 +1,6 @@
 import base64
 import io
-from google_auth.services.authenticate_drive import authenticate_google_drive
+from dependencias_app.utils.authenticate_drive import authenticate_google_drive
 from googleapiclient.http import MediaIoBaseDownload, MediaIoBaseUpload
 
 def get_from_drive(file_id, grupo):

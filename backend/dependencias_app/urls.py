@@ -1,12 +1,6 @@
-from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import path
 from dependencias_app.views.observacao_views import *
-from dependencias_app.views.usuario_views import *
-from dependencias_app.views.professor_views import *
 from dependencias_app.views.aluno_views import *
-from dependencias_app.views.disciplina_views import *
-from dependencias_app.views.curso_views import *
 from dependencias_app.views.calendario_views import *
 from dependencias_app.views.ppt_views import *
 from dependencias_app.views.ped_views import *
@@ -16,38 +10,14 @@ from dependencias_app.views.notificacao_views import *
 
 
 urlpatterns = [
-    # views de usuários
-    path('usuario/cadastrar/', cadastrar_usuario),
-    path('usuario/listar/<str:perfil>/', listar_usuarios_por_perfil),
-    path('usuario/<str:idUsuario>/', get_infos_usuario),
-    path('usuario/<str:idUsuario>/editar/', editar_usuario),
-    path('listar-grupos/', listar_grupos),
-
-    # cadastra informações adicionais dos alunos e professores
-    path('dados-adicionais-aluno/', infos_adicionais_aluno),
-    path('dados-adicionais-professor/', infos_adicionais_professor),
-    path('usuario/listar/param/<str:grupo>/', listar_por_parametro),
-
-    # views de curso
-    path('curso/cadastrar/', cadastrar_curso),
-    path('curso/listar/', listar_cursos),
-    path('curso/buscar/<str:modalidade>/<str:nome>/', buscar_por_modalidade),
-    path('curso/<str:cursoId>/', obter_curso),
-    path('curso/<str:cursoId>/editar/', editar_curso),
-
-    # views de disciplinas
-    path('disciplina/cadastrar/', cadastrar_disciplina),
-    path('disciplina/listar/', listar_disciplinas),
-    path('disciplina/buscar/<str:cursoId>/<str:nome>/', buscar_por_curso),
-    path('disciplina/<str:disciplinaId>/', buscar_disciplina),
-    path('disciplina/editar/<str:disciplinaId>/', editar_disciplina),
+    path('tokens/', ),
+    # views de grupos
+    path('grupos/cadastrar/', ),
 
     # views de calendarios
-    path('calendario/cadastrar/', cadastrar_calendario),
     path('calendario/listar/', listar_calendarios),
     path('calendario/buscar/<str:modalidade>/<str:titulo>/', buscar_por_titulo),
     path('calendario/<str:calendarioId>/', obter_calendario),
-    path('calendario/<str:calendarioId>/editar/', editar_calendario),
 
     # views de eventos
     path('evento/cadastrar/', cadastrar_evento),
@@ -87,8 +57,6 @@ urlpatterns = [
     path('plano-estudos/editar/<int:planoId>/<str:modalidade>/', editar_plano_estudos,),
     
     #views para tela de observaçoes
-    # No arquivo urls.py
-    #path('visualizar-observacao/<int:id>/', visualizar_observacao, name='visualizar_observacao'),
     path('visualizar-observacao/<int:id>/', visualizar_observacao, name='visualizar_observacao'),
 
 
@@ -102,6 +70,3 @@ urlpatterns = [
     path('notificacoes/<int:idUsuario>/', buscar_notificacoes),
     path('notificacoes/troca-status/<int:idNotificacao>/', trocar_status),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

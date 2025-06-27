@@ -1,66 +1,64 @@
-import React from "react";
-import logo from "../../assets/logo-ifrs.png";
-import PageContainer from "../../components/PageContainer/PageContainer";
-import GoogleLoginButton from "../../components/GoogleLoginButton/GoogleLoginButton";
+import { useEffect, useState } from "react";
 import styles from "./LoginPage.module.css";
 import { authService } from "../../services/authService";
-import { useNavigate } from "react-router-dom";
-import { faBan } from "@fortawesome/free-solid-svg-icons";
-import { ToastContainer, toast } from 'react-toastify';
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
+import CustomLoading from "../../components/customLoading/CustomLoading";
 import { jwtDecode } from "jwt-decode";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { verificarGrupos } from "../../utils/permissões";
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 const LoginPage = () => {
   const redirect = useNavigate()
+  const query = useQuery()
+  const [autenticado, setAutenticado] = useState('pendente')
 
-  const handleSuccess = async (response) => {
-    const res = await authService.login(response)
+  const obterTokens = async () => {
+    const system = query.get('system')
+    const user = query.get('user')
+    const profilePicture = query.get('profilePicture')
 
     try {
-      if (res.status === 400) throw new Error(res)
-      sessionStorage.setItem('token', res.data.token)
+      const res = await authService.autenticar(user, system)
 
-      const decoded = jwtDecode(res.data.token)
+      if (res.status !== 200) throw new Error()
 
-      if (decoded.primeiroLogin === true && (decoded.grupo === 'Aluno' || decoded.grupo === 'Professor')) {
-        redirect(`${decoded.grupo}/perfil`)
-      } else {
-        redirect(`${decoded.grupo}`)
-      }
+      const grupo = verificarGrupos(res.data.user.groups)
 
+      res.data.user.profile_picture = profilePicture
+      
+      sessionStorage.setItem('user', JSON.stringify(res.data.user))
+      redirect(`/${grupo}`)
     } catch (error) {
-      handleFailure(res)
+      console.error(error)
+      setAutenticado('recusado')
     }
   }
 
-  const handleFailure = (response) => {
-    toast.error(response.response.data.mensagem, {
-      position: "bottom-center",
-      style: { backgroundColor: '#ff0000', color: '#fff', textAlign: 'center' },
-      progressStyle: { backgroundColor: '#fff' },
-      icon: <FontAwesomeIcon icon={faBan} color='white' />
-    });
+  useEffect(() => {
+    obterTokens()
+  }, [])
+
+  if (autenticado === 'recusado') {
+    return (
+      <main className={styles.main}>
+        <h2 className={styles.titulo}>Acesso não autorizado</h2>
+        <p className={styles.detalhes}>chave inválida</p>
+      </main>
+    )
   }
 
   return (
     <>
-      <ToastContainer />
-      <PageContainer usuario={{}}>
-        <div className={styles.loginContainer}>
-          <h1 className={styles.titulo}>Sistema de Gerenciamento de Progressões</h1>
-          <div className={styles.conteudo}>
-            <div className={styles.esquerda}>
-              <img src={logo} alt="Logo Campus" className={styles.logo} />
-            </div>
-            <div className={styles.divisor} />
-            <div className={styles.direita}>
-              <h2>Acesse sua Conta</h2>
-              <GoogleLoginButton handleLogin={handleSuccess} handleLoginFailure={handleFailure} />
-            </div>
-          </div>
+      <main className={styles.main}>
+        <h2 className={styles.titulo}>Validando acesso...</h2>
+        <div className={styles.loadingContainer}>
+          <CustomLoading />
         </div>
-      </PageContainer>
+      </main>
     </>
   );
 };
