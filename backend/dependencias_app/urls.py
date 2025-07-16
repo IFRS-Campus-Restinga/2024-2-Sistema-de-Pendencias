@@ -1,72 +1,60 @@
 from django.urls import path
-from dependencias_app.views.observacao_views import *
-from dependencias_app.views.aluno_views import *
-from dependencias_app.views.calendario_views import *
 from dependencias_app.views.ppt_views import *
 from dependencias_app.views.ped_views import *
 from dependencias_app.views.atividade_views import *
+from dependencias_app.views.avaliacao_views import *
 from dependencias_app.views.plano_estudos_views import *
 from dependencias_app.views.notificacao_views import *
+from dependencias_app.views.observacao_views import *
+from dependencias_app.views.grupo_views import *
+from dependencias_app.views.token_views import *
 
 
 urlpatterns = [
-    path('tokens/', ),
+    # views de autenticação
+    path('tokens/', obter_tokens),
+
     # views de grupos
-    path('grupos/cadastrar/', ),
-
-    # views de calendarios
-    path('calendario/listar/', listar_calendarios),
-    path('calendario/buscar/<str:modalidade>/<str:titulo>/', buscar_por_titulo),
-    path('calendario/<str:calendarioId>/', obter_calendario),
-
-    # views de eventos
-    path('evento/cadastrar/', cadastrar_evento),
-    path('calendario/<str:calendarioId>/eventos/', listar_eventos_calendario),
-    path('evento/<str:eventoId>/', obter_evento),
-    path('evento/<str:eventoId>/editar/', editar_evento),
+    path('grupo/cadastrar/', cadastrar_grupo),
+    path('grupo/listar/', listar_grupos),
+    path('grupo/<str:grupo_id>/detalhes/', detalhes_grupo),
+    path('grupo/<str:grupo_id>/editar', editar_grupo),
 
     # view de PPT
     path('ppt/cadastrar/', cadastrar_PPT),
     path('ppt/listar/', listar_PPT),
-    path('ppt/detalhes/<str:pptId>/', detalhes_PPT),
-    path('ppt/editar/<str:pptId>/', editar_ppt),
-    path('ppt/status/<str:pptId>/', trocar_status),
+    path('ppt/<str:ppt_id>/detalhes/', detalhes_PPT),
+    path('ppt/<str:ppt_id>/editar/', editar_ppt),
     
     # views de PED
     path('ped/<str:modalidade>/cadastrar/', cadastrar_PED),
-    path('ped/<str:modalidade>/listar/', listar_PED),
-    path('ped/<str:modalidade>/listar/<str:professorId>/', listar_PED),
-    path('ped/<str:modalidade>/detalhes/<str:pedId>/', detalhes_PED),
-    path('ped/<str:modalidade>/editar/<str:pedId>/', editar_PED),
-    path('ped/<str:modalidade>/desativar/<str:pedId>/', desativar_PED),
-    path('aluno/dependencias/', listar_dependencias_aluno),
+    path('ped/<str:modalidade>/listar/', listar_PED_por_modalidade),
+    path('ped/<str:modalidade>/<str:ped_id>/detalhes/', detalhes_PED),
+    path('ped/<str:modalidade>/<str:ped_id>/editar/', editar_PED),
 
-    #views para atividades/avaliações
-    path('atividade/cadastro/<str:modalidade>/', cadastrar_atividade),
-    path('plano-atividades/vincular/<int:pedId>/<str:modalidade>/', vincular_atividades),
-    path('plano-atividades/professor/listar/', listar_atividades_professor),
-    path('plano-atividades/professor/listar/<str:modalidade>/', listar_atividades_professor),
-    path('plano-atividades/<int:pedId>/<str:modalidade>/', listar_atividades),
-    path('plano-atividades/detalhes/<str:modalidade>/<int:atividadeId>/', buscar_atividade),
-    path('plano-atividades/avaliacao/<str:modalidade>/<int:avaliacaoId>/', buscar_por_avaliacao),
-    path('plano-atividades/editar/<str:modalidade>/<int:atividadeId>/', editar_atividade),
+    #views para atividades
+    path('atividade/cadastrar/<str:modalidade>/', cadastrar_atividade),
+    path('atividade/listar/', listar_atividades),
+    path('atividade/<str:modalidade>/<str:atividade_id>/detalhes/', buscar_atividade_por_id),
+    path('atividade/<str:modalidade>/<str:atividade_id>/editar/', editar_atividade),
+
+    # views para avaliações
+    path('avaliacao/<str:modalidade>/cadastrar/', cadastrar_avaliacoes),
+    path('avaliacao/<str:modalidade>/<str:ped_id>/listar/', listar_avaliacoes_por_PED),
+    path('avaliacao/<str:modalidade>/editar/', editar_avaliacoes),
 
     # views de plano de estudos
-    path('plano-estudos/cadastrar/<str:modalidade>/', cadastrar_plano_estudos),
-    path('plano-estudos/detalhes/<int:planoId>/<str:modalidade>/', detalhes_plano_estudos),
-    path('plano-estudos/editar/<int:planoId>/<str:modalidade>/', editar_plano_estudos,),
+    path('plano-estudos/<str:modalidade>/cadastrar/', cadastrar_plano_estudos),
+    path('plano-estudos/<str:modalidade>/<str:plano_estudos_id>/detalhes/', detalhes_plano_estudos),
+    path('plano-estudos/<str:modalidade>/<str:plano_estudos_id>/editar/', editar_plano_estudos,),
     
-    #views para tela de observaçoes
-    path('visualizar-observacao/<int:id>/', visualizar_observacao, name='visualizar_observacao'),
-
-
     #views para observações
-    path('adicionar-observacao/', adicionar_observacao, name='adicionar_observacao'),
-    #path('visualizar-observacao/', visualizar_observacao, name='visualizar_observacao'),
-    path('listar-observacoes/', listar_observacoes, name='listar_observacoes'),
-    path('editar-observacao/<int:id>/', editar_observacao, name='editar_observacao<id>'),
+    path('observacao/<str:modalidade>/<str:ped_id>/cadastrar/', cadastrar_observacao),
+    path('observacoes/<str:modalidade>/<str:ped_id>/listar/', listar_observacoes),
+    path('observacao/<str:modalidade>/<str:ped_id>/<str:observacao_id>/detalhes/', visualizar_observacao),
+    path('observacao/<str:modalidade>/<str:ped_id>/<str:observacao_id>/editar/', editar_observacao),
     
     # Views de notificacao
-    path('notificacoes/<int:idUsuario>/', buscar_notificacoes),
-    path('notificacoes/troca-status/<int:idNotificacao>/', trocar_status),
+    path('notificacoes/<str:usuario_id>/', buscar_notificacoes),
+    path('notificacoes/<str:notificacao_id>/editar/', trocar_status),
 ]

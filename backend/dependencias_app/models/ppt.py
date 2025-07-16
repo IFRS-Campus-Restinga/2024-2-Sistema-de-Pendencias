@@ -1,20 +1,16 @@
 from django.db import models
 from .progressao import *
-from .turma import *
-from .disciplina import *
-from .curso import *
-from google_auth.models import Usuario
 
 class PPT(Progressao):
-    turma_atual = models.ForeignKey(Turma, on_delete=models.DO_NOTHING, related_name='ppt_turma_atual')
-    turma_progressao = models.ForeignKey(Turma, on_delete=models.DO_NOTHING, related_name='ppt_turma_prog')
+    turma_atual = models.UUIDField(default=uuid.uuid4, editable=False)
+    turma_progressao = models.UUIDField(default=uuid.uuid4, editable=False)
 
     # sobrescrita dos related names dos campos chave estrangeira herdados de Dependencia
-    aluno = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='ppts_aluno')
-    disciplina = models.ForeignKey(Disciplina, on_delete=models.DO_NOTHING, related_name='ppts_disciplina')
-    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, related_name='ppts_curso')
-    professor_disciplina = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='ppts_professor_disciplina')
-    professor_ppt = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, related_name='ppts_professor_resp')
+    aluno = models.UUIDField(default=uuid.uuid4, editable=False)
+    disciplina = models.UUIDField(default=uuid.uuid4, editable=False)
+    curso = models.UUIDField(default=uuid.uuid4, editable=False)
+    professor_disciplina = models.UUIDField(default=uuid.uuid4, editable=False)
+    professor_ppt = models.UUIDField(default=uuid.uuid4, editable=False)
 
     class Meta:
         abstract = False

@@ -2,10 +2,6 @@ from rest_framework import serializers
 from dependencias_app.models.avaliacao import *
 from datetime import datetime
 
-import logging
-
-logger = logging.getLogger(__name__)
-
 class Avaliacao_EMI_Serializer(serializers.ModelSerializer):
     data_entrega = serializers.DateField(format="%Y-%m-%d")
 
@@ -26,8 +22,6 @@ class Avaliacao_EMI_Serializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(f"Não é permitido remover a nota de uma atividade após ser registrada.")
 
         data_entrega = data.get('data_entrega', None)
-
-        print(data_entrega)
         
         if data_entrega < datetime.today().date() or data_entrega == None or data_entrega == '':
             raise serializers.ValidationError('A data de entrega da atividade não pode estar vazia ou ser inferior ao dia de hoje!')

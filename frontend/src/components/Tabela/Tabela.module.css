@@ -1,110 +1,104 @@
 .containerTabela {
     width: 100%;
-    max-width: 100%;
-    max-height: 200px;
+    max-height: 250px;
     overflow-y: scroll;
-    overflow-x: hidden;
+    overflow-x: hidden; 
+    position: relative;
+    display: block;
 }
 
 .tabela {
     width: 100%;
-    max-height: 350px;
+    height: 100%;
+    font-family: 'Roboto';
     border-collapse: collapse;
-    border-spacing: 0;
-
-    .th-ordenar {
-        display: flex;
-        align-items: center;
-    }
-
-    tbody {
-        font-size: 12px;
-
-        tr:hover {
-            cursor: pointer;
-            background-color: #ccc;
-            transition: .3s ease-in-out;
-        }
-    }
-
-
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    tr:nth-child(odd) {
-        background-color: white;
-    }
-
-    th {
-        cursor: pointer;
-        background-color: #006b3f;
-        color: white;
-        position: sticky;
-        top: 0;
-        z-index: 0;
-        padding: 5px;
-        white-space: nowrap;
-    }
-
-    td {
-        padding: 5px;
-        text-align: center;
-    }
 }
 
-.icone {
-    width: 15px;
-    height: 15px
-}
-
-.texto {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.cabecalho {
     width: 100%;
+    position: sticky;
+    top: 0;
+    background-color: #006b3f;
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    z-index: 10;
 }
 
-.iconeAcao {
-    max-width: 15px;
-    max-height: 15px;
-    cursor: pointer;
-    position: absolute;
+.cabecalho th {
+    /* para garantir que o sticky funcione */
+    background-color: inherit;
 }
 
-.ordenar {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+.corpo tr:nth-child(odd) {
+    background-color: #ffffff;
 }
 
-.ordenadores span {
-    cursor: pointer;
+.corpo tr:nth-child(even) {
+    background-color: #f0f0f0;
 }
 
-.seta-cima,
-.seta-baixo {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-left: 5px;
+.table tbody .linha:hover {
+    transform: scale(1.02);
+    transition: all ease-in-out 0.3s;
+    position: relative;
+    z-index: 3;
 }
 
-.icone-container img {
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    margin: 0 10px;
+.linha {
+    transform-origin: center; /* cresce para a direita, evitando ultrapassar a esquerda */
+}
+
+th, .coluna{
+    width: auto;
+    text-align: center;
+    padding: 3px;
+}
+
+.coluna {
+    color: #767676;
+    font-size: 12px;
+    font-weight: 500;
 }
 
 .acoes {
     display: flex;
+    gap: 4px;
+    width: 100%;
+    margin-right: 5px;
     justify-content: center;
-    align-items: center;
-    gap: 10px;
 }
 
-.containerTabela {
-    justify-self: center;
-    flex: 1;
+.acao {
+    padding: 3px;
+    display: flex;
+    border-radius: 50%;
+    border: 1px solid #767676;
+    background-color: transparent;
+    width: 20px;
+    height: 20px;
+
+    &:hover {
+        cursor: pointer;
+        transform: scale(1.05);
+        transition: all ease-in-out 0.3s;
+    }
+}
+
+.containerMensagem {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mensagem {
+    font-size: 14px;
+    font-family: 'Roboto';
+    color: #767676;
+    font-weight: 600;
+    border: 1px solid #767676;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
 }

@@ -1,6 +1,5 @@
 from django.db import models
 from .base import BaseModel
-from django.core.validators import MinLengthValidator
 from dependencias_app.models.base import *
 from django.db import models
 from dependencias_app.enums.status_dependencia import *

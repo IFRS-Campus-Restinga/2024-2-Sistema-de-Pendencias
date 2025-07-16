@@ -213,10 +213,9 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
           <div className={styles.containerBotoes}>
             {dependencia.status !== "Desativado" && grupo === 'Gestão Escolar' ? (
               <>
-                <Button texto="Desativar PED" color="#f00" onClick={abrirModal} />
+                <Button texto="Desativar PED" color="#f00" />
                 <Button
                   texto="Encerrar PED"
-                  onClick={abrirModalConfirmacao}
                   disabled={dependencia.status !== "Finalizada"}
                   title={dependencia.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
                 />

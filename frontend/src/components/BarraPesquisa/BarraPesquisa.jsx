@@ -1,32 +1,28 @@
-import Input from '../Input/Input'
 import styles from './BarraPesquisa.module.css'
-import Lupa from "../../assets/lupa-branca.png";
-import X from "../../assets/x-branco.png";
+import search from '../../assets/search-alt-svgrepo-com-white.svg'
+import clear from '../../assets/close-svgrepo-com-white.svg'
 
-const BarraPesquisa = ({ setFiltro, filtro, fetchDados, setPagina }) => {
+const BarraPesquisa = ({ onSearch, setSearch, searchParam }) => {
+
+    const handleEnter = (event) => {
+        if (event.key === 'Enter') {
+            onSearch(1, searchParam)
+        }
+    }
 
     return (
-        <div className={styles.barraPesquisa}>
-            <Input
-                tipo='text'
-                valor={filtro}
-                onChange={(e) => {
-                    setFiltro(e.target.value)
-                    setPagina(1)
-                }}
-                textoAjuda={'Buscar por nome, e-mail, grupo, status...'}
+        <div className={styles.containerBarraPesquisa}>
+            <input
+                type="text"
+                name={'searchInput'}
+                value={searchParam}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={handleEnter}
+                className={styles.inputPesquisa}
             />
-            <div className={styles.containerIcones}>
-                <img
-                    className={styles.icone}
-                    src={Lupa}
-                    onClick={fetchDados}
-                />
-                <img
-                    className={styles.icone}
-                    src={X}
-                    onClick={() => setFiltro('')}
-                />
+            <div className={styles.containerAcoes}>
+                <img src={search} className={styles.acao} alt="Buscar" onClick={() => onSearch(1 ,searchParam)} />
+                <img src={clear} className={styles.acao} alt="Limpar campo" onClick={() => setSearch('')}/>
             </div>
         </div>
     )

@@ -14,7 +14,6 @@ import HomeGestao from './pages/base/Gestao/home/HomeGestao'
 
 import ListarCalendario from './pages/base/Gestao/listarCalendarios/ListarCalendarios'
 import Calendario from './pages/base/Gestao/calendario/calendario'
-import CadastroEvento from "./pages/base/Gestao/cadastroEvento/CadastroEvento"
 
 // PED
 import CadastroPED from './pages/base/Gestao/cadastroPED/cadastroPED'
@@ -58,10 +57,12 @@ import ListarAtividadesProfessor from './pages/base/Professor/listarAtividades/L
 import DetalhesDependenciaAluno from './pages/base/Aluno/detalhesDependencia/DetalhesDependenciaAluno'
 import ListarAtividadesAluno from './pages/base/Aluno/listarAtividades/ListarAtividadesAluno'
 import DetalhesAtividadeAluno from './pages/base/Aluno/detalhesAtividade/DetalhesAtividadeAluno'
+import ListarGrupos from './pages/base/Gestao/listarGrupos/ListarGrupos'
+import GrupoForm from './pages/base/Gestao/GrupoForm/GrupoForm'
 
 const router = createBrowserRouter([
     {
-        path: '/redirect/',
+        path: '/auth/token/',
         element: <LoginPage />,
     },
     // Rotas do perfil de Gestao Escolar
@@ -74,6 +75,18 @@ const router = createBrowserRouter([
                 element: <HomeGestao />
             },
             {
+                path: '/gestao-escolar/grupos/create/',
+                element: <GrupoForm/>
+            },
+            {
+                path: '/gestao_escolar/grupos',
+                element: <ListarGrupos/>
+            },
+            {
+                path: '/gestao_escolar/grupos/:grupoId/edit/',
+                element: <GrupoForm/>
+            },
+            {
                 path: '/gestao_escolar/calendarios',
                 element: <ListarCalendario />
             },
@@ -81,14 +94,14 @@ const router = createBrowserRouter([
                 path: '/gestao_escolar/calendarios/:idCalendario/',
                 element: <Calendario />
             },
-            {
-                path: '/gestao_escolar/cadastroEvento/',
-                element: <CadastroEvento />
-            },
-            {
-                path: '/gestao_escolar/calendarios/:idCalendario/eventos/:idEvento/editar',
-                element: <CadastroEvento />
-            },
+            // {
+            //     path: '/gestao_escolar/cadastroEvento/',
+            //     element: <CadastroEvento />
+            // },
+            // {
+            //     path: '/gestao_escolar/calendarios/:idCalendario/eventos/:idEvento/editar',
+            //     element: <CadastroEvento />
+            // },
             {
                 path: '/gestao_escolar/cadastroPED',
                 element: <CadastroPED />

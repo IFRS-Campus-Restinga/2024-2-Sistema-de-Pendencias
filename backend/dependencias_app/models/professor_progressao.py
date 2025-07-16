@@ -6,7 +6,7 @@ import uuid
 
 class Professor_Progressao(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    professor = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    professor = models.UUIDField(default=uuid.uuid4, editable=False)
     responsavel_atual = models.BooleanField(default=True)
 
     class Meta:

@@ -22,15 +22,15 @@ const LoginPage = () => {
     const profilePicture = query.get('profilePicture')
 
     try {
-      const res = await authService.autenticar(user, system)
+      const res = await authService.obterTokens(user, system)
 
       if (res.status !== 200) throw new Error()
 
-      const grupo = verificarGrupos(res.data.user.groups)
+      const grupo = verificarGrupos(res.data.groups)
 
-      res.data.user.profile_picture = profilePicture
+      res.data.profile_picture = profilePicture
       
-      sessionStorage.setItem('user', JSON.stringify(res.data.user))
+      sessionStorage.setItem('user', JSON.stringify(res.data))
       redirect(`/${grupo}`)
     } catch (error) {
       console.error(error)

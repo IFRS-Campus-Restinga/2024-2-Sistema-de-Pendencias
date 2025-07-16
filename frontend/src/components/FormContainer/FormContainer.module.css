@@ -1,0 +1,32 @@
+.formContainer {
+    align-self: center;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-height: 45%;
+}
+
+.tituloForm {
+    text-align: center;
+    color: #767676;
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 2em;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}

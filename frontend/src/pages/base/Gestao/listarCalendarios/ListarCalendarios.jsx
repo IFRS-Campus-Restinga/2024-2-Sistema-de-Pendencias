@@ -1,5 +1,5 @@
 import FormContainer from '../../../../components/FormContainer/FormContainer'
-import Tabela from '../../../../components/Tabela/Tabela'
+import Tabela from '../../../../components/Tabela/Tabelas/Tabela'
 import styles from './ListarCalendarios.module.css'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'

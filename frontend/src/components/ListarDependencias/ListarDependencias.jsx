@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import styles from './ListarDependencias.module.css';
 import FormContainer from '../../components/FormContainer/FormContainer';
 import 'react-toastify/dist/ReactToastify.css';
-import Tabela from '../../components/Tabela/Tabela';
+import Tabela from '../../components/Tabela/Tabelas/Tabela';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IconeAdicionar from "../../assets/icone-adicionar-disciplina.png";
 import BarraPesquisa from '../../components/BarraPesquisa/BarraPesquisa';
