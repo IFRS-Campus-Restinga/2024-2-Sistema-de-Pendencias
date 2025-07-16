@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import './VisualizarPDF.css'
+import styles from './VisualizarPDF.module.css'
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
@@ -24,8 +24,8 @@ const VisualizarPDF = ({ pdfData, onClick }) => {
       }
 
     return (
-        <div className='viewContainer'>
-          <div className='pdfContainer' onClick={onClick}> 
+        <div className={styles.viewContainer}>
+          <div className={styles.pdfContainer} onClick={onClick}> 
             
           </div>
         </div>

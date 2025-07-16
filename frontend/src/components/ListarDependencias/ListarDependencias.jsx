@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import styles from './ListarDependencias.module.css';
 import FormContainer from '../../components/FormContainer/FormContainer';
-import 'react-toastify/dist/ReactToastify.css';
 import Tabela from '../../components/Tabela/Tabelas/Tabela';
+import BarraPesquisa from '../BarraPesquisa/BarraPesquisa'
 import { useLocation, useNavigate } from 'react-router-dom';
-import IconeAdicionar from "../../assets/icone-adicionar-disciplina.png";
-import BarraPesquisa from '../../components/BarraPesquisa/BarraPesquisa';
 import Loading from '../../components/Loading/Loading';
 import { PEDService } from '../../services/pedService';
 import { PPTService } from '../../services/pptService';
@@ -83,12 +81,6 @@ const ListarCurso = () => {
         <div className={styles.container}>
           <BarraPesquisa setFiltro={setFiltroGeral} fetchDados={fetchProgressoesFiltro} filtro={filtroGeral} setPagina={setPagina} />
           <div>
-            <img
-              className={styles.iconeAdicionarProgressao}
-              src={IconeAdicionar}
-              onClick={() => navigate(tipo === 'peds' ? '/Gestão Escolar/cadastroPED/' : '/Gestão Escolar/cadastroPPT/')}
-              title='Cadastrar Progressão'
-            />
           </div>
         </div>
         <div className={styles.containerTabela}>

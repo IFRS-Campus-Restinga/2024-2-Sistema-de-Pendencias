@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react'
 import { notificacaoService } from '../../services/notificacaoService'
 import styles from './Notificacoes.module.css'
-import PED_EMI from '../../assets/peds-branco.png'
-import PED_ProEJA from '../../assets/peds-proeja-branco.png'
-import PPT from '../../assets/ppt-branco.png'
-import Plano_Estudos from '../../assets/plano-estudos-branco.png'
-import Evento from '../../assets/evento-branco.png'
-import Atividade from '../../assets/atividade-branco.png'
 import { Link } from 'react-router-dom'
 import Loading from '../Loading/Loading'
 
@@ -41,21 +35,21 @@ const Notificacoes = () => {
     }
 
     const setIconeNotif = (tipo) => {
-        switch (tipo) {
-            case 'PED Integrado':
-                return PED_EMI
-            case 'PED ProEJA':
-                return PED_ProEJA
-            case 'PPT':
-                return PPT
-            case 'Plano de Estudos':
-                return Plano_Estudos
-            case 'Evento':
-                return Evento
-            case 'Atividade':
-                return Atividade
-            default:
-        }
+        // switch (tipo) {
+        //     case 'PED Integrado':
+        //         return PED_EMI
+        //     case 'PED ProEJA':
+        //         return PED_ProEJA
+        //     case 'PPT':
+        //         return PPT
+        //     case 'Plano de Estudos':
+        //         return Plano_Estudos
+        //     case 'Evento':
+        //         return Evento
+        //     case 'Atividade':
+        //         return Atividade
+        //     default:
+        // }
     }
 
     useEffect(() => {

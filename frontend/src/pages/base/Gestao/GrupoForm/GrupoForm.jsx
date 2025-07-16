@@ -1,16 +1,17 @@
+import 'react-toastify/dist/ReactToastify.css';
 import { useLocation } from 'react-router-dom'
 import styles from './GrupoForm.module.css'
 import { useEffect, useState } from 'react'
-import ServicoDeGrupos from '../../../../services/groupService'
+import GrupoService from '../../../../services/grupoService'
 import FormContainer from '../../../../components/FormContainer/FormContainer'
 import { toast, ToastContainer } from 'react-toastify'
-import ServicoDePermissoes from '../../../../services/permission_service'
+import PermissaoService from '../../../../services/permissaoService'
 import TabelaDeTransferencia from '../../../../components/Tabela/Tabelas/TabelaTransferencia'
-import CarregandoPersonalizado from '../../../../components/customLoading/CustomLoading'
-import RotuloPersonalizado from '../../../../components/customLabel/CustomLabel'
-import InputPersonalizado from '../../../../components/customInput/CustomInput'
-import { validarCampoObrigatorioString } from '../../../../utils/validations/generalValidations'
-import CustomButton from '../../../../components/customButton/CustomButton'
+import CustomLoading from '../../../../components/customLoading/CustomLoading'
+import Label from '../../../../components/Label/Label'
+import Input from '../../../../components/Input/Input'
+import { validarCampoObrigatorio } from '../../../../utils/validacoes'
+import Button from '../../../../components/Button/Button'
 
 const GrupoForm = () => {
     const { state } = useLocation()
@@ -40,9 +41,9 @@ const GrupoForm = () => {
     const buscarDadosDoGrupo = async () => {
         try {
             const [resGrupo, resDisponiveis, resDoGrupo] = await Promise.all([
-                ServicoDeGrupos.get(state),
-                ServicoDePermissoes.notAssignedTo(state, paginaDisponiveis),
-                ServicoDePermissoes.listByGroup(state, paginaDoGrupo)
+                GrupoService.detalhes(state),
+                PermissaoService.naoVinculadas(state, paginaDisponiveis),
+                PermissaoService.listarPorGrupo(state, paginaDoGrupo)
             ])
 
             setPermissoesDisponiveis(resDisponiveis.data.results)
@@ -73,7 +74,7 @@ const GrupoForm = () => {
     const buscarPermissoesDoGrupo = async () => {
         setCarregandoGrupo(true)
         try {
-            const res = await ServicoDePermissoes.listByGroup(state, paginaDoGrupo)
+            const res = await PermissaoService.listarPorGrupo(state, paginaDoGrupo)
 
             setGrupo(prev => ({
                 ...prev,
@@ -92,7 +93,7 @@ const GrupoForm = () => {
     const buscarPermissoesDisponiveis = async () => {
         setCarregandoDisponiveis(true)
         try {
-            const res = await ServicoDePermissoes.list(paginaDisponiveis)
+            const res = await PermissaoService.listar(paginaDisponiveis)
 
             setPermissoesDisponiveis(prev => [...prev, ...res.data.results])
 
@@ -109,7 +110,7 @@ const GrupoForm = () => {
 
     const validarFormulario = () => {
         let valido = true
-        const erro = validarCampoObrigatorioString(grupo.name)
+        const erro = validarCampoObrigatorio(grupo.name)
 
         if (erro) valido = false
         setErroNome(erro)
@@ -121,8 +122,8 @@ const GrupoForm = () => {
 
         if (validarFormulario()) {
             const requisicao = state
-                ? ServicoDeGrupos.edit(grupo, state)
-                : ServicoDeGrupos.create(grupo)
+                ? GrupoService.editar({id: state, name: grupo.name, permissions: permissoesDisponiveis}, state)
+                : GrupoService.criar(grupo)
 
             toast.promise(requisicao, {
                 pending: state ? 'Salvando alterações...' : 'Criando grupo...',
@@ -159,24 +160,24 @@ const GrupoForm = () => {
 
     return (
         <FormContainer
-            title={`${state ? 'Editar' : 'Cadastrar'} Grupo`}
-            formTip={`Preencha os campos obrigatórios (*)\n\nVincule ou Desvincule permissões ao grupo utilizando as tabelas abaixo.`}
+            titulo={`${state ? 'Editar' : 'Cadastrar'} Grupo`}
+            textoInfo={`Preencha os campos obrigatórios (*)\n\nVincule ou Desvincule permissões ao grupo utilizando as tabelas abaixo.`}
         >
             <ToastContainer />
             {carregandoGeral ? (
-                <CarregandoPersonalizado />
+                <CustomLoading />
             ) : (
                 <form className={styles.form} onSubmit={aoSubmeter}>
                     <div className={styles.formGroup}>
-                        <RotuloPersonalizado title="Nome *">
-                            <InputPersonalizado
-                                type="text"
-                                value={grupo.name}
-                                onBlur={() => setErroNome(validarCampoObrigatorioString(grupo.name))}
+                        <Label titulo="Nome *">
+                            <Input
+                                tipo="text"
+                                valor={grupo.name}
+                                onBlur={() => setErroNome(validarCampoObrigatorio(grupo.name))}
                                 onChange={(e) => setGrupo({ ...grupo, name: e.target.value })}
-                                error={erroNome}
+                                erro={erroNome}
                             />
-                        </RotuloPersonalizado>
+                        </Label>
                     </div>
                     <TabelaDeTransferencia
                         titulo1="Permissões disponíveis"
@@ -201,7 +202,7 @@ const GrupoForm = () => {
                         renderizarItem={(p) => p.name}
                     />
                     <div className={styles.buttonContainer}>
-                        <CustomButton text={state ? "Salvar alterações" : "Cadastrar"} type="submit" />
+                        <Button texto={state ? "Salvar alterações" : 'Cadastrar'} tipo={'submit'} />
                     </div>
                 </form>
             )}

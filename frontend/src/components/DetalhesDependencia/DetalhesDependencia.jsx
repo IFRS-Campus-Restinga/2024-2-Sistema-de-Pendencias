@@ -1,13 +1,10 @@
 import styles from "./DetalhesDependencia.module.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FormContainer from "../FormContainer/FormContainer";
 import Button from "../Button/Button";
 import StatusBalls from "../StatusBall/StatusBall";
 import Dropdown from "../Dropdown/Dropdown";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import Modal from '../Modal/Modal'
 import { PEDService } from "../../services/pedService";
 import { PPTService } from "../../services/pptService";
 import { toast } from "react-toastify";

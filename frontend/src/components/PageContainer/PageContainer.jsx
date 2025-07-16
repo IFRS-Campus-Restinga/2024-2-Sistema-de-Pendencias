@@ -1,10 +1,10 @@
 import Header from "../Header/Header";
 import MainContainer from "../MainContainer/mainContainer";
-import "./PageContainer.css";
+import styles from "./PageContainer.module.css";
 
 const PageContainer = ({ children, homeUrl }) => {
   return (
-    <div className="PageContainer">
+    <div className={styles.pageContainer}>
       <Header homeUrl={homeUrl} />
       <MainContainer>{children}</MainContainer>
     </div>

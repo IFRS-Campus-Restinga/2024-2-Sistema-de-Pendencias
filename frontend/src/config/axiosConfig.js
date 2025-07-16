@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// Criação da instância do axios
 export const api = axios.create({
   baseURL: process.env.REACT_APP_BASE_API_URL,
   withCredentials: true,
@@ -11,6 +10,20 @@ export const apiHub = axios.create({
   withCredentials: true,
 });
 
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -19,17 +32,25 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      try {
-        const refreshResponse = await axios.post(
-          `${process.env.REACT_APP_BASE_API_URL}/api/token/refresh/`,
-          null,
-          { withCredentials: true }
-        );
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(() => api(originalRequest))
+          .catch((err) => Promise.reject(err));
+      }
 
+      isRefreshing = true;
+
+      try {
+        await api.get("session/tokens/refresh/");
+        processQueue(null);
         return api(originalRequest);
-      } catch (err) {
-        console.log("Erro ao renovar o token:", err);
-        return Promise.reject(err);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 

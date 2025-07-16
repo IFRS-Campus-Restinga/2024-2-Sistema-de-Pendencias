@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import styles from "./LoginPage.module.css";
 import { authService } from "../../services/authService";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import 'react-toastify/dist/ReactToastify.css';
+import { useLocation, useNavigate } from "react-router-dom";
 import CustomLoading from "../../components/customLoading/CustomLoading";
-import { jwtDecode } from "jwt-decode";
 import { verificarGrupos } from "../../utils/permissões";
 
 function useQuery() {
@@ -31,7 +29,7 @@ const LoginPage = () => {
       res.data.profile_picture = profilePicture
       
       sessionStorage.setItem('user', JSON.stringify(res.data))
-      redirect(`/${grupo}`)
+      redirect(`/session/${grupo}/home`)
     } catch (error) {
       console.error(error)
       setAutenticado('recusado')

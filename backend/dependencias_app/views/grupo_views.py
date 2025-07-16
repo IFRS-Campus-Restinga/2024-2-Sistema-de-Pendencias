@@ -9,7 +9,7 @@ from django.http import Http404
 @has_every_permission(['add_group'])
 def cadastrar_grupo(request):
     try:
-        GrupoService.criar(request.data)
+        GrupoService.criar(request.data.get('name', None), request.data.get('permissions', None))
 
         return Response({'mensagem': 'Grupo registrado com sucesso'}, status=status.HTTP_201_CREATED)
     except serializers.ValidationError as e:
@@ -45,9 +45,9 @@ def detalhes_grupo(request, grupo_id):
     
 @api_view(['PUT', 'PATCH'])
 @has_every_permission(['change_group'])
-def editar_grupo(request):
+def editar_grupo(request, grupo_id):
     try:
-        GrupoService.editar(request.data)
+        GrupoService.editar(request.data, grupo_id)
 
         return Response({'mensagem': 'Grupo editado com sucesso'}, status=status.HTTP_200_OK)
     except Http404 as e:

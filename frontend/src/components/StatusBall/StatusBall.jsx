@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook, faSpinner, faCheck, faRocket } from '@fortawesome/free-solid-svg-icons';
-import './StatusBalls.css';
+import styles from './StatusBalls.module.css';
 
 const StatusBalls = ({ status, tipo, parecerLancado }) => {
     const [activeStatus, setActiveStatus] = useState('');
@@ -31,45 +31,45 @@ const StatusBalls = ({ status, tipo, parecerLancado }) => {
     return (
         <div className="status-container">
             {/* Bola 1: Criada */}
-            <div className={`status-ball ${getStatusClass(0)}`}>
+            <div className={`${styles.statusBall} ${getStatusClass(0)}`}>
                 <FontAwesomeIcon icon={faBook} style={{ fontSize: "20px" }} />
-                <div className="status-text">Criada</div>
+                <div className={styles.statusText}>Criada</div>
             </div>
-            <div className='containerProgresso'>
+            <div className={styles.containerProgresso}>
                     <div style={{width: '14px', height: '14px', borderRadius: '50%', backgroundColor: getStatusClass(1) ? '#00b36b' : 'white', border: '1px solid #ccc'}}/>
                     <div style={{width: '17px', height: '17px', borderRadius: '50%', backgroundColor: getStatusClass(1) ? '#009e55' : 'white', border: '1px solid #ccc'}}/>
                     <div style={{width: '20px', height: '20px', borderRadius: '50%', backgroundColor: getStatusClass(1) ? '#006b3f' : 'white', border: '1px solid #ccc'}}/>
                 </div>
 
             {/* Bola 2: Em andamento */}
-            <div className={`status-ball ${getStatusClass(1)}`}>
+            <div className={`${styles.statusBall} ${getStatusClass(1)}`}>
                 <FontAwesomeIcon icon={faSpinner} spin style={{ fontSize: "20px" }} />
-                <div className="status-text">Em andamento</div>
+                <div className={styles.statusText}>Em andamento</div>
             </div>
 
 
             {/* Bola 3: Lançado */}
                 <>
-                <div className='containerProgresso'>
+                <div className={styles.containerProgresso}>
                     <div style={{width: '14px', height: '14px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#00b36b' : 'white', border: '1px solid #ccc'}}/>
                     <div style={{width: '17px', height: '17px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#009e55' : 'white', border: '1px solid #ccc'}}/>
                     <div style={{width: '20px', height: '20px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#006b3f' : 'white', border: '1px solid #ccc'}}/>
                 </div>
-                <div className={`status-ball ${getStatusClass(2)}`}>
+                <div className={`${styles.statusBall} ${getStatusClass(2)}`}>
                     <FontAwesomeIcon icon={faRocket} style={{ fontSize: "20px" }} />
-                    <div className="status-text">Lançado</div>
+                    <div className={styles.statusText}>Lançado</div>
                 </div>
                 </>
-                <div className='containerProgresso'>
+                <div className={styles.containerProgresso}>
                     <div style={{width: '14px', height: '14px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#00b36b' : 'white', border: '1px solid #ccc'}}/>
                     <div style={{width: '17px', height: '17px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#009e55' : 'white', border: '1px solid #ccc'}}/>
                     <div style={{width: '20px', height: '20px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#006b3f' : 'white', border: '1px solid #ccc'}}/>
                 </div>
 
             {/* Bola 4: Finalizada */}
-            <div className={`status-ball ${getStatusClass(3)}`}>
+            <div className={`${styles.statusBall} ${getStatusClass(3)}`}>
                 <FontAwesomeIcon icon={faCheck} style={{ fontSize: "20px" }} />
-                <div className="status-text">Finalizada</div>
+                <div className={styles.statusText}>Finalizada</div>
             </div>
         </div>
     );

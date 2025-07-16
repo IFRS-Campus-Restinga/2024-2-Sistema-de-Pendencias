@@ -1,13 +1,13 @@
 from django.contrib.auth.models import Group
 
-class FormatGroupData:
+class FormatGrupoData:
     @staticmethod
     def list_format(instance: Group):
         formatted_name = instance.name.replace('_', ' ').title()
 
         return {
             'id': instance.uuid_map.uuid,
-            'Nome': formatted_name,
+            'nome': formatted_name,
         }
     
     @staticmethod
@@ -15,11 +15,5 @@ class FormatGroupData:
         return {
             'id': group.uuid_map.uuid,
             'name': group.name,
-            'permissions': [
-                {
-                    'id': perm.uuid_map.uuid,
-                    'name': perm.name
-                }
-                for perm in group.permissions.all()
-            ]
+            'permissions': []
         }

@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
-import './PDFPreview.css'
+import styles from './PDFPreview.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import downloadBranco from '../../assets/upload-branco.png'
 
 GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/legacy/build/pdf.worker.min.mjs', import.meta.url).toString();
 
@@ -135,7 +134,7 @@ const PDFPreview = ({ pdfData }) => {
   return (
     <>
       <div
-        className="pdfPreview" onClick={() => setPdfAberto(true)}>
+        className={styles.pdfPreview} onClick={() => setPdfAberto(true)}>
         <div style={{
             backgroundImage: `url(${imageUrl})`,
             backgroundSize: 'cover',
@@ -146,9 +145,9 @@ const PDFPreview = ({ pdfData }) => {
     </div>
     {
       pdfAberto ? (
-        <div className='viewContainer' onClick={() => setPdfAberto(false)}>
-            <img src={downloadBranco} className='downloadIcon' style={{display: `${download ? 'block' : 'none'}`}}/>
-          <a href={pdfURL} className={`pdfContainer ${download ? 'download' : ''}`} download={'Atividade.pdf'} onMouseEnter={() => setDownload(true)} onMouseLeave={() => setDownload(false)}>
+        <div className={styles.viewContainer} onClick={() => setPdfAberto(false)}>
+            {/* <img src={downloadBranco} className={styles.downloadIcon} style={{display: `${download ? 'block' : 'none'}`}}/> */}
+          <a href={pdfURL} className={`${styles.pdfContainer} ${download ? styles.download : null}`} download={'Atividade.pdf'} onMouseEnter={() => setDownload(true)} onMouseLeave={() => setDownload(false)}>
             {
               paginasPDF.map((pagina) => (
                 <img src={pagina} className='pdf'/>

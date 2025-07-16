@@ -1,7 +1,7 @@
 import styles from '../Tabela.module.css'
-import setaDupla from '../../../assets/'
+import setaDupla from '../../../assets/double-arrow-right-svgrepo-com.svg'
 import { useEffect, useRef } from 'react'
-import CarregandoPersonalizado from '../../customLoading/CustomLoading'
+import CustomLoading from '../../customLoading/CustomLoading'
 
 const TabelaDeTransferencia = ({
     titulo1,
@@ -105,25 +105,25 @@ const TabelaDeTransferencia = ({
     }, [paginaAtualLista2])
 
     return (
-        <section className={styles.tablesContainer}>
-            <div className={styles.dualTableContainer}>
+        <section className={styles.containerTabelas}>
+            <div className={styles.containerTabelaDupla}>
                 {carregandoLista1 && (
-                    <div className={styles.loadingWindow}>
-                        <CarregandoPersonalizado />
+                    <div className={styles.janelaCarregamento}>
+                        <CustomLoading />
                     </div>
                 )}
-                <table className={styles.table}>
-                    <thead className={styles.thead}>
-                        <tr className={styles.tr}>
+                <table className={styles.tabela}>
+                    <thead className={styles.cabecalho}>
+                        <tr className={styles.linha}>
                             <th className={styles.th}>{titulo1}</th>
                             <th className={styles.thAction} />
                         </tr>
                     </thead>
-                    <tbody className={styles.tbody}>
+                    <tbody className={styles.corpo}>
                         {lista1.map((item, indice) => (
                             <tr
                                 key={`lista1-${obterChave(item)}`}
-                                className={styles.tr}
+                                className={styles.linha}
                                 ref={
                                     indice === 0
                                         ? refPrimeiroItemLista1
@@ -132,12 +132,12 @@ const TabelaDeTransferencia = ({
                                         : null
                                 }
                             >
-                                <td className={styles.td}>{renderizarItem(item)}</td>
+                                <td className={styles.coluna}>{renderizarItem(item)}</td>
                                 <td className={styles.tdAction}>
                                     <img
                                         src={setaDupla}
                                         alt="Vincular"
-                                        className={styles.action}
+                                        className={styles.acao}
                                         onClick={() => enviarParaLista2(indice)}
                                     />
                                 </td>
@@ -146,24 +146,24 @@ const TabelaDeTransferencia = ({
                     </tbody>
                 </table>
             </div>
-            <div className={styles.dualTableContainer}>
+            <div className={styles.containerTabelaDupla}>
                 {carregandoLista2 && (
-                    <div className={styles.loadingWindow}>
-                        <CarregandoPersonalizado />
+                    <div className={styles.janelaCarregamento}>
+                        <CustomLoading />
                     </div>
                 )}
-                <table className={styles.table}>
-                    <thead className={styles.thead}>
-                        <tr className={styles.tr}>
+                <table className={styles.tabela}>
+                    <thead className={styles.cabecalho}>
+                        <tr className={styles.linha}>
                             <th className={styles.thAction} />
                             <th className={styles.th}>{titulo2}</th>
                         </tr>
                     </thead>
-                    <tbody className={styles.tbody}>
+                    <tbody className={styles.corpo}>
                         {lista2.map((item, indice) => (
                             <tr
                                 key={`lista2-${obterChave(item)}`}
-                                className={styles.tr}
+                                className={styles.linha}
                                 ref={
                                     indice === 0
                                         ? refPrimeiroItemLista2
@@ -176,12 +176,12 @@ const TabelaDeTransferencia = ({
                                     <img
                                         src={setaDupla}
                                         alt="Desvincular"
-                                        className={styles.action}
+                                        className={styles.acao}
                                         style={{ rotate: '180deg' }}
                                         onClick={() => enviarParaLista1(indice)}
                                     />
                                 </td>
-                                <td className={styles.td}>{renderizarItem(item)}</td>
+                                <td className={styles.coluna}>{renderizarItem(item)}</td>
                             </tr>
                         ))}
                     </tbody>

@@ -1,4 +1,4 @@
-.status-container {
+.statusContainer {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -10,7 +10,7 @@
     padding-top: 10px;
 }
 
-.status-ball {
+.statusBall {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -25,13 +25,13 @@
     padding: 5px;
 }
 
-.status-ball.active {
+.statusBall .active {
     background-color: #006b3f;
     border: 2px solid #006b3f;
     color: white;
 }
 
-.status-text {
+.statusText {
     margin-top: 8px;
     font-size: 12px;
     text-align: center;
@@ -39,11 +39,11 @@
     color: black;
 }
 
-.status-ball.active .status-text {
+.statusBall .active .statusText {
     color: white;
 }
 
-.status-ball i {
+.statusBall i {
     font-size: 20px;
 }
 
@@ -74,12 +74,12 @@
 }
 
 @media (max-width: 570px) {
-    .status-ball {
+    .statusBall {
         width: 80px;
         height: 80px;
     }
 
-    .status-text {
+    .statusText {
         font-size: 8px;
         font-weight: 700;
     }

@@ -46,13 +46,45 @@ def obter_tokens(request):
                 secure=False,
                 samesite='Lax',
                 max_age=60 * 60 * 24,
-                path='auth/token/'
+                path='session/'
             )
         
         return response
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+@api_view(['GET'])
+def renovar_token(request):
+    refresh_token = request.COOKIES.get('refresh_token', None)
 
-    
+    try:
+        external_response = requests.get(
+            f'{settings.BASE_SYSTEM_URL}/session/token/refresh/',
+            cookies={
+                'refresh_token': refresh_token,
+                'system': settings.SYSTEM_ID
+            }
+        )
 
+        if external_response.status_code == 200:
+            access_token = external_response.json().get('access_token')
+
+            response = Response(status=status.HTTP_200_OK)
+
+            access_token = TokenService.adicionar_permissoes(access_token)
+
+            response.set_cookie(
+                key='access_token',
+                value=access_token,
+                httponly=True,
+                secure=False,
+                samesite='Lax',
+                path='/'
+            )
+            return response
+        else:
+            return Response({
+                'mensagem': external_response.text
+            }, status=external_response.status_code)
+    except Exception as e:
+        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

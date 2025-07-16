@@ -16,7 +16,7 @@ const ListarGrupos = () => {
         <Listagem
             fetchDados={fetchGrupos}
             titulo={'Grupos'}
-            urlCadastro={'/gestao_escolar/grupos/cadastro/'}
+            urlCadastro={'/session/gestao_escolar/grupos/cadastro/'}
         />
     )
 }

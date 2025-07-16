@@ -30,3 +30,8 @@
     align-items: center;
     margin: 10px;
 }
+
+.linha {
+    border: 1px solid #006b3f;
+    margin-bottom: 20px;
+}

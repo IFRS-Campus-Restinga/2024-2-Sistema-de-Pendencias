@@ -1,20 +1,21 @@
+import uuid
 from django.contrib.auth.models import Group, Permission
-from dependencias_app.serializers.grupo_serializer import Grupo_Serializer
+from dependencias_app.serializers.grupo_serializer import GrupoSerializer
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 
 class GrupoPagination(PageNumberPagination):
     page_size = 10
-    page_size_query_param = 'pagina'
+    page_size_query_param = 'tam_pagina'
     max_page_size = 30
 
 class GrupoService:
     @staticmethod
     def criar(nome: str, lista_permissoes: list):
-        permissoes = Permission.objects.filter(uuid_map__uuid__in=[perm['id'] for perm in lista_permissoes]).values_list('id', flat=True)
+        permissoes = Permission.objects.filter(uuid_map__uuid__in=[uuid.UUID(perm['id']) for perm in lista_permissoes]).values_list('id', flat=True)
 
-        serializer = Grupo_Serializer(data={'name': nome, 'permissions': permissoes})
+        serializer = GrupoSerializer(data={'name': nome, 'permissions': permissoes})
 
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)
@@ -22,12 +23,17 @@ class GrupoService:
         serializer.save()
 
     @staticmethod
-    def editar(grupo_id: str, nome: str, lista_permissoes: list):
-        grupo = get_object_or_404(Group, uuid_map__uuid=grupo_id)
+    def editar(grupo_data, grupo_id: str):
+        grupo = get_object_or_404(Group, uuid_map__uuid=uuid.UUID(grupo_id))
 
-        permissoes = Permission.objects.filter(uuid_map__uuid__in=[perm['id'] for perm in lista_permissoes]).values_list('id', flat=True)
+        grupo_name = grupo_data['name']
+        permissoes_uuids = [uuid.UUID(perm['id']) for perm in grupo_data['permissions']]
 
-        serializer = Grupo_Serializer(instance=grupo, data={'name': nome, 'permissions': permissoes}, partial=True)
+        permissoes = Permission.objects.filter(
+            uuid_map__uuid__in=permissoes_uuids
+        ).values_list('id', flat=True)
+
+        serializer = GrupoSerializer(instance=grupo, data={'name': grupo_name, 'permissions': permissoes})
 
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)
@@ -44,17 +50,17 @@ class GrupoService:
         paginator = GrupoPagination()
         resultado_paginado = paginator.paginate_queryset(lista_grupos, request)
 
-        serializer = Grupo_Serializer(resultado_paginado, many=True, context={'request': request})
+        serializer = GrupoSerializer(resultado_paginado, many=True, context={'request': request})
 
         return paginator.get_paginated_response(serializer.data)
 
     @staticmethod
-    def detalhes(grupo_id: int, request):
-        grupo = get_object_or_404(Group, pk=grupo_id)
+    def detalhes(request, grupo_id: str):
+        grupo = get_object_or_404(Group, uuid_map__uuid=uuid.UUID(grupo_id))
 
-        serializer = Grupo_Serializer(data=grupo, context={'request': request})
+        serializer = GrupoSerializer(grupo, context={'request': request})
 
-        return serializer.instance
+        return serializer.data
 
     @staticmethod
     def listar_permissoes_por_grupo(nome: str) -> list[str]:

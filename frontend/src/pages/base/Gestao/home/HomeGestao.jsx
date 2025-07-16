@@ -15,23 +15,23 @@ const HomeGestao = () => {
             </div>
 
             <div className={styles.menu}>
-                <Link to={'grupos'} className={styles.botaoMenu}>
+                <Link to={'/session/gestao_escolar/grupos'} className={styles.botaoMenu}>
                     <img src={lock} alt="" className={styles.iconeBotao} />
                     <p className={styles.textoBotao}>Gerenciar Grupos & Permissões</p>
                 </Link>
-                <Link to={'ped/ProEJA'} className={styles.botaoMenu}>
+                <Link to={'/session/gestao_escolar/ped/ProEJA'} className={styles.botaoMenu}>
                     <img src={proeja} alt="" className={styles.iconeBotao} />
                     <p className={styles.textoBotao}>Gerenciar Progressões ProEJA</p>
                 </Link>
-                <Link to={'ped/Integrado'} className={styles.botaoMenu}>
+                <Link to={'/session/gestao_escolar/ped/Integrado'} className={styles.botaoMenu}>
                     <img src={emi} alt="" className={styles.iconeBotao} />
                     <p className={styles.textoBotao}>Gerenciar Progressões EMI</p>
                 </Link>
-                <Link to={'ppt'} className={styles.botaoMenu}>
+                <Link to={'/session/gestao_escolar/ppt'} className={styles.botaoMenu}>
                     <img src={ppt} alt="" className={styles.iconeBotao} />
                     <p className={styles.textoBotao}>Gerenciar Progressões Parciais</p>
                 </Link>
-                <Link to={'calendario'} className={styles.botaoMenu}>
+                <Link to={'/session/gestao_escolar/calendario'} className={styles.botaoMenu}>
                     <img src={calendar} alt="" className={styles.iconeBotao} />
                     <p className={styles.textoBotao}>Gerenciar Calendário</p>
                 </Link>

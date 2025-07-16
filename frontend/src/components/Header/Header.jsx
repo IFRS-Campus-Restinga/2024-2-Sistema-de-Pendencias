@@ -63,18 +63,10 @@ const Header = ({ homeUrl }) => {
               <p className={styles.grupo}>{validaUsuario(JSON.parse(sessionStorage.getItem('user')).groups).grupo}</p>
             </span>
             <Dropdown
-              tipo={'usuario'}
-              icone={
-                <img src={JSON.parse(sessionStorage.getItem('user')).profile_picture} className={styles.fotoPerfil} />
-              }
+              img={JSON.parse(sessionStorage.getItem('user')).profile_picture}
               itens={[
                 {
-                  name: 'Minha Conta',
-                  link: `${homeUrl}/perfil`
-                },
-                {
-                  name: 'Logout',
-                  link: null,
+                  titulo: 'Logout',
                   onClick: handleLogout
                 }
               ]}

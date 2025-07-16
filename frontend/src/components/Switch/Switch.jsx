@@ -1,4 +1,4 @@
-import './Switch.css'
+import styles from './Switch.module.css'
 
 const Switch = ({valor, stateHandler, valor1, valor2, imagemCustom}) => {
     let handleClick = () => {
@@ -8,11 +8,11 @@ const Switch = ({valor, stateHandler, valor1, valor2, imagemCustom}) => {
       };
 
     return (
-        <button type='button' className={valor === valor1 ? 'button' : 'toggledBtn'} onClick={handleClick}>
-            <p id='text' className={valor === valor1 ? 'btnText' : 'toggledBtnText'}>
+        <button type='button' className={valor === valor1 ? styles.button : styles.toggledBtn} onClick={handleClick}>
+            <p id={styles.text} className={valor === valor1 ? styles.btnText : styles.toggledBtnText}>
                 {valor === valor1 ? valor1 : valor2}
             </p>
-            <div className={valor === valor1? 'slider' : 'toggledSlider'}>
+            <div className={valor === valor1? styles.slider : styles.toggledSlider}>
                 {imagemCustom}
             </div>
         </button>

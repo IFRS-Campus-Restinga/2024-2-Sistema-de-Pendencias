@@ -106,10 +106,10 @@ const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setP
                                                     <img src={search} alt="detalhes" className={styles.acao} onClick={() => redirectAction(item.id)} />
                                                 )}
                                                 {editar && (
-                                                    <img src={editIcon} alt="editar" className={styles.acao} onClick={() => redirectAction(item.id, 'edit')} />
+                                                    <img src={editIcon} alt="editar" className={styles.acao} onClick={() => redirectAction(item.id, 'editar')} />
                                                 )}
                                                 {deletar && (
-                                                    <img src={deleteIcon} alt="excluir" className={styles.acao} onClick={() => redirectAction(item.id, 'delete')} />
+                                                    <img src={deleteIcon} alt="excluir" className={styles.acao} onClick={() => {}} />
                                                 )}
                                             </div>
                                         </td>
