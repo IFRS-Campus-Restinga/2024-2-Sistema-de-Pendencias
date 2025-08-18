@@ -9,7 +9,7 @@ from django.http import Http404
 @has_every_permission(['add_group'])
 def cadastrar_grupo(request):
     try:
-        GrupoService.criar(request.data.get('name', None), request.data.get('permissions', None))
+        GrupoService.criar(request.data)
 
         return Response({'mensagem': 'Grupo registrado com sucesso'}, status=status.HTTP_201_CREATED)
     except serializers.ValidationError as e:

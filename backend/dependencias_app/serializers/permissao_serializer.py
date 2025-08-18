@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import Permission
-from dependencias_app.utils.formatters.format_permissao_data import FormatPermissaoData
+from dependencias_app.formatters.format_permissao_data import FormatPermissaoData
 
 class PermissaoSerializer(serializers.ModelSerializer):
     class Meta:

@@ -26,10 +26,12 @@ const GrupoForm = () => {
     const [anteriorDoGrupo, setAnteriorDoGrupo] = useState(null)
 
     const [permissoesDisponiveis, setPermissoesDisponiveis] = useState([])
+    const [permissoesGrupo, setPermissoesGrupo] = useState([])
+    const [addPermissoes, setAddPermissoes] = useState([])
+    const [remPermissoes, setRemPermissoes] = useState([])
     const [grupo, setGrupo] = useState({
         id: '',
         name: '',
-        permissions: []
     })
 
     const [carregandoGeral, setCarregandoGeral] = useState(true)
@@ -40,25 +42,22 @@ const GrupoForm = () => {
 
     const buscarDadosDoGrupo = async () => {
         try {
-            const [resGrupo, resDisponiveis, resDoGrupo] = await Promise.all([
+            const res = await Promise.all([
                 GrupoService.detalhes(state),
                 PermissaoService.naoVinculadas(state, paginaDisponiveis),
                 PermissaoService.listarPorGrupo(state, paginaDoGrupo)
             ])
 
-            setPermissoesDisponiveis(resDisponiveis.data.results)
+            
+            setGrupo(res[0].data)
+            setPermissoesDisponiveis(res[1].data.results)
+            setPermissoesGrupo(res[2].data.results)
 
-            setGrupo(prev => ({
-                id: resGrupo.data.id,
-                name: resGrupo.data.name,
-                permissions: [...prev.permissions, ...resDoGrupo.data.results.flat()]
-            }))
+            setProximaDisponiveis(res[1].data.next ? paginaDisponiveis + 1 : null)
+            setAnteriorDisponiveis(res[1].data.prev ? paginaDisponiveis - 1 : null)
 
-            setProximaDisponiveis(resDisponiveis.data.next ? paginaDisponiveis + 1 : null)
-            setAnteriorDisponiveis(resDisponiveis.data.prev ? paginaDisponiveis - 1 : null)
-
-            setProximaDoGrupo(resDoGrupo.data.next ? paginaDoGrupo + 1 : null)
-            setAnteriorDoGrupo(resDoGrupo.data.prev ? paginaDoGrupo - 1 : null)
+            setProximaDoGrupo(res[2].data.next ? paginaDoGrupo + 1 : null)
+            setAnteriorDoGrupo(res[2].data.prev ? paginaDoGrupo - 1 : null)
         } catch (erro) {
             toast.error(erro.message || 'Erro ao carregar dados do grupo.', {
                 autoClose: 2000,
@@ -73,13 +72,11 @@ const GrupoForm = () => {
 
     const buscarPermissoesDoGrupo = async () => {
         setCarregandoGrupo(true)
+
         try {
             const res = await PermissaoService.listarPorGrupo(state, paginaDoGrupo)
 
-            setGrupo(prev => ({
-                ...prev,
-                permissions: [...prev.permissions, ...res.data.results]
-            }))
+            setPermissoesGrupo([...permissoesGrupo, ...res.data.results])
 
             setProximaDoGrupo(res.data.next ? paginaDoGrupo + 1 : null)
             setAnteriorDoGrupo(res.data.previous ? paginaDoGrupo - 1 : null)
@@ -92,10 +89,15 @@ const GrupoForm = () => {
 
     const buscarPermissoesDisponiveis = async () => {
         setCarregandoDisponiveis(true)
-        try {
-            const res = await PermissaoService.listar(paginaDisponiveis)
 
-            setPermissoesDisponiveis(prev => [...prev, ...res.data.results])
+        try {
+            const req = state ?
+            PermissaoService.naoVinculadas(state, paginaDisponiveis) :
+            PermissaoService.listar(paginaDisponiveis)
+
+            const res = await req
+
+            setPermissoesDisponiveis([...permissoesDisponiveis, ...res.data.results])
 
             setProximaDisponiveis(res.data.next ? paginaDisponiveis + 1 : null)
             setAnteriorDisponiveis(res.data.previous ? paginaDisponiveis - 1 : null)
@@ -122,8 +124,8 @@ const GrupoForm = () => {
 
         if (validarFormulario()) {
             const requisicao = state
-                ? GrupoService.editar({id: state, name: grupo.name, permissions: permissoesDisponiveis}, state)
-                : GrupoService.criar(grupo)
+                ? GrupoService.editar({id: state, name: grupo.name, addPermissoes, remPermissoes}, state)
+                : GrupoService.criar({name: grupo.name, addPermissoes, remPermissoes})
 
             toast.promise(requisicao, {
                 pending: state ? 'Salvando alterações...' : 'Criando grupo...',
@@ -138,16 +140,23 @@ const GrupoForm = () => {
     }
 
     const atualizarPermissoesDoGrupo = (novasPermissoes) => {
-        setGrupo(prev => {
+        setPermissoesGrupo(prev => {
             const atualizado = typeof novasPermissoes === 'function'
-                ? novasPermissoes(prev.permissions)
+                ? novasPermissoes(prev)
                 : novasPermissoes
 
-            return {
-                ...prev,
-                permissions: atualizado
-            }
+            return atualizado
         })
+    }
+
+    const addPermission = (perm) => {
+        setAddPermissoes([...addPermissoes, perm])
+        setRemPermissoes(remPermissoes.filter((p) => p.id !== perm.id))
+    }
+
+    const removePermission = (perm) => {
+        setRemPermissoes([...remPermissoes, perm])
+        setAddPermissoes(addPermissoes.filter((p) => p.id !== perm.id))
     }
 
     useEffect(() => {
@@ -183,15 +192,17 @@ const GrupoForm = () => {
                         titulo1="Permissões disponíveis"
                         titulo2="Permissões do grupo"
                         lista1={permissoesDisponiveis}
-                        lista2={grupo.permissions}
+                        lista2={permissoesGrupo}
                         setLista1={setPermissoesDisponiveis}
                         setLista2={atualizarPermissoesDoGrupo}
+                        callbackLista1={(perm) => addPermission(perm)}
+                        callbackLista2={(perm) => removePermission(perm)}
                         paginaAtualLista1={paginaDisponiveis}
                         paginaAtualLista2={paginaDoGrupo}
-                        temProximaPaginaLista1={proximaDisponiveis}
-                        temProximaPaginaLista2={proximaDoGrupo}
-                        temPaginaAnteriorLista1={anteriorDisponiveis}
-                        temPaginaAnteriorLista2={anteriorDoGrupo}
+                        proximaPaginaLista1={proximaDisponiveis}
+                        proximaPaginaLista2={proximaDoGrupo}
+                        paginaAnteriorLista1={anteriorDisponiveis}
+                        paginaAnteriorLista2={anteriorDoGrupo}
                         buscarDadosLista1={buscarPermissoesDisponiveis}
                         buscarDadosLista2={buscarPermissoesDoGrupo}
                         carregandoLista1={carregandoDisponiveis}

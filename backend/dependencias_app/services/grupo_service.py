@@ -12,10 +12,11 @@ class GrupoPagination(PageNumberPagination):
 
 class GrupoService:
     @staticmethod
-    def criar(nome: str, lista_permissoes: list):
-        permissoes = Permission.objects.filter(uuid_map__uuid__in=[uuid.UUID(perm['id']) for perm in lista_permissoes]).values_list('id', flat=True)
+    def criar(grupo_data):
+        add_permissoes = Permission.objects.filter(uuid_map__uuid__in=[uuid.UUID(perm['id']) for perm in grupo_data.get('addPermissoes')]).values_list('id', flat=True)
+        rem_permissoes = Permission.objects.filter(uuid_map__uuid__in=[uuid.UUID(perm['id']) for perm in grupo_data.get('remPermissoes')]).values_list('id', flat=True)
 
-        serializer = GrupoSerializer(data={'name': nome, 'permissions': permissoes})
+        serializer = GrupoSerializer(data={'name': grupo_data.get('name'), 'permissions_to_add': add_permissoes, 'permissions_to_remove': rem_permissoes})
 
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)
@@ -26,14 +27,12 @@ class GrupoService:
     def editar(grupo_data, grupo_id: str):
         grupo = get_object_or_404(Group, uuid_map__uuid=uuid.UUID(grupo_id))
 
+        add_permissoes = Permission.objects.filter(uuid_map__uuid__in=[uuid.UUID(perm['id']) for perm in grupo_data.get('addPermissoes')]).values_list('id', flat=True)
+        rem_permissoes = Permission.objects.filter(uuid_map__uuid__in=[uuid.UUID(perm['id']) for perm in grupo_data.get('remPermissoes')]).values_list('id', flat=True)
+
         grupo_name = grupo_data['name']
-        permissoes_uuids = [uuid.UUID(perm['id']) for perm in grupo_data['permissions']]
 
-        permissoes = Permission.objects.filter(
-            uuid_map__uuid__in=permissoes_uuids
-        ).values_list('id', flat=True)
-
-        serializer = GrupoSerializer(instance=grupo, data={'name': grupo_name, 'permissions': permissoes})
+        serializer = GrupoSerializer(instance=grupo, data={'name': grupo_name, 'permissions_to_add': add_permissoes, 'permissions_to_remove': rem_permissoes})
 
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)

@@ -4,7 +4,7 @@ class FormatGrupoData:
     @staticmethod
     def list_format(instance: Group):
         formatted_name = instance.name.replace('_', ' ').title()
-
+        
         return {
             'id': instance.uuid_map.uuid,
             'nome': formatted_name,
@@ -15,5 +15,4 @@ class FormatGrupoData:
         return {
             'id': group.uuid_map.uuid,
             'name': group.name,
-            'permissions': []
         }

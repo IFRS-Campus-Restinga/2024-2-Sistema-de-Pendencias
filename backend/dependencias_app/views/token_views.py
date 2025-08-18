@@ -8,26 +8,35 @@ from dependencias_app.services.token_service import TokenService
 
 @api_view(['GET'])
 def obter_tokens(request):
-    system = request.GET.get('system', None)
-    user = request.GET.get('user', None)
+    system = request.GET.get('system')
+    user = request.GET.get('user')
 
     try:
-        response = requests.get(f'{settings.BASE_SYSTEM_URL}/session/token/pair-token/', params={'system': system, 'user': user})
+        r = requests.get(
+            f'{settings.BASE_SYSTEM_URL}/session/token/pair-token/',
+            params={'system': system, 'user': user}
+        )
 
-        if response.status_code == 200:
-            access_token = response.json().get('access')
-            refresh_token = response.json().get('refresh')
+        if r.status_code != 200:
+            return Response(r.json(), status=r.status_code)
 
-            user_data = requests.get(
-                f'{settings.BASE_SYSTEM_URL}/api/user/data/',
-                cookies={
-                    'access_token': access_token,
-                    'system': settings.SYSTEM_ID
-                }
-            ).json()
+        access_token = r.json().get('access')
+        refresh_token = r.json().get('refresh')
 
-            response = Response(user_data, status=status.HTTP_200_OK)
+        print(settings.SYSTEM_ID)
 
+        user_data_response = requests.get(
+            f'{settings.BASE_SYSTEM_URL}/api/users/data/',
+            cookies={
+                'access_token': access_token,
+                'system': settings.SYSTEM_ID
+            }
+        )
+
+        response = Response(user_data_response.json(), status=user_data_response.status_code)
+
+        # Se tokens existirem, adiciona cookies na resposta
+        if access_token and refresh_token:
             access_token = TokenService.adicionar_permissoes(access_token)
 
             response.set_cookie(
@@ -38,7 +47,6 @@ def obter_tokens(request):
                 samesite='Lax',
                 path='/'
             )
-
             response.set_cookie(
                 key='refresh_token',
                 value=refresh_token,
@@ -46,10 +54,11 @@ def obter_tokens(request):
                 secure=False,
                 samesite='Lax',
                 max_age=60 * 60 * 24,
-                path='session/'
+                path='/session/'
             )
-        
+
         return response
+
     except Exception as e:
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     

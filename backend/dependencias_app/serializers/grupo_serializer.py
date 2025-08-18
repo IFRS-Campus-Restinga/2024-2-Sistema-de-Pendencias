@@ -1,13 +1,42 @@
+import re
+import uuid
+import unicodedata
 from rest_framework import serializers
-from django.contrib.auth.models import Group
-from dependencias_app.utils.formatters.format_grupo_data import FormatGrupoData
+from django.contrib.auth.models import Group, Permission
+from dependencias_app.formatters.format_grupo_data import FormatGrupoData
 from dependencias_app.models.group_map import GroupUUIDMap
 
+def format_string(text: str) -> str:
+    # Converte para minúsculas
+    text = text.lower()
+
+    # Remove acentos
+    text = unicodedata.normalize('NFKD', text)
+    text = text.encode('ASCII', 'ignore').decode('utf-8')
+
+    # Substitui espaços por _
+    text = text.replace(' ', '_')
+
+    # Remove qualquer caractere que não seja letra, número ou _
+    text = re.sub(r'[^\w_]', '', text)
+
+    return text
+
 class GrupoSerializer(serializers.ModelSerializer):
+    permissions_to_add = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Permission.objects.all(), required=False
+    )
+    permissions_to_remove = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Permission.objects.all(), required=False
+    )
+
     class Meta:
         model = Group
         fields = '__all__'
-        
+        extra_kwargs = {
+            'name': {'required': True}
+        }
+
     def to_representation(self, instance):
         request = self.context.get('request')
         retorno = request.GET.get("retorno", None)
@@ -21,29 +50,40 @@ class GrupoSerializer(serializers.ModelSerializer):
             case 'detalhes':
                 return FormatGrupoData.details_format(instance)
             case _:
-                raise serializers.ValidationError("Formato de retorno inválido")
+                raise serializers.ValidationError('Formato inválido')
+
 
     def create(self, validated_data):
-        permissions = validated_data.pop('permissions', [])
+        permissions_to_add = validated_data.pop('permissions_to_add', [])
+
+        # Obtem ou cria o grupo pelo nome
+        group_name = validated_data.get('name')
         
-        grupo = Group.objects.create(**validated_data)
+        group, created = Group.objects.get_or_create(name=format_string(group_name))
 
-        # Define as permissões do grupo (caso haja)
-        if permissions:
-            grupo.permissions.set(permissions)
+        # Atribui permissões (mesmo se já existia)
+        if permissions_to_add:
+            group.permissions.add(*permissions_to_add)
 
-        # Cria o mapeamento UUID
-        GroupUUIDMap.objects.create(group=grupo)
+        # Cria UUIDMap apenas se o grupo for novo
+        if created:
+            GroupUUIDMap.objects.create(group=group)
 
-        return grupo
+        return group
 
     def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
+        permissions_to_add = validated_data.pop('permissions_to_add', [])
+        permissions_to_remove = validated_data.pop('permissions_to_remove', [])
+
+        instance.name = format_string(validated_data.get('name', instance.name))
         instance.save()
 
-        # Remove do grupo apenas as permissões recebidas
-        if 'permissions' in validated_data:
-            permissions_to_remove = validated_data['permissions']
-            instance.permissions.remove(*permissions_to_remove)
+        if permissions_to_add:
+            perms_ids = [p.pk if hasattr(p, 'pk') else p for p in permissions_to_add]
+            instance.permissions.add(*perms_ids)
+
+        if permissions_to_remove:
+            perms_ids = [p.pk if hasattr(p, 'pk') else p for p in permissions_to_remove]
+            instance.permissions.remove(*perms_ids)
 
         return instance

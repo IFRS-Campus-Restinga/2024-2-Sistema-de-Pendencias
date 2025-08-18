@@ -29,7 +29,7 @@ class PermissaoService:
     @staticmethod
     def listar_nao_vinculadas(request, group_uuid):
         group = get_object_or_404(Group, uuid_map__uuid=uuid.UUID(group_uuid))
-
+    
         assigned_permissions = group.permissions.all()
 
         permissions = Permission.objects.exclude(id__in=assigned_permissions.values_list('id', flat=True))
