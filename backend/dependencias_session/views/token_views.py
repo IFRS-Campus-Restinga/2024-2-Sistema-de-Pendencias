@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
-from dependencias_app.services.token_service import TokenService
+from dependencias_session.services.token_service import TokenService
 
 @api_view(['GET'])
 def obter_tokens(request):
@@ -22,8 +22,6 @@ def obter_tokens(request):
 
         access_token = r.json().get('access')
         refresh_token = r.json().get('refresh')
-
-        print(settings.SYSTEM_ID)
 
         user_data_response = requests.get(
             f'{settings.BASE_SYSTEM_URL}/api/users/data/',
@@ -53,7 +51,6 @@ def obter_tokens(request):
                 httponly=True,
                 secure=False,
                 samesite='Lax',
-                max_age=60 * 60 * 24,
                 path='/session/'
             )
 

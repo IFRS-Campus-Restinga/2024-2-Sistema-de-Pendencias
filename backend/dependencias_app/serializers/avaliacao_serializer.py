@@ -6,14 +6,14 @@ class Avaliacao_EMI_Serializer(serializers.ModelSerializer):
     data_entrega = serializers.DateField(format="%Y-%m-%d")
 
     class Meta:
-        model = Avaliacao_Atividade_EMI
+        model = AvaliacaoAtividadeIntegrado
         fields = '__all__'
 
     def validate(self, data):
         atividade_id = data.get('atividade')
         ped = data.get('ped')
         
-        avaliacao_existente = Avaliacao_Atividade_EMI.objects.filter(ped_id=ped, atividade_id=atividade_id).first()
+        avaliacao_existente = AvaliacaoAtividadeIntegrado.objects.filter(ped_id=ped, atividade_id=atividade_id).first()
 
         # Se a avaliação já existe e a nota já foi definida
         if avaliacao_existente and avaliacao_existente.nota is not None:
@@ -44,7 +44,7 @@ class Avaliacao_ProEJA_Serializer(serializers.ModelSerializer):
     data_entrega = serializers.DateField(format="%Y-%m-%d")
 
     class Meta:
-        model = Avaliacao_Atividade_ProEJA
+        model = AvaliacaoAtividadeProEJA
         fields = '__all__'
     
     def validate(self, data):
@@ -52,7 +52,7 @@ class Avaliacao_ProEJA_Serializer(serializers.ModelSerializer):
         ped = data.get('ped')
         
         try:
-            avaliacao_existente = Avaliacao_Atividade_ProEJA.objects.filter(ped_id=ped, atividade_id=atividade_id).first()
+            avaliacao_existente = AvaliacaoAtividadeProEJA.objects.filter(ped_id=ped, atividade_id=atividade_id).first()
 
             # Se a avaliação já existe e a nota já foi definida
             if avaliacao_existente and avaliacao_existente.nota is not None:

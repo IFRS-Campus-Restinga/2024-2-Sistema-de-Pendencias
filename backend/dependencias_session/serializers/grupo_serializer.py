@@ -1,10 +1,9 @@
 import re
-import uuid
 import unicodedata
 from rest_framework import serializers
 from django.contrib.auth.models import Group, Permission
-from dependencias_app.formatters.format_grupo_data import FormatGrupoData
-from dependencias_app.models.group_map import GroupUUIDMap
+from dependencias_session.formatters.format_grupo_data import FormatGrupoData
+from dependencias_session.models.group_map import GroupUUIDMap
 
 def format_string(text: str) -> str:
     # Converte para minúsculas

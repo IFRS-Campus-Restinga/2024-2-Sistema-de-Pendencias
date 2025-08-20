@@ -1,8 +1,8 @@
-import { api, apiHub } from "../config/axiosConfig";
+import { api } from "../config/axiosConfig";
 
 export const disciplinaService = {
   buscarPorCurso: async (cursoId, pagina = 1, param = "") => {
-    return await apiHub.get(`api/course/get/${cursoId}/school-subject/`, {
+    return await api.get(`hub/curso/${cursoId}/disciplinas/`, {
       params: {
         page: pagina,
         data_format: "search",

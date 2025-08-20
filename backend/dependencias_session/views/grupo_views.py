@@ -1,12 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from fs_auth_middleware.decorators import has_every_permission, has_any_permission
-from dependencias_app.services.grupo_service import GrupoService
+from fs_auth_middleware.decorators import has_permissions
+from dependencias_session.services.grupo_service import GrupoService
 from django.http import Http404
 
 @api_view(['POST'])
-@has_every_permission(['add_group'])
+@has_permissions(['add_group'])
 def cadastrar_grupo(request):
     try:
         GrupoService.criar(request.data)
@@ -18,7 +18,7 @@ def cadastrar_grupo(request):
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['GET'])
-@has_every_permission(['view_group'])
+@has_permissions(['view_group'])
 def listar_grupos(request):
     try:
         return GrupoService.listar(request)
@@ -30,7 +30,7 @@ def listar_grupos(request):
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['GET'])
-@has_every_permission(['view_group'])
+@has_permissions(['view_group'])
 def detalhes_grupo(request, grupo_id):
     try:
         grupo = GrupoService.detalhes(request, grupo_id)
@@ -44,7 +44,7 @@ def detalhes_grupo(request, grupo_id):
         return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['PUT', 'PATCH'])
-@has_every_permission(['change_group'])
+@has_permissions(['change_group'])
 def editar_grupo(request, grupo_id):
     try:
         GrupoService.editar(request.data, grupo_id)

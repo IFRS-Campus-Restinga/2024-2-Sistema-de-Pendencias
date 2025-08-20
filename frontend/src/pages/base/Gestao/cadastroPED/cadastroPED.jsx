@@ -4,22 +4,21 @@ import Button from "../../../../components/Button/Button";
 import FormContainer from "../../../../components/FormContainer/FormContainer"; // Importe o FormContainer
 import Switch from '../../../../components/Switch/Switch'
 import OpcoesBusca from "../../../../components/OpcoesBusca.jsx/OpcoesBusca";
-import LoadingIFRS from "../../../../components/LoadingIFRS/LoadingIFRS";
-import loadingEMI from '../../../../assets/loading-peds-emi.png'
-import loadingProEJA from '../../../../assets/loading-peds-proeja.png'
 import Label from "../../../../components/Label/Label";
 import MensagemErro from "../../../../components/MensagemErro/MensagemErro";
 import { ToastContainer, toast } from 'react-toastify'
-import React, { useEffect, useState } from "react";
-import cursoService from "../../../../services/cursoService";
+import { useEffect, useState } from "react";
 import { PEDService } from "../../../../services/pedService";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
-import { calendarioAcademicoService } from "../../../../services/calendarioAcademicoService";
 import { UsuarioService } from "../../../../services/usuarioService";
 import { validarAnoSemestreReprov, validarCampoUUID4, validarSerieProgressao } from "../../../../utils/validacoes";
+import { Axios, AxiosError } from "axios";
+import { calendarioService } from "../../../../services/calendarioService";
+import cursoService from "../../../../services/cursoService";
 import { disciplinaService } from "../../../../services/disciplinaService";
+import CustomLoading from "../../../../components/customLoading/CustomLoading";
 
 const CadastroPED = () => {
   const location = useLocation()
@@ -228,44 +227,52 @@ const CadastroPED = () => {
 
   const fetchAlunos = async (e) => {
     try {
-      const res = await UsuarioService.buscarPorParametro(e.target.value, 'Aluno')
+      const res = await UsuarioService.buscar(undefined, e.target.value, 'aluno')
 
-      console.log(res.data)
-
-      setOpcoesAlunos(res.data)
+      setOpcoesAlunos(res.data.result)
     } catch (error) {
-      console.log(error)
+      if (error instanceof AxiosError) {
+        toast.error(error.response.data.message)
+      } else {
+        console.error(error)
+      }
     }
   }
 
   const fetchProfessores = async (e, tipo) => {
     try {
-      const res = await UsuarioService.buscarPorParametro(e.target.value, 'Professor')
+      const res = await UsuarioService.buscar(undefined, e.target.value, 'professor')
 
       if (res.status !== 200) throw new Error(res)
 
       if (tipo === 'ped') setOpcoesProfessoresPED(res.data)
       if (tipo === 'disciplina') setOpcoesProfessoresDisciplina(res.data)
     } catch (error) {
-      console.log(error)
+      if (error instanceof AxiosError) {
+        toast.error(error.response.data.message)
+      } else {
+        console.error(error)
+      }
     }
   }
 
   const fetchCalendarios = async (e) => {
     try {
-      const res = await calendarioAcademicoService.buscar(modalidade, e.target.value)
+      const res = await calendarioService.buscar(undefined, e.target.value)
 
-      if (res.status !== 200) throw new Error(res)
-
-      setOpcoesCalendarios(res.data)
+      setOpcoesCalendarios(res.data.results)
     } catch (error) {
-      console.error(error)
+      if (error instanceof AxiosError) {
+        toast.error(error.response.data.message)
+      } else {
+        console.error(error)
+      }
     }
   }
 
   const fetchCurso = async (e) => {
     try {
-      const res = await cursoService.buscar(e.target.value, modalidade)
+      const res = await cursoService.buscarPorModalidade(undefined, e.target.value, )
 
       if (res.status !== 200) throw new Error(res)
 
@@ -281,14 +288,18 @@ const CadastroPED = () => {
         setErros({ ...erros, disciplina: 'É necessário selecionar um curso antes de buscar uma disciplina' })
       } else {
         setErros({ ...erros, disciplina: '' })
-        const res = await disciplinaService.buscar(formData.curso, e.target.value)
+        const res = await disciplinaService.buscarPorCurso(formData.curso, undefined, e.target.value)
 
         if (res.status !== 200) throw new Error(res)
 
-        setOpcoesDisciplinas(res.data)
+        setOpcoesDisciplinas(res.data.results)
       }
     } catch (error) {
-      console.error(error)
+      if (error instanceof AxiosError) {
+        toast.error(error.response.data.message)
+      } else {
+        console.error(error)
+      }
     }
   }
 
@@ -296,14 +307,16 @@ const CadastroPED = () => {
     try {
       const res = await PEDService.porId(state, modalidade, "edicao");
 
-      if (res.status !== 200) throw new Error(res);
-
       setFormData(res.data.ids)
       setControleInputs(res.data.valores)
       setTurmas([{ id: res.data.ids.turma_atual, numero: res.data.valores.turma_atual }])
       setDesabilitado(true)
     } catch (error) {
-      console.error("Erro ao buscar detalhes da PED:", error.message);
+      if (error instanceof AxiosError) {
+        toast.error(error.response.data.message)
+      } else {
+        console.error(error)
+      }
     } finally {
       setCarregando(false)
     }
@@ -341,7 +354,7 @@ const CadastroPED = () => {
     }
   }, [modalidade, state])
 
-  if (carregando) return <LoadingIFRS icone={modalidade === 'Integrado' ? loadingEMI : loadingProEJA} />
+  if (carregando) return <CustomLoading/>
 
   return (
     <>

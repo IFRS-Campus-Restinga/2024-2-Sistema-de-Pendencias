@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from dependencias_app.models.professor_progressao import Professor_Progressao_EMI, Professor_Progressao_ProEJA
+from dependencias_app.models.professor_progressao import ProfessorProgressaoIntegrado, ProfessorProgressaoProEJA
 
-class Professor_PED_EMI_Serializer(serializers.ModelSerializer):
+class ProfessorPEDIntegradoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Professor_Progressao_EMI
+        model = ProfessorProgressaoIntegrado
         fields = '__all__'
 
-class Professor_PED_ProEJA_Serializer(serializers.ModelSerializer):
+class ProfessorPEDProEJASerializer(serializers.ModelSerializer):
     class Meta:
-        model = Professor_Progressao_ProEJA
+        model = ProfessorProgressaoProEJA
         fields = '__all__'

@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.utils import timezone
 from dependencias_app.models.ppt import PPT
 from dependencias_app.models.notificacao import Notificacao
 

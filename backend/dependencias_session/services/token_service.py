@@ -1,6 +1,6 @@
 import jwt
 from django.conf import settings
-from dependencias_app.services.grupo_service import GrupoService
+from dependencias_session.services.grupo_service import GrupoService
 
 class TokenService:
     @staticmethod

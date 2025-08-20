@@ -1,14 +1,12 @@
 from rest_framework import serializers
-from dependencias_app.models.form_encerramento import Form_Encerramento
+from dependencias_app.models.form_encerramento import FormEncerramentoIntegrado, FormEncerramentoProEJA
 
-class Form_Encerramento_Serializer(serializers.ModelSerializer):
+class FormEncerramentoIntegradoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Form_Encerramento
+        model = FormEncerramentoIntegrado
         fields = '__all__'
-
-    def save(self, **kwargs):
-        formEncerramento = super().save(**kwargs)
-
-        formEncerramento.full_clean()
-        formEncerramento.save()
-        return formEncerramento
+    
+class FormEncerramentoProEJASerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FormEncerramentoProEJA
+        fields = '__all__'

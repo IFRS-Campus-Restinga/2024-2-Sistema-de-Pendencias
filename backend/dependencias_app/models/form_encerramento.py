@@ -1,22 +1,24 @@
+import uuid
 from django.db import models
 from .base import BaseModel
-from .ped_EMI import PED_EMI
-from .ped_ProEJA import PED_ProEJA
+from .ped_integrado import PEDIntegrado
+from .ped_ProEJA import PEDProEJA
 
-class Form_Encerramento(BaseModel):
+class FormEncerramento(BaseModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     parecerFinal = models.TextField(null=False, blank=False, max_length=500)
 
     class Meta:
         abstract = True
 
-class Form_Encerramento_EMI(Form_Encerramento):
-    ped = models.OneToOneField(PED_EMI, on_delete=models.DO_NOTHING, related_name='form_encerramento_emi')
+class FormEncerramentoIntegrado(FormEncerramento):
+    ped = models.OneToOneField(PEDIntegrado, on_delete=models.DO_NOTHING, related_name='form_encerramento_emi')
 
     class Meta:
         abstract = False
 
-class Form_Encerramento_ProEJA(Form_Encerramento):
-    ped = models.OneToOneField(PED_ProEJA, on_delete=models.DO_NOTHING, related_name='form_encerramento_proeja')
+class FormEncerramentoProEJA(FormEncerramento):
+    ped = models.OneToOneField(PEDProEJA, on_delete=models.DO_NOTHING, related_name='form_encerramento_proeja')
 
     class Meta:
         abstract = False

@@ -130,3 +130,15 @@
         cursor: pointer;
     }
 }
+
+.containerMensagem {
+    display: flex;
+    width: fit-content;
+    border-radius: 8px;
+    border: 1px solid #767676;
+    color: #767676;
+    padding: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0px auto 0px auto;
+}

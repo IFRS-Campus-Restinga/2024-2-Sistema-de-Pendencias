@@ -63,6 +63,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'dependencias_app',
+    'dependencias_session',
+    'hub_tools',
     'rest_framework',
 ]
 

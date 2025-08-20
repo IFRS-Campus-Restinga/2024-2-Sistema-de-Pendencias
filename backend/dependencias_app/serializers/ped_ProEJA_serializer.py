@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from dependencias_app.models.ped_ProEJA import PED_ProEJA
+from dependencias_app.models.ped_ProEJA import PEDProEJA
 from dependencias_app.models.notificacao import Notificacao
 
 
-class PED_ProEJA_Serializer(serializers.ModelSerializer):
+class PEDProEJASerializer(serializers.ModelSerializer):
     aluno = serializers.UUIDField()
     professor_disciplina = serializers.UUIDField()
     curso = serializers.UUIDField()
@@ -11,5 +11,5 @@ class PED_ProEJA_Serializer(serializers.ModelSerializer):
     disciplina = serializers.UUIDField()
 
     class Meta:
-        model = PED_ProEJA
+        model = PEDProEJA        
         fields = '__all__'

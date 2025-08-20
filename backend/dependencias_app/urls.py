@@ -6,26 +6,9 @@ from dependencias_app.views.avaliacao_views import *
 from dependencias_app.views.plano_estudos_views import *
 from dependencias_app.views.notificacao_views import *
 from dependencias_app.views.observacao_views import *
-from dependencias_app.views.grupo_views import *
-from dependencias_app.views.permissao_views import *
-from dependencias_app.views.token_views import *
 
 
 urlpatterns = [
-    # views de autenticação
-    path('tokens/', obter_tokens),
-    path('tokens/refresh/', renovar_token),
-
-    # views de grupos
-    path('grupo/cadastrar/', cadastrar_grupo),
-    path('grupo/listar/', listar_grupos),
-    path('grupo/<str:grupo_id>/detalhes/', detalhes_grupo),
-    path('grupo/<str:grupo_id>/editar/', editar_grupo),
-
-    path('permissoes/listar/', listar_permissoes),
-    path('permissoes/listar/<str:grupo_id>/', listar_por_grupo),
-    path('permissoes/listar/<str:grupo_id>/nao_vinculadas/', listar_nao_vinculadas),
-
     # view de PPT
     path('ppt/cadastrar/', cadastrar_PPT),
     path('ppt/listar/', listar_PPT),

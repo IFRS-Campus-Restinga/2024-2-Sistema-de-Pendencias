@@ -1,10 +1,11 @@
-import { apiHub } from "../config/axiosConfig";
+import { api } from "../config/axiosConfig";
 
 export const cursoService = {
   buscarPorModalidade: async (pagina = 1, param = "", modalidade) => {
-    return await apiHub.get(`api/course/get/modality/${modalidade}`, {
+    return await api.get("hub/cursos/get/", {
       params: {
         page: pagina,
+        modality: modalidade,
         data_format: "search",
         search: param,
       },

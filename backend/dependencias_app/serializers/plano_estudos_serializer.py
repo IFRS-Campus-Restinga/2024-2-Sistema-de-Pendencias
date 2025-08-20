@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from dependencias_app.models.plano_estudos import *
 
-class Plano_Estudos_EMI_Serializer(serializers.ModelSerializer):
+class PlanoEstudosIntegradoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plano_Estudos_EMI
         fields = '__all__'
@@ -18,7 +18,7 @@ class Plano_Estudos_EMI_Serializer(serializers.ModelSerializer):
         return representation
     
 
-class Plano_Estudos_ProEJA_Serializer(serializers.ModelSerializer):
+class PlanoEstudosProEJASerializer(serializers.ModelSerializer):
     class Meta:
         model = Plano_Estudos_ProEJA
         fields = '__all__'

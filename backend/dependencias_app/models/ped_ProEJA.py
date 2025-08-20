@@ -2,7 +2,7 @@ import uuid
 from django.db import models
 from .progressao import Progressao
 
-class PED_ProEJA(Progressao):
+class PEDProEJA(Progressao):
     aluno = models.UUIDField(default=uuid.uuid4, editable=False)
     professor_disciplina = models.UUIDField(default=uuid.uuid4, editable=False)
     disciplina = models.UUIDField(default=uuid.uuid4, editable=False)

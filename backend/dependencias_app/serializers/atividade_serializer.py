@@ -1,14 +1,14 @@
 from rest_framework import serializers
-from dependencias_app.models.atividade import Atividade_EMI, Atividade_ProEJA
+from dependencias_app.models.atividade import AtividadeIntegrado, AtividadeProEJA
 from dependencias_app.utils.manage_files import get_from_drive
 
 
-class Atividade_EMI_Serializer(serializers.ModelSerializer):
+class AtividadeIntegradoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Atividade_EMI
+        model = AtividadeIntegrado
         fields = '__all__'
 
-class Atividade_ProEJA_Serializer(serializers.ModelSerializer):
+class AtividadeProEJASerializer(serializers.ModelSerializer):
     class Meta:
-        model = Atividade_ProEJA
+        model = AtividadeProEJA
         fields = '__all__'

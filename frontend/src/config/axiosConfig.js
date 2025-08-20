@@ -5,11 +5,6 @@ export const api = axios.create({
   withCredentials: true,
 });
 
-export const apiHub = axios.create({
-  baseURL: process.env.REACT_APP_BASE_SYSTEM_URL,
-  withCredentials: true,
-});
-
 let isRefreshing = false;
 let failedQueue = [];
 

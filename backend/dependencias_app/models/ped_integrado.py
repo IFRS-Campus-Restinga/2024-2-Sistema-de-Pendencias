@@ -4,7 +4,7 @@ from .progressao import Progressao
 from dependencias_app.enums.trimestres_rec import Trimestre_Rec
 from dependencias_app.enums.serie_progressao import Serie_Progressao
 
-class PED_EMI(Progressao):
+class PEDIntegrado(Progressao):
     aluno = models.UUIDField(default=uuid.uuid4, editable=False)
     professor_disciplina = models.UUIDField(default=uuid.uuid4, editable=False)
     disciplina = models.UUIDField(default=uuid.uuid4, editable=False)

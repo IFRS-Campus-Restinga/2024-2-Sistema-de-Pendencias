@@ -17,8 +17,11 @@ import ListarGrupos from './pages/base/Gestao/listarGrupos/ListarGrupos'
 import GrupoForm from './pages/base/Gestao/GrupoForm/GrupoForm'
 
 // PED
+import ListarPEDGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPEDGestao'
 
 // PPT
+import ListarPPTGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPPTGestao'
+import CadastroPED from './pages/base/Gestao/cadastroPED/cadastroPED'
 
 // Plano Estudos
 
@@ -66,26 +69,18 @@ const router = createBrowserRouter([
             //     path: '/gestao_escolar/calendarios/:idCalendario/',
             //     element: <Calendario />
             // },
-            // {
-            //     path: '/gestao_escolar/cadastroEvento/',
-            //     element: <CadastroEvento />
-            // },
-            // {
-            //     path: '/gestao_escolar/calendarios/:idCalendario/eventos/:idEvento/editar',
-            //     element: <CadastroEvento />
-            // },
-            // {
-            //     path: '/gestao_escolar/cadastroPED',
-            //     element: <CadastroPED />
-            // },
-            // {
-            //     path: '/gestao_escolar/peds/Integrado',
-            //     element: <ListarPEDGestao />
-            // },
-            // {
-            //     path: '/gestao_escolar/peds/ProEJA',
-            //     element: <ListarPEDGestao />
-            // },
+            {
+                path: 'peds/cadastro',
+                element: <CadastroPED />
+            },
+            {
+                path: 'peds/Integrado',
+                element: <ListarPEDGestao />
+            },
+            {
+                path: 'peds/ProEJA',
+                element: <ListarPEDGestao />
+            },
             // {
             //     path: '/gestao_escolar/peds/Integrado/:idPed',
             //     element: <DetalhesPEDGestao />
@@ -106,10 +101,10 @@ const router = createBrowserRouter([
             //     path: '/gestao_escolar/cadastroPPT',
             //     element: <CadastroPPT />
             // },
-            // {
-            //     path: '/gestao_escolar/ppts',
-            //     element: <ListarPPTGestao />
-            // },
+            {
+                path: 'ppts',
+                element: <ListarPPTGestao />
+            },
             // {
             //     path: '/gestao_escolar/ppts/:idPpt',
             //     element: <DetalhesPPTGestao />

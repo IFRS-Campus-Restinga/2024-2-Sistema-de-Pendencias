@@ -1,11 +1,11 @@
 from .base import BaseModel
 from django.db import models
 from .atividade import *
-from .ped_EMI import PED_EMI
-from .ped_ProEJA import PED_ProEJA
+from .ped_integrado import PEDIntegrado
+from .ped_ProEJA import PEDProEJA
 from dependencias_app.enums.status_atividade import Status_Atividade
 
-class Avaliacao_Atividade(BaseModel):
+class AvaliacaoAtividade(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     data_entrega = models.DateField(null=True, blank=True)
     data_criacao = models.DateField(auto_now_add=True)
@@ -16,16 +16,16 @@ class Avaliacao_Atividade(BaseModel):
         abstract = True
 
 
-class Avaliacao_Atividade_EMI(Avaliacao_Atividade):
-    ped = models.ForeignKey(PED_EMI, on_delete=models.DO_NOTHING, related_name='atividades_emi')
-    atividade = models.ForeignKey(Atividade_EMI, on_delete=models.DO_NOTHING, related_name='dependencias_emi')
+class AvaliacaoAtividadeIntegrado(AvaliacaoAtividade):
+    ped = models.ForeignKey(PEDIntegrado, on_delete=models.DO_NOTHING, related_name='atividades_emi')
+    atividade = models.ForeignKey(AtividadeIntegrado, on_delete=models.DO_NOTHING, related_name='dependencias_emi')
 
     class Meta:
         abstract = False
 
-class Avaliacao_Atividade_ProEJA(Avaliacao_Atividade):
-    ped = models.ForeignKey(PED_ProEJA, on_delete=models.DO_NOTHING, related_name='atividades_proeja')
-    atividade = models.ForeignKey(Atividade_ProEJA, on_delete=models.DO_NOTHING, related_name='dependencias_proeja')
+class AvaliacaoAtividadeProEJA(AvaliacaoAtividade):
+    ped = models.ForeignKey(PEDProEJA, on_delete=models.DO_NOTHING, related_name='atividades_proeja')
+    atividade = models.ForeignKey(AtividadeProEJA, on_delete=models.DO_NOTHING, related_name='dependencias_proeja')
     
     class Meta:
         abstract = False
