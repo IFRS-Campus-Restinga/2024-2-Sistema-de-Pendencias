@@ -34,42 +34,64 @@ class PEDService:
 
         lista_aluno = requests.get(
             f'{settings.BASE_SYSTEM_URL}/api/users/get/group/aluno/', 
-            params={'search': busca, 'active': 'true', 'data_format': 'search'},
-            cookies={'system': settings.SYSTEM_ID}
-        ).json()
+            params={'search': busca, 'active': 'true', 'fields': 'id, username'},
+            cookies={'system': settings.API_KEY}
+        ).json().get('results', [])
         lista_professor = requests.get(
             f'{settings.BASE_SYSTEM_URL}/api/users/get/group/professor/', 
-            params={'search': busca, 'active': 'true', 'data_format': 'search'},
-            cookies={'system': settings.SYSTEM_ID}
-        ).json()
+            params={'search': busca, 'active': 'true', 'fields': 'id, username'},
+            cookies={'system': settings.API_KEY}
+        ).json().get('results', [])
+        lista_cursos = requests.get(
+            f'{settings.BASE_SYSTEM_URL}/api/academic/courses/get/', 
+            params={'search': busca, 'fields': 'id, name'},
+            cookies={'system': settings.API_KEY}
+        ).json().get('results', [])
+        lista_disciplinas = requests.get(
+            f'{settings.BASE_SYSTEM_URL}/api/academic/subjects/get/', 
+            params={'search': busca, 'fields': 'id, name'},
+            cookies={'system': settings.API_KEY}
+        ).json().get('results', [])
 
-        alunos_map = {str(aluno["id"]): aluno["title"] for aluno in lista_aluno}
-        professores_map = {str(prof["id"]): prof["title"] for prof in lista_professor}
+        alunos_map = {str(aluno["id"]): aluno["username"] for aluno in lista_aluno}
+        professores_map = {str(prof["id"]): prof["username"] for prof in lista_professor}
+        cursos_map = {str(curso["id"]): curso["name"] for curso in lista_cursos}
+        disciplinas_map = {str(disciplina["id"]): disciplina["name"] for disciplina in lista_disciplinas}
 
         alunos_ids = list(alunos_map.keys())
         professores_ids = list(professores_map.keys())
+        cursos_ids = list(cursos_map.keys())
+        disciplinas_ids = list(disciplinas_map.keys())
+
+        professor_field = ("professores_emi" if hasattr(model_class, "professores_emi") else "professores_proeja")
 
         peds = model_class.objects.filter(
             Q(aluno__in=[uuid.UUID(aluno_id) for aluno_id in alunos_ids]) |
-            Q(professor_ped__in=[uuid.UUID(professor_ped_id) for professor_ped_id in professores_ids]) |
-            Q(professor_disciplina__in=[uuid.UUID(professor_disciplina_id) for professor_disciplina_id in  professores_ids])
+            Q(**{f"{professor_field}__in": [uuid.UUID(pid) for pid in professores_ids]}, **{f"{professor_field}__responsavel_atual": True}) |
+            Q(professor_disciplina__in=[uuid.UUID(professor_disciplina_id) for professor_disciplina_id in professores_ids]) |
+            Q(disciplina__in=[uuid.UUID(disciplina_id) for disciplina_id in disciplinas_ids]) |
+            Q(curso__in=[uuid.UUID(curso_id) for curso_id in cursos_ids])
         )
 
         paginator = PEDPagination()
         paginated_result = paginator.paginate_queryset(peds, request)
 
-        serializer = serializer_class(data=paginated_result, many=True, context={'request': request})
+        serializer = serializer_class(paginated_result, many=True, context={'request': request})
 
         data = serializer.data
 
-        # aqui substitui IDs pelos nomes
         for item in data:
             if item.get("aluno") in alunos_map:
                 item["aluno"] = alunos_map[item["aluno"]]
-            if item.get("professor_ped") in professores_map:
-                item["professor_ped"] = professores_map[item["professor_ped"]]
+            if item.get(f"{professor_field}") in professores_map:
+                item[f"{professor_field}"] = professores_map[item[f"{professor_field}"]]
             if item.get("professor_disciplina") in professores_map:
                 item["professor_disciplina"] = professores_map[item["professor_disciplina"]]
+            if item.get("curso") in professores_map:
+                item["curso"] = professores_map[item["curso"]]
+            if item.get("disciplina") in professores_map:
+                item["disciplina"] = professores_map[item["disciplina"]]
+            
 
         return paginator.get_paginated_response(data)
 

@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 // Tela de Login
+import AuthPage from './pages/auth/AuthPage'
 import LoginPage from './pages/login/LoginPage'
 
 // import das telas base de cada perfil
@@ -13,15 +14,17 @@ import BaseGestao from './pages/base/Gestao/BaseGestao'
 import HomeGestao from './pages/base/Gestao/home/HomeGestao'
 
 // Grupos & Permissoes
-import ListarGrupos from './pages/base/Gestao/listarGrupos/ListarGrupos'
-import GrupoForm from './pages/base/Gestao/GrupoForm/GrupoForm'
+import GrupoLista from './pages/base/Gestao/grupoLista/GrupoLista'
+import GrupoForm from './pages/base/Gestao/grupoForm/GrupoForm'
+import UsuarioLista from './pages/base/Gestao/usuarioLista/UsuarioLista'
 
 // PED
 import ListarPEDGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPEDGestao'
 
 // PPT
 import ListarPPTGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPPTGestao'
-import CadastroPED from './pages/base/Gestao/cadastroPED/cadastroPED'
+import CadastroPED from './pages/base/Gestao/PEDForm/PEDForm'
+import UsuarioForm from './pages/base/Gestao/usuarioForm/UsuarioForm'
 
 // Plano Estudos
 
@@ -37,8 +40,12 @@ import CadastroPED from './pages/base/Gestao/cadastroPED/cadastroPED'
 
 const router = createBrowserRouter([
     {
-        path: 'session/token/',
-        element: <LoginPage />,
+        path: 'session/',
+        element: <LoginPage/>
+    },
+    {
+        path: 'session/auth/',
+        element: <AuthPage />,
     },
     // Rotas do perfil de Gestao Escolar
     {
@@ -55,11 +62,35 @@ const router = createBrowserRouter([
             },
             {
                 path: 'grupos/',
-                element: <ListarGrupos/>
+                element: <GrupoLista/>
             },
             {
                 path: 'grupos/:grupoId/editar/',
                 element: <GrupoForm/>
+            },
+            {
+                path: 'alunos/',
+                element: <UsuarioLista/>
+            },
+            {
+                path: 'servidores/',
+                element: <UsuarioLista/>
+            },
+            {
+                path: 'servidores/cadastro/',
+                element: <UsuarioForm/>,
+            },
+            {
+                path: 'alunos/cadastro/',
+                element: <UsuarioForm/>
+            },
+            {
+                path: 'alunos/:alunoId/editar/',
+                element: <UsuarioForm/>
+            },
+            {
+                path: 'servidores/:servidorId/editar/',
+                element: <UsuarioForm/>
             },
             // {
             //     path: '/gestao_escolar/calendarios',

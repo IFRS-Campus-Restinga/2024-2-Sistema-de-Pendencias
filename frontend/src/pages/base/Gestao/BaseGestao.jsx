@@ -3,10 +3,11 @@ import PageContainer from "../../../components/PageContainer/PageContainer";
 import { validaUsuario } from "../validaUsuario";
 import { useEffect } from "react";
 import { verificarGrupos } from "../../../utils/permissões";
+import { ToastContainer } from "react-toastify";
 
 const BaseGestao = () => {
   const redirect = useNavigate()
-  const homeUrl = `/${verificarGrupos(JSON.parse(sessionStorage.getItem('user')).groups)}`
+  const homeUrl = `/${verificarGrupos(JSON.parse(sessionStorage.getItem('user')).group)}`
 
   const validaGestao = () => {
     const res = validaUsuario('gestao_escolar')
@@ -24,6 +25,7 @@ const BaseGestao = () => {
 
   return (
     <PageContainer homeUrl={homeUrl}>
+      <ToastContainer autoClose={2000} position="bottom-right" />
       <Outlet />
     </PageContainer>
   );

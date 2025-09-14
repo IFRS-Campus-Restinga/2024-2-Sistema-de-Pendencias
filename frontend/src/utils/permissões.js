@@ -1,13 +1,13 @@
-export const verificarGrupos = (grupos) => {
+export const verificarGrupos = (grupo) => {
   let grupoSistema = [
     "gestao_escolar",
     "coord_reg_esc",
     "coord",
-    "prof",
+    "professor",
     "aluno",
   ];
 
-  for (let grupo of grupos) {
-    if (grupoSistema.includes(grupo)) return grupo;
+  if (grupoSistema.includes(grupo)) {
+    return grupo;
   }
 };

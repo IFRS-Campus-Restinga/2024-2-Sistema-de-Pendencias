@@ -13,7 +13,7 @@ const ListarPEDGestao = () => {
         return {
             proxima: res.data.next,
             anterior: res.data.prev,
-            lista: res.data.result
+            lista: res.data.results
         }
     }
 

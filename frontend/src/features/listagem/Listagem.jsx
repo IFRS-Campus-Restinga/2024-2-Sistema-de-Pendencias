@@ -5,7 +5,7 @@ import Tabela from "../../components/Tabela/Tabelas/Tabela"
 import styles from "./Listagem.module.css"
 import { useNavigate } from "react-router-dom"
 
-const Listagem = ({titulo, fetchDados, urlCadastro}) => {
+const Listagem = ({titulo, fetchDados, urlCadastro, propMap}) => {
     const navigate = useNavigate()
     const [filtro, setFiltro] = useState('')
     const [lista, setLista] = useState([])
@@ -37,13 +37,17 @@ const Listagem = ({titulo, fetchDados, urlCadastro}) => {
                 <div className={styles.container}>
                     <BarraPesquisa 
                         setFiltro={setFiltro} 
-                        fetchDados={(pagina, param) => {
+                        onSearch={(pagina, param) => {
                             setPagina(1)
                             buscar(pagina, param)
                         }} 
                         filtro={filtro} 
                     />
-                    <div className={styles.addIcone} onClick={() => navigate(urlCadastro)}>+</div>
+                    {
+                        urlCadastro ? (
+                            <div className={styles.addIcone} onClick={() => navigate(urlCadastro)}>+</div>
+                        ) : null
+                    }
                 </div>
                     <Tabela
                         fetchDados={buscar}
@@ -56,6 +60,7 @@ const Listagem = ({titulo, fetchDados, urlCadastro}) => {
                         visualizar={true}
                         editar={true}
                         deletar={true}
+                        propMap={propMap}
                     />
             </FormContainer>
         </>

@@ -5,18 +5,18 @@ from rest_framework.decorators import api_view
 from django.conf import settings
 
 @api_view(['GET'])
-def buscar_usuario(request, grupo):
+def buscar_usuario(request, perfil):
     try:
         res = requests.get(
-            f'{settings.BASE_SYSTEM_URL}/api/users/get/group/{grupo}/',
+            f'{settings.BASE_SYSTEM_URL}/api/users/get/access_profile/{perfil}/',
             params={
-                'search': request.GET.get('search', ''),
-                'active': request.GET.get('active'),
-                'data_format': request.GET.get('data_format'),
-                'page': request.GET.get('page')
+                'search': request.GET.get('busca', ''),
+                'active': request.GET.get('ativo'),
+                'fields': request.GET.get('retorno'),
+                'page': request.GET.get('pagina')
             },
             cookies={
-                'system': settings.SYSTEM_ID
+                'system': settings.API_KEY
             } 
         )
 

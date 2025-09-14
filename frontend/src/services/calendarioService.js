@@ -1,12 +1,12 @@
 import { api } from "../config/axiosConfig";
 
 export const calendarioService = {
-  buscar: async (pagina = 1, param = "") => {
-    return await api.get("hub/calendario/get/", {
+  buscar: async (pagina = 1, param = "", retorno) => {
+    return await api.get("hub/calendarios/get/", {
       params: {
-        page: pagina,
-        data_format: "search",
-        search: param,
+        pagina,
+        retorno,
+        busca: param,
         status: "Ativo",
       },
     });

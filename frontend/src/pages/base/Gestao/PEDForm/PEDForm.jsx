@@ -1,9 +1,9 @@
-import styles from "./cadastroPED.module.css";
+import styles from "./PEDForm.module.css";
 import Input from "../../../../components/Input/Input";
 import Button from "../../../../components/Button/Button";
 import FormContainer from "../../../../components/FormContainer/FormContainer"; // Importe o FormContainer
 import Switch from '../../../../components/Switch/Switch'
-import OpcoesBusca from "../../../../components/OpcoesBusca.jsx/OpcoesBusca";
+import OpcoesBusca from "../../../../components/OpcoesBusca/OpcoesBusca";
 import Label from "../../../../components/Label/Label";
 import MensagemErro from "../../../../components/MensagemErro/MensagemErro";
 import { ToastContainer, toast } from 'react-toastify'
@@ -19,15 +19,17 @@ import { calendarioService } from "../../../../services/calendarioService";
 import cursoService from "../../../../services/cursoService";
 import { disciplinaService } from "../../../../services/disciplinaService";
 import CustomLoading from "../../../../components/customLoading/CustomLoading";
+import modalidadeMap from "../../../../utils/modalidadeMap";
+import Select from "../../../../components/Select/Select";
 
-const CadastroPED = () => {
+const PEDForm = () => {
   const location = useLocation()
   const redirect = useNavigate()
   const { state } = location || {}
-  const tipoPed = location.pathname.split('/')[3];
+  const tipoPed = location.pathname.split('/')[4];
   const [carregando, setCarregando] = useState(true)
-  const [modalidade, setModalidade] = useState(tipoPed ?? 'Integrado')
-  const [turmas, setTurmas] = useState([])
+  const [modalidade, setModalidade] = useState(state ? tipoPed : 'Integrado')
+  const [opcoesTurmaAtual, setOpcoesTurmaAtual] = useState([])
   const [opcoesAlunos, setOpcoesAlunos] = useState([])
   const [opcoesProfessoresPED, setOpcoesProfessoresPED] = useState([])
   const [opcoesProfessoresDisciplina, setOpcoesProfessoresDisciplina] = useState([])
@@ -63,7 +65,20 @@ const CadastroPED = () => {
     periodo_letivo: '',
   })
 
-  const serieProgressao = ['1º Ano', '2º Ano', '3º Ano', '4º Ano']
+  const serieProgressao = [
+    {
+      title: '1º ano'
+    },
+    {
+      title: '2º ano'
+    },
+    {
+      title: '3º ano'
+    },
+    {
+      title: '4º ano'
+    },
+  ]
 
   const handleTrimestreRec = (e) => {
     const { checked, value } = e.target;
@@ -151,6 +166,10 @@ const CadastroPED = () => {
     setErros({})
   };
 
+  useEffect(() => {
+    console.log(erros)
+  }, [erros])
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -227,9 +246,9 @@ const CadastroPED = () => {
 
   const fetchAlunos = async (e) => {
     try {
-      const res = await UsuarioService.buscar(undefined, e.target.value, 'aluno')
+      const res = await UsuarioService.buscar(undefined, e.target.value, 'aluno', 'id, username')
 
-      setOpcoesAlunos(res.data.result)
+      setOpcoesAlunos(res.data.results)
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response.data.message)
@@ -241,12 +260,12 @@ const CadastroPED = () => {
 
   const fetchProfessores = async (e, tipo) => {
     try {
-      const res = await UsuarioService.buscar(undefined, e.target.value, 'professor')
+      const res = await UsuarioService.buscar(undefined, e.target.value, 'professor', 'id, username')
 
       if (res.status !== 200) throw new Error(res)
 
-      if (tipo === 'ped') setOpcoesProfessoresPED(res.data)
-      if (tipo === 'disciplina') setOpcoesProfessoresDisciplina(res.data)
+      if (tipo === 'ped') setOpcoesProfessoresPED(res.data.results)
+      if (tipo === 'disciplina') setOpcoesProfessoresDisciplina(res.data.results)
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response.data.message)
@@ -258,7 +277,7 @@ const CadastroPED = () => {
 
   const fetchCalendarios = async (e) => {
     try {
-      const res = await calendarioService.buscar(undefined, e.target.value)
+      const res = await calendarioService.buscar(undefined, e.target.value, 'id, title')
 
       setOpcoesCalendarios(res.data.results)
     } catch (error) {
@@ -272,11 +291,11 @@ const CadastroPED = () => {
 
   const fetchCurso = async (e) => {
     try {
-      const res = await cursoService.buscarPorModalidade(undefined, e.target.value, )
+      const res = await cursoService.buscarPorModalidade(undefined, e.target.value, modalidadeMap[modalidade], 'id, name, course_class.id, course_class.number')
 
       if (res.status !== 200) throw new Error(res)
 
-      setOpcoesCursos(res.data)
+      setOpcoesCursos(res.data.results)
     } catch (error) {
       console.log(error)
     }
@@ -287,10 +306,9 @@ const CadastroPED = () => {
       if (!formData.curso || formData.curso === '') {
         setErros({ ...erros, disciplina: 'É necessário selecionar um curso antes de buscar uma disciplina' })
       } else {
-        setErros({ ...erros, disciplina: '' })
-        const res = await disciplinaService.buscarPorCurso(formData.curso, undefined, e.target.value)
+        setErros({ ...erros, disciplina: null })
 
-        if (res.status !== 200) throw new Error(res)
+        const res = await disciplinaService.buscarPorCurso(formData.curso, undefined, e.target.value, 'id, name, code')
 
         setOpcoesDisciplinas(res.data.results)
       }
@@ -307,9 +325,6 @@ const CadastroPED = () => {
     try {
       const res = await PEDService.porId(state, modalidade, "edicao");
 
-      setFormData(res.data.ids)
-      setControleInputs(res.data.valores)
-      setTurmas([{ id: res.data.ids.turma_atual, numero: res.data.valores.turma_atual }])
       setDesabilitado(true)
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -343,7 +358,7 @@ const CadastroPED = () => {
 
     setErros(novosErros)
 
-    return Object.values(novosErros).every((erro) => erro === '') ?? Object.keys(novosErros).length === 0
+    return Object.values(novosErros).every((erro) => erro === null) ?? Object.keys(novosErros).length === 0
   }
 
   useEffect(() => {
@@ -357,10 +372,9 @@ const CadastroPED = () => {
   if (carregando) return <CustomLoading/>
 
   return (
-    <>
-      <ToastContainer />
-      <FormContainer onSubmit={handleSubmit} titulo={state ? 'Editar PED' : 'Cadastro PED'}>
-        {Object.values(erros).some((erro) => erro !== '') ? <MensagemErro mensagem={'*Preencha os campos obrigatórios'} /> : null}
+    <FormContainer titulo={state ? 'Editar PED' : 'Cadastro PED'}>
+      {Object.values(erros).some((erro) => erro !== '') ? <MensagemErro mensagem={'*Preencha os campos obrigatórios'} /> : null}
+      <form onSubmit={handleSubmit}>
         <span className={styles.span}>
           <p className={styles.p}>
             Modalidade
@@ -398,10 +412,10 @@ const CadastroPED = () => {
                             opcoes={opcoesAlunos}
                             setValor={(opcao) => {
                               setFormData({ ...formData, aluno: opcao.id })
-                              setControleInputs({ ...controleInputs, aluno: opcao.nome ?? opcao.email })
+                              setControleInputs({ ...controleInputs, aluno: opcao.username })
                               setOpcoesAlunos([])
                             }}
-                            chave={opcoesAlunos.every((opcao) => opcao.nome !== null) ? 'nome' : 'email'}
+                            chave={'username'}
                           />
                         ) : null
                       }
@@ -427,10 +441,10 @@ const CadastroPED = () => {
                             opcoes={opcoesProfessoresPED}
                             setValor={(opcao) => {
                               setFormData({ ...formData, professor_ped: opcao.id })
-                              setControleInputs({ ...controleInputs, professor_ped: opcao.nome ?? opcao.email })
+                              setControleInputs({ ...controleInputs, professor_ped: opcao.username })
                               setOpcoesProfessoresPED([])
                             }}
-                            chave={opcoesProfessoresPED.every((opcao) => opcao.nome !== null) ? 'nome' : 'email'}
+                            chave={'username'}
                           />
                         ) : null
                       }
@@ -457,10 +471,10 @@ const CadastroPED = () => {
                             opcoes={opcoesProfessoresDisciplina}
                             setValor={(opcao) => {
                               setFormData({ ...formData, professor_disciplina: opcao.id })
-                              setControleInputs({ ...controleInputs, professor_disciplina: opcao.nome ?? opcao.email })
+                              setControleInputs({ ...controleInputs, professor_disciplina: opcao.username })
                               setOpcoesProfessoresDisciplina([])
                             }}
-                            chave={opcoesProfessoresDisciplina.every((opcao) => opcao.nome !== null) ? 'nome' : 'email'}
+                            chave={'username'}
                           />
                         ) : null
                       }
@@ -499,10 +513,10 @@ const CadastroPED = () => {
                             opcoes={opcoesCalendarios}
                             setValor={(opcao) => {
                               setFormData({ ...formData, periodo_letivo: opcao.id })
-                              setControleInputs({ ...controleInputs, periodo_letivo: opcao.titulo })
+                              setControleInputs({ ...controleInputs, periodo_letivo: opcao.title })
                               setOpcoesCalendarios([])
                             }}
-                            chave={'titulo'}
+                            chave={'title'}
                           />
                         ) : null
                       }
@@ -532,11 +546,11 @@ const CadastroPED = () => {
                             opcoes={opcoesCursos}
                             setValor={(opcao) => {
                               setFormData({ ...formData, curso: opcao.id })
-                              setControleInputs({ ...controleInputs, curso: opcao.nome })
-                              setTurmas(opcao.turmas)
+                              setControleInputs({ ...controleInputs, curso: opcao.name })
+                              setOpcoesTurmaAtual(opcao.course_class)
                               setOpcoesCursos([])
                             }}
-                            chave={'nome'}
+                            chave={'name'}
                           />
                         ) : null
                       }
@@ -562,10 +576,10 @@ const CadastroPED = () => {
                             opcoes={opcoesDisciplinas}
                             setValor={(opcao) => {
                               setFormData({ ...formData, disciplina: opcao.id })
-                              setControleInputs({ ...controleInputs, disciplina: opcao.nome })
+                              setControleInputs({ ...controleInputs, disciplina: opcao.name })
                               setOpcoesDisciplinas([])
                             }}
-                            chave={'nome'}
+                            chave={'name'}  
                           />
                         ) : null
                       }
@@ -575,52 +589,38 @@ const CadastroPED = () => {
                 </div>
                 <div className={styles.formGroup}>
                   <Label titulo={'Série da Progressão *'}>
-                    <select
-                      className={erros.serie_progressao || erros.turma_serie ? styles.erroSelectCadastroPED : styles.selectCadastroPED}
-                      value={formData.serie_progressao}
-                      onChange={(e) => {
-                        setFormData({ ...formData, serie_progressao: e.target.value })
-                      }}
-                      onBlur={() => setErros({ ...erros, serie_progressao: validarSerieProgressao(formData.serie_progressao) })}
-                      disabled={desabilitado}
-                    >
-                      {
-                        !state ? (
-                          <option value=''>{'Selecione uma serie para progressão'}</option>
-                        ) : (<></>)
-                      }
-                      {
-                        serieProgressao.map((serie, index) => (
-                          <option value={serie.id} key={index}>{serie}</option>
-                        ))
-                      }
-                    </select>
-                    {erros.turma_serie !== '' ? <MensagemErro mensagem={erros.turma_serie} /> : null}
+                    <div className={styles.inputContainer}>
+                      <Select
+                        chave='title'
+                        opcoes={serieProgressao}
+                        selecionado={formData.serie_progressao}
+                        setValor={(opcao) => {
+                          setFormData({...formData, serie_progressao: opcao.title})
+                        }}
+                        desabilitado={desabilitado}
+                      />
+                      {erros.turma_serie !== '' ? <MensagemErro mensagem={erros.turma_serie} /> : null}
+                    </div>
                   </Label>
                   <Label titulo={'Turma *'}>
-                    <select
-                      className={erros.turma_atual || erros.turma_serie ? styles.erroSelectCadastroPED : styles.selectCadastroPED}
-                      value={formData.turma_atual}
-                      onChange={(e) => {
-                        const selectedValue = e.target.value;
-                        const selectedText = e.target.options[e.target.selectedIndex].text;
-
-                        setFormData({ ...formData, turma_atual: selectedValue });
-                        setControleInputs({ ...controleInputs, turma_atual: selectedText });
-                      }}
-                      disabled={desabilitado}
-                    >
-                      {!state && <option value="">{'Selecione uma turma'}</option>}
-                      {turmas?.map((turma, index) => (
-                        <option value={turma.id} key={index}>{turma.numero}</option>
-                      ))}
-                    </select>
-                    {erros.turma_serie !== '' ? <MensagemErro mensagem={erros.turma_serie} /> : null}
+                    <div className={styles.inputContainer}>
+                      <Select
+                        chave='number'
+                        opcoes={opcoesTurmaAtual}
+                        selecionado={controleInputs.turma_atual}
+                        setValor={(opcao) => {
+                          setFormData({...formData, turma_atual: opcao.id})
+                          setControleInputs({...controleInputs, turma_atual: opcao.number})
+                        }}
+                        desabilitado={state ? desabilitado : formData.curso ? false : true}
+                      />
+                      {erros.turma_serie !== '' ? <MensagemErro mensagem={erros.turma_serie} /> : null}
+                    </div>
                   </Label>
                 </div>
               </section>
             </>
-          ) : (
+          ) : modalidade === 'ProEJA' ? (
             <>
               <Label titulo={'Aluno *'}>
                 <div className={styles.inputContainer}>
@@ -642,10 +642,10 @@ const CadastroPED = () => {
                         opcoes={opcoesAlunos}
                         setValor={(opcao) => {
                           setFormData({ ...formData, aluno: opcao.id })
-                          setControleInputs({ ...controleInputs, aluno: opcao.nome ?? opcao.email })
+                          setControleInputs({ ...controleInputs, aluno: opcao.username })
                           setOpcoesAlunos([])
                         }}
-                        chave={opcoesAlunos.every((opcao) => opcao.nome !== null) ? 'nome' : 'email'}
+                        chave={'username'}
                       />
                     ) : null
                   }
@@ -671,10 +671,10 @@ const CadastroPED = () => {
                         opcoes={opcoesProfessoresPED}
                         setValor={(opcao) => {
                           setFormData({ ...formData, professor_ped: opcao.id })
-                          setControleInputs({ ...controleInputs, professor_ped: opcao.nome ?? opcao.email })
+                          setControleInputs({ ...controleInputs, professor_ped: opcao.username })
                           setOpcoesProfessoresPED([])
                         }}
-                        chave={opcoesProfessoresPED.every((opcao) => opcao.nome !== null) ? 'nome' : 'email'}
+                        chave={'username'}
                       />
                     ) : null
                   }
@@ -701,10 +701,10 @@ const CadastroPED = () => {
                         opcoes={opcoesProfessoresDisciplina}
                         setValor={(opcao) => {
                           setFormData({ ...formData, professor_disciplina: opcao.id })
-                          setControleInputs({ ...controleInputs, professor_disciplina: opcao.nome ?? opcao.email })
+                          setControleInputs({ ...controleInputs, professor_disciplina: opcao.username })
                           setOpcoesProfessoresDisciplina([])
                         }}
-                        chave={opcoesProfessoresDisciplina.every((opcao) => opcao.nome !== null) ? 'nome' : 'email'}
+                        chave={'username'}
                       />
                     ) : null
                   }
@@ -730,10 +730,10 @@ const CadastroPED = () => {
                         opcoes={opcoesCursos}
                         setValor={(opcao) => {
                           setFormData({ ...formData, curso: opcao.id })
-                          setControleInputs({ ...controleInputs, curso: opcao.nome })
+                          setControleInputs({ ...controleInputs, curso: opcao.name })
                           setOpcoesCursos([])
                         }}
-                        chave={'nome'}
+                        chave={'name'}
                       />
                     ) : null
                   }
@@ -759,10 +759,10 @@ const CadastroPED = () => {
                         opcoes={opcoesDisciplinas}
                         setValor={(opcao) => {
                           setFormData({ ...formData, disciplina: opcao.id })
-                          setControleInputs({ ...controleInputs, disciplina: opcao.nome ?? opcao.email })
+                          setControleInputs({ ...controleInputs, disciplina: opcao.name })
                           setOpcoesDisciplinas([])
                         }}
-                        chave={'nome'}
+                        chave={'name'}
                       />
                     ) : null
                   }
@@ -805,10 +805,10 @@ const CadastroPED = () => {
                         opcoes={opcoesCalendarios}
                         setValor={(opcao) => {
                           setFormData({ ...formData, periodo_letivo: opcao.id })
-                          setControleInputs({ ...controleInputs, periodo_letivo: opcao.titulo })
+                          setControleInputs({ ...controleInputs, periodo_letivo: opcao.title })
                           setOpcoesCalendarios([])
                         }}
-                        chave={'titulo'}
+                        chave={'title'}
                       />
                     ) : null
                   }
@@ -816,7 +816,7 @@ const CadastroPED = () => {
                 </div>
               </Label>
             </>
-          )
+          ) : null
         }
         <Label titulo={'Observacao (opcional)'}>
           <textarea
@@ -825,15 +825,14 @@ const CadastroPED = () => {
 
               setFormData({ ...formData, observacao: e.target.value })
             }}
-            name="observacao"
             value={formData.observacao}
             placeholder="Caso haja alguma observação sobre o aluno, insira aqui"
           />
         </Label>
         <Button color="#006b3f" texto={state ? 'Salvar Alterações' : 'Cadastrar'} tipo="submit" disabled={botaoDesabilitado} />
-      </FormContainer >
-    </>
+      </form>
+    </FormContainer >
   );
 };
 
-export default CadastroPED;
+export default PEDForm;

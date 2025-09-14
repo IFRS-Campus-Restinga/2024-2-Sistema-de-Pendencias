@@ -4,7 +4,7 @@ const PermissaoService = {
   listar: async (pagina = 1) => {
     return api.get(`api/permissoes/listar/`, {
       params: {
-        retorno: "lista",
+        retorno: "id, codename",
         page: pagina,
       },
     });
@@ -13,7 +13,7 @@ const PermissaoService = {
   listarPorGrupo: async (grupoId, pagina = 1) => {
     return api.get(`api/permissoes/listar/${grupoId}/`, {
       params: {
-        retorno: "lista",
+        retorno: "id, codename",
         page: pagina,
       },
     });
@@ -22,7 +22,7 @@ const PermissaoService = {
   naoVinculadas: async (grupoId, pagina = 1) => {
     return api.get(`api/permissoes/listar/${grupoId}/nao_vinculadas/`, {
       params: {
-        retorno: "lista",
+        retorno: "id, codename",
         page: pagina,
       },
     });

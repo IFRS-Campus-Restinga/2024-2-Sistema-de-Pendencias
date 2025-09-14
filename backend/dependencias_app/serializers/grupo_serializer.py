@@ -2,8 +2,8 @@ import re
 import unicodedata
 from rest_framework import serializers
 from django.contrib.auth.models import Group, Permission
-from dependencias_session.formatters.format_grupo_data import FormatGrupoData
-from dependencias_session.models.group_map import GroupUUIDMap
+from ..formatters.format_grupo_data import URLFieldsParser
+from ..models.group_map import GroupUUIDMap
 
 def format_string(text: str) -> str:
     # Converte para minúsculas
@@ -43,13 +43,7 @@ class GrupoSerializer(serializers.ModelSerializer):
         if not retorno:
             raise serializers.ValidationError('O campo retorno não pode ser nulo.')
         
-        match retorno:
-            case 'lista':
-                return FormatGrupoData.list_format(instance)
-            case 'detalhes':
-                return FormatGrupoData.details_format(instance)
-            case _:
-                raise serializers.ValidationError('Formato inválido')
+        return URLFieldsParser.parse(instance, retorno)
 
 
     def create(self, validated_data):

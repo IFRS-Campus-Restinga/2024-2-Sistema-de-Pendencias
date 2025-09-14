@@ -62,10 +62,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'rest_framework',
+    'hub_tools',
     'dependencias_app',
     'dependencias_session',
-    'hub_tools',
-    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -168,3 +168,4 @@ GOOGLE_OAUTH2_CLIENT_SECRET = os.getenv('GOOGLE_OAUTH2_CLIENT_SECRET')
 GOOGLE_OAUTH2_PROJECT_ID = os.getenv('GOOGLE_OAUTH2_PROJECT_ID')
 BASE_SYSTEM_URL = os.getenv('BASE_SYSTEM_URL')
 SYSTEM_ID = os.getenv('SYSTEM_ID')
+API_KEY = os.getenv('API_KEY')

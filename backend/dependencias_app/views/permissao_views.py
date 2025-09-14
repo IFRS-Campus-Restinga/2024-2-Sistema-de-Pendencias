@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from fs_auth_middleware.decorators import has_permissions
-from dependencias_session.services.permissao_service import PermissaoService
+from dependencias_app.services.permissao_service import PermissaoService
 from django.http import Http404
     
 @api_view(['GET'])

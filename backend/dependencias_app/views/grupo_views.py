@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from fs_auth_middleware.decorators import has_permissions
-from dependencias_session.services.grupo_service import GrupoService
+from dependencias_app.services.grupo_service import GrupoService
 from django.http import Http404
 
 @api_view(['POST'])

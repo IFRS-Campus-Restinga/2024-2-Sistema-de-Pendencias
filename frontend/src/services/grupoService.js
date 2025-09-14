@@ -2,16 +2,16 @@ import api from "../config/axiosConfig";
 
 const GrupoService = {
   criar: async (params) => {
-    return await api.post("api/grupo/cadastrar/", params);
+    return await api.post("api/grupos/cadastrar/", params);
   },
 
   listar: async (pagina = 1, param = "") => {
     try {
-      return await api.get("api/grupo/listar/", {
+      return await api.get("api/grupos/listar/", {
         params: {
           param,
           pagina,
-          retorno: "lista",
+          retorno: "id, name",
         },
       });
     } catch (error) {
@@ -20,15 +20,15 @@ const GrupoService = {
   },
 
   detalhes: async (grupoId) => {
-    return await api.get(`api/grupo/${grupoId}/detalhes/`, {
+    return await api.get(`api/grupos/${grupoId}/detalhes/`, {
       params: {
-        retorno: "detalhes",
+        retorno: "id, name",
       },
     });
   },
 
   editar: async (params, grupoId) => {
-    return api.put(`api/grupo/${grupoId}/editar/`, params);
+    return api.put(`api/grupos/${grupoId}/editar/`, params);
   },
 };
 

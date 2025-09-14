@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef  } from 'react';
 
 
-const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setPagina, deletar, editar, visualizar }) => {
+const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setPagina, deletar, editar, visualizar, propMap }) => {
     const redirect = useNavigate()
     const primeiroRef = useRef(null)
     const ultimoRef = useRef(null)
@@ -66,7 +66,7 @@ const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setP
                                 {
                                     Object.keys(lista[0] ?? {}).map((itemKey) => (
                                         itemKey !== 'id' ? (
-                                            <th className={styles.th}>{itemKey}</th>
+                                            <th className={styles.th}>{propMap[itemKey]}</th>
                                         ) : null
                                     ))
                                 }

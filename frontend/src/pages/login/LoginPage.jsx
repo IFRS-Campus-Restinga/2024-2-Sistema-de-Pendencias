@@ -1,64 +1,27 @@
-import { useEffect, useState } from "react";
-import styles from "./LoginPage.module.css";
-import { authService } from "../../services/authService";
-import { useLocation, useNavigate } from "react-router-dom";
-import CustomLoading from "../../components/customLoading/CustomLoading";
-import { verificarGrupos } from "../../utils/permissões";
-
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
+import styles from './LoginPage.module.css'
+import ifrs from '../../assets/logo-ifrs-branco.png'
 
 const LoginPage = () => {
-  const redirect = useNavigate()
-  const query = useQuery()
-  const [autenticado, setAutenticado] = useState('pendente')
 
-  const obterTokens = async () => {
-    const system = query.get('system')
-    const user = query.get('user')
-    const profilePicture = query.get('profilePicture')
-
-    try {
-      const res = await authService.obterTokens(user, system)
-
-      if (res.status !== 200) throw new Error()
-
-      const grupo = verificarGrupos(res.data.groups)
-
-      res.data.profile_picture = profilePicture
-      
-      sessionStorage.setItem('user', JSON.stringify(res.data))
-      redirect(`/session/${grupo}/home`)
-    } catch (error) {
-      console.error(error)
-      setAutenticado('recusado')
+    const handleRedirect = () => {
+        window.location.href = `${process.env.REACT_APP_BASE_SYSTEM_URL}/session?system=${process.env.REACT_APP_SYSTEM_ID}`
     }
-  }
 
-  useEffect(() => {
-    obterTokens()
-  }, [])
-
-  if (autenticado === 'recusado') {
     return (
-      <main className={styles.main}>
-        <h2 className={styles.titulo}>Acesso não autorizado</h2>
-        <p className={styles.detalhes}>chave inválida</p>
-      </main>
+        <main className={styles.main}>
+            <header className={styles.header}>
+                <img src={ifrs} alt="" className={styles.logo}/>
+            </header>
+            <section className={styles.section}>
+                <h1 className={styles.h1}>Sistema de Progressões</h1>
+                <hr className={styles.hr}/>
+                <div className={styles.div} onClick={handleRedirect}>
+                    Acessar
+                    <img src="https://ifrs.edu.br/wp-content/themes/ifrs-portal-theme/favicons/apple-touch-icon.png" alt="ifrs" className={styles.img}/>
+                </div>
+            </section>
+        </main>
     )
-  }
+}
 
-  return (
-    <>
-      <main className={styles.main}>
-        <h2 className={styles.titulo}>Validando acesso...</h2>
-        <div className={styles.loadingContainer}>
-          <CustomLoading />
-        </div>
-      </main>
-    </>
-  );
-};
-
-export default LoginPage;
+export default LoginPage

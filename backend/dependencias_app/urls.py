@@ -1,36 +1,56 @@
 from django.urls import path
+from dependencias_app.views.usuario_views import *
+from dependencias_app.views.grupo_views import *
+from dependencias_app.views.permissao_views import *
 from dependencias_app.views.ppt_views import *
 from dependencias_app.views.ped_views import *
 from dependencias_app.views.atividade_views import *
 from dependencias_app.views.avaliacao_views import *
 from dependencias_app.views.plano_estudos_views import *
 from dependencias_app.views.notificacao_views import *
-from dependencias_app.views.observacao_views import *
+from dependencias_app.views.acompanhamento_views import *
 
 
 urlpatterns = [
+    # views de usuário
+    path('usuarios/cadastrar/', cadastrar_usuario),
+    path('usuarios/listar/', listar_usuarios),
+    path('usuarios/<str:usuario_id>/detalhes/', detalhes_usuario),
+    path('usuarios/<str:usuario_id>/editar/', editar_usuario),
+
+    # views de grupo
+    path('grupos/cadastrar/', cadastrar_grupo),
+    path('grupos/listar/', listar_grupos),
+    path('grupos/<str:grupo_id>/detalhes/', detalhes_grupo),
+    path('grupos/<str:grupo_id>/editar/', editar_grupo),
+
+    # views de permissão
+    path('permissoes/listar/', listar_permissoes),
+    path('permissoes/listar/<str:grupo_id>/', listar_por_grupo),
+    path('permissoes/listar/<str:grupo_id>/nao_vinculadas/', listar_nao_vinculadas),
+
     # view de PPT
-    path('ppt/cadastrar/', cadastrar_PPT),
-    path('ppt/listar/', listar_PPT),
-    path('ppt/<str:ppt_id>/detalhes/', detalhes_PPT),
-    path('ppt/<str:ppt_id>/editar/', editar_ppt),
+    path('ppts/cadastrar/', cadastrar_PPT),
+    path('ppts/listar/', listar_PPT),
+    path('ppts/<str:ppt_id>/detalhes/', detalhes_PPT),
+    path('ppts/<str:ppt_id>/editar/', editar_ppt),
     
     # views de PED
-    path('ped/<str:modalidade>/cadastrar/', cadastrar_PED),
-    path('ped/<str:modalidade>/listar/', listar_PED_por_modalidade),
-    path('ped/<str:modalidade>/<str:ped_id>/detalhes/', detalhes_PED),
-    path('ped/<str:modalidade>/<str:ped_id>/editar/', editar_PED),
+    path('peds/<str:modalidade>/cadastrar/', cadastrar_PED),
+    path('peds/<str:modalidade>/listar/', listar_PED_por_modalidade),
+    path('peds/<str:modalidade>/<str:ped_id>/detalhes/', detalhes_PED),
+    path('peds/<str:modalidade>/<str:ped_id>/editar/', editar_PED),
 
     #views para atividades
-    path('atividade/cadastrar/<str:modalidade>/', cadastrar_atividade),
-    path('atividade/listar/', listar_atividades),
-    path('atividade/<str:modalidade>/<str:atividade_id>/detalhes/', buscar_atividade_por_id),
-    path('atividade/<str:modalidade>/<str:atividade_id>/editar/', editar_atividade),
+    path('atividades/cadastrar/<str:modalidade>/', cadastrar_atividade),
+    path('atividades/listar/', listar_atividades),
+    path('atividades/<str:modalidade>/<str:atividade_id>/detalhes/', buscar_atividade_por_id),
+    path('atividades/<str:modalidade>/<str:atividade_id>/editar/', editar_atividade),
 
     # views para avaliações
-    path('avaliacao/<str:modalidade>/cadastrar/', cadastrar_avaliacoes),
-    path('avaliacao/<str:modalidade>/<str:ped_id>/listar/', listar_avaliacoes_por_PED),
-    path('avaliacao/<str:modalidade>/editar/', editar_avaliacoes),
+    path('avaliacoes/<str:modalidade>/cadastrar/', cadastrar_avaliacoes),
+    path('avaliacoes/<str:modalidade>/<str:ped_id>/listar/', listar_avaliacoes_por_PED),
+    path('avaliacoes/<str:modalidade>/editar/', editar_avaliacoes),
 
     # views de plano de estudos
     path('plano-estudos/<str:modalidade>/cadastrar/', cadastrar_plano_estudos),
@@ -38,10 +58,10 @@ urlpatterns = [
     path('plano-estudos/<str:modalidade>/<str:plano_estudos_id>/editar/', editar_plano_estudos,),
     
     #views para observações
-    path('observacao/<str:modalidade>/<str:ped_id>/cadastrar/', cadastrar_observacao),
-    path('observacoes/<str:modalidade>/<str:ped_id>/listar/', listar_observacoes),
-    path('observacao/<str:modalidade>/<str:ped_id>/<str:observacao_id>/detalhes/', visualizar_observacao),
-    path('observacao/<str:modalidade>/<str:ped_id>/<str:observacao_id>/editar/', editar_observacao),
+    path('acompanhamentos/<str:modalidade>/<str:ped_id>/cadastrar/', cadastrar_acompanhamento),
+    path('acompanhamentos/<str:modalidade>/<str:ped_id>/listar/', listar_acompanhamentos),
+    path('acompanhamentos/<str:modalidade>/<str:ped_id>/<str:acompanhamento_id>/detalhes/', visualizar_acompanhamento),
+    path('acompanhamentos/<str:modalidade>/<str:ped_id>/<str:acompanhamento_id>/editar/', editar_acompanhamento),
     
     # Views de notificacao
     path('notificacoes/<str:usuario_id>/', buscar_notificacoes),

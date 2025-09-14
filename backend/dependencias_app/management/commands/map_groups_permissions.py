@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
-from dependencias_app.models import GroupUUIDMap, PermissionUUIDMap  # Substitua
+from ...models.group_map import GroupUUIDMap
+from ...models.permission_map import PermissionUUIDMap
 
 class Command(BaseCommand):
     help = "Mapeia todos os grupos e permissões com UUIDs"

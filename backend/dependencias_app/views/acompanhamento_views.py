@@ -3,20 +3,20 @@ from rest_framework.response import Response
 from rest_framework import status
 
 @api_view(['POST'])
-def cadastrar_observacao(request):
+def cadastrar_acompanhamento(request):
     pass
 
 
 @api_view(['GET'])
-def listar_observacoes(request, ped_id):
+def listar_acompanhamentos(request, ped_id):
     pass
 
 
 @api_view(['GET'])
-def visualizar_observacao(request, observacao_id):
+def visualizar_acompanhamento(request, acompanhamento_id):
     pass
     
 
 @api_view(['PUT'])
-def editar_observacao(request, observacao_id):
+def editar_acompanhamento(request, observacao_id):
     pass

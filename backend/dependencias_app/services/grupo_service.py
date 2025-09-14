@@ -1,6 +1,6 @@
 import uuid
 from django.contrib.auth.models import Group, Permission
-from dependencias_session.serializers.grupo_serializer import GrupoSerializer
+from dependencias_app.serializers.grupo_serializer import GrupoSerializer
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 from rest_framework.pagination import PageNumberPagination

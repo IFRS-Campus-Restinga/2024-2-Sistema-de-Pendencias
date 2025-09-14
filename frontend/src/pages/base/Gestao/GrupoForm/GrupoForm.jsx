@@ -129,10 +129,14 @@ const GrupoForm = () => {
 
             toast.promise(requisicao, {
                 pending: state ? 'Salvando alterações...' : 'Criando grupo...',
-                success: state ? 'Grupo atualizado com sucesso!' : 'Grupo criado com sucesso!',
+                success: {
+                    render({ data }) {
+                        return data.data.message || 'Erro ao salvar dados'
+                    }
+                },
                 error: {
                     render({ data }) {
-                        return data?.message || 'Erro ao salvar dados'
+                        return data.data.message || 'Erro ao salvar dados'
                     }
                 }
             })
@@ -172,7 +176,6 @@ const GrupoForm = () => {
             titulo={`${state ? 'Editar' : 'Cadastrar'} Grupo`}
             textoInfo={`Preencha os campos obrigatórios (*)\n\nVincule ou Desvincule permissões ao grupo utilizando as tabelas abaixo.`}
         >
-            <ToastContainer />
             {carregandoGeral ? (
                 <CustomLoading />
             ) : (
@@ -210,7 +213,7 @@ const GrupoForm = () => {
                         setPaginaAtualLista1={setPaginaDisponiveis}
                         setPaginaAtualLista2={setPaginaDoGrupo}
                         obterChave={(p) => p.id}
-                        renderizarItem={(p) => p.name}
+                        renderizarItem={(p) => p.codename}
                     />
                     <div className={styles.buttonContainer}>
                         <Button texto={state ? "Salvar alterações" : 'Cadastrar'} tipo={'submit'} />

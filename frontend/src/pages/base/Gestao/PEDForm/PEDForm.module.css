@@ -16,6 +16,7 @@
     font-size: 15px;
     margin: 10px;
     font-weight: bold;
+    color: #767676;
 }
 
 .formGroup {
@@ -28,19 +29,22 @@
 .inputContainer {
     position: relative;
     margin-bottom: 10px;
+    min-height: 30px;
 }
 
 .textArea {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Roboto';
     padding: 5px;
     margin-top: 7px;
     border: 1px solid #ccc;
     border-radius: 8px;
+    color: #767676
 }
 
 .select:focus,
 .textArea:focus {
     border: 1px solid #797979;
+    outline: none;
 }
 
 .labelTrimestreRec {
@@ -61,19 +65,19 @@
 
 }
 
-.selectCadastroPED,
-.erroSelectCadastroPED {
+.selectPEDForm,
+.erroSelectPEDForm {
     font-size: 15px;
     border: 1px solid #ccc;
     padding: 5px;
     border-radius: 8px;
 }
 
-.selectCadastroPED {
+.selectPEDForm {
     border: 1px solid #ccc;
 }
 
-.erroSelectCadastroPED {
+.erroSelectPEDForm {
     border: 1px solid #f00;
 }
 

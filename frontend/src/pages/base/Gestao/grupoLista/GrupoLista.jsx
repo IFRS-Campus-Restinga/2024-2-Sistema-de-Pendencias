@@ -1,7 +1,11 @@
 import Listagem from "../../../../features/listagem/Listagem"
 import GrupoService from "../../../../services/grupoService"
 
-const ListarGrupos = () => {   
+const GrupoMap = {
+    'name': 'nome'
+}
+
+const GrupoLista = () => {   
     const fetchGrupos = async (pagina, param) => {
         const res = await GrupoService.listar(pagina, param)
 
@@ -17,8 +21,9 @@ const ListarGrupos = () => {
             fetchDados={fetchGrupos}
             titulo={'Grupos'}
             urlCadastro={'/session/gestao_escolar/grupos/cadastro/'}
+            propMap={GrupoMap}
         />
     )
 }
 
-export default ListarGrupos
+export default GrupoLista
