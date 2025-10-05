@@ -25,6 +25,10 @@ import ListarPEDGestao from './pages/base/Gestao/listarDependenciasGestao/Listar
 import ListarPPTGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPPTGestao'
 import CadastroPED from './pages/base/Gestao/PEDForm/PEDForm'
 import UsuarioForm from './pages/base/Gestao/usuarioForm/UsuarioForm'
+import Home from './pages/home/Home'
+import DetalhesPEDGestao from './pages/base/Gestao/detalhesDependenciaGestao/DetalhesPEDGestao'
+import CadastroPPT from './pages/base/Gestao/PPTForm/PPTForm'
+import DetalhesPPTGestao from './pages/base/Gestao/detalhesDependenciaGestao/DetalhesPPTGestao'
 
 // Plano Estudos
 
@@ -39,6 +43,10 @@ import UsuarioForm from './pages/base/Gestao/usuarioForm/UsuarioForm'
 // Filhos de Aluno
 
 const router = createBrowserRouter([
+    {
+        path: '/',
+        element: <Home/>
+    },
     {
         path: 'session/',
         element: <LoginPage/>
@@ -112,38 +120,34 @@ const router = createBrowserRouter([
                 path: 'peds/ProEJA',
                 element: <ListarPEDGestao />
             },
-            // {
-            //     path: '/gestao_escolar/peds/Integrado/:idPed',
-            //     element: <DetalhesPEDGestao />
-            // },
-            // {
-            //     path: '/gestao_escolar/peds/ProEJA/:idPed',
-            //     element: <DetalhesPEDGestao />
-            // },
-            // {
-            //     path: '/gestao_escolar/peds/Integrado/:idPed/editar',
-            //     element: <CadastroPED />
-            // },
-            // {
-            //     path: '/gestao_escolar/peds/ProEJA/:idPed/editar',
-            //     element: <CadastroPED />
-            // },
-            // {
-            //     path: '/gestao_escolar/cadastroPPT',
-            //     element: <CadastroPPT />
-            // },
+            {
+                path: 'peds/Integrado/:idPed',
+                element: <DetalhesPEDGestao />
+            },
+            {
+                path: 'peds/ProEJA/:idPed',
+                element: <DetalhesPEDGestao />
+            },
+            {
+                path: 'peds/Integrado/:idPed/editar',
+                element: <CadastroPED />
+            },
+            {
+                path: 'peds/ProEJA/:idPed/editar',
+                element: <CadastroPED />
+            },
+            {
+                path: 'ppts/cadastro',
+                element: <CadastroPPT />
+            },
             {
                 path: 'ppts',
                 element: <ListarPPTGestao />
             },
-            // {
-            //     path: '/gestao_escolar/ppts/:idPpt',
-            //     element: <DetalhesPPTGestao />
-            // },
-            // {
-            //     path: '/gestao_escolar/ppts/:idPpt/editar',
-            //     element: <CadastroPPT />
-            // },
+            {
+                path: 'ppts/:idPpt',
+                element: <DetalhesPPTGestao />
+            },
             // {
             //     path: '/gestao_escolar/peds/:modalidade/:idPed/planoEstudos/:planoId/',
             //     element: <DetalhesPlanoEstudos />

@@ -1,3 +1,9 @@
+.form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 .section {
     width: 100%;
     display: flex;
@@ -19,11 +25,16 @@
     color: #767676;
 }
 
-.formGroup {
-    width: 50%;
+.formGroup, .selectFormGroup {
+    width: 100%;
     padding: 7px;
     display: flex;
     flex-direction: column;
+    height: 100%;
+}
+
+.selectFormGroup {
+    gap: 10px;
 }
 
 .inputContainer {

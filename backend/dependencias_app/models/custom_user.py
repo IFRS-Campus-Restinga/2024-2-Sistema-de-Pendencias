@@ -5,7 +5,7 @@ from .base import BaseModel
 
 class CustomUser(BaseModel):
     id = models.UUIDField(primary_key=True, editable=False)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name="Grupo")
 
     def __str__(self):
         return f'{self.id} | {self.group.name}'

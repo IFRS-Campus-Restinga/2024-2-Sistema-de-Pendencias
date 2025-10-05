@@ -5,18 +5,28 @@ export const UsuarioService = {
     return api.post("api/usuarios/cadastrar/", params);
   },
 
-  listar: async (perfil, pagina, busca) => {
-    return api.get("api/usuarios/listar/", {
+  listarGrupo: async (grupo, pagina = 1, busca, retorno) => {
+    return api.get(`api/usuarios/listar/grupo/${grupo}/`, {
       params: {
-        perfil,
         pagina,
         busca,
+        retorno,
       },
     });
   },
 
-  buscar: async (usuarioId) => {
-    return api.get(`api/usuarios/${usuarioId}/detalhes/`);
+  listarPerfil: async (perfil, pagina = 1, busca, retorno) => {
+    return api.get(`api/usuarios/listar/perfil/${perfil}/`, {
+      params: {
+        pagina,
+        busca,
+        retorno,
+      },
+    });
+  },
+
+  obter: async (usuarioId) => {
+    return api.get(`api/usuarios/${usuarioId}/`);
   },
 
   editar: async (usuarioId, params) => {

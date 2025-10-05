@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import Notificacoes from "../Notificacoes/Notificacoes";
 import { validaUsuario } from "../../pages/base/validaUsuario";
 
-const Header = ({ homeUrl }) => {
+const Header = () => {
   const [notificAberta, setNotificAberta] = useState(false)
   const [nome, setNome] = useState()
   const redirect = useNavigate()
@@ -51,7 +51,7 @@ const Header = ({ homeUrl }) => {
 
   return (
     <header className={styles.header}>
-      <img src={logo} alt="Logo do Site" className={styles.logo} />
+      <img src={logo} alt="Logo do Site" className={styles.logo} onClick={() => redirect(`/session/${JSON.parse(sessionStorage.getItem('user')).group}/home`)}/>
       {
         sessionStorage.getItem('user') ? (
           <div className={styles.menu}>
@@ -64,9 +64,10 @@ const Header = ({ homeUrl }) => {
             </span>
             <Dropdown
               img={JSON.parse(sessionStorage.getItem('user')).profile_picture}
+              fontSize={'12px'}
               itens={[
                 {
-                  titulo: 'Logout',
+                  name: 'Logout',
                   onClick: handleLogout
                 }
               ]}

@@ -4,7 +4,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
 }
 
 .dropdownContainer {
@@ -29,7 +28,7 @@
 
 .titulo {
     font-family: 'Roboto';
-    font-size: 15px;
+    font-size: var(--dropdown-font-size, 15px);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -45,7 +44,7 @@
 .lista {
     display: flex;
     flex-direction: column;
-    min-width: 100%;
+    min-width: max-content;
     list-style: none;
     background-color: white;
     border-radius: 8px;
@@ -59,9 +58,7 @@
     display: flex;
     justify-content: start;
     padding: 5px;
-    font-size: 12px;
     font-family: 'Roboto';
-    color: black;
     font-weight: 600;
     text-decoration: none;
 
@@ -84,7 +81,23 @@
 
 .itemTitle {
     text-decoration: none;
-    color: #a0a0a0;
+    color: #767676;
     font-family: 'Roboto';
     font-weight: 500;
+    font-size: var(--dropdown-font-size, 16px);
+
+}
+
+.desabilitado {
+    cursor: not-allowed;
+    color: #a0a0a0;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: var(--dropdown-font-size, 16px);
+
+
+    .itemTitle {
+        color: #a0a0a0;
+        padding: 8px;
+    }
 }

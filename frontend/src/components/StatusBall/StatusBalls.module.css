@@ -23,12 +23,23 @@
     transition: background-color 0.3s;
     position: relative;
     padding: 5px;
+
 }
 
-.statusBall .active {
+.active {
     background-color: #006b3f;
     border: 2px solid #006b3f;
     color: white;
+}
+
+.statusBall.active {
+    .statusText {
+        margin-top: 8px;
+        font-size: 12px;
+        text-align: center;
+        font-weight: bold;
+        color: white;
+    }
 }
 
 .statusText {
@@ -36,11 +47,7 @@
     font-size: 12px;
     text-align: center;
     font-weight: bold;
-    color: black;
-}
-
-.statusBall .active .statusText {
-    color: white;
+    color: #767676;
 }
 
 .statusBall i {
@@ -52,6 +59,11 @@
     justify-content: space-evenly;
     align-items: center;
     flex: 1;
+}
+
+.statusIcon {
+    width: 20px;
+    height: 20px;
 }
 
 @media (max-width: 1260px) {

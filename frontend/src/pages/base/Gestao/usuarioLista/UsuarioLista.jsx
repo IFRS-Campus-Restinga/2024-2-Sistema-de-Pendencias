@@ -12,7 +12,7 @@ const UsuarioLista = () => {
     const location = useLocation()
     const perfilUsuarios = location.pathname.split('/')[3]    
     const fetchUsuarios = async (pagina, param) => {
-        const res = await UsuarioService.listar(perfilUsuarios === 'alunos' ? 'aluno' : 'servidor', pagina, param)
+        const res = await UsuarioService.listarPerfil(perfilUsuarios === 'alunos' ? 'aluno' : 'servidor', pagina, param, 'id, username, email')
 
         return {
             proxima: res.data.next,
@@ -27,6 +27,8 @@ const UsuarioLista = () => {
             titulo={perfilUsuarios}
             urlCadastro={`/session/gestao_escolar/${perfilUsuarios}/cadastro/`}
             propMap={UsuarioMap}
+            visualizar={false}
+            editar={true}
         />
     )
 }

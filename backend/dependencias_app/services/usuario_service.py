@@ -7,11 +7,14 @@ from rest_framework import serializers
 from ..models.custom_user import CustomUser
 from ..serializers.usuario_serializer import CustomUserSerializer
 from rest_framework.pagination import PageNumberPagination
+from django.db.models import CharField
+from django.db.models.functions import Cast
 
 class CustomUserPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'tam_pagina'
     max_page_size = 30
+    page_query_param = 'pagina'
 
 class CustomUserService:
     @staticmethod
@@ -28,15 +31,15 @@ class CustomUserService:
         serializer.save()
 
     @staticmethod
-    def listar(request) -> list:
+    def listar_perfil(request, perfil) -> list:
         busca = request.GET.get('busca', None)
-        perfil = request.GET.get('perfil', None)
         pagina = request.GET.get('pagina', None)
+        retorno = request.GET.get('retorno', None)
 
         dados_hub = requests.get(
             f'{settings.BASE_SYSTEM_URL}/api/users/get/access_profile/{perfil}/',
             params={
-                'fields': 'id, username, email',
+                'fields': retorno,
                 'page': pagina,
                 'active': 'true',
                 'search': busca
@@ -67,6 +70,40 @@ class CustomUserService:
         resultado = paginator.paginate_queryset(lista_final, request)
 
         return paginator.get_paginated_response(resultado)
+    
+    @staticmethod
+    def listar_grupo(request, grupo):
+        busca = request.GET.get('busca', None)
+        pagina = request.GET.get('pagina', None)
+        retorno = request.GET.get('retorno', None)
+
+        # Lista de IDs do banco como string (sem traços)
+        usuarios = CustomUser.objects.filter(group__name=grupo)
+        perfil = 'aluno' if grupo == 'aluno' else 'servidor'
+
+        # Requisição à API
+        usuarios_hub = requests.get(
+            f'{settings.BASE_SYSTEM_URL}/api/users/get/access_profile/{perfil}/',
+            params={
+                'fields': retorno,
+                'page': pagina,
+                'active': 'true',
+                'search': busca
+            },
+            cookies={'system': settings.API_KEY}
+        ).json()
+
+        lista_final = []
+
+        for usuario_hub in usuarios_hub.get('results', []):
+            for usuario in usuarios:
+                if usuario.id == uuid.UUID(usuario_hub['id']):
+                    lista_final.append(usuario_hub)
+
+        paginator = CustomUserPagination()
+        resultado = paginator.paginate_queryset(lista_final, request)
+
+        return paginator.get_paginated_response(resultado)
 
     @staticmethod
     def detalhes(usuario_id):
@@ -86,7 +123,6 @@ class CustomUserService:
         usuario_hub['group'] = str(usuario.group.uuid_map.uuid)
 
         return usuario_hub
-
 
     @staticmethod
     def obter_dados(user_id: str):
@@ -121,3 +157,16 @@ class CustomUserService:
             raise serializers.ValidationError(serializer.errors)
         
         serializer.save()
+
+    @staticmethod
+    def criar_aluno(aluno_id):
+        aluno = CustomUser.objects.filter(id=uuid.UUID(aluno_id))
+
+        if aluno == None:
+            grupo = Group.objects.get(name="aluno")
+
+            CustomUser.objects.create(
+                id=uuid.UUID(aluno_id),
+                group=grupo
+            )
+            

@@ -1,19 +1,18 @@
 import CustomLoading from '../../customLoading/CustomLoading';
 import styles from '../Tabela.module.css'
 import search from '../../../assets/search-alt-svgrepo-com.svg';
-import deleteIcon from '../../../assets/delete-svgrepo-com.svg';
 import editIcon from '../../../assets/edit-3-svgrepo-com.svg'
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef  } from 'react';
 
 
-const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setPagina, deletar, editar, visualizar, propMap }) => {
+const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setPagina, editar, visualizar, propMap }) => {
     const redirect = useNavigate()
     const primeiroRef = useRef(null)
     const ultimoRef = useRef(null)
 
     const redirectAction = (itemId, action = '') => {
-        redirect(`${itemId}/${action}/`, {state: itemId})
+        redirect(`${itemId}/${action}`, {state: itemId})
     }
 
     useEffect(() => {
@@ -71,7 +70,7 @@ const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setP
                                     ))
                                 }
                                 {
-                                    !deletar && !editar && !visualizar ? null : (
+                                    !editar && !visualizar ? null : (
                                         <th className={styles.th}>
                                             Ações
                                         </th>
@@ -95,7 +94,7 @@ const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setP
                                             Object.entries(item).map(([key, value]) => (
                                                 key !== 'id' ? (
                                                     <td key={key} className={styles.coluna}>
-                                                        {value}
+                                                        {value ?? '-'}
                                                     </td>
                                                 ) : null
                                             ))
@@ -107,9 +106,6 @@ const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setP
                                                 )}
                                                 {editar && (
                                                     <img src={editIcon} alt="editar" className={styles.acao} onClick={() => redirectAction(item.id, 'editar')} />
-                                                )}
-                                                {deletar && (
-                                                    <img src={deleteIcon} alt="excluir" className={styles.acao} onClick={() => {}} />
                                                 )}
                                             </div>
                                         </td>

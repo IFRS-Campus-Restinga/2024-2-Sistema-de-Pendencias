@@ -10,6 +10,10 @@
     flex-direction: column;
 }
 
+.nomeAluno {
+    margin-left: 10px;
+}
+
 .containerStatus {
     display: flex;
     flex-direction: column;
@@ -34,10 +38,12 @@
     font-weight: bold;
     font-size: 17px;
     margin: 10px;
+    color: #767676;
 }
 
 .p,
 .ul {
+    color: #767676;
     font-weight: 400;
     font-size: 15px;
     margin: 5px;
@@ -91,6 +97,11 @@
     flex-direction: row;
     justify-content: center;
     padding-top: 10px;
+}
+
+.icone {
+    width: 30px;
+    height: 30px;
 }
 
 @media (max-width: 1260px) {

@@ -20,7 +20,7 @@ const GrupoService = {
   },
 
   detalhes: async (grupoId) => {
-    return await api.get(`api/grupos/${grupoId}/detalhes/`, {
+    return await api.get(`api/grupos/${grupoId}/`, {
       params: {
         retorno: "id, name",
       },

@@ -6,7 +6,7 @@ from .ped_ProEJA import PEDProEJA
 
 class FormEncerramento(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    parecerFinal = models.TextField(null=False, blank=False, max_length=500)
+    parecer_final = models.TextField(null=False, blank=False, max_length=500, verbose_name="Parecer Final")
 
     class Meta:
         abstract = True

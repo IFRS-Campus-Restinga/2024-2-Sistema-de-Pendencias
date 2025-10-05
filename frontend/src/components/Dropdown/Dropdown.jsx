@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import styles from "./Dropdown.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const Dropdown = ({ itens, icone, img, titulo, elementos }) => {
+const Dropdown = ({ itens, icone, img, titulo, elementos, fontSize }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const changeDropdownState = () => {
@@ -19,7 +19,7 @@ const Dropdown = ({ itens, icone, img, titulo, elementos }) => {
     <div className={styles.dropdownContainer}>
       {
         titulo ? (
-          <h1 className={styles.titulo} onMouseEnter={changeDropdownState}>
+          <h1 className={styles.titulo} style={{ "--dropdown-font-size": fontSize || "inherit" }} onMouseEnter={changeDropdownState}>
               {icone ? (
                 <>
                   <img
@@ -40,18 +40,30 @@ const Dropdown = ({ itens, icone, img, titulo, elementos }) => {
               alt={titulo}
               onMouseEnter={changeDropdownState}
           />
+        ) : icone ? (
+          <div onMouseEnter={changeDropdownState}>
+            {icone}
+          </div>
         ) : null
       }
       {dropdownOpen ? (
         <ul className={styles.lista} onMouseLeave={changeDropdownState}>
           {itens.map((item) =>
             item.link ? (
-              <Link to={item.link} className={styles.item}>
-                <li>{item.titulo}</li>
+              <Link 
+                to={item.link} 
+                className={item.desabilitado ? styles.desabilitado : styles.item}
+              >
+                <li className={styles.itemTitle} style={{ "--dropdown-font-size": fontSize || "inherit" }}>{item.name}</li>
               </Link>
             ) : (
-              <li className={styles.item} onClick={item.onClick}>
-                {item.titulo}
+              <li 
+                onClick={item.onClick}
+                className={item.desabilitado ? styles.desabilitado : styles.item}
+              >
+                <p className={styles.itemTitle} style={{ "--dropdown-font-size": fontSize || "inherit" }}>
+                  {item.name}
+                </p>
               </li>
             )
           )}

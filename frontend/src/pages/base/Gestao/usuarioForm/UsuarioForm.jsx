@@ -44,7 +44,7 @@ const UsuarioForm = () => {
 
     const fetchUsuario = async () => {
         try {
-            const res = await UsuarioService.buscar(state)
+            const res = await UsuarioService.obter(state)
 
             setBuscaUsuario(res.data.username)
             setEmailUsuario(res.data.email)

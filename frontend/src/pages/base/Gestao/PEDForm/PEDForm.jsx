@@ -6,7 +6,7 @@ import Switch from '../../../../components/Switch/Switch'
 import OpcoesBusca from "../../../../components/OpcoesBusca/OpcoesBusca";
 import Label from "../../../../components/Label/Label";
 import MensagemErro from "../../../../components/MensagemErro/MensagemErro";
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { useEffect, useState } from "react";
 import { PEDService } from "../../../../services/pedService";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { UsuarioService } from "../../../../services/usuarioService";
 import { validarAnoSemestreReprov, validarCampoUUID4, validarSerieProgressao } from "../../../../utils/validacoes";
-import { Axios, AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { calendarioService } from "../../../../services/calendarioService";
 import cursoService from "../../../../services/cursoService";
 import { disciplinaService } from "../../../../services/disciplinaService";
@@ -166,10 +166,6 @@ const PEDForm = () => {
     setErros({})
   };
 
-  useEffect(() => {
-    console.log(erros)
-  }, [erros])
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -184,61 +180,34 @@ const PEDForm = () => {
       }
 
       toast.promise(
-        (async () => {
-          const res = await req;
-
-          if (res.status !== 200 && res.status !== 201) {
-            throw new Error(JSON.stringify(["Erro ao registrar PED"]));
-          }
-
-          setErros({});
-
-          // Redirecionar após um tempo
-          setTimeout(() => {
-            redirect(`/Gestão Escolar/peds/${modalidade}`);
-          }, 3000);
-
-          return res;
-        })(),
+        req,
         {
           pending: 'Realizando registro...',
-          success: 'Registro realizado com sucesso!',
-          error: {
-            render({ data }) {
-              if (data instanceof Error) {
-                try {
-                  const mensagens = JSON.parse(data.message);
-
-                  if (Array.isArray(mensagens)) {
-                    mensagens.forEach((mensagem, index) => {
-                      if (index > 0) {
-                        toast.error(mensagem, {
-                          autoClose: 3000,
-                          position: 'bottom-center',
-                          style: { textAlign: 'center', whiteSpace: 'pre-line' },
-                        });
-                      }
-                    });
-
-                    return mensagens[0];
-                  }
-
-                  return 'Erro ao registrar PED.';
-                } catch (e) {
-                  return 'Erro inesperado ao processar mensagens.';
-                }
-              }
-
-              return 'Erro ao registrar PED.';
+          success: {
+            render({data}) {
+              return data.data.message
             }
-          }
+          },
+          error: "Erro de Validação"
         },
-        {
-          autoClose: 3000,
-          position: 'bottom-center',
-          style: { textAlign: 'center', whiteSpace: 'pre-line' }
+      ).then((res) => {
+        if (res.status === 200 || res.status === 201) {
+          setErros({})
+          setTimeout(() => {
+            redirect('/session/gestao_escolar/peds/Integrado')
+          }, 3000);
         }
-      );
+      }).catch((err) => {
+          if (err instanceof AxiosError) {
+              const errors = err.response?.data?.message;
+
+              if (Array.isArray(errors)) {
+                  errors.forEach((msg) => toast.error(msg));
+              } else {
+                  toast.error(errors);
+              }
+          }
+      })
     }
 
     setBotaoDesabilitado(false)
@@ -246,7 +215,7 @@ const PEDForm = () => {
 
   const fetchAlunos = async (e) => {
     try {
-      const res = await UsuarioService.buscar(undefined, e.target.value, 'aluno', 'id, username')
+      const res = await UsuarioService.buscarHub(undefined, e.target.value, 'aluno', 'id, username')
 
       setOpcoesAlunos(res.data.results)
     } catch (error) {
@@ -260,7 +229,7 @@ const PEDForm = () => {
 
   const fetchProfessores = async (e, tipo) => {
     try {
-      const res = await UsuarioService.buscar(undefined, e.target.value, 'professor', 'id, username')
+      const res = await UsuarioService.listarGrupo("professor", undefined, e.target.value, 'id, username')
 
       if (res.status !== 200) throw new Error(res)
 
@@ -323,9 +292,57 @@ const PEDForm = () => {
 
   const fetchPED = async () => {
     try {
-      const res = await PEDService.porId(state, modalidade, "edicao");
+      const res = await PEDService.porId(
+        state, 
+        modalidade, 
+        `
+          id,
+          aluno,
+          professor_disciplina,
+          professor_ped,
+          curso,
+          disciplina,
+          periodo_letivo,
+          observacao,
+          turma_atual,
+          serie_progressao,
+          trimestre_recuperar,
+          ano_semestre_reprov
+        `
+        , 'obj'
+      );
+      
+      setFormData({
+        aluno: res.data.aluno.id,
+        professor_disciplina: res.data.professor_disciplina.id,
+        professor_ped: res.data.professor_ped.id,
+        curso: res.data.curso.id,
+        disciplina: res.data.disciplina.id,
+        periodo_letivo: res.data.periodo_letivo.id,
+        observacao: res.data.observacao,
+        // dados ped emi
+        ...(res.data.trimestre_recuperar && { trimestre_recuperar: res.data.trimestre_recuperar }),
+        ...(res.data.serie_progressao && { serie_progressao: res.data.serie_progressao }),
+        ...(res.data.turma_atual && { turma_atual: res.data.turma_atual.id }),
+        // dados ped proeja
+        ...(res.data.ano_semestre_reprov && { ano_semestre_reprov: res.data.ano_semestre_reprov })
+      })
 
-      setDesabilitado(true)
+      setControleInputs({
+        aluno: res.data.aluno.username,
+        professor_disciplina: res.data.professor_disciplina.username,
+        professor_ped: res.data.professor_ped.username,
+        curso: res.data.curso.name,
+        disciplina: res.data.disciplina.name,
+        periodo_letivo: res.data.periodo_letivo.title,
+        observacao: res.data.observacao,
+        // dados ped emi
+        ...(res.data.serie_progressao && { serie_progressao: res.data.serie_progressao }),
+        ...(res.data.trimestre_recuperar && { trimestre_recuperar: res.data.trimestre_recuperar }),
+        ...(res.data.turma_atual && { turma_atual: res.data.turma_atual.number }),
+        // dados ped proeja
+        ...(res.data.ano_semestre_reprov && { ano_semestre_reprov: res.data.ano_semestre_reprov })
+      })
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response.data.message)
@@ -363,6 +380,7 @@ const PEDForm = () => {
 
   useEffect(() => {
     if (state) {
+      setDesabilitado(true)
       fetchPED()
     } else {
       setCarregando(false)
@@ -373,7 +391,7 @@ const PEDForm = () => {
 
   return (
     <FormContainer titulo={state ? 'Editar PED' : 'Cadastro PED'}>
-      {Object.values(erros).some((erro) => erro !== '') ? <MensagemErro mensagem={'*Preencha os campos obrigatórios'} /> : null}
+      {Object.values(erros).some((erro) => erro !== null) ? <MensagemErro mensagem={'*Preencha os campos obrigatórios'} /> : null}
       <form onSubmit={handleSubmit}>
         <span className={styles.span}>
           <p className={styles.p}>
@@ -587,7 +605,7 @@ const PEDForm = () => {
                     </div>
                   </Label>
                 </div>
-                <div className={styles.formGroup}>
+                <div className={styles.selectFormGroup}>
                   <Label titulo={'Série da Progressão *'}>
                     <div className={styles.inputContainer}>
                       <Select

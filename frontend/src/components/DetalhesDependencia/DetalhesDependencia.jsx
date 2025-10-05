@@ -1,5 +1,5 @@
 import styles from "./DetalhesDependencia.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormContainer from "../FormContainer/FormContainer";
 import Button from "../Button/Button";
 import StatusBalls from "../StatusBall/StatusBall";
@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { PEDService } from "../../services/pedService";
 import { PPTService } from "../../services/pptService";
 import { toast } from "react-toastify";
+import gearIcon from '../../assets/gear-svgrepo-com.svg'
 
 const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
   const redirect = useNavigate()
@@ -17,7 +18,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
   const setLink = (id, nome) => {
     if (id) return `${nome}/${id}`
 
-    if (grupo === 'Professor') return `${nome}`
+    if (grupo === 'professor') return `${nome}`
 
     return null
   }
@@ -73,11 +74,6 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
           }
         }
       },
-      {
-        autoClose: 3000,
-        position: 'bottom-center',
-        style: { textAlign: 'center', whiteSpace: 'pre-line' }
-      }
     );
 
     setBotaoDesabilitado(false)
@@ -85,14 +81,14 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
 
   return (
     <FormContainer
-      titulo={`Detalhes da ${tipo} - ${modalidade}`}
+      titulo={`Detalhes da ${tipo} ${modalidade ? modalidade : ''}`}
       comprimento="80%"
     >
       <label className={styles.cabecalho}>
         <span className={styles.span}>
           Aluno - <p className={styles.nomeAluno}>{dependencia.aluno}</p>
         </span>
-        <label className={styles.status}>Andamento da PED</label>
+        <label className={styles.status}>Andamento da {tipo}</label>
       </label>
       <section className={styles.section}>
         <div className={styles.div}>
@@ -100,18 +96,22 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
             <label className={styles.label}>
               Docente responsável pela progressão
               {
-                dependencia.professores.map((professor) => (
-                  <ul className={styles.ul}>
-                    <li className={styles.li}>
-                      {professor.nome}
-                      {
-                        professor.responsavel_atual ? (
-                          <p className={styles.resp}>Resp. Atual</p>
-                        ) : null
-                      }
-                    </li>
-                  </ul>
-                ))
+                dependencia?.professores?.length > 0 ? (
+                  dependencia?.professores.map((professor) => (
+                    <ul className={styles.ul}>
+                      <li className={styles.li}>
+                        {professor.nome}
+                        {
+                          professor.resp_atual ? (
+                            <p className={styles.resp}>Resp. Atual</p>
+                          ) : null
+                        }
+                      </li>
+                    </ul>
+                  ))
+                ) : (
+                  <p className={styles.p}>{dependencia.professor_ppt}</p>
+                )
               }
             </label>
             <label className={styles.label}>
@@ -171,9 +171,9 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
         </div>
         <div className={styles.containerStatus}>
           {
-            grupo !== "Aluno" ? (
+            grupo !== "Aluno" && tipo !== 'PPT' ? (
               <div className={styles.opcoesContainer}>
-                <Dropdown tipo={'icone'} icone={<FontAwesomeIcon icon={faGear} color="black" size="xl" />}
+                <Dropdown icone={<img src={gearIcon} className={styles.icone}/>}
                   itens={[
                     {
                       link: `atividades/`,
@@ -185,7 +185,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
                       link: 'editar',
                       name: 'Editar PED',
                       state: dependencia.id,
-                      desabilitado: grupo !== 'Gestão Escolar'
+                      desabilitado: grupo !== 'gestao_escolar'
                     },
                     {
                       link: setLink(dependencia.plano_estudos?.id, 'planoEstudos'),
@@ -208,11 +208,11 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
           }
           <StatusBalls status={dependencia.status} />
           <div className={styles.containerBotoes}>
-            {dependencia.status !== "Desativado" && grupo === 'Gestão Escolar' ? (
+            {dependencia.status !== "Desativado" && grupo === 'gestao_escolar' ? (
               <>
-                <Button texto="Desativar PED" color="#f00" />
+                <Button texto={`Desativar ${tipo}`} color="#f00" />
                 <Button
-                  texto="Encerrar PED"
+                  texto={`Encerrar ${tipo}`}
                   disabled={dependencia.status !== "Finalizada"}
                   title={dependencia.status !== "Finalizada" ? "A PED precisa estar 'Finalizada' para ser encerrada." : ""}
                 />
