@@ -22,6 +22,8 @@ const GrupoLista = () => {
             titulo={'Grupos'}
             urlCadastro={'/session/gestao_escolar/grupos/cadastro/'}
             propMap={GrupoMap}
+            visualizar={false}
+            editar={true}
         />
     )
 }

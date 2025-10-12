@@ -39,9 +39,16 @@ urlpatterns = [
     # views de PED
     path('peds/<str:modalidade>/cadastrar/', cadastrar_PED),
     path('peds/<str:modalidade>/listar/', listar_PED_por_modalidade),
+    path('peds/<str:modalidade>/listar/professor/', listar_PED_por_professor),
+    path('peds/<str:modalidade>/listar/coordenador/', listar_PED_por_coordenador),
     path('peds/<str:modalidade>/<str:ped_id>/', detalhes_PED),
     path('peds/<str:modalidade>/<str:ped_id>/editar/', editar_PED),
     path('peds/<str:modalidade>/<str:ped_id>/desativar/', desativar_PED),
+
+    # views de plano de estudos
+    path('plano-estudos/<str:modalidade>/cadastrar/', cadastrar_plano_estudos),
+    path('plano-estudos/<str:modalidade>/<str:plano_estudos_id>/', detalhes_plano_estudos),
+    path('plano-estudos/<str:modalidade>/<str:plano_estudos_id>/editar/', editar_plano_estudos,),
 
     #views para atividades
     path('atividades/cadastrar/<str:modalidade>/', cadastrar_atividade),
@@ -53,11 +60,6 @@ urlpatterns = [
     path('avaliacoes/<str:modalidade>/cadastrar/', cadastrar_avaliacoes),
     path('avaliacoes/<str:modalidade>/<str:ped_id>/listar/', listar_avaliacoes_por_PED),
     path('avaliacoes/<str:modalidade>/editar/', editar_avaliacoes),
-
-    # views de plano de estudos
-    path('plano-estudos/<str:modalidade>/cadastrar/', cadastrar_plano_estudos),
-    path('plano-estudos/<str:modalidade>/<str:plano_estudos_id>/', detalhes_plano_estudos),
-    path('plano-estudos/<str:modalidade>/<str:plano_estudos_id>/editar/', editar_plano_estudos,),
     
     #views para observações
     path('acompanhamentos/<str:modalidade>/<str:ped_id>/cadastrar/', cadastrar_acompanhamento),

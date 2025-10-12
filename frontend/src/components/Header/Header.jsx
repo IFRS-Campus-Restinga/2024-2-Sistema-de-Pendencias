@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import Cookies from 'js-cookie'
+import { useEffect, useState } from "react";
 import styles from "./Header.module.css";
 import logo from "../../assets/logo-ifrs-branco.png";
 import Dropdown from '../Dropdown/Dropdown'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { jwtDecode } from "jwt-decode";
 import { authService } from '../../services/authService'
 import { useNavigate } from "react-router-dom";
 import Notificacoes from "../Notificacoes/Notificacoes";
-import { validaUsuario } from "../../pages/base/validaUsuario";
+import { AxiosError } from "axios";
+import { toast } from 'react-toastify'
+
 
 const Header = () => {
   const [notificAberta, setNotificAberta] = useState(false)
@@ -17,19 +17,19 @@ const Header = () => {
   const redirect = useNavigate()
 
   const handleLogout = async () => {
-    const res = await authService.logout()
-
-    if (res.status === 200) {
-      sessionStorage.clear()
-      Cookies.remove('csrftoken', { path: '/', domain: '127.0.0.1' });
-      Cookies.remove('sessionid', { path: '/', domain: '127.0.0.1' });
-
-      escreveNome()
-
-      redirect('/')
+    try {
+        await authService.logout()
+    
+        sessionStorage.clear()
+    
+        redirect('/session')
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response.data.message)
+      } else {
+        console.error(error)
+      }
     }
-
-    else return
   };
 
   const escreveNome = () => {

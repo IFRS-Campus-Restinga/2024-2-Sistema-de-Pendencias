@@ -1,16 +1,18 @@
-import requests
 import uuid
+import asyncio
+import aiohttp
 from django.conf import settings
-from django.db import transaction
+from django.db import transaction, models
 from django.shortcuts import get_object_or_404
-from django.db.models import OuterRef, Subquery, UUIDField, Q
+from django.db.models import OuterRef, Subquery, UUIDField
 from ..models.professor_progressao import ProfessorProgressaoIntegrado, ProfessorProgressaoProEJA
 from ..models.custom_user import CustomUser
 from rest_framework import serializers
 from rest_framework.pagination import PageNumberPagination
-from ..utils.validar_modalidade_ped import validar_modalidade
-from ..utils.mapear_dados import mapear_fk_para_objetos
+from ..utils.validar_modalidade import validar_modalidade
+from ..utils.formatar_obj import formatar_obj
 from ..services.usuario_service import CustomUserService
+from dependencias_session.services.token_service import TokenService
 
 class PEDPagination(PageNumberPagination):
     page_size = 10
@@ -21,7 +23,7 @@ class PEDService:
     @staticmethod
     @transaction.atomic
     def criar(ped_data, modalidade):
-        _, serializer_class = validar_modalidade(modalidade)
+        _, serializer_class = validar_modalidade(modalidade, 'PED')
 
         CustomUserService.criar_aluno(ped_data.get("aluno"))
 
@@ -49,156 +51,267 @@ class PEDService:
 
     @staticmethod
     def listar(request, modalidade):
-        model_class, serializer_class = validar_modalidade(modalidade)
+        model_class, serializer_class = validar_modalidade(modalidade, 'PED')
         busca = request.GET.get('busca', '')
 
-        lista_aluno = requests.get(
-            f'{settings.BASE_SYSTEM_URL}/api/users/get/access_profile/aluno/', 
-            params={'search': busca, 'active': 'true', 'fields': 'id, username', 'page_size': 150},
-            cookies={'system': settings.API_KEY}
-        ).json().get('results', [])
-        lista_professor = requests.get(
-            f'{settings.BASE_SYSTEM_URL}/api/users/get/access_profile/servidor/', 
-            params={'search': busca, 'active': 'true', 'fields': 'id, username', 'page_size': 150},
-            cookies={'system': settings.API_KEY}
-        ).json().get('results', [])
-        lista_curso = requests.get(
-            f'{settings.BASE_SYSTEM_URL}/api/academic/courses/get/', 
-            params={'search': busca, 'fields': 'id, name'},
-            cookies={'system': settings.API_KEY}
-        ).json().get('results', [])
-        lista_disciplina = requests.get(
-            f'{settings.BASE_SYSTEM_URL}/api/academic/subjects/get/', 
-            params={'search': busca, 'fields': 'id, name', 'page_size': 100},
-            cookies={'system': settings.API_KEY}
-        ).json().get('results', [])
+        paginator = PEDPagination()
 
         if modalidade == "Integrado":
             responsavel_subquery = ProfessorProgressaoIntegrado.objects.filter(
                 ped=OuterRef('pk'),
-                responsavel_atual=True,
-                professor__in=[uuid.UUID(prof['id']) for prof in lista_professor]
+                responsavel_atual=True
             ).values('professor')[:1]
         else:
             responsavel_subquery = ProfessorProgressaoProEJA.objects.filter(
                 ped=OuterRef('pk'),
                 responsavel_atual=True,
-                professor__in=[uuid.UUID(prof['id']) for prof in lista_professor]
             ).values('professor')[:1]
 
-        lista_peds = model_class.objects.filter(
-            Q (aluno__in=[uuid.UUID(aluno['id']) for aluno in lista_aluno]) |
-            Q (professor_disciplina__in=[uuid.UUID(professor['id']) for professor in lista_professor]) |
-            Q (curso__in=[uuid.UUID(curso['id']) for curso in lista_curso]) |
-            Q (disciplina__in=[uuid.UUID(disciplina['id']) for disciplina in lista_disciplina])
-        ).annotate(
-            professor_ped=Subquery(responsavel_subquery, output_field=UUIDField())
-        )
+        peds = model_class.objects.all().annotate(professor_ped=Subquery(responsavel_subquery, output_field=UUIDField())).order_by('-data_criacao')
 
-        serializer = serializer_class(lista_peds, context={'request': request}, many=True)
+        lista_peds = serializer_class(peds, context={'request': request}, many=True)
+        resultado = []
 
-        api_data_map = {
-            'aluno': lista_aluno,
-            'professor_ped': lista_professor,
-            'professor_disciplina': lista_professor,
-            'curso': lista_curso,
-            'disciplina': lista_disciplina
-        }
+        cookies = {"system": settings.API_KEY}
+        base_url = settings.BASE_SYSTEM_URL
 
-        resultado = mapear_fk_para_objetos(serializer.data, api_data_map, request.GET.get("formato"))
+        for ped in lista_peds.data:
+            if len(resultado) < paginator.page_size:
+                # monta tasks diretamente na listagem
+                tasks = [
+                    {"key": "aluno", "url": f"{base_url}/api/users/get/{ped['aluno']}/", "params": {"fields": "id,username"}},
+                    {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ped['professor_disciplina']}/", "params": {"fields": "id,username"}},
+                    {"key": "professor_ped", "url": f"{base_url}/api/users/get/{ped['professor_ped']}/", "params": {"fields": "id,username"}},
+                    {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ped['curso']}/", "params": {"fields": "id,name"}},
+                    {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ped['disciplina']}/", "params": {"fields": "id,name"}},
+                ]
+
+                try:
+                    # executa todas as requests simultaneamente
+                    dados_ped = AsyncRequestService.run_fetch(tasks, cookies=cookies)
+                    ped.update(dados_ped)
+
+                    # filtro de busca
+                    if busca.strip():
+                        busca_lower = busca.lower()
+                        if any(busca_lower in str(v).lower() for v in ped.values() if v is not None):
+                            resultado.append(formatar_obj(ped, request.GET.get("formato")))
+                    else:
+                        resultado.append(formatar_obj(ped, request.GET.get("formato")))
+
+                except Exception as e:
+                    raise Exception(f"Erro ao buscar dados do PED {ped['id']}: {str(e)}")
+        
+
+        page = paginator.paginate_queryset(resultado, request)
+        return paginator.get_paginated_response(page)
+
+    @staticmethod
+    def listar_professor(request, modalidade):
+        professor_id = TokenService.decode_token(request.COOKIES.get("access_token")).get("user_id")
+
+        model_class, serializer_class = validar_modalidade(modalidade, 'PED')
+        busca = request.GET.get('busca', '')
 
         paginator = PEDPagination()
+
+        if modalidade == "Integrado":
+            peds = model_class.objects.filter(
+                professores_emi__professor__id=uuid.UUID(professor_id),
+                professores_emi__responsavel_atual=True
+            ).annotate(
+                professor_ped=models.F('professores_emi__professor')
+            ).order_by('-data_criacao')
+
+        else:
+            peds = model_class.objects.filter(
+                professores_proeja__professor__id=uuid.UUID(professor_id),
+                professores_proeja__responsavel_atual=True
+            ).annotate(
+                professor_ped=models.F('professores_proeja__professor')
+            ).order_by('-data_criacao')
+
+        lista_peds = serializer_class(peds, context={'request': request}, many=True)
+        resultado = []
+
+        cookies = {"system": settings.API_KEY}
+        base_url = settings.BASE_SYSTEM_URL
+
+        for ped in lista_peds.data:
+            if len(resultado) < paginator.page_size:
+                # monta tasks diretamente na listagem
+                tasks = [
+                    {"key": "aluno", "url": f"{base_url}/api/users/get/{ped['aluno']}/", "params": {"fields": "id,username"}},
+                    {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ped['professor_disciplina']}/", "params": {"fields": "id,username"}},
+                    {"key": "professor_ped", "url": f"{base_url}/api/users/get/{ped['professor_ped']}/", "params": {"fields": "id,username"}},
+                    {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ped['curso']}/", "params": {"fields": "id,name"}},
+                    {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ped['disciplina']}/", "params": {"fields": "id,name"}},
+                ]
+
+                try:
+                    # executa todas as requests simultaneamente
+                    dados_ped = AsyncRequestService.run_fetch(tasks, cookies=cookies)
+                    ped.update(dados_ped)
+
+                    # filtro de busca
+                    if busca.strip():
+                        busca_lower = busca.lower()
+                        if any(busca_lower in str(v).lower() for v in ped.values() if v is not None):
+                            resultado.append(formatar_obj(ped, request.GET.get("formato")))
+                    else:
+                        resultado.append(formatar_obj(ped, request.GET.get("formato")))
+
+                except Exception as e:
+                    raise Exception(f"Erro ao buscar dados do PED {ped['id']}: {str(e)}")
+        
+
+        page = paginator.paginate_queryset(resultado, request)
+        return paginator.get_paginated_response(page)
+
+    @staticmethod
+    def listar_coordenador(request, modalidade):
+        coordenador_id = TokenService.decode_token(request.COOKIES.get("access_token")).get("user_id")
+
+        model_class, serializer_class = validar_modalidade(modalidade, 'PED')
+        busca = request.GET.get('busca', '')
+
+        paginator = PEDPagination()
+
+        if modalidade == "Integrado":
+            responsavel_subquery = ProfessorProgressaoIntegrado.objects.filter(
+                ped=OuterRef('pk'),
+                responsavel_atual=True
+            ).values('professor')[:1]
+        else:
+            responsavel_subquery = ProfessorProgressaoProEJA.objects.filter(
+                ped=OuterRef('pk'),
+                responsavel_atual=True,
+            ).values('professor')[:1]
+
+        peds = model_class.objects.all().annotate(professor_ped=Subquery(responsavel_subquery, output_field=UUIDField())).order_by('-data_criacao')
+
+        lista_peds = serializer_class(peds, context={'request': request}, many=True)
+        resultado = []
+
+        cookies = {"system": settings.API_KEY}
+        base_url = settings.BASE_SYSTEM_URL
+
+        for ped in lista_peds.data:
+            if len(resultado) < paginator.page_size:
+                # monta tasks diretamente na listagem
+                tasks = [
+                    {"key": "aluno", "url": f"{base_url}/api/users/get/{ped['aluno']}/", "params": {"fields": "id,username"}},
+                    {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ped['professor_disciplina']}/", "params": {"fields": "id,username"}},
+                    {"key": "professor_ped", "url": f"{base_url}/api/users/get/{ped['professor_ped']}/", "params": {"fields": "id,username"}},
+                    {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ped['curso']}/", "params": {"fields": "id,name,coord.id"}},
+                    {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ped['disciplina']}/", "params": {"fields": "id,name"}},
+                ]
+
+                try:
+                    # executa todas as requests simultaneamente
+                    dados_ped = AsyncRequestService.run_fetch(tasks, cookies=cookies)
+                    ped.update(dados_ped)
+
+                    print(dados_ped)
+
+                    curso_coord_id = str(dados_ped['course']['coord']['id'])
+
+                    if curso_coord_id == str(coordenador_id):
+                        # filtro de busca
+                        if busca.strip():
+                            busca_lower = busca.lower()
+                            if any(busca_lower in str(v).lower() for v in ped.values() if v is not None):
+                                resultado.append(formatar_obj(ped, request.GET.get("formato")))
+                        else:
+                            resultado.append(formatar_obj(ped, request.GET.get("formato")))
+
+                except Exception as e:
+                    raise Exception(f"Erro ao buscar dados do PED {ped['id']}: {str(e)}")
+        
+
         page = paginator.paginate_queryset(resultado, request)
         return paginator.get_paginated_response(page)
 
     @staticmethod
     def detalhes(request, modalidade, ped_id):
-        model_class, serializer_class = validar_modalidade(modalidade)
+        retorno = request.GET.get("retorno", None)
+
+        model_class, serializer_class = validar_modalidade(modalidade, 'PED')
 
         ped = get_object_or_404(model_class, pk=uuid.UUID(ped_id))
-
-        aluno = requests.get(
-            f'{settings.BASE_SYSTEM_URL}/api/users/get/{str(ped.aluno.id)}/',
-            params={'fields': 'id, username'},
-            cookies={'system': settings.API_KEY}
-        ).json()
-
-        professor_disciplina = requests.get(
-            f'{settings.BASE_SYSTEM_URL}/api/users/get/{str(ped.professor_disciplina.id)}/', 
-            params={'fields': 'id, username'},
-            cookies={'system': settings.API_KEY}
-        ).json()
-
-        attr = 'professores_emi' if modalidade == 'Integrado' else 'professores_proeja'
-        lista_professores = []
-        for professor in getattr(ped, attr).all():
-            professor_hub = requests.get(
-                f'{settings.BASE_SYSTEM_URL}/api/users/get/{str(professor.professor.id)}/', 
-                params={'fields': 'id, username'},
-                cookies={'system': settings.API_KEY}
-            ).json()
-
-            lista_professores.append(professor_hub)
-
-        curso = requests.get(
-            f'{settings.BASE_SYSTEM_URL}/api/academic/courses/get/{str(ped.curso)}', 
-            params={'fields': 'id, name, course_class.id, course_class.number'},
-            cookies={'system': settings.API_KEY}
-        ).json()
-
-        disciplina = requests.get(
-            f'{settings.BASE_SYSTEM_URL}/api/academic/subjects/get/{str(ped.disciplina)}', 
-            params={'fields': 'id, name'},
-            cookies={'system': settings.API_KEY}
-        ).json()
-
-        periodo_letivo = requests.get(
-            f'{settings.BASE_SYSTEM_URL}/api/calendars/get/{str(ped.periodo_letivo)}', 
-            params={'fields': 'id, title'},
-            cookies={'system': settings.API_KEY}
-        ).json()
-
         serializer = serializer_class(ped, context={'request': request})
 
-        turmas = curso.get('course_class')
-        turma_atual = None
+        cookies = {"system": settings.API_KEY}
+        base_url = settings.BASE_SYSTEM_URL
 
-        for turma in turmas:
-            if turma['id'] == str(ped.turma_atual):
-                turma_atual = turma
+        # Monta os campos que vão para a request do curso
+        curso_fields = "id,name"
+        if modalidade == "Integrado":
+            curso_fields += ",course_class.id,course_class.number"
 
-        api_data_map = {
-            'aluno': [aluno],
-            'professor_disciplina': [professor_disciplina],
-            'curso': [curso],
-            'disciplina': [disciplina],
-            'periodo_letivo': [periodo_letivo],
-            'turma_atual': [turma_atual]
-        }
+        tasks = [
+            {"key": "aluno", "url": f"{base_url}/api/users/get/{serializer.data['aluno']}/", "params": {"fields": "id,username"}},
+            {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{serializer.data['professor_disciplina']}/", "params": {"fields": "id,username"}},
+            {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{serializer.data['curso']}/", "params": {"fields": curso_fields}},
+            {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{serializer.data['disciplina']}/", "params": {"fields": "id,name"}},
+        ]
 
-        if "professor_ped" in request.GET.get("retorno"):
-            api_data_map['professor_ped'] = lista_professores
+        if "professor_ped" in retorno:
+            prof_atual = serializer.data.get("professor_ped")
+            if prof_atual:
+                tasks.append({
+                    "key": "professor_ped",
+                    "url": f"{base_url}/api/users/get/{str(prof_atual)}/",
+                    "params": {"fields": "id,username"}
+                })
 
-        retorno_mapeado = mapear_fk_para_objetos([serializer.data], api_data_map, request.GET.get("formato"))[0]
+        if "professores" in retorno:
+            for i, prof in enumerate(serializer.data.get("professores", [])):
+                tasks.append({
+                    "key": f"professor_{i}",
+                    "url": f"{base_url}/api/users/get/{str(prof['id'])}/",
+                    "params": {"fields": "id, username"}
+                })
 
-        if "professores" in request.GET.get("retorno"):
-            professores_ped = []
-            for professor_ped in retorno_mapeado['professores']:
-                for professor_hub in lista_professores:
-                    if professor_hub['id'] == professor_ped['id']:
-                        professores_ped.append({
-                            'nome': professor_hub['username'],
-                            'resp_atual': professor_ped['resp_atual']
-                        })
+        try:
+            dados_ped = AsyncRequestService.run_fetch(tasks, cookies=cookies)
 
-            retorno_mapeado['professores'] = professores_ped
+            # Monta a lista agregada de professores se necessário
+            ped_dict = serializer.data.copy()
 
-        return retorno_mapeado
+            if "professores" in retorno:
+                professores = []
+                for i, prof_obj in enumerate(serializer.data['professores']):
+                    professor_id = str(prof_obj['id'])
+                    resp_atual = prof_obj['resp_atual']
+                    professor_req = dados_ped.get(f"professor_{i}", {})
+                    professores.append({
+                        "id": professor_id,
+                        "username": professor_req.get("username"),
+                        "resp_atual": resp_atual
+                    })
+                    dados_ped.pop(f"professor_{i}", None)
+
+                dados_ped["professores"] = professores
+            
+            # Define turma atual e, se necessário, número e ID das turmas
+            if ped_dict.get('turma_atual'):
+                turmas = dados_ped['curso']['course_class']
+                turma_atual_id = ped_dict.get("turma_atual")  # assumindo que existe este campo
+                turma_atual = next((t for t in turmas if str(t['id']) == str(turma_atual_id)), None)
+                ped_dict["turma_atual"] = turma_atual
+
+            ped_dict.update(dados_ped)
+
+        except Exception as e:
+            raise Exception(f"Erro ao buscar dados do PED {ped.id}: {str(e)}")
+
+        return formatar_obj(ped_dict, request.GET.get("formato"))
 
     @staticmethod
     @transaction.atomic
     def editar(ped_data, ped_id, modalidade):
-        model_class, serializer_class = validar_modalidade(modalidade)
+        model_class, serializer_class = validar_modalidade(modalidade, 'PED')
         ped = get_object_or_404(model_class, pk=uuid.UUID(ped_id))
         CustomUserService.criar_aluno(ped_data.get('aluno'))
 
@@ -231,3 +344,32 @@ class PEDService:
                     "responsavel_atual": True,
                 }
             )
+
+
+class AsyncRequestService:
+    @staticmethod
+    async def fetch_json(session, url, params=None, cookies=None):
+        async with session.get(url, params=params, cookies=cookies, timeout=10) as response:
+            response.raise_for_status()
+            return await response.json()
+
+    @staticmethod
+    async def fetch_multiple(tasks, cookies=None):
+        """
+        Executa múltiplas requisições simultaneamente.
+        tasks: lista de dicts {"key": str, "url": str, "params": dict}
+        Retorna dict {key: resultado_json}
+        """
+        cookies = cookies or {}
+        async with aiohttp.ClientSession() as session:
+            coros = [
+                AsyncRequestService.fetch_json(session, t["url"], params=t.get("params"), cookies=cookies)
+                for t in tasks
+            ]
+            results = await asyncio.gather(*coros, return_exceptions=False)
+        
+        return {t["key"]: r for t, r in zip(tasks, results)}
+
+    @staticmethod
+    def run_fetch(tasks, cookies=None):
+        return asyncio.run(AsyncRequestService.fetch_multiple(tasks, cookies=cookies))

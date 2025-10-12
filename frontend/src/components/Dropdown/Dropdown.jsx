@@ -51,7 +51,8 @@ const Dropdown = ({ itens, icone, img, titulo, elementos, fontSize }) => {
           {itens.map((item) =>
             item.link ? (
               <Link 
-                to={item.link} 
+                to={item.link}
+                state={item.state} 
                 className={item.desabilitado ? styles.desabilitado : styles.item}
               >
                 <li className={styles.itemTitle} style={{ "--dropdown-font-size": fontSize || "inherit" }}>{item.name}</li>

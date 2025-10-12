@@ -1,5 +1,6 @@
 import uuid
 import requests
+from django.db.models import Q
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
@@ -7,8 +8,6 @@ from rest_framework import serializers
 from ..models.custom_user import CustomUser
 from ..serializers.usuario_serializer import CustomUserSerializer
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import CharField
-from django.db.models.functions import Cast
 
 class CustomUserPagination(PageNumberPagination):
     page_size = 10
@@ -29,79 +28,115 @@ class CustomUserService:
             raise serializers.ValidationError(serializer.errors)
         
         serializer.save()
-
+ 
     @staticmethod
-    def listar_perfil(request, perfil) -> list:
+    def listar_perfil(request, perfil):
         busca = request.GET.get('busca', None)
-        pagina = request.GET.get('pagina', None)
         retorno = request.GET.get('retorno', None)
-
-        dados_hub = requests.get(
-            f'{settings.BASE_SYSTEM_URL}/api/users/get/access_profile/{perfil}/',
-            params={
-                'fields': retorno,
-                'page': pagina,
-                'active': 'true',
-                'search': busca
-            },
-            cookies={
-                'system': settings.API_KEY
-            }
-        ).json()
-
-        if dados_hub.get('count') == 0:
-            paginator = CustomUserPagination()
-            page = paginator.paginate_queryset([], request)
-            return paginator.get_paginated_response(page)
-
-        resultados = dados_hub.get('results', None)
-
-        lista_usuarios = CustomUser.objects.filter(id__in=[uuid.UUID(usuario['id']) for usuario in resultados])
-
-        lista_final = []
-
-        for usuario in lista_usuarios:
-            for hub_usuario in resultados:
-                if hub_usuario['id'] == str(usuario.id):
-                    hub_usuario['group'] = usuario.group.name
-                    lista_final.append(hub_usuario)
+        ultimo_id = request.GET.get('ultimo', None)
+        ultimo_created_at = request.GET.get('data_criacao', None)
 
         paginator = CustomUserPagination()
-        resultado = paginator.paginate_queryset(lista_final, request)
 
+        # Query base
+        if perfil == 'aluno':
+            usuarios = CustomUser.objects.filter(group__name='aluno')
+        else:
+            usuarios = CustomUser.objects.exclude(group__name='aluno')
+
+        usuarios = usuarios.order_by('-created_at', '-id')
+
+        # Aplica cursor se fornecido
+        if ultimo_id and ultimo_created_at:
+            usuarios = usuarios.filter(
+                Q(created_at__lt=ultimo_created_at) |
+                Q(created_at=ultimo_created_at, id__lt=ultimo_id)
+            )
+
+
+        lista_usuarios_hub = []
+        for usuario in usuarios:
+            if len(lista_usuarios_hub) == paginator.page_size + 1:
+                break
+
+            url = f'{settings.BASE_SYSTEM_URL}/api/users/get/{str(usuario.id)}/'
+            try:
+                response = requests.get(
+                    url,
+                    params={'fields': retorno},
+                    cookies={'system': settings.API_KEY},
+                    timeout=10
+                )
+                response.raise_for_status()
+            except requests.exceptions.RequestException as e:
+                raise Exception(f"Erro ao acessar a API para o usuário {usuario.id}: {e}")
+
+            usuario_hub = response.json()
+
+            # Filtro de busca
+            if busca and busca.strip():
+                busca_lower = busca.lower()
+                if any(busca_lower in str(value).lower() for value in usuario_hub.values() if value is not None):
+                    lista_usuarios_hub.append({
+                        'id': str(usuario.id),
+                        'username': usuario_hub.get('username'),
+                        'email': usuario_hub.get('email'),
+                        'group': usuario.group.name
+                    })
+            else:
+                lista_usuarios_hub.append({
+                    'id': str(usuario.id),
+                    'username': usuario_hub.get('username'),
+                    'email': usuario_hub.get('email'),
+                    'group': usuario.group.name
+                })
+
+        resultado = paginator.paginate_queryset(lista_usuarios_hub, request)
         return paginator.get_paginated_response(resultado)
-    
+
     @staticmethod
     def listar_grupo(request, grupo):
         busca = request.GET.get('busca', None)
-        pagina = request.GET.get('pagina', None)
         retorno = request.GET.get('retorno', None)
 
-        # Lista de IDs do banco como string (sem traços)
-        usuarios = CustomUser.objects.filter(group__name=grupo)
-        perfil = 'aluno' if grupo == 'aluno' else 'servidor'
-
-        # Requisição à API
-        usuarios_hub = requests.get(
-            f'{settings.BASE_SYSTEM_URL}/api/users/get/access_profile/{perfil}/',
-            params={
-                'fields': retorno,
-                'page': pagina,
-                'active': 'true',
-                'search': busca
-            },
-            cookies={'system': settings.API_KEY}
-        ).json()
-
-        lista_final = []
-
-        for usuario_hub in usuarios_hub.get('results', []):
-            for usuario in usuarios:
-                if usuario.id == uuid.UUID(usuario_hub['id']):
-                    lista_final.append(usuario_hub)
-
         paginator = CustomUserPagination()
-        resultado = paginator.paginate_queryset(lista_final, request)
+
+        usuarios = CustomUser.objects.filter(group__name=grupo).order_by('-created_at')
+        
+        lista_usuarios_hub = []
+        for usuario in usuarios:
+            if len(lista_usuarios_hub) == paginator.page_size:
+                break
+            else:
+                url = f'{settings.BASE_SYSTEM_URL}/api/users/get/{str(usuario.id)}/'
+                try:
+                    response = requests.get(url, params={'fields': retorno}, cookies={'system': settings.API_KEY}, timeout=10)
+                    
+                    response.raise_for_status()
+
+                except requests.exceptions.RequestException as e:
+                    raise Exception(f"Erro ao acessar a API para o usuário {usuario.id}: {e}")
+
+                usuario_hub = response.json()
+
+                if busca and busca.strip():
+                    busca_lower = busca.lower()
+                    if any(
+                        busca_lower in str(value).lower()
+                        for value in usuario_hub.values()
+                        if value is not None
+                    ):
+                        lista_usuarios_hub.append({
+                            'id': str(usuario.id),
+                            'username': usuario_hub['username'],
+                        })
+                else:
+                    lista_usuarios_hub.append({
+                        'id': str(usuario.id),
+                        'username': usuario_hub['username'],
+                    })
+
+        resultado = paginator.paginate_queryset(lista_usuarios_hub, request)
 
         return paginator.get_paginated_response(resultado)
 
@@ -162,7 +197,7 @@ class CustomUserService:
     def criar_aluno(aluno_id):
         aluno = CustomUser.objects.filter(id=uuid.UUID(aluno_id))
 
-        if aluno == None:
+        if not aluno.exists():
             grupo = Group.objects.get(name="aluno")
 
             CustomUser.objects.create(

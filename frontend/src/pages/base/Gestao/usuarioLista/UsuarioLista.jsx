@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom"
 import Listagem from "../../../../features/listagem/Listagem"
 import { UsuarioService } from "../../../../services/usuarioService"
+import { useState } from "react"
 
 const UsuarioMap = {
     'username': 'nome',
@@ -10,9 +11,13 @@ const UsuarioMap = {
 
 const UsuarioLista = () => {
     const location = useLocation()
-    const perfilUsuarios = location.pathname.split('/')[3]    
+    const perfilUsuarios = location.pathname.split('/')[3]
+    const [ultimo, setUltimo] = useState()
+
     const fetchUsuarios = async (pagina, param) => {
-        const res = await UsuarioService.listarPerfil(perfilUsuarios === 'alunos' ? 'aluno' : 'servidor', pagina, param, 'id, username, email')
+        const res = await UsuarioService.listarPerfil(perfilUsuarios === 'alunos' ? 'aluno' : 'servidor', pagina, param, 'id, username, email', ultimo)
+        
+        setUltimo(res.data.results[res.data.results.length - 1])
 
         return {
             proxima: res.data.next,

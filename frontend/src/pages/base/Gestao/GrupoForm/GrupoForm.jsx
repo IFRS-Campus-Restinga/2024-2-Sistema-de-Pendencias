@@ -1,5 +1,5 @@
 import 'react-toastify/dist/ReactToastify.css';
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './GrupoForm.module.css'
 import { useEffect, useState } from 'react'
 import GrupoService from '../../../../services/grupoService'
@@ -12,9 +12,11 @@ import Label from '../../../../components/Label/Label'
 import Input from '../../../../components/Input/Input'
 import { validarCampoObrigatorio } from '../../../../utils/validacoes'
 import Button from '../../../../components/Button/Button'
+import { AxiosError } from 'axios';
 
 const GrupoForm = () => {
     const { state } = useLocation()
+    const redirect = useNavigate()
 
     const [paginaDisponiveis, setPaginaDisponiveis] = useState(1)
     const [paginaDoGrupo, setPaginaDoGrupo] = useState(1)
@@ -131,13 +133,19 @@ const GrupoForm = () => {
                 pending: state ? 'Salvando alterações...' : 'Criando grupo...',
                 success: {
                     render({ data }) {
-                        return data.data.message || 'Erro ao salvar dados'
+                        return data.data.message
                     }
                 },
                 error: {
                     render({ data }) {
-                        return data.data.message || 'Erro ao salvar dados'
+                        if (data instanceof AxiosError) return data.response?.data.message
                     }
+                }
+            }).then((res) => {
+                if (res.status === 200 || res.status === 201) {
+                    setTimeout(() => {
+                        redirect('/session/gestao_escolar/grupos')
+                    }, 3000);
                 }
             })
         }

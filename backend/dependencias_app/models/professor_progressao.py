@@ -1,7 +1,7 @@
 from django.db import models
 from .base import BaseModel
 from .ped_integrado import PEDIntegrado
-from .ped_ProEJA import PEDProEJA
+from .ped_proeja import PEDProEJA
 from .custom_user import CustomUser
 import uuid
 

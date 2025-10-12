@@ -27,6 +27,26 @@ def listar_PED_por_modalidade(request, modalidade):
         return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+@has_permissions(['view_pedintegrado', 'view_pedproeja'])
+def listar_PED_por_professor(request, modalidade):
+    try:
+        return PEDService.listar_professor(request, modalidade)
+    except serializers.ValidationError as e:
+        return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+@has_permissions(['view_pedintegrado', 'view_pedproeja'])
+def listar_PED_por_coordenador(request, modalidade):
+    try:
+        return PEDService.listar_coordenador(request, modalidade)
+    except serializers.ValidationError as e:
+        return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 @has_permissions(['view_pedintegrado', 'view_pedproeja'])

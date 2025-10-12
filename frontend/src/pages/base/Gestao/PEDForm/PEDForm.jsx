@@ -379,6 +379,7 @@ const PEDForm = () => {
   }
 
   useEffect(() => {
+    console.log(state)
     if (state) {
       setDesabilitado(true)
       fetchPED()

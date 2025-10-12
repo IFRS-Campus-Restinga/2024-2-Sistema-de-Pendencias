@@ -100,7 +100,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
                   dependencia?.professores.map((professor) => (
                     <ul className={styles.ul}>
                       <li className={styles.li}>
-                        {professor.nome}
+                        {professor.username}
                         {
                           professor.resp_atual ? (
                             <p className={styles.resp}>Resp. Atual</p>

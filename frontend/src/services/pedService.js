@@ -17,6 +17,30 @@ export const PEDService = {
     });
   },
 
+  listarProfessor: async (retorno, param, pagina, modalidade, formato) => {
+    return await api.get(`api/peds/${modalidade}/listar/professor/`, {
+      params: {
+        retorno,
+        page: pagina,
+        page_size: 10,
+        busca: param,
+        formato,
+      },
+    });
+  },
+
+  listarCoordenador: async (retorno, param, pagina, modalidade, formato) => {
+    return await api.get(`api/peds/${modalidade}/listar/coordenador/`, {
+      params: {
+        retorno,
+        page: pagina,
+        page_size: 10,
+        busca: param,
+        formato,
+      },
+    });
+  },
+
   porId: async (pedId, modalidade, retorno, formato) => {
     const retornoLimpo = (retorno || "").replace(/\s+/g, "");
     return await api.get(`api/peds/${modalidade}/${pedId}/`, {
