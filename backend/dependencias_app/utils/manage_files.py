@@ -33,10 +33,10 @@ def get_from_drive(file_id, grupo):
         raise Exception(f"Erro ao tentar obter o arquivo: {str(e)}")
 
 
-def upload_to_drive(file, file_name, grupo):
+def upload_to_drive(file, file_name, grupo, parents):
     try:
         # Verifica se o grupo tem permissão para fazer upload
-        if grupo == 'Aluno':
+        if grupo == 'aluno':
             raise Exception('Permissão de grupo inválida para upload')
 
         # Autentica usando a conta de serviço correspondente
@@ -45,7 +45,7 @@ def upload_to_drive(file, file_name, grupo):
         # Define os metadados do arquivo
         file_metadata = {
             'name': file_name,
-            'parents': ['1ClTW88YusBkt1Gt0i7ZHdW9qcBc50ldG']  # ID da pasta de destino no Google Drive
+            'parents': [parents]  # ID da pasta de destino no Google Drive
         }
         
         media = MediaIoBaseUpload(io.BytesIO(file.read()), mimetype='application/pdf')
