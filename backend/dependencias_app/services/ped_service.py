@@ -6,12 +6,12 @@ from django.db import transaction, models
 from django.shortcuts import get_object_or_404
 from django.db.models import OuterRef, Subquery, UUIDField
 from ..models.professor_progressao import ProfessorProgressaoIntegrado, ProfessorProgressaoProEJA
-from ..models.custom_user import CustomUser
+from ..models.usuario import Usuario
 from rest_framework import serializers
 from rest_framework.pagination import PageNumberPagination
 from ..utils.validar_modalidade import validar_modalidade
 from ..utils.formatar_obj import formatar_obj
-from ..services.usuario_service import CustomUserService
+from ..services.usuario_service import UsuarioService
 from dependencias_session.services.token_service import TokenService
 
 class PEDPagination(PageNumberPagination):
@@ -25,7 +25,7 @@ class PEDService:
     def criar(ped_data, modalidade):
         _, serializer_class = validar_modalidade(modalidade, 'PED')
 
-        CustomUserService.criar_aluno(ped_data.get("aluno"))
+        UsuarioService.criar_aluno(ped_data.get("aluno"))
 
         serializer = serializer_class(data=ped_data)
 
@@ -34,7 +34,7 @@ class PEDService:
         
         ped_instance = serializer.save()
 
-        professor = get_object_or_404(CustomUser, pk=uuid.UUID(ped_data.get("professor_ped")))
+        professor = get_object_or_404(Usuario, pk=uuid.UUID(ped_data.get("professor_ped")))
 
         if modalidade == 'Integrado':
             ProfessorProgressaoIntegrado.objects.create(
@@ -313,7 +313,7 @@ class PEDService:
     def editar(ped_data, ped_id, modalidade):
         model_class, serializer_class = validar_modalidade(modalidade, 'PED')
         ped = get_object_or_404(model_class, pk=uuid.UUID(ped_id))
-        CustomUserService.criar_aluno(ped_data.get('aluno'))
+        UsuarioService.criar_aluno(ped_data.get('aluno'))
 
         serializer = serializer_class(instance=ped, data=ped_data, partial=True)
 
@@ -322,7 +322,7 @@ class PEDService:
         
         serializer.save()
 
-        professor = get_object_or_404(CustomUser, pk=uuid.UUID(ped_data.get("professor_ped")))
+        professor = get_object_or_404(Usuario, pk=uuid.UUID(ped_data.get("professor_ped")))
 
         if modalidade == 'Integrado':
             ProfessorProgressaoIntegrado.objects.filter(ped=serializer.instance).exclude(professor=professor).update(responsavel_atual=False)

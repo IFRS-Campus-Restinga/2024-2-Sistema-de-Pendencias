@@ -3,11 +3,12 @@ from django.db import models
 from .progressao import Progressao
 from dependencias_app.enums.trimestres_rec import Trimestre_Rec
 from dependencias_app.enums.serie_progressao import Serie_Progressao
-from .custom_user import CustomUser
+from .usuario import Usuario
+
 
 class PEDIntegrado(Progressao):
-    aluno = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="aluno_peds_emi", verbose_name="Aluno", editable=False)
-    professor_disciplina = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="disciplina_peds_emi", verbose_name="Professor da disciplina", editable=False)
+    aluno = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="aluno_peds_emi", verbose_name="Aluno", editable=False)
+    professor_disciplina = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="disciplina_peds_emi", verbose_name="Professor da disciplina", editable=False)
     disciplina = models.UUIDField(default=uuid.uuid4, verbose_name="Disciplina", editable=False)
     curso = models.UUIDField(default=uuid.uuid4, verbose_name="Curso", editable=False)
     trimestre_recuperar = models.CharField(null=False, blank=False, choices=Trimestre_Rec.choices, max_length=10, verbose_name="Trimestre à recuperar")

@@ -2,7 +2,7 @@ from django.db import models
 from .base import BaseModel
 from .ped_integrado import PEDIntegrado
 from .ped_proeja import PEDProEJA
-from .custom_user import CustomUser
+from .usuario import Usuario
 import uuid
 
 class ProfessorProgressao(BaseModel):
@@ -15,15 +15,17 @@ class ProfessorProgressao(BaseModel):
 
 class ProfessorProgressaoIntegrado(ProfessorProgressao):
     ped = models.ForeignKey(PEDIntegrado, on_delete=models.DO_NOTHING, related_name='professores_emi')
-    professor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='professor_peds_emi')
+    professor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='professor_peds_emi')
 
     class Meta:
         abstract = False
+        default_permissions = ()
 
     
 class ProfessorProgressaoProEJA(ProfessorProgressao):
     ped = models.ForeignKey(PEDProEJA, on_delete=models.DO_NOTHING, related_name='professores_proeja')
-    professor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='professor_peds_proeja')
+    professor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='professor_peds_proeja')
 
     class Meta:
         abstract = False
+        default_permissions = ()

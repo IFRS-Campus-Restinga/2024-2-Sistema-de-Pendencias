@@ -9,4 +9,4 @@ class AvaliacaoProEJA(Avaliacao):
     
     class Meta:
         abstract = False
-        verbose_name = "Avaliações ProEJA" 
+        verbose_name = "Avaliações ProEJA"

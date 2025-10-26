@@ -221,7 +221,7 @@ const GrupoForm = () => {
                         setPaginaAtualLista1={setPaginaDisponiveis}
                         setPaginaAtualLista2={setPaginaDoGrupo}
                         obterChave={(p) => p.id}
-                        renderizarItem={(p) => p.codename}
+                        renderizarItem={(p) => p.name}
                     />
                     <div className={styles.buttonContainer}>
                         <Button texto={state ? "Salvar alterações" : 'Cadastrar'} tipo={'submit'} />

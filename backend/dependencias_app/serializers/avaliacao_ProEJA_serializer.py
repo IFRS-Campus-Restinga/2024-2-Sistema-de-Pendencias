@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models.avaliacao_ProEJA import AvaliacaoProEJA
+from ..models.avaliacao_proeja import AvaliacaoProEJA
 from datetime import datetime
 
 class Avaliacao_ProEJA_Serializer(serializers.ModelSerializer):

@@ -7,7 +7,6 @@ from dependencias_app.views.ped_views import *
 from dependencias_app.views.atividade_views import *
 from dependencias_app.views.avaliacao_views import *
 from dependencias_app.views.plano_estudos_views import *
-from dependencias_app.views.notificacao_views import *
 from dependencias_app.views.acompanhamento_views import *
 
 
@@ -66,8 +65,5 @@ urlpatterns = [
     path('acompanhamentos/<str:modalidade>/<str:ped_id>/listar/', listar_acompanhamentos),
     path('acompanhamentos/<str:modalidade>/<str:ped_id>/<str:acompanhamento_id>/', visualizar_acompanhamento),
     path('acompanhamentos/<str:modalidade>/<str:ped_id>/<str:acompanhamento_id>/editar/', editar_acompanhamento),
-    
-    # Views de notificacao
-    path('notificacoes/<str:usuario_id>/', buscar_notificacoes),
-    path('notificacoes/<str:notificacao_id>/editar/', trocar_status),
+
 ]

@@ -72,16 +72,6 @@ const Header = () => {
                 }
               ]}
             />
-            <button className={styles.botaoNotificacao}>
-              <FontAwesomeIcon icon={faBell} color="white" size="xl" onClick={() => setNotificAberta(!notificAberta)} />
-              {
-                notificAberta ? (
-                  <Notificacoes />
-                ) : (
-                  <></>
-                )
-              }
-            </button>
           </div>
         ) : (
           <></>

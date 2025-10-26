@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from ..services.token_service import TokenService, TokenValidationError
-from dependencias_app.services.usuario_service import CustomUserService
+from dependencias_app.services.usuario_service import UsuarioService
 from jwt.exceptions import InvalidTokenError
 
 
@@ -13,7 +13,7 @@ def obter_tokens(request):
 
     try:
         access_token, refresh_token = TokenService.pair_token(user)
-        user_data = CustomUserService.obter_dados(user)
+        user_data = UsuarioService.obter_dados(user)
 
         response = Response(user_data, status=status.HTTP_200_OK)
 

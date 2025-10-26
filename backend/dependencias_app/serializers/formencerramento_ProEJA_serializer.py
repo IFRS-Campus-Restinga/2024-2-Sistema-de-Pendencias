@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models.formencerramento_ProEJA import FormEncerramentoProEJA
+from ..models.formencerramento_proeja import FormEncerramentoProEJA
 
 class FormEncerramentoProEJASerializer(serializers.ModelSerializer):
 

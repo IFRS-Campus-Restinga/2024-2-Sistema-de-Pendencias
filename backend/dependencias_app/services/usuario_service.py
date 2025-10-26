@@ -5,24 +5,24 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
 from rest_framework import serializers
-from ..models.custom_user import CustomUser
-from ..serializers.usuario_serializer import CustomUserSerializer
+from ..models.usuario import Usuario
+from ..serializers.usuario_serializer import UsuarioSerializer
 from rest_framework.pagination import PageNumberPagination
 
-class CustomUserPagination(PageNumberPagination):
+class UsuarioPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'tam_pagina'
     max_page_size = 30
     page_query_param = 'pagina'
 
-class CustomUserService:
+class UsuarioService:
     @staticmethod
     def criar(data):
         group = Group.objects.get(uuid_map__uuid=uuid.UUID(data.get('group')))
 
         data['group'] = group.id
 
-        serializer = CustomUserSerializer(data=data)
+        serializer = UsuarioSerializer(data=data)
 
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)
@@ -36,13 +36,13 @@ class CustomUserService:
         ultimo_id = request.GET.get('ultimo', None)
         ultimo_created_at = request.GET.get('data_criacao', None)
 
-        paginator = CustomUserPagination()
+        paginator = UsuarioPagination()
 
         # Query base
         if perfil == 'aluno':
-            usuarios = CustomUser.objects.filter(group__name='aluno')
+            usuarios = Usuario.objects.filter(group__name='aluno')
         else:
-            usuarios = CustomUser.objects.exclude(group__name='aluno')
+            usuarios = Usuario.objects.exclude(group__name='aluno')
 
         usuarios = usuarios.order_by('-created_at', '-id')
 
@@ -99,9 +99,9 @@ class CustomUserService:
         busca = request.GET.get('busca', None)
         retorno = request.GET.get('retorno', None)
 
-        paginator = CustomUserPagination()
+        paginator = UsuarioPagination()
 
-        usuarios = CustomUser.objects.filter(group__name=grupo).order_by('-created_at')
+        usuarios = Usuario.objects.filter(group__name=grupo).order_by('-created_at')
         
         lista_usuarios_hub = []
         for usuario in usuarios:
@@ -153,7 +153,7 @@ class CustomUserService:
             }
         ).json()
 
-        usuario = get_object_or_404(CustomUser, pk=uuid.UUID(usuario_hub.get('id')))
+        usuario = get_object_or_404(Usuario, pk=uuid.UUID(usuario_hub.get('id')))
 
         usuario_hub['group'] = str(usuario.group.uuid_map.uuid)
 
@@ -161,7 +161,7 @@ class CustomUserService:
 
     @staticmethod
     def obter_dados(user_id: str):
-        user = get_object_or_404(CustomUser, pk=uuid.UUID(user_id))
+        user = get_object_or_404(Usuario, pk=uuid.UUID(user_id))
 
         user_data = requests.get(
             f'{settings.BASE_SYSTEM_URL}/api/users/get/{user_id}/', 
@@ -181,12 +181,12 @@ class CustomUserService:
     
     @staticmethod
     def editar(data, usuario_id):
-        usuario = get_object_or_404(CustomUser, pk=uuid.UUID(usuario_id))
+        usuario = get_object_or_404(Usuario, pk=uuid.UUID(usuario_id))
         grupo = get_object_or_404(Group, uuid_map__uuid=uuid.UUID(data.get('group')))
 
         data['group'] = grupo.id
 
-        serializer = CustomUserSerializer(instance=usuario, data=data)
+        serializer = UsuarioSerializer(instance=usuario, data=data)
 
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)
@@ -195,12 +195,12 @@ class CustomUserService:
 
     @staticmethod
     def criar_aluno(aluno_id):
-        aluno = CustomUser.objects.filter(id=uuid.UUID(aluno_id))
+        aluno = Usuario.objects.filter(id=uuid.UUID(aluno_id))
 
         if not aluno.exists():
             grupo = Group.objects.get(name="aluno")
 
-            CustomUser.objects.create(
+            Usuario.objects.create(
                 id=uuid.UUID(aluno_id),
                 group=grupo
             )

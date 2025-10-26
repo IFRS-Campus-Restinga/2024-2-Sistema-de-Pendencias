@@ -1,20 +1,19 @@
 from rest_framework import serializers
 from dependencias_app.models.ppt import PPT
-from dependencias_app.models.notificacao import Notificacao
-from ..models.custom_user import CustomUser
+from ..models.usuario import Usuario
 from ..formatters.format_ppt import URLFieldsParser
 
 class PPTSerializer(serializers.ModelSerializer):
     aluno = serializers.PrimaryKeyRelatedField(
-        queryset=CustomUser.objects.filter(group__name="aluno"),
+        queryset=Usuario.objects.filter(group__name="aluno"),
         required=True
     )
     professor_disciplina = serializers.PrimaryKeyRelatedField(
-        queryset=CustomUser.objects.filter(group__name="professor"),
+        queryset=Usuario.objects.filter(group__name="professor"),
         required=True
     )
     professor_ppt = serializers.PrimaryKeyRelatedField(
-            queryset=CustomUser.objects.filter(group__name="professor"),
+            queryset=Usuario.objects.filter(group__name="professor"),
             required=True
         )    
     curso = serializers.UUIDField()
@@ -27,7 +26,7 @@ class PPTSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate(self, attrs):
-        from ..models.ped_ProEJA import PEDProEJA
+        from ..models.ped_proeja import PEDProEJA
         from ..models.ped_integrado import PEDIntegrado
 
         aluno = attrs.get('aluno')

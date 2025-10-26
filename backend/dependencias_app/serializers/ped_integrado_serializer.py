@@ -1,16 +1,15 @@
 from rest_framework import serializers
 from dependencias_app.models.ped_integrado import PEDIntegrado
-from dependencias_app.models.notificacao import Notificacao
 from ..formatters.format_ped_integrado import URLFieldsParser
-from ..models.custom_user import CustomUser
+from ..models.usuario import Usuario
 
 class PEDIntegradoSerializer(serializers.ModelSerializer):
     aluno = serializers.PrimaryKeyRelatedField(
-        queryset=CustomUser.objects.filter(group__name="aluno"),
+        queryset=Usuario.objects.filter(group__name="aluno"),
         required=True
     )
     professor_disciplina = serializers.PrimaryKeyRelatedField(
-        queryset=CustomUser.objects.filter(group__name="professor"),
+        queryset=Usuario.objects.filter(group__name="professor"),
         required=True
     )
     curso = serializers.UUIDField()
@@ -23,7 +22,7 @@ class PEDIntegradoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate(self, attrs):
-        from ..models.ped_ProEJA import PEDProEJA
+        from ..models.ped_proeja import PEDProEJA
         from ..models.ppt import PPT
 
         aluno = attrs.get('aluno')

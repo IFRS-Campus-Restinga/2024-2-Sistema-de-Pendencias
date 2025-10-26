@@ -20,7 +20,7 @@ def main():
     django.setup()
 
     from django.contrib.auth.models import Group, Permission
-    from dependencias_app.models.custom_user import CustomUser
+    from dependencias_app.models.usuario import Usuario
     from dependencias_app.models.group_map import GroupUUIDMap
     from dependencias_app.models.permission_map import PermissionUUIDMap
     from django.db import transaction
@@ -43,7 +43,7 @@ def main():
 
         # --- Vincular usuário existente ao grupo admin ---
         try:
-            CustomUser.objects.create(id=uuid.UUID("87b911cfbd6647bd9a77f1f16002abc6"), group=ge_group)
+            Usuario.objects.create(id=uuid.UUID("554595a2-1597-49eb-a589-1c20f78cc953"), group=ge_group)
         except Exception as e:
             print(f"❌ Erro ao criar usuário: {e}")
 

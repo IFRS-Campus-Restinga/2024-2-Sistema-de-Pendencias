@@ -41,10 +41,6 @@ const HomeGestao = () => {
                     <img src={ppt} alt="" className={styles.iconeBotao} />
                     <p className={styles.textoBotao}>Gerenciar Progressões Parciais</p>
                 </Link>
-                <Link to={'/session/gestao_escolar/calendarios'} className={styles.botaoMenu}>
-                    <img src={calendar} alt="" className={styles.iconeBotao} />
-                    <p className={styles.textoBotao}>Gerenciar Calendário</p>
-                </Link>
             </div>
         </div>
     )

@@ -4,7 +4,6 @@ from .avaliacao_integrado import AvaliacaoIntegrado
 from .avaliacao_proeja import AvaliacaoProEJA
 from .formencerramento_integrado import FormEncerramentoIntegrado
 from .formencerramento_proeja import FormEncerramentoProEJA
-from .notificacao import Notificacao
 from .acompanhamento_integrado import AcompanhamentoIntegrado
 from .acompanhamento_proeja import AcompanhamentoProEJA
 from .ped_integrado import PEDIntegrado
@@ -14,4 +13,4 @@ from .planoestudos_proeja import PlanoEstudosProEJA
 from .ppt import PPT
 from .professor_progressao import ProfessorProgressaoIntegrado, ProfessorProgressaoProEJA
 from .progressao import Progressao
-from .custom_user import CustomUser
+from .usuario import Usuario

@@ -9,7 +9,7 @@ from ..serializers.ppt_serializer import PPTSerializer
 from rest_framework import serializers
 from rest_framework.pagination import PageNumberPagination
 from ..utils.formatar_obj import formatar_obj
-from ..services.usuario_service import CustomUserService
+from ..services.usuario_service import UsuarioService
 
 class PPTPagintaion(PageNumberPagination):
     page_size = 10
@@ -20,7 +20,7 @@ class PPTService:
     @staticmethod
     @transaction.atomic
     def criar(ppt_data):
-        CustomUserService.criar_aluno(ppt_data.get("aluno"))
+        UsuarioService.criar_aluno(ppt_data.get("aluno"))
 
         serializer = PPTSerializer(data=ppt_data)
 
@@ -121,7 +121,7 @@ class PPTService:
     @transaction.atomic
     def editar(ppt_data, ppt_id):
         ped = get_object_or_404(PPT, pk=uuid.UUID(ppt_id))
-        CustomUserService.criar_aluno(ppt_data.get('aluno'))
+        UsuarioService.criar_aluno(ppt_data.get('aluno'))
 
         serializer = PPTSerializer(instance=ped, data=ppt_data, partial=True)
 
