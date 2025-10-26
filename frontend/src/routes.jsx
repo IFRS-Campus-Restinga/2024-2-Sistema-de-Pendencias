@@ -105,14 +105,6 @@ const router = createBrowserRouter([
                 path: 'servidores/:servidorId/editar/',
                 element: <UsuarioForm/>
             },
-            // {
-            //     path: '/gestao_escolar/calendarios',
-            //     element: <ListarCalendario />
-            // },
-            // {
-            //     path: '/gestao_escolar/calendarios/:idCalendario/',
-            //     element: <Calendario />
-            // },
             {
                 path: 'peds/cadastro',
                 element: <CadastroPED />
@@ -213,12 +205,12 @@ const router = createBrowserRouter([
     // },
     // Rotas de Professor
     {
-        path: '/sessao/Professor/',
+        path: 'session/professor/',
         element: <BaseProfessor />,
         //   adicionar abaixo, as children de professor
         children: [
             {
-                path: 'home',
+                path: 'home/',
                 element: <HomeProfessor />
             },
             // {

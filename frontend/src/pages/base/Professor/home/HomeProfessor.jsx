@@ -14,21 +14,17 @@ const HomeProfessor = () => {
             </div>
 
             <div className={styles.menu}>
-                <Link to={'/session/professor/peds/ProEJA'} className={styles.botaoMenu}>
-                    <img src={proeja} alt="" className={styles.iconeBotao} />
-                    <p className={styles.textoBotao}>Gerenciar Progressões ProEJA</p>
-                </Link>
                 <Link to={'/session/professor/peds/Integrado'} className={styles.botaoMenu}>
                     <img src={emi} alt="" className={styles.iconeBotao} />
-                    <p className={styles.textoBotao}>Gerenciar Progressões EMI</p>
+                    <p className={styles.textoBotao}>Minhas Progressões EMI</p>
                 </Link>
-                <Link to={'/session/professor/ppts'} className={styles.botaoMenu}>
-                    <img src={ppt} alt="" className={styles.iconeBotao} />
-                    <p className={styles.textoBotao}>Gerenciar Progressões Parciais</p>
+                <Link to={'/session/professor/peds/ProEJA'} className={styles.botaoMenu}>
+                    <img src={proeja} alt="" className={styles.iconeBotao} />
+                    <p className={styles.textoBotao}>Minhas Progressões ProEJA</p>
                 </Link>
                 <Link to={'/session/professor/atividades'} className={styles.botaoMenu}>
                     <img src={atividade} alt="" className={styles.iconeBotao} />
-                    <p className={styles.textoBotao}>Gerenciar Atividades</p>
+                    <p className={styles.textoBotao}>Gerenciar Minhas Atividades</p>
                 </Link>
             </div>
         </div>

@@ -190,14 +190,14 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
                     {
                       link: setLink(dependencia.plano_estudos?.id, 'planoEstudos'),
                       name: 'Plano de Estudos',
-                      state: dependencia,
-                      desabilitado: !(dependencia.plano_estudos) ? grupo !== 'Professor' : false
+                      state: {ped: dependencia.id, plano_estudos: dependencia.plano_estudos},
+                      desabilitado: !(dependencia.plano_estudos) ? grupo !== 'professor' : false
                     },
                     {
                       link: setLink(dependencia.form_encerramento, 'formEncerramento'),
                       name: 'Formulário de Encerramento',
-                      state: dependencia,
-                      desabilitado: !(dependencia.form_encerramento) ? grupo !== 'Professor' : false
+                      state: {ped: dependencia.id, form_encerramento: dependencia.form_encerramento},
+                      desabilitado: !(dependencia.form_encerramento) ? grupo !== 'professor' || dependencia.status !== 'Em andamento' : false
                     },
                   ]}
                 />

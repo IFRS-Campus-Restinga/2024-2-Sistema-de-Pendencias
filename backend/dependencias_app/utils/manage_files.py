@@ -60,7 +60,7 @@ def upload_to_drive(file, file_name, grupo, parents):
         print(f"Erro ao tentar fazer upload: {str(e)}")
         raise Exception(f"Erro ao tentar fazer upload: {str(e)}")
     
-def change_file(file, file_name, previous_file_id, grupo):
+def change_file(file, file_name, previous_file_id, parents, grupo):
     try:
         # Verifica se o grupo tem permissão para fazer upload
         if grupo == 'Aluno':
@@ -69,12 +69,12 @@ def change_file(file, file_name, previous_file_id, grupo):
         # Autentica usando a conta de serviço correspondente
         service = authenticate_google_drive(grupo)
 
-        previous_file = service.files().delete(fileId=previous_file_id).execute()
+        service.files().delete(fileId=previous_file_id).execute()
 
         # Define os metadados do arquivo
         file_metadata = {
             'name': file_name,
-            'parents': ['1ClTW88YusBkt1Gt0i7ZHdW9qcBc50ldG']  # ID da pasta de destino no Google Drive
+            'parents': [parents]  # ID da pasta de destino no Google Drive
         }
         
         media = MediaIoBaseUpload(io.BytesIO(file.read()), mimetype='application/pdf')

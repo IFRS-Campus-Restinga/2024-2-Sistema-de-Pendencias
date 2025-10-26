@@ -8,4 +8,3 @@ class AtividadeProEJA(Atividade):
     class Meta:
         abstract = False
         verbose_name_plural = 'Atividades ProEJA'
-        default_permissions = ()

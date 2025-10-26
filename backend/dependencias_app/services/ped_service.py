@@ -1,6 +1,4 @@
 import uuid
-import asyncio
-import aiohttp
 from django.conf import settings
 from django.db import transaction, models
 from django.shortcuts import get_object_or_404
@@ -13,6 +11,7 @@ from ..utils.validar_modalidade import validar_modalidade
 from ..utils.formatar_obj import formatar_obj
 from ..services.usuario_service import UsuarioService
 from dependencias_session.services.token_service import TokenService
+from .async_request_service import AsyncRequestService
 
 class PEDPagination(PageNumberPagination):
     page_size = 10
@@ -294,15 +293,20 @@ class PEDService:
 
                 dados_ped["professores"] = professores
             
-            # Define turma atual e, se necessário, número e ID das turmas
+            # Define turma atual e, se necessário, número e ID da turma
             if ped_dict.get('turma_atual'):
                 turmas = dados_ped['curso']['course_class']
                 turma_atual_id = ped_dict.get("turma_atual")  # assumindo que existe este campo
                 turma_atual = next((t for t in turmas if str(t['id']) == str(turma_atual_id)), None)
                 ped_dict["turma_atual"] = turma_atual
 
+
             ped_dict.update(dados_ped)
 
+            if ped_dict.get('curso'):
+                print(dados_ped['curso']['name'])
+                ped_dict['curso'] = dados_ped['curso']['name']
+                
         except Exception as e:
             raise Exception(f"Erro ao buscar dados do PED {ped.id}: {str(e)}")
 
@@ -344,32 +348,3 @@ class PEDService:
                     "responsavel_atual": True,
                 }
             )
-
-
-class AsyncRequestService:
-    @staticmethod
-    async def fetch_json(session, url, params=None, cookies=None):
-        async with session.get(url, params=params, cookies=cookies, timeout=10) as response:
-            response.raise_for_status()
-            return await response.json()
-
-    @staticmethod
-    async def fetch_multiple(tasks, cookies=None):
-        """
-        Executa múltiplas requisições simultaneamente.
-        tasks: lista de dicts {"key": str, "url": str, "params": dict}
-        Retorna dict {key: resultado_json}
-        """
-        cookies = cookies or {}
-        async with aiohttp.ClientSession() as session:
-            coros = [
-                AsyncRequestService.fetch_json(session, t["url"], params=t.get("params"), cookies=cookies)
-                for t in tasks
-            ]
-            results = await asyncio.gather(*coros, return_exceptions=False)
-        
-        return {t["key"]: r for t, r in zip(tasks, results)}
-
-    @staticmethod
-    def run_fetch(tasks, cookies=None):
-        return asyncio.run(AsyncRequestService.fetch_multiple(tasks, cookies=cookies))

@@ -15,7 +15,6 @@ const VisualizarPDF = ({ pdfData, onClick }) => {
       };
 
     useEffect(() => {
-        console.log(pdfData)
         if (pdfData) renderPDF();
       }, [pdfData]);
     

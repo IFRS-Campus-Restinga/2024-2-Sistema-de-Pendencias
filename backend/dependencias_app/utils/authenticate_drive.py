@@ -7,11 +7,11 @@ def authenticate_google_drive(grupo):
     SCOPES = ['https://www.googleapis.com/auth/drive']
 
     # Define o arquivo de credenciais com base no grupo do usuário
-    if grupo == 'Gestão Escolar':
+    if grupo == 'gestao_escolar':
         SERVICE_ACCOUNT_FILE = f'{settings.BASE_DIR}/credentials/credentials_sistema.json'  # Caminho para o arquivo de credenciais do admin
-    elif grupo in ['Professor', 'Coordenador']:
+    elif grupo in ['professor', 'coord']:
         SERVICE_ACCOUNT_FILE = f'{settings.BASE_DIR}/credentials/credentials_servidores.json'  # Caminho para o arquivo de credenciais dos professores/coordenadores
-    elif grupo == 'Aluno':
+    elif grupo == 'aluno':
         SERVICE_ACCOUNT_FILE = f'{settings.BASE_DIR}/credentials/credentials_alunos.json'  # Caminho para o arquivo de credenciais dos professores/coordenadores
     else:
         raise ValueError("Grupo inválido. Permissões de grupo desconhecidas.")

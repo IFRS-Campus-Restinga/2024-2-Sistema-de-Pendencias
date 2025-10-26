@@ -10,6 +10,7 @@ class PlanoEstudos(BaseModel):
     forma_oferta = models.CharField(choices=Forma_Oferta.choices, max_length=20, null=False, blank=False, verbose_name="Forma de oferta")
     turno = models.CharField(choices=Turnos.choices, max_length=10, null=False, blank=False, verbose_name="Turno")
     parecer_pedagogico = models.TextField(blank=False, null=False, verbose_name="Parecer pedagógico")
+    drive_id = models.CharField(blank=False, null=False)
 
     class Meta:
         abstract = True

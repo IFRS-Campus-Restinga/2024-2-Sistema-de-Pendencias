@@ -47,7 +47,7 @@ urlpatterns = [
     # views de plano de estudos
     path('plano-estudos/<str:modalidade>/cadastrar/', cadastrar_plano_estudos),
     path('plano-estudos/<str:modalidade>/<str:plano_estudos_id>/', detalhes_plano_estudos),
-    path('plano-estudos/<str:modalidade>/<str:plano_estudos_id>/editar/', editar_plano_estudos,),
+    path('plano-estudos/<str:modalidade>/<str:plano_estudos_id>/editar/', editar_plano_estudos),
 
     #views para atividades
     path('atividades/cadastrar/<str:modalidade>/', cadastrar_atividade),

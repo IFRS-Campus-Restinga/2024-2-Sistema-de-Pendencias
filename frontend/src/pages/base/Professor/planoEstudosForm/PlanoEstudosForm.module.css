@@ -1,100 +1,35 @@
-/* Estilo para a seção do formulário */
-.sectionCadastroPlanoEstudos {
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  /* Garante que os campos ocupem o espaço necessário */
-  gap: 20px;
-  /* Espaçamento consistente entre os campos */
-}
-
-/* Div que envolve cada campo (Ajuste para que o parecer ocupe mais espaço) */
-.divCadastroPlanoEstudos {
-  width: 48%;
-  /* Ajuste a largura para garantir que os campos fiquem alinhados */
-  padding: 10px;
-  box-sizing: border-box;
-  min-width: 280px;
-  /* Largura mínima para os campos */
-}
-
-/* Div específica para o campo de "Parecer Pedagógico" */
-.divCadastroPlanoEstudos.textarea {
-  width: 100%;
-  /* Permite que o campo de parecer ocupe toda a largura possível */
-}
-
-/* Largura e espaçamento dos campos */
-.labelCadastroPlanoEstudos {
+.form {
   display: flex;
   flex-direction: column;
-  font-size: 16px;
-  font-weight: bold;
-  gap: 8px;
-  /* Espaço entre o rótulo e o campo */
+  gap: 20px;
 }
 
-.selectCadastroPlanoEstudos,
-.inputCadastroPlanoEstudos,
-.textAreaCadastroPlanoEstudos {
-  border: 1px solid #ccc;
-}
-
-/* Estilo para os campos de input e select */
-.selectCadastroPlanoEstudos,
-.inputCadastroPlanoEstudos,
-.textAreaCadastroPlanoEstudos,
-.errorSelectCadastroPlanoEstudos,
-.errorInputCadastroPlanoEstudos,
-.errorTextAreaCadastroPlanoEstudos {
-  font-size: 15px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  /* Espaço entre os campos */
+.formGroup {
+  display: flex;
   width: 100%;
-  box-sizing: border-box;
+  gap: 15px;
 }
 
-/* Estilo para o campo de texto de Parecer Pedagógico */
-.textAreaCadastroPlanoEstudos,
-.errorTextAreaCadastroPlanoEstudos {
-  font-family: Arial, Helvetica, sans-serif;
-  height: 300px;
-  /* Aumenta a altura do campo para parecer mais destacado */
-  overflow-y: auto;
-  /* Permite rolagem vertical */
-  resize: none;
-  /* Desativa o redimensionamento do campo */
+.textArea {
+    width: 100%;
+    padding: 5px;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    color: #767676;
+    min-height: 200px;
 }
 
-/* Estilos para o foco nos campos */
-.textAreaCadastroPlanoEstudos:focus,
-.selectCadastroPlanoEstudos:focus,
-.inputCadastroPlanoEstudos:focus {
-  border: 1px solid #797979;
-  outline: none;
+.textArea {
+    border: 1px solid #ccc;
 }
 
-/* Estilos para os campos com erro */
-.errorSelectCadastroPlanoEstudos,
-.errorInputCadastroPlanoEstudos,
-.errorTextAreaCadastroPlanoEstudos {
-  border: 1px solid #e74c3c;
+textarea:focus {
+    border: 1px solid #797979;
+    outline: none;
 }
 
-/* Estilos para o foco nos campos com erro */
-.errorSelectCadastroPlanoEstudos:focus,
-.errorInputCadastroPlanoEstudos:focus,
-.errorTextAreaCadastroPlanoEstudos:focus {
-  border-color: #e74c3c;
-}
-
-/* Estilo para a mensagem de erro */
-.errorMessage {
-  color: #e74c3c;
-  font-size: 12px;
-  margin-top: 5px;
+.section {
+  display:  flex;
+  width: 100%;
 }

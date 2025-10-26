@@ -24,7 +24,7 @@ const StatusBalls = ({ status, tipo, parecerLancado }) => {
         if (activeStatus === 'Finalizada') {
             return 'active';
         }
-        if (activeStatus === 'Lançado' && index < 3) {
+        if (activeStatus === 'Lançada' && index < 3) {
             return 'active';
         }
         if (activeStatus === 'Em Andamento' && index < 2) {
@@ -65,7 +65,7 @@ const StatusBalls = ({ status, tipo, parecerLancado }) => {
                 </div>
                 <div className={`${styles.statusBall} ${getStatusClass(2) ? styles[getStatusClass(2)] : ''}`}>
                     <img src={getStatusClass(2) ? rocketWhite : rocket} className={styles.statusIcon} />
-                    <div className={styles.statusText}>Lançado</div>
+                    <div className={styles.statusText}>Lançada</div>
                 </div>
                 </>
                 <div className={styles.containerProgresso}>
