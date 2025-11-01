@@ -57,6 +57,9 @@ class PlanoEstudosService:
             .get(id=uuid.UUID(data.get("ped")))
         )
 
+        if ped.professor.id != TokenService.decode_token(request.COOKIES.get("access_token"))['user_id']:
+            raise serializers.ValidationError("Acesso não autorizado")
+
         tasks = [
             {"key": "aluno", "url": f"{base_url}/api/users/get/{str(ped.aluno.id)}/", "params": {"fields": "username"}},
             {"key": "professor_ped", "url": f"{base_url}/api/users/get/{str(ped.professor_ped)}/", "params": {"fields": "username"}},
@@ -140,6 +143,9 @@ class PlanoEstudosService:
 
         if ped.status not in ['Criada', 'Em Andamento']:
             raise serializers.ValidationError({"PED": "status da PED inválido para edição do plano de estudos"})
+
+        if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get("access_token"))['user_id']:
+            raise serializers.ValidationError("Acesso não autorizado")
 
         tasks = [
             {"key": "aluno", "url": f"{base_url}/api/users/get/{str(ped.aluno.id)}/", "params": {"fields": "username"}},

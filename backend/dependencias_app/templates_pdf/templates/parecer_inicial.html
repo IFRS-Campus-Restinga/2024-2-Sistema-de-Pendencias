@@ -3,13 +3,75 @@
 <head>
   <meta charset="utf-8"/>
   <style>
-    body { font-family: DejaVu Sans, sans-serif; font-size: 12px; margin: 30px; display: flex; flex-direction: column; align-items: center;}
-    h1 { text-align: center; font-size: 16px; margin-bottom: 8px; }
-    .field { margin-bottom: 6px; display: flex; gap: 15px;}
-    .label { font-weight: bold; display:inline-block; width:180px; }
-    .logo {margin: auto;}
-    .parecer { margin-top: 12px; white-space: pre-wrap; border-top: 1px solid #ccc; padding-top: 8px; display: flex; flex-direction: column; align-items: center;}
-    img {width: 250px;}
+    /* === CONFIGURAÇÕES GERAIS === */
+    @page {
+      size: A4;
+      margin: 2.5cm 2cm;
+    }
+
+    body {
+      font-family: DejaVu Sans, sans-serif;
+      font-size: 12px;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    img {
+      width: 250px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    section {
+      margin-top: 30px;
+    }
+
+    .field {
+      margin-bottom: 6px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .label {
+      font-weight: bold;
+      display: inline-block;
+      width: 180px;
+    }
+
+    /* === ÁREA DE PARECER === */
+    .parecer {
+      margin-top: 20px;
+      border-top: 1px solid #ccc;
+      padding-top: 8px;
+
+      /* ✅ PERMITE QUEBRAS DE PÁGINA NORMAIS */
+      page-break-inside: auto;
+      break-inside: auto;
+      page-break-after: auto;
+
+      /* ✅ NÃO USAR FLEX AQUI! */
+      display: block;
+      width: 100%;
+    }
+
+    .texto-parecer {
+      white-space: pre-wrap;     /* respeita quebras de linha */
+      word-wrap: break-word;     /* quebra palavras grandes */
+      overflow-wrap: break-word;
+      text-align: justify;
+      line-height: 1.4;
+
+      /* ✅ PERMITE DIVISÃO ENTRE PÁGINAS */
+      page-break-inside: auto;
+      break-inside: auto;
+    }
+
   </style>
 </head>
 <body>
@@ -17,7 +79,7 @@
     <h1 style="margin-top: 30px;">Anexo III</h1>
     <h1 style="margin-top: 30px;">Formulário do Plano de Estudos Dirigidos</h1>
 
-    <section style="display: flex; flex-direction: column; margin-top: 30px;">
+    <section>
         <div class="field"><span class="label">Campus:</span> Restinga</div>
         <div class="field"><span class="label">Estudante:</span> {{ aluno }}</div>
         <div class="field"><span class="label">Curso:</span> {{ curso }}</div>
@@ -27,17 +89,13 @@
         <div class="field"><span class="label">Professor(a):</span> {{ professor_ped }}</div>
         <div class="field"><span class="label">Semestre/Ano:</span> {{ ano_semestre_reprov|default:ano }}</div>
         <div class="field"><span class="label">Semestre/Série do Curso:</span> {{ serie_progressao }}</div>
-    
-        <div class="field"><span class="label">Turno:</span>
+
+        <div class="field">
+            <span class="label">Turno:</span>
             <p>Manhã ( {% if turno == "Manhã" %}x{% else %}&nbsp;{% endif %} )</p>
             <p>Tarde ( {% if turno == "Tarde" %}x{% else %}&nbsp;{% endif %} )</p>
             <p>Noite ( {% if turno == "Noite" %}x{% else %}&nbsp;{% endif %} )</p>
             <p>Integral ( {% if turno == "Integral" %}x{% else %}&nbsp;{% endif %} )</p>
-
-            <!-- <p>Manhã (x)</p>
-            <p>Tarde ( )</p>
-            <p>Noite ( )</p>
-            <p>Integral ( )</p> -->
         </div>
     </section>
 
@@ -46,13 +104,13 @@
         <p>
             OBS: Descrever o desenvolvimento do estudante durante a realização do componente curricular e
             apontar os objetivos/aspectos que ainda não foram atingidos pelo mesmo, indicando os
-            conteúdos/ conhecimentos que precisam ser recuperados.
+            conteúdos/conhecimentos que precisam ser recuperados.
         </p>
     </div>
 
-    <div style="display: flex; flex-direction: column;">
+    <div class="parecer">
         <div class="label"><strong>Parecer do professor</strong></div>
-        <p>{{ parecer_pedagogico }}</p>
+        <p class="texto-parecer">{{ parecer_pedagogico|linebreaksbr }}</p>
     </div>
 
     <div style="margin-top: 40px;">
