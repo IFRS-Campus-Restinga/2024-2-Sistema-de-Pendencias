@@ -75,4 +75,10 @@ class PEDProEJASerializer(serializers.ModelSerializer):
         if "professor_ped" in retorno:
             rep['professor_ped'] = str(instance.professores_proeja.filter(responsavel_atual=True).first().professor.id)
         
+        if "plano_estudos" in retorno:
+            rep["plano_estudos"] = instance.plano_estudos_proeja
+
+        if "form_encerramento" in retorno:
+            rep["form_encerramento"] = instance.form_encerramento_proeja
+
         return URLFieldsParser.parse(rep, retorno)

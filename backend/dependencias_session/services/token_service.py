@@ -109,7 +109,7 @@ class TokenService:
         return access_token
 
     @staticmethod
-    def decode_token(token: str) -> tuple[dict, str]:
+    def decode_token(token: str):
         """Decodifica o refresh_token recebido, retornando o payload"""
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])

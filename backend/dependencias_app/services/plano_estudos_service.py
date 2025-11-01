@@ -2,10 +2,11 @@ import os
 import uuid
 import base64
 from datetime import datetime
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from ..utils.validar_modalidade import validar_modalidade
 from ..utils.flatten_obj import flatten_named_fields
-from ..utils.manage_files import upload_to_drive
+from ..utils.manage_files import upload_to_drive, get_from_drive, change_file
 from django.conf import settings
 from django.db.models import OuterRef, Subquery, UUIDField
 from django.forms.models import model_to_dict
@@ -28,6 +29,13 @@ class PlanoEstudosService:
         ped_model_class = PEDIntegrado if modalidade == 'Integrado' else PEDProEJA
 
         data = request.data.copy()
+
+        serializer = serializer_class(data=data)
+
+        if not serializer.is_valid():
+            raise serializers.ValidationError(serializer.errors)
+
+        plano_estudos_instance = serializer.Meta.model(**serializer.validated_data)
 
         # Define a subquery conforme a modalidade
         if modalidade == "Integrado":
@@ -57,38 +65,116 @@ class PlanoEstudosService:
             {"key": "periodo_letivo", "url": f"{base_url}/api/calendars/get/{str(ped.periodo_letivo)}/", "params": {"fields": "start"}},
         ]
 
-        try:
-            # executa todas as requests simultaneamente
-            dados_ped = AsyncRequestService.run_fetch(tasks, cookies=cookies)
+        # executa todas as requests simultaneamente
+        dados_ped = AsyncRequestService.run_fetch(tasks, cookies=cookies)
 
-            ped_dict = model_to_dict(ped)
+        ped_dict = model_to_dict(ped)
+        ped_dict.update(dados_ped)
 
-            ped_dict.update(dados_ped)
+        context_plano_estudos = flatten_named_fields({**ped_dict, **data}, ('name', 'username', 'start'))
+        context_plano_estudos['ano'] = datetime.strptime(context_plano_estudos['periodo_letivo'], "%Y-%m-%d").year
+        context_plano_estudos['logo'] = f"file:///{logo_path.replace(os.sep, '/')}"
 
-            context_plano_estudos = flatten_named_fields({**ped_dict, **data}, ('name', 'username', 'start'))
-            context_plano_estudos['ano'] = datetime.strptime(context_plano_estudos['periodo_letivo'], "%Y-%m-%d").year
-            context_plano_estudos['logo'] = context_plano_estudos['logo'] = f"file:///{logo_path.replace(os.sep, '/')}"
+        file = FileService.gerar_pdf('templates/parecer_inicial.html', context_plano_estudos)
+        file.seek(0)
+        pdf_base64 = base64.b64encode(file.read()).decode("utf-8")
 
-            file = FileService.gerar_pdf('templates/parecer_inicial.html', context_plano_estudos)
-            file.seek(0)
-            pdf_base64 = base64.b64encode(file.read()).decode("utf-8")
+        file.seek(0)
+        plano_estudos_instance.drive_id = upload_to_drive(
+            file,
+            f'parecer_inicial_{context_plano_estudos.get("ped")}',
+            TokenService.decode_token(request.COOKIES.get("access_token")).get("group"),
+            DRIVE_FOLDER
+        )
 
-            file.seek(0)
-            data['drive_id'] = upload_to_drive(
-                file,
-                f'parecer_inicial_{context_plano_estudos.get("ped")}',
-                TokenService.decode_token(request.COOKIES.get("access_token")).get("group"),
-                DRIVE_FOLDER
+        plano_estudos_instance.save()
+        
+        ped.status = "Em Andamento"
+        ped.save()
+
+        return pdf_base64
+    
+    @staticmethod
+    def detalhes(request, modalidade, plano_estudos_id):
+        model_class, serializer_class = validar_modalidade(modalidade, "PlanoEstudos")
+
+        plano_estudos = get_object_or_404(model_class, pk=uuid.UUID(plano_estudos_id))
+
+        serializer = serializer_class(plano_estudos, context={'request': request})
+
+        arquivo = get_from_drive(plano_estudos.drive_id, TokenService.decode_token(request.COOKIES.get('access_token'))['group'])
+
+        return serializer.data, arquivo['data']
+
+    @staticmethod
+    def editar(request, modalidade, plano_estudos_id):
+        model_class, serializer_class = validar_modalidade(modalidade, "PlanoEstudos")
+        ped_model_class = PEDIntegrado if modalidade == 'Integrado' else PEDProEJA
+
+        data = request.data.copy()
+
+        serializer = serializer_class(data=data)
+
+        if not serializer.is_valid():
+            raise serializers.ValidationError(serializer.errors)
+
+        if modalidade == "Integrado":
+            responsavel_subquery = (
+                ProfessorProgressaoIntegrado.objects
+                .filter(ped=OuterRef('pk'), responsavel_atual=True)
+                .values('professor')[:1]
+            )
+        else:
+            responsavel_subquery = (
+                ProfessorProgressaoProEJA.objects
+                .filter(ped=OuterRef('pk'), responsavel_atual=True)
+                .values('professor')[:1]
             )
 
-            serializer = serializer_class(data=data)
-            if not serializer.is_valid():
-                raise serializers.ValidationError(serializer.errors)
-            serializer.save()
+        plano_estudos = get_object_or_404(model_class, pk=uuid.UUID(plano_estudos_id))
+        ped = (
+            ped_model_class.objects
+            .annotate(professor_ped=Subquery(responsavel_subquery, output_field=UUIDField()))
+            .get(id=uuid.UUID(data.get("ped")))
+        )
 
-            return pdf_base64
-        except Exception as e:
-            raise Exception(f"Erro ao buscar dados do PED {ped.id}: {str(e)}")
+        if ped.status not in ['Criada', 'Em Andamento']:
+            raise serializers.ValidationError({"PED": "status da PED inválido para edição do plano de estudos"})
 
+        tasks = [
+            {"key": "aluno", "url": f"{base_url}/api/users/get/{str(ped.aluno.id)}/", "params": {"fields": "username"}},
+            {"key": "professor_ped", "url": f"{base_url}/api/users/get/{str(ped.professor_ped)}/", "params": {"fields": "username"}},
+            {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{str(ped.curso)}/", "params": {"fields": "name"}},
+            {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{str(ped.disciplina)}/", "params": {"fields": "name"}},
+            {"key": "periodo_letivo", "url": f"{base_url}/api/calendars/get/{str(ped.periodo_letivo)}/", "params": {"fields": "start"}},
+        ]
 
+        dados_ped = AsyncRequestService.run_fetch(tasks, cookies=cookies)
 
+        ped_dict = model_to_dict(ped)
+
+        ped_dict.update(dados_ped)
+
+        context_plano_estudos = flatten_named_fields({**ped_dict, **data}, ('name', 'username', 'start'))
+        context_plano_estudos['ano'] = datetime.strptime(context_plano_estudos['periodo_letivo'], "%Y-%m-%d").year
+        context_plano_estudos['logo'] = context_plano_estudos['logo'] = f"file:///{logo_path.replace(os.sep, '/')}"
+
+        file = FileService.gerar_pdf('templates/parecer_inicial.html', context_plano_estudos)
+        file.seek(0)
+        pdf_base64 = base64.b64encode(file.read()).decode("utf-8")
+
+        file.seek(0)
+        plano_estudos.drive_id = change_file(
+            file,
+            f'parecer_inicial_{context_plano_estudos.get("ped")}',
+            plano_estudos.drive_id,
+            DRIVE_FOLDER,
+            TokenService.decode_token(request.COOKIES.get("access_token"))["group"],
+        )
+
+        for attr, value in serializer.validated_data.items():
+            setattr(plano_estudos, attr, value)
+
+        plano_estudos.save()
+
+        return pdf_base64

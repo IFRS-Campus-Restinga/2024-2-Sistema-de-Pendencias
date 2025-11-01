@@ -225,12 +225,9 @@ class PEDService:
                     dados_ped = AsyncRequestService.run_fetch(tasks, cookies=cookies)
                     ped.update(dados_ped)
 
-                    print(dados_ped)
-
                     curso_coord_id = str(dados_ped['course']['coord']['id'])
 
                     if curso_coord_id == str(coordenador_id):
-                        # filtro de busca
                         if busca.strip():
                             busca_lower = busca.lower()
                             if any(busca_lower in str(v).lower() for v in ped.values() if v is not None):

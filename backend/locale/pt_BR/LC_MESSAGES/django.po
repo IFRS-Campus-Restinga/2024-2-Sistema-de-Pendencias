@@ -136,7 +136,7 @@ msgstr "Pode adicionar Avaliação ProEJA"
 
 #: .\locale_strings.py:39
 msgid "Can change Avaliações ProEJA"
-msgstr "Pode adicionar Avaliação ProEJA"
+msgstr "Pode alterar Avaliação ProEJA"
 
 #: .\locale_strings.py:40
 msgid "Can delete Avaliações ProEJA"

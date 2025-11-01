@@ -6,7 +6,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/legacy/build/pdf.worker.min.mjs', import.meta.url).toString();
 
-const PDFPreview = ({ pdfData }) => {
+const PDFPreview = ({ pdfData, width, height }) => {
   const [imageUrl, setImageUrl] = useState(null);
   const [PDF, setPDF] = useState(null)
   const [pdfURL, setPdfURL] = useState(null)
@@ -138,8 +138,8 @@ const PDFPreview = ({ pdfData }) => {
         <div style={{
             backgroundImage: `url(${imageUrl})`,
             backgroundSize: 'cover',
-            width: '220px',
-            height: '300px',
+            width: width ?? '220px',
+            height: height ?? '300px',
             border: '1px dashed #006b3f'
         }}/>
     </div>

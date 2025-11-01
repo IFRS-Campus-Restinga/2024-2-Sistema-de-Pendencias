@@ -2,6 +2,8 @@ from rest_framework import serializers
 from dependencias_app.models.ped_integrado import PEDIntegrado
 from ..formatters.format_ped_integrado import URLFieldsParser
 from ..models.usuario import Usuario
+from ..serializers.planoestudos_integrado_serializer import PlanoEstudosIntegradoSerializer
+from ..serializers.formencerramento_integrado_serializer import FormEncerramentoIntegradoSerializer
 
 class PEDIntegradoSerializer(serializers.ModelSerializer):
     aluno = serializers.PrimaryKeyRelatedField(
@@ -74,6 +76,14 @@ class PEDIntegradoSerializer(serializers.ModelSerializer):
         
         if "professor_ped" in retorno:
             rep['professor_ped'] = str(instance.professores_emi.filter(responsavel_atual=True).first().professor.id)
+
+        if "plano_estudos" in retorno:
+            if hasattr(instance, "plano_estudos_emi"):
+                rep["plano_estudos"] = str(instance.plano_estudos_emi.id)
+
+        if "form_encerramento" in retorno:
+            if hasattr(instance, "form_encerramento_emi"):
+                rep["form_encerramento"] = str(instance.form_encerramento_emi.id)
         
         return URLFieldsParser.parse(rep, retorno)
 

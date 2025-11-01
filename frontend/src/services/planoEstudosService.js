@@ -18,7 +18,7 @@ export const PlanoEstudosService = {
 
   editar: async (planoId, modalidade, params) => {
     return await api.put(
-      `/api/plano-estudos/editar/${modalidade}/${planoId}/`,
+      `/api/plano-estudos/${modalidade}/${planoId}/editar/`,
       params
     );
   },

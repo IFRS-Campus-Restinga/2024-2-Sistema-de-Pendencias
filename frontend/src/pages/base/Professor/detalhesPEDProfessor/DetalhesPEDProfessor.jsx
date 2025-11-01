@@ -32,7 +32,9 @@ const DetalhesPEDProfessor = () => {
                     situacao,
                     turma_atual,
                     serie_progressao,
-                    observacao
+                    observacao,
+                    plano_estudos,
+                    form_encerramento
                     `,
                 'flat' 
             )
