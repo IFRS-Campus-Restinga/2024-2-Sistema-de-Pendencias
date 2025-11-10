@@ -22,9 +22,13 @@ const HomeProfessor = () => {
                     <img src={proeja} alt="" className={styles.iconeBotao} />
                     <p className={styles.textoBotao}>Minhas Progressões ProEJA</p>
                 </Link>
-                <Link to={'/session/professor/atividades'} className={styles.botaoMenu}>
+                <Link to={'/session/professor/atividades/Integrado'} className={styles.botaoMenu}>
                     <img src={atividade} alt="" className={styles.iconeBotao} />
-                    <p className={styles.textoBotao}>Gerenciar Minhas Atividades</p>
+                    <p className={styles.textoBotao}>Gerenciar Atividades EMI</p>
+                </Link>
+                <Link to={'/session/professor/atividades/ProEJA'} className={styles.botaoMenu}>
+                    <img src={atividade} alt="" className={styles.iconeBotao} />
+                    <p className={styles.textoBotao}>Gerenciar Atividades ProEJA</p>
                 </Link>
             </div>
         </div>

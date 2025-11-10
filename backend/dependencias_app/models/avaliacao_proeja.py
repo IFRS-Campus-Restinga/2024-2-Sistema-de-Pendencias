@@ -1,11 +1,11 @@
 from django.db import models
 from .avaliacao import Avaliacao
-from .ped_proeja import PEDProEJA
-from .atividade_proeja import AtividadeProEJA
+from .ped_proeja import PEDProeja
+from .atividade_proeja import AtividadeProeja
 
-class AvaliacaoProEJA(Avaliacao):
-    ped = models.ForeignKey(PEDProEJA, on_delete=models.DO_NOTHING, related_name='atividades_proeja')
-    atividade = models.ForeignKey(AtividadeProEJA, on_delete=models.DO_NOTHING, related_name='dependencias_proeja')
+class AvaliacaoProeja(Avaliacao):
+    ped = models.ForeignKey(PEDProeja, on_delete=models.DO_NOTHING, related_name='atividades_proeja')
+    atividade = models.ForeignKey(AtividadeProeja, on_delete=models.DO_NOTHING, related_name='dependencias_proeja')
     
     class Meta:
         abstract = False

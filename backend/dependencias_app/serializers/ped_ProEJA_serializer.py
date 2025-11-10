@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from ..models.usuario import Usuario
-from ..models.ped_proeja import PEDProEJA
+from ..models.ped_proeja import PEDProeja
 from ..formatters.format_ped_proeja import URLFieldsParser
 
-class PEDProEJASerializer(serializers.ModelSerializer):
+class PEDProejaSerializer(serializers.ModelSerializer):
     aluno = serializers.PrimaryKeyRelatedField(
         queryset=Usuario.objects.filter(group__name="aluno"),
         required=True
@@ -18,7 +18,7 @@ class PEDProEJASerializer(serializers.ModelSerializer):
     turma_atual = serializers.UUIDField()
 
     class Meta:
-        model = PEDProEJA
+        model = PEDProeja
         fields = '__all__'
 
     def validate(self, attrs):
@@ -31,7 +31,7 @@ class PEDProEJASerializer(serializers.ModelSerializer):
 
         ppts = PPT.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
 
-        peds_proeja = PEDProEJA.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
+        peds_proeja = PEDProeja.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
 
         if self.instance is None and peds_proeja.exists():
             raise serializers.ValidationError({

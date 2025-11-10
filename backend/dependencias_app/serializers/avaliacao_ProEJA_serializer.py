@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from ..models.avaliacao_proeja import AvaliacaoProEJA
+from ..models.avaliacao_proeja import AvaliacaoProeja
 from datetime import datetime
 
-class Avaliacao_ProEJA_Serializer(serializers.ModelSerializer):
+class Avaliacao_Proeja_Serializer(serializers.ModelSerializer):
     data_entrega = serializers.DateField(format="%Y-%m-%d")
 
     class Meta:
-        model = AvaliacaoProEJA
+        model = AvaliacaoProeja
         fields = '__all__'
     
     def validate(self, data):
@@ -14,7 +14,7 @@ class Avaliacao_ProEJA_Serializer(serializers.ModelSerializer):
         ped = data.get('ped')
         
         try:
-            avaliacao_existente = AvaliacaoProEJA.objects.filter(ped_id=ped, atividade_id=atividade_id).first()
+            avaliacao_existente = AvaliacaoProeja.objects.filter(ped_id=ped, atividade_id=atividade_id).first()
 
             # Se a avaliação já existe e a nota já foi definida
             if avaliacao_existente and avaliacao_existente.nota is not None:

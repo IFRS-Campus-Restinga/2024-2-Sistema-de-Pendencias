@@ -44,6 +44,8 @@ import ListarPEDProfessor from './pages/base/Professor/listarDependenciasProfess
 import DetalhesPEDProfessor from './pages/base/Professor/detalhesPEDProfessor/DetalhesPEDProfessor'
 import PlanoEstudosForm from './pages/base/Professor/planoEstudosForm/PlanoEstudosForm'
 import BaseProfessor from './pages/base/Professor/BaseProfessor'
+import ListarAtividadesProfessor from './pages/base/Professor/atividadeLista/AtividadeLista'
+import AtividadeForm from './pages/base/Professor/atividadeForm/AtividadeForm'
 
 // Filhos de Aluno
 
@@ -213,14 +215,18 @@ const router = createBrowserRouter([
                 path: 'home/',
                 element: <HomeProfessor />
             },
-            // {
-            //     path: ':idUsuario/atividades/',
-            //     element: <ListarAtividadesProfessor />
-            // },
-            // {
-            //     path: ':idUsuario/atividades/:atividadeId/editar',
-            //     element: <CadastroAtividade />
-            // },
+            {
+                path: 'atividades/:modalidade',
+                element: <ListarAtividadesProfessor />
+            },
+            {
+                path: 'atividades/cadastrar',
+                element: <AtividadeForm />
+            },
+            {
+                path: 'atividades/:modalidade/:atividadeId/editar',
+                element: <AtividadeForm />
+            },
             {
                 path: 'peds/:modalidade/',
                 element: <ListarPEDProfessor />
@@ -238,27 +244,23 @@ const router = createBrowserRouter([
                 element: <PlanoEstudosForm />
             },
             // {
-            //     path: ':idUsuario/cadastroAtividade/',
-            //     element: <CadastroAtividade />
-            // },
-            // {
-            //     path: ':idUsuario/peds/:modalidade/:pedId/atividades',
+            //     path: 'peds/:modalidade/:pedId/atividades',
             //     element: <AtividadesPEDProfessor />
             // },
             // {
-            //     path: ':idUsuario/adicionarObservacao',
+            //     path: 'adicionarObservacao',
             //     element: <AdicionarObservacao />
             // },
             // {
-            //     path: ':idUsuario/observacoes/:pedTipo/:pedId/:idObservacao',
+            //     path: 'observacoes/:pedTipo/:pedId/:idObservacao',
             //     element: <DetalhesObservacoes />
             // },
             // {
-            //     path: ':idUsuario/observacoes/:pedTipo/:pedId',
+            //     path: 'observacoes/:pedTipo/:pedId',
             //     element: <ListarObservacoes />
             // },
             // {
-            //     path: ':idUsuario/editarObservacao/:idObservacao',
+            //     path: 'editarObservacao/:idObservacao',
             //     element: <AdicionarObservacao />,
             // },
         ]

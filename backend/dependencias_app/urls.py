@@ -50,14 +50,14 @@ urlpatterns = [
     path('plano-estudos/<str:modalidade>/<str:plano_estudos_id>/editar/', editar_plano_estudos),
 
     #views para atividades
-    path('atividades/cadastrar/<str:modalidade>/', cadastrar_atividade),
-    path('atividades/listar/', listar_atividades),
-    path('atividades/<str:modalidade>/<str:atividade_id>/', buscar_atividade_por_id),
+    path('atividades/<str:modalidade>/cadastrar/', cadastrar_atividade),
+    path('atividades/<str:modalidade>/', listar_atividades),
+    path('atividades/<str:modalidade>/<str:atividade_id>/', detalhes_atividade),
     path('atividades/<str:modalidade>/<str:atividade_id>/editar/', editar_atividade),
 
     # views para avaliações
     path('avaliacoes/<str:modalidade>/cadastrar/', cadastrar_avaliacoes),
-    path('avaliacoes/<str:modalidade>/<str:ped_id>/listar/', listar_avaliacoes_por_PED),
+    path('avaliacoes/<str:modalidade>/<str:ped_id>/', listar_avaliacoes_por_PED),
     path('avaliacoes/<str:modalidade>/editar/', editar_avaliacoes),
     
     #views para observações

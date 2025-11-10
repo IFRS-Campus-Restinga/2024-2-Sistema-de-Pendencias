@@ -3,7 +3,7 @@ from django.conf import settings
 from django.db import transaction, models
 from django.shortcuts import get_object_or_404
 from django.db.models import OuterRef, Subquery, UUIDField
-from ..models.professor_progressao import ProfessorProgressaoIntegrado, ProfessorProgressaoProEJA
+from ..models.professor_progressao import ProfessorProgressaoIntegrado, ProfessorProgressaoProeja
 from ..models.usuario import Usuario
 from rest_framework import serializers
 from rest_framework.pagination import PageNumberPagination
@@ -42,7 +42,7 @@ class PEDService:
                 ped=ped_instance
             )
         else:
-            ProfessorProgressaoProEJA.objects.create(
+            ProfessorProgressaoProeja.objects.create(
                 professor=professor,
                 responsavel_atual=True,
                 ped=ped_instance
@@ -62,7 +62,7 @@ class PEDService:
                 responsavel_atual=True
             ).values('professor')[:1]
         else:
-            responsavel_subquery = ProfessorProgressaoProEJA.objects.filter(
+            responsavel_subquery = ProfessorProgressaoProeja.objects.filter(
                 ped=OuterRef('pk'),
                 responsavel_atual=True,
             ).values('professor')[:1]
@@ -196,7 +196,7 @@ class PEDService:
                 responsavel_atual=True
             ).values('professor')[:1]
         else:
-            responsavel_subquery = ProfessorProgressaoProEJA.objects.filter(
+            responsavel_subquery = ProfessorProgressaoProeja.objects.filter(
                 ped=OuterRef('pk'),
                 responsavel_atual=True,
             ).values('professor')[:1]
@@ -352,7 +352,7 @@ class PEDService:
         else:
             ProfessorProgressaoIntegrado.objects.filter(ped=serializer.instance).exclude(professor=professor).update(responsavel_atual=False)
 
-            ProfessorProgressaoProEJA.objects.get_or_create(
+            ProfessorProgressaoProeja.objects.get_or_create(
                 professor=professor,
                 ped=serializer.instance,
                 defaults={

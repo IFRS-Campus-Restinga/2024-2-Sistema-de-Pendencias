@@ -32,7 +32,6 @@ def get_from_drive(file_id, grupo):
     except Exception as e:
         raise Exception(f"Erro ao tentar obter o arquivo: {str(e)}")
 
-
 def upload_to_drive(file, file_name, grupo, parents):
     try:
         # Verifica se o grupo tem permissão para fazer upload

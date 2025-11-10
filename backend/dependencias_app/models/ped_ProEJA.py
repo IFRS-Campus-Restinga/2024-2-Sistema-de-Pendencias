@@ -3,7 +3,7 @@ from django.db import models
 from .progressao import Progressao
 from .usuario import Usuario
 
-class PEDProEJA(Progressao):
+class PEDProeja(Progressao):
     aluno = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="aluno_peds_proeja", verbose_name="Aluno", editable=False)
     professor_disciplina = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="disciplina_peds_proeja", verbose_name="Professor da disciplina", editable=False)
     disciplina = models.UUIDField(default=uuid.uuid4, verbose_name="Disciplina", editable=False)

@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from ..models.formencerramento_proeja import FormEncerramentoProEJA
+from ..models.formencerramento_proeja import FormEncerramentoProeja
 
-class FormEncerramentoProEJASerializer(serializers.ModelSerializer):
+class FormEncerramentoProejaSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = FormEncerramentoProEJA
+        model = FormEncerramentoProeja
         fields = '__all__'

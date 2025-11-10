@@ -1,108 +1,52 @@
 import { api } from "../config/axiosConfig";
 
-const atividadeService = {
+const AtividadeService = {
   criar: async (modalidade, params) => {
-    const res = await api
-      .post(`/api/atividade/cadastro/${modalidade}/`, params, {
+    const res = await api.post(`api/atividades/${modalidade}/cadastrar/`, params, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
-      .catch((erro) => {
-        return erro;
-      });
 
     return res;
   },
 
-  vincular: async (pedId, modalidade, params) => {
-    const res = await api
-      .post(`/api/atividade/vincular/${pedId}/${modalidade}/`, params)
-      .catch((erro) => {
-        return erro;
-      });
-
-    return res;
-  },
-
-  porId: async (atividadeId, modalidade) => {
-    const res = await api
-      .get(`/api/plano-atividades/detalhes/${modalidade}/${atividadeId}/`, {
+  listar: async (modalidade, pagina, param, retorno) => {
+    const res = await api.get(`api/atividades/${modalidade}/`,
+      {
         params: {
-          retorno: "detalhes",
+          pagina,
+          param,
+          retorno,
         },
       })
-      .catch((erro) => {
-        return erro;
-      });
 
     return res;
   },
 
-  porAvaliacao: async (avaliacaoId, modalidade) => {
+  porId: async (atividadeId, modalidade, retorno) => {
     const res = await api
-      .get(`/api/plano-atividades/avaliacao/${modalidade}/${avaliacaoId}/`, {
+      .get(`api/atividades/${modalidade}/${atividadeId}/`, {
         params: {
-          retorno: "detalhes",
+          retorno,
         },
       })
-      .catch((erro) => {
-        return erro;
-      });
-
-    return res;
-  },
-
-  listarPorPED: async (pedId, modalidade) => {
-    const res = await api
-      .get(`/api/plano-atividades/${pedId}/${modalidade}/`, {
-        params: {
-          retorno: "listar",
-        },
-      })
-      .catch((erro) => {
-        return erro;
-      });
-
-    return res;
-  },
-
-  listarPorProfessor: async (modalidade) => {
-    const res = await api
-      .get(
-        `/api/plano-atividades/professor/listar/?modalidade=${
-          modalidade ?? ""
-        }`,
-        {
-          params: {
-            retorno: "listar",
-          },
-        }
-      )
-      .catch((erro) => {
-        return erro;
-      });
 
     return res;
   },
 
   editar: async (atividadeId, modalidade, params) => {
-    try {
-      const response = await api.put(
-        `api/plano-atividades/editar/${modalidade}/${atividadeId}/`,
-        params,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      return response;
-    } catch (error) {
-      console.error("Erro ao editar a atividade:", error);
-      throw error;
-    }
-  },
-};
+    const res = await api.put(`api/atividades/${modalidade}/${atividadeId}/editar/`,
+      params,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
 
-export default atividadeService;
+    return res;
+  }
+}
+
+export default AtividadeService;

@@ -11,8 +11,8 @@ from django.conf import settings
 from django.db.models import OuterRef, Subquery, UUIDField
 from django.forms.models import model_to_dict
 from ..models.ped_integrado import PEDIntegrado
-from ..models.ped_proeja import PEDProEJA
-from ..models.professor_progressao import ProfessorProgressaoIntegrado, ProfessorProgressaoProEJA
+from ..models.ped_proeja import PEDProeja
+from ..models.professor_progressao import ProfessorProgressaoIntegrado, ProfessorProgressaoProeja
 from .async_request_service import AsyncRequestService
 from .file_service import FileService
 from dependencias_session.services.token_service import TokenService
@@ -26,7 +26,7 @@ class PlanoEstudosService:
     @staticmethod
     def criar(request, modalidade):
         _, serializer_class = validar_modalidade(modalidade, "PlanoEstudos")
-        ped_model_class = PEDIntegrado if modalidade == 'Integrado' else PEDProEJA
+        ped_model_class = PEDIntegrado if modalidade == 'Integrado' else PEDProeja
 
         data = request.data.copy()
 
@@ -46,7 +46,7 @@ class PlanoEstudosService:
             )
         else:
             responsavel_subquery = (
-                ProfessorProgressaoProEJA.objects
+                ProfessorProgressaoProeja.objects
                 .filter(ped=OuterRef('pk'), responsavel_atual=True)
                 .values('professor')[:1]
             )
@@ -57,7 +57,7 @@ class PlanoEstudosService:
             .get(id=uuid.UUID(data.get("ped")))
         )
 
-        if ped.professor.id != TokenService.decode_token(request.COOKIES.get("access_token"))['user_id']:
+        if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get("access_token"))['user_id']:
             raise serializers.ValidationError("Acesso não autorizado")
 
         tasks = [
@@ -112,7 +112,7 @@ class PlanoEstudosService:
     @staticmethod
     def editar(request, modalidade, plano_estudos_id):
         model_class, serializer_class = validar_modalidade(modalidade, "PlanoEstudos")
-        ped_model_class = PEDIntegrado if modalidade == 'Integrado' else PEDProEJA
+        ped_model_class = PEDIntegrado if modalidade == 'Integrado' else PEDProeja
 
         data = request.data.copy()
 
@@ -129,7 +129,7 @@ class PlanoEstudosService:
             )
         else:
             responsavel_subquery = (
-                ProfessorProgressaoProEJA.objects
+                ProfessorProgressaoProeja.objects
                 .filter(ped=OuterRef('pk'), responsavel_atual=True)
                 .values('professor')[:1]
             )

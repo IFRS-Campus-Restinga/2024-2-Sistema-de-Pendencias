@@ -1,9 +1,9 @@
 from django.db import models
-from .ped_proeja import PEDProEJA
+from .ped_proeja import PEDProeja
 from .form_encerramento import FormEncerramento
 
-class FormEncerramentoProEJA(FormEncerramento):
-    ped = models.OneToOneField(PEDProEJA, on_delete=models.DO_NOTHING, related_name='form_encerramento_proeja')
+class FormEncerramentoProeja(FormEncerramento):
+    ped = models.OneToOneField(PEDProeja, on_delete=models.DO_NOTHING, related_name='form_encerramento_proeja')
 
     class Meta:
         abstract = False

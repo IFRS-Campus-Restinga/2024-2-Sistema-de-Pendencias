@@ -49,6 +49,7 @@ const PlanoEstudosForm = () => {
   const submit = async (e) => {
     e.preventDefault()
     setDesabilitado(true)
+    
     if (validar()) {
       const promise = state.plano_estudos
         ? PlanoEstudosService.editar(state.plano_estudos, modalidade, formData)
@@ -119,10 +120,6 @@ const PlanoEstudosForm = () => {
     } else {
       setIsLoading(false)
     }
-  }, [])
-
-  useEffect(() => {
-    console.log(formData)
   }, [])
   
   return (

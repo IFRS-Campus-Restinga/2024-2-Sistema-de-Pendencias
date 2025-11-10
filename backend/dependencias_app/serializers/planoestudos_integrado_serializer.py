@@ -16,7 +16,7 @@ class PlanoEstudosIntegradoSerializer(serializers.ModelSerializer):
 
         if turno == 'Noite':
             raise serializers.ValidationError({
-                'turno': 'Na modalidade Integrado, o turno não pode ser Noite.'
+                'turno': 'Progressões desta modalidade não podem ocorrer à noite'
             })
 
         return super().validate(attrs)

@@ -1,58 +1,50 @@
-.divCadastroAtividade,
-.divPDF {
+.formGroup,
+.pdfContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
     width: 100%;
     height: 100%;
-    min-height: 363px;
     flex: 1;
 }
 
-.divCadastroAtividade {
+.formGroup {
     justify-content: start;
 }
 
-.divPDF {
+.pdfContainer {
     justify-content: center;
 }
 
-.labelCadastroAtividade,
-.labelTextArea {
-    font-size: 15px;
-    font-weight: 700;
-    width: 100%;
-    gap: 8px;
-    display: flex;
-    flex-direction: column;
-}
-
-.labelTextArea {
-    height: 100%;
-}
-
-.textAreaCadastroAtividade {
+.textArea, .textAreaError {
     border-radius: 8px;
     width: 100%;
-    border: 1px solid #ccc;
     padding: 10px;
     flex: 1;
-    font-family: Arial, Helvetica, sans-serif;
+    color: #767676;
+    min-height: 200px;
 }
 
-.textAreaCadastroAtividade:focus {
-    border: 1px solid #797979;
+.textArea {
+    border: 1px solid #ccc;
+}
+
+.textAreaError {
+    border: 1px solid red;
+}
+
+.textArea:focus, .textAreaError:focus {
     outline: none;
     height: 100%
 }
 
-.pCadastroAtividade {
-    font-size: 10px;
+.p {
+    font-size: 13px;
 }
 
 .labelInputVazio,
-.labelInputArquivo {
+.labelInput {
     padding: 10px;
     border-radius: 8px;
     display: flex;
@@ -68,12 +60,12 @@
     border: 1px solid #797979;
 }
 
-.labelInputArquivo {
+.labelInput {
     background-color: #006b3f;
     color: white;
 }
 
-.labelInputArquivo:hover,
+.labelInput:hover,
 .labelInputVazio:hover {
     cursor: pointer;
     scale: calc(1.05);
@@ -85,14 +77,14 @@
     max-height: 25px;
 }
 
-.divPDF {
+.pdfContainer {
     border-radius: 8px;
     margin-left: 15px;
     padding: 15px;
     background-color: #eee;
 }
 
-.spanCadastroAtividade {
+.span {
     display: flex;
     width: 100%;
     align-items: center;
@@ -101,7 +93,13 @@
     justify-content: center;
 }
 
-.sectionCadastroAtividade {
+.section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.form {
     display: flex;
     max-height: 60%;
     gap: 15px;
