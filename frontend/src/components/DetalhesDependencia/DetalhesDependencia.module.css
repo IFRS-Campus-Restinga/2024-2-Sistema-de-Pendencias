@@ -10,6 +10,13 @@
     flex-direction: column;
 }
 
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    margin-left: auto;
+}
+
 .nomeAluno {
     margin-left: 10px;
 }
@@ -22,7 +29,6 @@
     margin-top: 10px;
     border-radius: 10px;
     max-height: 300px;
-    margin-left: 15px;
     padding: 10px;
 }
 
@@ -47,6 +53,12 @@
     font-weight: 400;
     font-size: 15px;
     margin: 5px;
+    min-width: fit-content;
+}
+
+.p {
+    display: flex;
+    align-items: center;
 }
 
 .span {
@@ -103,6 +115,177 @@
     width: 30px;
     height: 30px;
 }
+
+.container {
+    gap: 15px;
+}
+
+.acompanhamentoContainer {
+    display: flex;
+    max-width: 100%;
+    gap: 10px;
+}
+
+.acompanhamento {
+    display: flex;
+    flex-direction: column;
+    background-color: #f1f1f1;
+    width: 100%;
+    gap: 10px;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+/* LEVE — verde */
+.leve {
+  background-color: #d4f8d4;
+  border: 2px solid #28a745;   /* verde forte */
+  border-radius: 12px;
+}
+
+/* MODERADA — amarelo */
+.moderada {
+  background-color: #fff3cd;
+  border: 2px solid #e0a800;   /* amarelo forte */
+  border-radius: 12px;
+}
+
+/* GRAVE — vermelho claro */
+.grave {
+  background-color: #f8d7da;
+  border: 2px solid #dc3545;   /* vermelho forte */
+  border-radius: 12px;
+}
+
+/* GRAVÍSSIMA — vermelho escuro */
+.gravissima {
+  background-color: #f5c6cb;
+  border: 2px solid #b30000;   /* vermelho mais escuro */
+  border-radius: 12px;
+}
+
+.group {
+    display: flex;
+    width: 100%;
+}
+
+.button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: auto;
+    border: 1px solid #767676;
+    cursor: pointer;
+}
+
+.textArea {
+    width: 100%;
+    padding: 5px;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    color: #767676;
+    height: 200px;
+}
+
+.textArea {
+    border: 1px solid #ccc;
+}
+
+textarea:focus {
+    border: 1px solid #797979;
+    outline: none;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.rangeContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rangeLabel {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+/* O input range estilizado */
+.range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #28a745 0%, #ffc107 33%, #ff8c00 66%, #dc3545 100%);
+  outline: none;
+  padding: 0;
+  margin: 0;
+  /* cria uma leve sombra para destacar a barra */
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+}
+
+/* WebKit thumb */
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid rgba(0,0,0,0.15);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  margin-top: -4px; /* centraliza verticalmente no track */
+  cursor: pointer;
+}
+
+/* Firefox thumb */
+.range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid rgba(0,0,0,0.15);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  cursor: pointer;
+}
+
+/* Firefox track (mantém o gradiente por baixo do range) */
+.range::-moz-range-track {
+  height: 14px;
+  border-radius: 999px;
+  background: transparent; /* já definido no .range */
+}
+
+/* pequenas labels dos ticks (baixo da barra) */
+.rangeTicks {
+  display:flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #333;
+  margin-top: 6px;
+  user-select: none;
+}
+
+/* rótulo que mostra a seleção atual com cor correspondente */
+.rangeSelected {
+  margin-top: 8px;
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: #111;
+}
+
+/* cores de fundo para cada seleção: você pode aplicar dinamicamente inline */
+.rangeSelected[data-severity="0"] { background: rgba(40,167,69,0.12); }
+.rangeSelected[data-severity="1"] { background: rgba(255,193,7,0.12); }
+.rangeSelected[data-severity="2"] { background: rgba(255,140,0,0.12); }
+.rangeSelected[data-severity="3"] { background: rgba(220,53,69,0.12); }
 
 @media (max-width: 1260px) {
     .containerStatus {

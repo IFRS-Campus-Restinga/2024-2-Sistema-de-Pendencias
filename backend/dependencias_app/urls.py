@@ -61,9 +61,8 @@ urlpatterns = [
     path('avaliacoes/<str:modalidade>/editar/', editar_avaliacoes),
     
     #views para observações
-    path('acompanhamentos/<str:modalidade>/<str:ped_id>/cadastrar/', cadastrar_acompanhamento),
+    path('acompanhamentos/<str:modalidade>/cadastrar/', cadastrar_acompanhamento),
     path('acompanhamentos/<str:modalidade>/<str:ped_id>/listar/', listar_acompanhamentos),
-    path('acompanhamentos/<str:modalidade>/<str:ped_id>/<str:acompanhamento_id>/', visualizar_acompanhamento),
-    path('acompanhamentos/<str:modalidade>/<str:ped_id>/<str:acompanhamento_id>/editar/', editar_acompanhamento),
+    path('acompanhamentos/<str:modalidade>/<str:acompanhamento_id>/editar/', editar_acompanhamento),
 
 ]

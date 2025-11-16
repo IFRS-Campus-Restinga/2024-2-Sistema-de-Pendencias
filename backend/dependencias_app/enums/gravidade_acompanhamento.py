@@ -1,6 +1,6 @@
 from django.db import models
 
-class Urgencia_Observacao(models.TextChoices):
+class GravidadeAcompanhamnto(models.TextChoices):
     LEVE = 'Leve'
     MODERADA = 'Moderada'
     GRAVE = 'Grave'

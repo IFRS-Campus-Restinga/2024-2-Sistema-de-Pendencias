@@ -5,5 +5,4 @@ class Status_Dependencia(models.TextChoices):
     EM_ANDAMENTO = 'Em Andamento'
     LANCADO = 'Lançada'
     FINALIZADO = 'Finalizada'
-    DESATIVADO = 'Desativado'
-    ENCERRADO = 'Encerrado'
+    DESATIVADO = 'Desativada'

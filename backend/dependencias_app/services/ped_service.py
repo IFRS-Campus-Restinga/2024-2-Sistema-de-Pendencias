@@ -255,7 +255,7 @@ class PEDService:
         base_url = settings.BASE_SYSTEM_URL
 
         # Monta os campos que vão para a request do curso
-        curso_fields = "id,name"
+        curso_fields = "id,name,coord.id"
         if modalidade == "Integrado":
             curso_fields += ",course_class.id,course_class.number"
 
@@ -315,13 +315,12 @@ class PEDService:
             ped_dict.update(dados_ped)
 
             if ped_dict.get('curso'):
-                print(dados_ped['curso']['name'])
-                ped_dict['curso'] = dados_ped['curso']['name']
+                ped_dict['curso'] = {'name': dados_ped['curso']['name'], 'coord': dados_ped['curso']['coord']['id']}
                 
         except Exception as e:
             raise Exception(f"Erro ao buscar dados do PED {ped.id}: {str(e)}")
 
-        return formatar_obj(ped_dict, request.GET.get("formato"))
+        return formatar_obj(ped_dict, request.GET.get("formato"), ignorar_campo=['professores', 'curso'])
 
     @staticmethod
     @transaction.atomic
