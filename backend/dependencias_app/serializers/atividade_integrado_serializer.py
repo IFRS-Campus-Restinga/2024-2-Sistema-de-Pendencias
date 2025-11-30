@@ -8,7 +8,7 @@ class AtividadeIntegradoSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = AtividadeIntegrado
-        fields = '__all__'
+        fields = '__all__' 
 
     def to_representation(self, instance):
         request = self.context.get('request')

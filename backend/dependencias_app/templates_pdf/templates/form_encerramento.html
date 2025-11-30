@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+
+<title>Anexo IV - Registro das Atividades</title>
+
+<style>
+  @page { 
+    size: A4;
+    margin: 20mm 18mm 20mm 18mm; 
+  }
+
+  body {
+    font-family: "Helvetica", "Arial", sans-serif;
+    font-size: 12px;
+    color: #000;
+    line-height: 1.3;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  img.logo {
+    height: 70px;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  h2 {
+    margin: 0;
+    margin-top: 4px;
+    font-size: 13px;
+  }
+
+  .subtitle {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+
+  table.activities {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 12px;
+  }
+
+  table.activities th {
+    border-bottom: 1px solid #000;
+    padding: 6px 4px;
+    text-align: left;
+    font-weight: bold;
+  }
+
+  table.activities td {
+    border-bottom: 1px solid #ddd;
+    padding: 6px 4px;
+    vertical-align: top;
+  }
+
+  .col-date { width: 18%; }
+  .col-activity { width: 57%; }
+  .col-due { width: 25%; }
+
+  .final-section {
+    margin-top: 18px;
+  }
+
+  .nota {
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: bold;
+  }
+
+  .resultado {
+    margin-top: 6px;
+    font-size: 12px;
+  }
+
+  .parecer {
+    margin-top: 12px;
+    padding: 8px;
+    border: 1px solid #000;
+    min-height: 120px;
+    white-space: pre-wrap;
+  }
+
+  .footer {
+    margin-top: 20px;
+    font-size: 12px;
+  }
+
+  .assinatura {
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  .assinatura .line {
+    border-top: 1px solid #000;
+    width: 60%;
+    margin: 0 auto;
+    padding-top: 4px;
+  }
+
+  tr, td, th { page-break-inside: avoid; }
+</style>
+</head>
+
+<body>
+
+  <header>
+    {% if logo %}
+      <img src="{{ logo }}" class="logo" alt="Logo">
+    {% endif %}
+    <h1>Anexo IV</h1>
+    <h2>Registro das Atividades desenvolvidas<br>(adaptado para o ensino remoto)</h2>
+  </header>
+
+  <h3 style="margin-top:12px;">Atividades registradas</h3>
+
+  <table class="activities">
+    <thead>
+      <tr>
+        <th class="col-date">Data</th>
+        <th class="col-activity">Atividade realizada</th>
+        <th class="col-due">Data de entrega</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in atividades %}
+      <tr>
+        <td>{{ a.data_criacao }}</td>
+        <td>{{ a.atividade.titulo }}</td>
+        <td>{{ a.data_entrega }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="final-section">
+    <div class="nota">
+      Nota final da/o estudante: {{ nota }}
+    </div>
+
+    <div class="resultado">
+      Resultado:
+      {% if nota >= 7 %}
+        (X) aprovada/o &nbsp;&nbsp; ( ) reprovada/o
+      {% else %}
+        ( ) aprovada/o &nbsp;&nbsp; (X) reprovada/o
+      {% endif %}
+    </div>
+
+    <div class="subtitle" style="margin-top:14px;">Parecer Final:</div>
+
+    <div class="parecer">
+      {{ parecer_final|linebreaksbr }}
+    </div>
+  </div>
+
+  <div class="footer">
+    Porto Alegre, {{ data }}
+  </div>
+
+  <div class="assinatura">
+    Assinatura da/o docente: {{ professor }}
+  </div>
+
+</body>
+</html>

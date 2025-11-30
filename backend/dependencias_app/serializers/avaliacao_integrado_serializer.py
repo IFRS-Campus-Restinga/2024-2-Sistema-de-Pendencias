@@ -1,37 +1,77 @@
 from rest_framework import serializers
+from dependencias_app.formatters.format_avaliacoes import URLFieldsParser
+from dependencias_app.models.atividade_integrado import AtividadeIntegrado
+from dependencias_app.models.ped_integrado import PEDIntegrado
 from ..models.avaliacao_integrado import AvaliacaoIntegrado
 from datetime import datetime
 
 class AvaliacaoIntegradoSerializer(serializers.ModelSerializer):
     data_entrega = serializers.DateField(format="%Y-%m-%d")
+    ped = serializers.PrimaryKeyRelatedField(queryset=PEDIntegrado.objects.all())
+    atividade = serializers.PrimaryKeyRelatedField(queryset=AtividadeIntegrado.objects.all())
 
     class Meta:
         model = AvaliacaoIntegrado
-        fields = '__all__'
+        fields = "__all__"
 
     def validate(self, data):
-        atividade_id = data.get('atividade')
-        ped = data.get('ped')
-        
-        avaliacao_existente = AvaliacaoIntegrado.objects.filter(ped_id=ped, atividade_id=atividade_id).first()
+        """
+        Este método aceita tanto UM item quanto UMA LISTA,
+        porque o serviço sempre envia uma lista com many=True.
+        """
+        if isinstance(data, list):
+            return self._validate_list(data)
 
-        # Se a avaliação já existe e a nota já foi definida
+        return self._validate_item(data)
+
+    def _validate_item(self, item):
+        atividade_id = item.get("atividade")
+        ped = item.get("ped")
+
+        avaliacao_existente = AvaliacaoIntegrado.objects.filter(
+            ped_id=ped,
+            atividade_id=atividade_id
+        ).first()
+
         if avaliacao_existente and avaliacao_existente.nota is not None:
-            nova_nota = data.get('nota')
-            if nova_nota is None or nova_nota == '':
-                raise serializers.ValidationError({"Nota": "Não é permitido anular a nota de uma atividade após ser registrada."})
+            nova_nota = item.get("nota")
+            if nova_nota in (None, ""):
+                raise serializers.ValidationError({
+                    "Nota": "Não é permitido anular a nota após registro."
+                })
 
-        data_entrega = data.get('data_entrega', None)
-        
-        if data_entrega < datetime.today().date() or data_entrega == None or data_entrega == '':
-            raise serializers.ValidationError('A data de entrega da atividade não pode estar vazia ou ser inferior ao dia de hoje!')
+        data_entrega = item.get("data_entrega")
 
+        if not data_entrega or data_entrega < datetime.today().date():
+            raise serializers.ValidationError({
+                "Data entrega": "A data de entrega não pode ser menor que hoje."
+            })
 
-        return data
+        return item
+
+    def _validate_list(self, items):
+        erros = []
+        atividades_vistas = set()
+
+        for idx, item in enumerate(items):
+            atividade_id = item.get("atividade")
+
+            if atividade_id in atividades_vistas:
+                raise serializers.ValidationError(
+                    {"atividade": f"Não é permitido cadastrar avaliações com atividades duplicadas"}
+                )
+
+            atividades_vistas.add(atividade_id)
+
+            self._validate_item(item)
+
+        return items
 
     def to_representation(self, instance):
-        representation = super().to_representation(instance)
+        request = self.context.get("request")
+        retorno = request.GET.get("retorno")
 
-        
+        if not retorno:
+            raise serializers.ValidationError("O campo 'retorno' não pode ser nulo.")
 
-        return representation
+        return URLFieldsParser.parse(instance, retorno)

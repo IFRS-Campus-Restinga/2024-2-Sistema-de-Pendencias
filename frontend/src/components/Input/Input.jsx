@@ -1,7 +1,7 @@
 import MensagemErro from '../MensagemErro/MensagemErro';
 import styles from './Input.module.css'
 
-const Input = ({ tipo, textoAjuda, erro, onChange, onBlur, valor, desabilitado, alinharCentro, nome, dataMinima, lista, tiposDeArquivo, fonte, id, max, cor, dataMaxima }) => {
+const Input = ({ tipo, textoAjuda, erro, onChange, onBlur, valor, desabilitado, alinharCentro, nome, valorMinimo, lista, tiposDeArquivo, fonte, id, max, cor, valorMaximo }) => {
   return (
     <>
       <input
@@ -18,9 +18,9 @@ const Input = ({ tipo, textoAjuda, erro, onChange, onBlur, valor, desabilitado, 
           textAlign: alinharCentro ? 'center' : 'left',
           fontSize: fonte ?? '15px',
         }}
-        min={dataMinima}
+        min={valorMinimo}
         maxLength={max}
-        max={dataMaxima}
+        max={valorMaximo}
         list={lista}
         accept={tiposDeArquivo}
       />

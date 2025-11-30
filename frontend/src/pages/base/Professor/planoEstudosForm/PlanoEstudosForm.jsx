@@ -1,6 +1,6 @@
 import styles from "./PlanoEstudosForm.module.css";
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../../../../components/Button/Button";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
 import { toast } from "react-toastify";
@@ -15,6 +15,7 @@ import { validarCampoObrigatorio } from "../../../../utils/validacoes";
 const PlanoEstudosForm = () => {
   const location = useLocation();
   const modalidade = location.pathname.split("/")[4]
+  const redirect = useNavigate()
   const { state } = location || {}; // Verifica se estamos editando ou criando
   const [erros, setErros] = useState({});
   const [desabilitado, setDesabilitado] = useState(false)
@@ -76,6 +77,7 @@ const PlanoEstudosForm = () => {
       try {
         const res = await promise
         setPlanoFile(res.data.plano)
+                redirect(`/session/professor/peds/${modalidade}/$${state.ped}/`, {state: state.ped})
       } catch (err) {
         console.error("Erro ao registrar plano:", err)
         setDesabilitado(false)
@@ -121,6 +123,8 @@ const PlanoEstudosForm = () => {
       setIsLoading(false)
     }
   }, [])
+
+  if (!state) return null
   
   return (
     <FormContainer titulo={state.plano_estudos ? "Editar Plano de Estudos" : "Cadastro Plano de Estudos"} comprimento={"60%"}>
@@ -190,7 +194,11 @@ const PlanoEstudosForm = () => {
                     {erros.parecer_pedagogico ? <MensagemErro mensagem={erros.parecer_pedagogico}/> : null}
                   </Label>
                 </div>
-                <Button disabled={desabilitado} texto={state.plano_estudos ? "Salvar" : "Cadastrar"} tipo={"submit"}/>
+                {
+                  !["Lançada", "Finalizada", "Desativada"].includes(state.status) ? (
+                    <Button disabled={desabilitado} texto={state.plano_estudos ? "Salvar" : "Cadastrar"} tipo={"submit"}/>
+                  ) : null
+                }
               </form>
               {
                 planoFile ? (

@@ -8,6 +8,7 @@ from dependencias_app.views.atividade_views import *
 from dependencias_app.views.avaliacao_views import *
 from dependencias_app.views.plano_estudos_views import *
 from dependencias_app.views.acompanhamento_views import *
+from dependencias_app.views.form_encerramento_views import *
 
 
 urlpatterns = [
@@ -44,25 +45,28 @@ urlpatterns = [
     path('peds/<str:modalidade>/<str:ped_id>/editar/', editar_PED),
     path('peds/<str:modalidade>/<str:ped_id>/desativar/', desativar_PED),
 
-    # views de plano de estudos
+    # views para plano de estudos
     path('plano-estudos/<str:modalidade>/cadastrar/', cadastrar_plano_estudos),
     path('plano-estudos/<str:modalidade>/<str:plano_estudos_id>/', detalhes_plano_estudos),
     path('plano-estudos/<str:modalidade>/<str:plano_estudos_id>/editar/', editar_plano_estudos),
 
-    #views para atividades
+    # views para atividades
     path('atividades/<str:modalidade>/cadastrar/', cadastrar_atividade),
     path('atividades/<str:modalidade>/', listar_atividades),
     path('atividades/<str:modalidade>/<str:atividade_id>/', detalhes_atividade),
     path('atividades/<str:modalidade>/<str:atividade_id>/editar/', editar_atividade),
 
-    # views para avaliações
-    path('avaliacoes/<str:modalidade>/cadastrar/', cadastrar_avaliacoes),
-    path('avaliacoes/<str:modalidade>/<str:ped_id>/', listar_avaliacoes_por_PED),
-    path('avaliacoes/<str:modalidade>/editar/', editar_avaliacoes),
+    # views para plano de atividades
+    path('plano-atividades/<str:modalidade>/salvar/<str:ped_id>/', salvar_plano_atividades),
+    path('plano-atividades/<str:modalidade>/<str:ped_id>/', listar_avaliacoes_por_PED),
     
     #views para observações
     path('acompanhamentos/<str:modalidade>/cadastrar/', cadastrar_acompanhamento),
     path('acompanhamentos/<str:modalidade>/<str:ped_id>/listar/', listar_acompanhamentos),
     path('acompanhamentos/<str:modalidade>/<str:acompanhamento_id>/editar/', editar_acompanhamento),
 
+    # views para form encerramento
+    path('form-encerramento/<str:modalidade>/cadastrar/<str:ped_id>/', cadastrar_form_encerramento),
+    path('form-encerramento/<str:modalidade>/<str:form_encerramento_id>/', detalhes_form_encerramento),
+    path('form-encerramento/<str:modalidade>/<str:form_encerramento_id>/editar/', editar_form_encerramento),
 ]

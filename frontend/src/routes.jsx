@@ -43,9 +43,11 @@ import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
 import ListarPEDProfessor from './pages/base/Professor/listarDependenciasProfessor/ListarPEDProfessor'
 import DetalhesPEDProfessor from './pages/base/Professor/detalhesPEDProfessor/DetalhesPEDProfessor'
 import PlanoEstudosForm from './pages/base/Professor/planoEstudosForm/PlanoEstudosForm'
+import FormEncerramentoForm from './pages/base/Professor/formEncerramentoForm/FormEncerramentoForm'
 import BaseProfessor from './pages/base/Professor/BaseProfessor'
 import ListarAtividadesProfessor from './pages/base/Professor/atividadeLista/AtividadeLista'
 import AtividadeForm from './pages/base/Professor/atividadeForm/AtividadeForm'
+import AvaliacoesPEDProfessor from './pages/base/Professor/avaliacoes/AvaliacoesPEDProfessor'
 
 // Filhos de Aluno
 
@@ -243,26 +245,18 @@ const router = createBrowserRouter([
                 path: 'peds/:modalidade/:pedId/planoEstudos/:planoId/',
                 element: <PlanoEstudosForm />
             },
-            // {
-            //     path: 'peds/:modalidade/:pedId/atividades',
-            //     element: <AtividadesPEDProfessor />
-            // },
-            // {
-            //     path: 'adicionarObservacao',
-            //     element: <AdicionarObservacao />
-            // },
-            // {
-            //     path: 'observacoes/:pedTipo/:pedId/:idObservacao',
-            //     element: <DetalhesObservacoes />
-            // },
-            // {
-            //     path: 'observacoes/:pedTipo/:pedId',
-            //     element: <ListarObservacoes />
-            // },
-            // {
-            //     path: 'editarObservacao/:idObservacao',
-            //     element: <AdicionarObservacao />,
-            // },
+            {
+                path: 'peds/:modalidade/:pedId/formEncerramento',
+                element: <FormEncerramentoForm />
+            },
+            {
+                path: 'peds/:modalidade/:pedId/formEncerramento/:formId/',
+                element: <FormEncerramentoForm />
+            },
+            {
+                path: 'peds/:modalidade/:pedId/atividades',
+                element: <AvaliacoesPEDProfessor />
+            },
         ]
     },
     //   Rotas de Aluno

@@ -1,0 +1,196 @@
+import os
+import uuid
+import base64
+import locale
+from datetime import datetime
+from django.shortcuts import get_object_or_404
+from django.db import models, transaction
+import requests
+from rest_framework import serializers
+from dependencias_app.models.usuario import Usuario
+from ..utils.validar_modalidade import validar_modalidade
+from ..utils.manage_files import upload_to_drive, get_from_drive, change_file
+from django.conf import settings
+from .file_service import FileService
+from dependencias_session.services.token_service import TokenService
+from types import SimpleNamespace
+
+DRIVE_FOLDER = settings.DRIVE_FORM_ENCERRAMENTO_FOLDER
+cookies = {"system": settings.API_KEY}
+base_url = settings.BASE_SYSTEM_URL
+logo_path = os.path.join(settings.BASE_DIR, "dependencias_app", "templates_pdf", "logo-ifrs-colorido.png")
+locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
+
+class FormEncerramentoService:
+    @staticmethod
+    def validar_professor(request):
+        usuario_id = TokenService.decode_token(request.COOKIES.get("access_token")).get("user_id")
+
+        professor = Usuario.objects.filter(id=usuario_id, group__name="professor").first()
+
+        if professor is None:
+            raise serializers.ValidationError("Usuário inválido")
+
+        return professor
+
+    @staticmethod
+    def obter_atividades_por_ped(professor, modalidade, ped_id):
+        ped_model_class, _ = validar_modalidade(modalidade, "PED")
+
+        if modalidade == "Integrado":
+            ped_queryset = ped_model_class.objects.annotate(
+                professor_ped=models.F("professores_emi__professor")
+            ).filter(
+                id=uuid.UUID(ped_id),
+                professores_emi__professor=professor,
+                professores_emi__responsavel_atual=True
+            )
+            atividades_attr = "atividades_emi"
+
+        else:
+            ped_queryset = ped_model_class.objects.annotate(
+                professor_ped=models.F("professores_proeja__professor")
+            ).filter(
+                id=uuid.UUID(ped_id),
+                professores_proeja__professor=professor,
+                professores_proeja__responsavel_atual=True
+            )
+            atividades_attr = "atividades_proeja"
+
+        ped = ped_queryset.first()
+
+        if ped is None:
+            raise serializers.ValidationError("Progressão não encontrada para o usuário solicitante")
+
+        atividades = getattr(ped, atividades_attr).all()
+
+        return ped, atividades
+
+    @staticmethod
+    @transaction.atomic
+    def criar(request, modalidade, ped_id):
+        _, serializer_class = validar_modalidade(modalidade, "FormEncerramento")
+
+        serializer = serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        context = serializer.validated_data.copy()
+
+        serializer.validated_data.pop("atividades", None)
+        serializer.validated_data.pop("nota", None)
+        form_encerramento_instance = serializer.Meta.model(**serializer.validated_data)
+
+        professor = FormEncerramentoService.validar_professor(request)
+        ped, _ = FormEncerramentoService.obter_atividades_por_ped(professor, modalidade, ped_id)
+
+        if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get("access_token"))["user_id"]:
+            raise serializers.ValidationError("Acesso não autorizado")
+
+        if ped.status != "Em Andamento":
+            raise serializers.ValidationError("Esta progressão não está em andamento")
+
+        context["professor"] = requests.get(
+            f"{base_url}/api/users/get/{str(professor.id)}/",
+            params={"fields": "username"},
+            cookies=cookies
+        ).json().get("username")
+        context["data"] = datetime.now().strftime("%d de %B de %Y")
+        context["logo"] = f"file:///{logo_path.replace(os.sep, '/')}"
+
+        file = FileService.gerar_pdf("templates/form_encerramento.html", context)
+
+        file.seek(0)
+        pdf_base64 = base64.b64encode(file.read()).decode("utf-8")
+
+        file.seek(0)
+        form_encerramento_instance.drive_id = upload_to_drive(
+            file,
+            f"form_encerramento_{str(ped.id)}",
+            professor.group.name,
+            DRIVE_FOLDER
+        )
+
+        form_encerramento_instance.save()
+
+        ped.status = "Lançada"
+        ped.nota_final = float(context.get("nota"))
+        ped.situacao = "Aprovado" if float(context.get("nota")) >= 7.0 else "Reprovado"
+        ped.save()
+
+        return pdf_base64
+
+    @staticmethod
+    def detalhes(request, modalidade, form_encerramento_id):
+        model_class, serializer_class = validar_modalidade(modalidade, "FormEncerramento")
+        _, avaliacao_serializer_class = validar_modalidade(modalidade, "Avaliacao")
+
+        form_encerramento = get_object_or_404(model_class, pk=uuid.UUID(form_encerramento_id))
+
+        req = SimpleNamespace(GET={'retorno': 'id, atividade.id, atividade.titulo, data_entrega, data_criacao, nota, status, ped.id'})
+
+        serializer = serializer_class(form_encerramento, context={"request": request})
+
+        professor = FormEncerramentoService.validar_professor(request)
+        ped, atividades = FormEncerramentoService.obter_atividades_por_ped(professor, modalidade, str(form_encerramento.ped.id))
+
+        arquivo = get_from_drive(form_encerramento.drive_id, professor.group.name)
+
+        serializer_avaliacoes = avaliacao_serializer_class(atividades, many=True, context={'request': req})
+
+        return {**serializer.data, "nota": ped.nota_final, "atividades": serializer_avaliacoes.data}, arquivo["data"]
+
+    @staticmethod
+    @transaction.atomic
+    def editar(request, modalidade, form_encerramento_id):
+        model_class, serializer_class = validar_modalidade(modalidade, "FormEncerramento")
+
+        instance = get_object_or_404(model_class, pk=uuid.UUID(form_encerramento_id))
+
+        serializer = serializer_class(instance=instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        context = serializer.validated_data.copy()
+
+        serializer.validated_data.pop("atividades", None)
+        serializer.validated_data.pop("nota", None)
+        
+        form_encerramento_instance = instance
+
+        professor = FormEncerramentoService.validar_professor(request)
+        ped, _ = FormEncerramentoService.obter_atividades_por_ped(professor, modalidade, str(instance.ped.id))
+
+        if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get("access_token"))["user_id"]:
+            raise serializers.ValidationError("Acesso não autorizado")
+
+        if ped.status != "Lançada":
+            raise serializers.ValidationError("Esta progressão ainda não foi lançada.")
+
+        context["professor"] = requests.get(
+            f"{base_url}/api/users/get/{str(professor.id)}/",
+            params={"fields": "username"},
+            cookies=cookies
+        ).json().get("username")
+
+        context["data"] = datetime.now().strftime("%d de %B de %Y")
+        context["logo"] = f"file:///{logo_path.replace(os.sep, '/')}"
+        file = FileService.gerar_pdf("templates/form_encerramento.html", context)
+
+        file.seek(0)
+        pdf_base64 = base64.b64encode(file.read()).decode("utf-8")
+
+        file.seek(0)
+        form_encerramento_instance.drive_id = change_file(
+            file,
+            f"form_encerramento_{str(ped.id)}",
+            instance.drive_id,
+            DRIVE_FOLDER,
+            professor.group.name
+        )
+
+        form_encerramento_instance.save()
+
+        ped.nota_final = float(context.get("nota"))
+        ped.situacao = "Aprovado" if float(context.get("nota")) >= 7 else "Reprovado"
+        ped.save()
+
+        return pdf_base64

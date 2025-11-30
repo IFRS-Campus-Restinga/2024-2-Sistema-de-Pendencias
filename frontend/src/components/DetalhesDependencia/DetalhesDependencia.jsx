@@ -310,33 +310,33 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
         <div className={styles.container}>
           <div className={styles.containerStatus}>
             {
-              grupo !== "Aluno" && tipo !== 'PPT' ? (
+              grupo !== "Aluno" && tipo !== 'PPT' && dependencia.status !== "Desativada" ? (
                 <div className={styles.opcoesContainer}>
                   <Dropdown icone={<img src={gearIcon} className={styles.icone}/>}
                     itens={[
                       {
                         link: `atividades/`,
                         name: 'Atividades',
-                        state: dependencia,
+                        state: {ped: dependencia.id, status: dependencia.status},
                         desabilitado: !dependencia.plano_estudos
                       },
                       {
                         link: 'editar',
                         name: 'Editar PED',
                         state: dependencia.id,
-                        desabilitado: grupo !== 'gestao_escolar'
+                        desabilitado: grupo !== 'gestao_escolar' || (dependencia.status !== "Criada" || dependencia.status !== "Em Andamento")
                       },
                       {
-                        link: setLink(dependencia.plano_estudos?.id, 'planoEstudos'),
+                        link: setLink(dependencia.plano_estudos, 'planoEstudos'),
                         name: 'Plano de Estudos',
-                        state: {ped: dependencia.id, plano_estudos: dependencia.plano_estudos},
+                        state: {ped: dependencia.id, plano_estudos: dependencia.plano_estudos, status: dependencia.status},
                         desabilitado: !(dependencia.plano_estudos) ? grupo !== 'professor' : false
                       },
                       {
                         link: setLink(dependencia.form_encerramento, 'formEncerramento'),
                         name: 'Formulário de Encerramento',
-                        state: {ped: dependencia.id, form_encerramento: dependencia.form_encerramento},
-                        desabilitado: !(dependencia.form_encerramento) ? grupo !== 'professor' || dependencia.status !== 'Em andamento' : false
+                        state: {ped: dependencia.id, form_encerramento: dependencia.form_encerramento, status: dependencia.status},
+                        desabilitado: grupo !== 'professor' ? !(dependencia.form_encerramento) : false
                       },
                     ]}
                   />
@@ -378,7 +378,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
                       <Button
                         texto="Atividades"
                         onClick={() =>
-                          redirect(`atividades`, { state: dependencia })
+                          redirect(`atividades`, { state: {ped: dependencia.id, status: dependencia.status} })
                         }
                         disabled={!dependencia.plano_estudos}
                       />

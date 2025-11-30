@@ -32,3 +32,47 @@ export const validarSerieProgressao = (valor) => {
 
   return null;
 };
+
+export const validarDataMinima = (dataStr) => {
+    if (!dataStr) return "Data inválida.";
+
+    // dataStr vem no formato "YYYY-MM-DD"
+    const data = new Date(dataStr + "T00:00:00");
+
+    // criar data de hoje sem horário
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    if (data < hoje) {
+        return "A data não pode ser menor que a data de hoje.";
+    }
+
+    return null;
+}
+
+export const validarDataMaxima = (data) => {
+  const hoje = new Date();
+  
+  // Zera horas para comparar só a parte da data
+  hoje.setHours(0, 0, 0, 0);
+
+  const dt = new Date(data);
+  dt.setHours(0, 0, 0, 0);
+
+  if (dt > hoje) {
+    throw new Error("A data não pode ser maior que a data atual.");
+  }
+
+  return null;
+}
+
+export const validarDatas = (data1, data2) => {
+  const d1 = new Date(data1);
+  const d2 = new Date(data2);
+
+  if (d1 > d2) {
+    return "A data de criação não pode ser maior que a data de entrega";
+  }
+
+  return null;
+}

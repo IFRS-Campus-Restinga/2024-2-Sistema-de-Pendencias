@@ -1,0 +1,65 @@
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.textArea {
+    width: 100%;
+    padding: 5px;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    color: #767676;
+    min-height: 200px;
+}
+
+.textArea {
+    border: 1px solid #ccc;
+}
+
+textarea:focus {
+    border: 1px solid #797979;
+    outline: none;
+}
+
+.addButton {
+    background-color: #006b3f;
+    border-radius: 50%;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    width: 20px;
+    height: 20px;
+    padding: 5px;
+    border:  none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+}
+
+.remover {
+    width: 25px;
+    height: 25px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.pdfContainer {
+  margin: 20px;
+}
+
+.p {
+  color: #767676;
+  font-size: 12px;
+  text-align: center;
+}

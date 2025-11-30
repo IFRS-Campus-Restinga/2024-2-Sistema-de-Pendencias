@@ -26,7 +26,7 @@ class PlanoEstudosService:
     @staticmethod
     def criar(request, modalidade):
         _, serializer_class = validar_modalidade(modalidade, "PlanoEstudos")
-        ped_model_class = PEDIntegrado if modalidade == 'Integrado' else PEDProeja
+        ped_model_class, _ = validar_modalidade(modalidade, "PED")
 
         data = request.data.copy()
 
@@ -93,6 +93,7 @@ class PlanoEstudosService:
         plano_estudos_instance.save()
         
         ped.status = "Em Andamento"
+        ped.data_inicio = datetime.today().date()
         ped.save()
 
         return pdf_base64
