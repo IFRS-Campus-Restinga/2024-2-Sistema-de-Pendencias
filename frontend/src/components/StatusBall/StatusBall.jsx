@@ -69,9 +69,9 @@ const StatusBalls = ({ status, tipo, parecerLancado }) => {
                 </div>
                 </>
                 <div className={styles.containerProgresso}>
-                    <div style={{width: '14px', height: '14px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#00b36b' : 'white', border: '1px solid #ccc'}}/>
-                    <div style={{width: '17px', height: '17px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#009e55' : 'white', border: '1px solid #ccc'}}/>
-                    <div style={{width: '20px', height: '20px', borderRadius: '50%', backgroundColor: getStatusClass(2) ? '#006b3f' : 'white', border: '1px solid #ccc'}}/>
+                    <div style={{width: '14px', height: '14px', borderRadius: '50%', backgroundColor: getStatusClass(3) ? '#00b36b' : 'white', border: '1px solid #ccc'}}/>
+                    <div style={{width: '17px', height: '17px', borderRadius: '50%', backgroundColor: getStatusClass(3) ? '#009e55' : 'white', border: '1px solid #ccc'}}/>
+                    <div style={{width: '20px', height: '20px', borderRadius: '50%', backgroundColor: getStatusClass(3) ? '#006b3f' : 'white', border: '1px solid #ccc'}}/>
                 </div>
 
             {/* Bola 4: Finalizada */}

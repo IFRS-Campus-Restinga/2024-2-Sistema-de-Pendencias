@@ -2,6 +2,9 @@ import uuid
 from django.conf import settings
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import NotFound
+from rest_framework.response import Response
+from dependencias_session.services.token_service import TokenService
 from ..models.ppt import PPT
 from ..serializers.ppt_serializer import PPTSerializer
 from rest_framework import serializers
@@ -11,7 +14,7 @@ from ..services.usuario_service import UsuarioService
 from .async_request_service import AsyncRequestService
 
 
-class PPTPagintaion(PageNumberPagination):
+class PPTPagintation(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 30
@@ -33,7 +36,7 @@ class PPTService:
     def listar(request):
         busca = request.GET.get('busca', '')
 
-        paginator = PPTPagintaion()
+        paginator = PPTPagintation()
 
         ppts = PPT.objects.all().order_by('-data_criacao')
 
@@ -80,6 +83,76 @@ class PPTService:
 
         page = paginator.paginate_queryset(resultado, request)
         return paginator.get_paginated_response(page)
+
+    @staticmethod
+    def listar_coordenador(request):
+        pass
+
+    @staticmethod
+    def listar_aluno(request):
+        aluno_id = uuid.UUID(TokenService.decode_token(request.COOKIES.get("access_token")).get("user_id"))
+        filtros = request.GET.getlist("params[]", [])
+
+        ppts = PPT.objects.filter(aluno__id=aluno_id).order_by('-data_criacao')
+
+        if filtros:
+            ppts = ppts.filter(status__in=filtros)
+
+        PPTSerializer(ppts, many=True, context={'request': request})
+
+        paginator = PPTPagintation()
+
+        try:
+            page = paginator.paginate_queryset(ppts, request)
+        except NotFound:
+            return Response({"results": []})
+
+        if not page:
+            return Response({"results": []})
+
+        lista_serializada = PPTSerializer(page, many=True, context={'request': request}).data
+
+        base_url = settings.BASE_SYSTEM_URL
+        cookies = {"system": settings.API_KEY}
+
+        resultado = []
+
+        for ppt in lista_serializada:
+
+            tasks = [
+                {
+                    "key": "curso",
+                    "url": f"{base_url}/api/academic/courses/get/{ppt['curso']}/",
+                    "params": {"fields": "name, course_class.id, course_class.number"},
+                },
+                {
+                    "key": "disciplina",
+                    "url": f"{base_url}/api/academic/subjects/get/{ppt['disciplina']}/",
+                    "params": {"fields": "name"},
+                },
+                {
+                    "key": "professor_ppt",
+                    "url": f"{base_url}/api/users/get/{ppt['professor_ppt']}/",
+                    "params": {"fields": "username"},
+                }
+            ]
+
+            try:
+                dados_ppt = AsyncRequestService.run_fetch(tasks, cookies=cookies)
+                ppt.update(dados_ppt)
+
+                turma_atual_id = ppt['turma_atual']
+                turmas = ppt['curso'].get('course_class', [])
+
+                # filtra a turma correta
+                ppt['turma_atual'] = next((turma for turma in turmas if turma['id'] == turma_atual_id), None)
+
+                resultado.append(formatar_obj(ppt, request.GET.get("formato")))
+
+            except Exception as e:
+                raise Exception(f"Erro ao enriquecer PPT {ppt['id']}: {str(e)}")
+
+        return paginator.get_paginated_response(resultado)
 
     @staticmethod
     def detalhes(request, ppt_id):

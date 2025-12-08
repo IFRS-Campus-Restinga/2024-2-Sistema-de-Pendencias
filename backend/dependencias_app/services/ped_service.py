@@ -3,6 +3,8 @@ from django.conf import settings
 from django.db import transaction, models
 from django.shortcuts import get_object_or_404
 from django.db.models import OuterRef, Subquery, UUIDField
+from rest_framework.exceptions import NotFound
+from rest_framework.response import Response
 from ..models.professor_progressao import ProfessorProgressaoIntegrado, ProfessorProgressaoProeja
 from ..models.usuario import Usuario
 from rest_framework import serializers
@@ -241,6 +243,87 @@ class PEDService:
 
         page = paginator.paginate_queryset(resultado, request)
         return paginator.get_paginated_response(page)
+
+    @staticmethod
+    def listar_aluno(request):
+        model_ped_emi, serializer_ped_emi = validar_modalidade('Integrado', 'PED')
+        model_ped_proeja, serializer_ped_proeja = validar_modalidade('Proeja', 'PED')
+
+        aluno_id = uuid.UUID(TokenService.decode_token(request.COOKIES.get("access_token")).get("user_id"))
+        filtros = request.GET.getlist("params[]", [])
+
+        responsavel_subquery_integrado = ProfessorProgressaoIntegrado.objects.filter(
+            ped=OuterRef('pk'),
+            responsavel_atual=True
+        ).values('professor')[:1]
+
+        responsavel_subquery_proeja = ProfessorProgressaoProeja.objects.filter(
+            ped=OuterRef('pk'),
+            responsavel_atual=True,
+        ).values('professor')[:1]
+
+        peds = model_ped_emi.objects.annotate(
+            professor_ped=Subquery(responsavel_subquery_integrado, output_field=UUIDField())
+        ).filter(aluno__id=aluno_id).order_by('-data_criacao')
+
+        if filtros:
+            peds = peds.filter(status__in=filtros)
+
+        serializer_class = serializer_ped_emi
+
+        if not peds.exists():
+            peds = model_ped_proeja.objects.annotate(
+                professor_ped=Subquery(responsavel_subquery_proeja, output_field=UUIDField())
+            ).filter(aluno__id=aluno_id).order_by('-data_criacao')
+
+            serializer_class = serializer_ped_proeja
+
+        paginator = PEDPagination()
+
+        try:
+            page = paginator.paginate_queryset(peds, request)
+        except NotFound:
+            return Response({"results": []})
+
+        if not page:
+            return Response({"results": []})
+
+        lista_serializada = serializer_class(page, context={'request': request}, many=True).data
+
+        base_url = settings.BASE_SYSTEM_URL
+        cookies = {"system": settings.API_KEY}
+
+        resultado = []
+
+        for ped in lista_serializada:
+
+            tasks = [
+                {
+                    "key": "curso",
+                    "url": f"{base_url}/api/academic/courses/get/{ped['curso']}/",
+                    "params": {"fields": "name"},
+                },
+                {
+                    "key": "disciplina",
+                    "url": f"{base_url}/api/academic/subjects/get/{ped['disciplina']}/",
+                    "params": {"fields": "name"},
+                },
+                {
+                    "key": "professor_ped",
+                    "url": f"{base_url}/api/users/get/{ped['professor_ped']}/",
+                    "params": {"fields": "username"},
+                },
+            ]
+
+            try:
+                dados_extra = AsyncRequestService.run_fetch(tasks, cookies=cookies)
+                ped.update(dados_extra)
+                resultado.append(formatar_obj(ped, request.GET.get("formato")))
+
+            except Exception as e:
+                raise Exception(f"Erro ao enriquecer PED {ped['id']}: {str(e)}")
+
+        return paginator.get_paginated_response(resultado)
 
     @staticmethod
     def detalhes(request, modalidade, ped_id):

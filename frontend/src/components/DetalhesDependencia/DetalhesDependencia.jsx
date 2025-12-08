@@ -310,7 +310,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
         <div className={styles.container}>
           <div className={styles.containerStatus}>
             {
-              grupo !== "Aluno" && tipo !== 'PPT' && dependencia.status !== "Desativada" ? (
+              grupo !== "aluno" && tipo !== 'PPT' && dependencia.status !== "Desativada" ? (
                 <div className={styles.opcoesContainer}>
                   <Dropdown icone={<img src={gearIcon} className={styles.icone}/>}
                     itens={[
@@ -378,9 +378,8 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
                       <Button
                         texto="Atividades"
                         onClick={() =>
-                          redirect(`atividades`, { state: {ped: dependencia.id, status: dependencia.status} })
+                          redirect(`atividades`, { state: {ped: dependencia.id, modalidade: modalidade} })
                         }
-                        disabled={!dependencia.plano_estudos}
                       />
                     );
                   }

@@ -9,7 +9,7 @@ from dependencias_app.services.avaliacao_service import AvaliacaoService
 @has_permissions(["add_avaliacaoproeja", "add_avaliacaointegrado", "change_avaliacaoproeja", "change_avaliacaointegrado"])
 def salvar_plano_atividades(request, modalidade, ped_id):
     try:
-        AvaliacaoService.salvar_plano_estudos(request, modalidade, ped_id)
+        AvaliacaoService.salvar_plano_atividades(request, modalidade, ped_id)
 
         return Response({'mensagem': 'Plano de estudos salvo com sucesso'}, status=status.HTTP_201_CREATED)
     except serializers.ValidationError as e:

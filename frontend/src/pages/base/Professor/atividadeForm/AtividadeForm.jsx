@@ -26,7 +26,7 @@ const AtividadeForm = () => {
     const [formData, setFormData] = useState({
         titulo: '',
         descricao: '',
-        arquivo: '',
+        arquivo: null,
     })
 
     const trocarModalidade = () => {
@@ -198,15 +198,15 @@ const AtividadeForm = () => {
                     </span>
                     <Button texto={state ? 'Salvar' : 'Cadastrar'} tipo={'submit'} disabled={desabilitado}/>
                 </section>
-                <section className={styles.section}>
                     {
                         formData.arquivo ?  (
-                            <div className={styles.pdfContainer}>
-                                <PDFPreview pdfData={formData.arquivo?.data ?? formData.arquivo} pdfUrl={formData.arquivo?.image_url ?? null}/>
-                            </div>
+                            <section className={styles.section}>
+                                <div className={styles.pdfContainer}>
+                                    <PDFPreview pdfData={formData.arquivo?.data ?? formData.arquivo} pdfUrl={formData.arquivo?.image_url ?? null}/>
+                                </div>
+                            </section>
                         ) : <></>
                     }
-                </section>
             </form>
         </FormContainer>
     )

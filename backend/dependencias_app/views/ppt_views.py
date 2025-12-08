@@ -26,6 +26,26 @@ def listar_PPT(request):
         return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+@has_permissions(['view_ppt'])
+def listar_PPT_coordenador(request):
+    try:
+        return PPTService.listar_coordenador(request)
+    except serializers.ValidationError as e:
+        return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+@has_permissions(['view_ppt'])
+def listar_PPT_aluno(request):
+    try:
+        return PPTService.listar_aluno(request)
+    except serializers.ValidationError as e:
+        return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])

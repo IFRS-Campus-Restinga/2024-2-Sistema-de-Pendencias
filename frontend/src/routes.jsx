@@ -48,6 +48,12 @@ import BaseProfessor from './pages/base/Professor/BaseProfessor'
 import ListarAtividadesProfessor from './pages/base/Professor/atividadeLista/AtividadeLista'
 import AtividadeForm from './pages/base/Professor/atividadeForm/AtividadeForm'
 import AvaliacoesPEDProfessor from './pages/base/Professor/avaliacoes/AvaliacoesPEDProfessor'
+import BaseAluno from './pages/base/Aluno/BaseAluno'
+import HomeAluno from './pages/base/Aluno/home/HomeAluno'
+import DetalhesPPTAluno from './pages/base/Aluno/detalhesDependencia/DetalhesPPTAluno'
+import DetalhesPEDAluno from './pages/base/Aluno/detalhesDependencia/DetalhesPEDAluno'
+import ListarAtividadesAluno from './pages/base/Aluno/listarAtividades/ListarAtividadesAluno'
+import DetalhesAtividadeAluno from './pages/base/Aluno/detalhesAtividade/DetalhesAtividadeAluno'
 
 // Filhos de Aluno
 
@@ -259,30 +265,34 @@ const router = createBrowserRouter([
             },
         ]
     },
-    //   Rotas de Aluno
-    // {
-    //     path: '/sessao/Aluno/',
-    //     element: <BaseAluno />,
-    //     //   adicionar abaixo, as children de aluno
-    //     children: [
-    //         {
-    //             path: ':idUsuario/',
-    //             element: <HomeAluno />
-    //         },
-    //         {
-    //             path: ':idUsuario/:modalidade/:pedId/detalhes',
-    //             element: <DetalhesDependenciaAluno />
-    //         },
-    //         {
-    //             path: ':idUsuario/:modalidade/:pedId/detalhes/atividades',
-    //             element: <ListarAtividadesAluno />
-    //         },
-    //         {
-    //             path: ':idUsuario/:modalidade/:pedId/detalhes/atividades/:atividadeId',
-    //             element: <DetalhesAtividadeAluno />
-    //         }
-    //     ]
-    // },
+    // Rotas de Aluno
+    {
+        path: '/session/aluno/',
+        element: <BaseAluno />,
+        //   adicionar abaixo, as children de aluno
+        children: [
+            {
+                path: 'home',
+                element: <HomeAluno />
+            },
+            {
+                path: 'PPT/:pptId',
+                element: <DetalhesPPTAluno />
+            },
+            {
+                path: 'PED/:pedId',
+                element: <DetalhesPEDAluno />
+            },
+            {
+                path: 'PED/:pedId/atividades',
+                element: <ListarAtividadesAluno />
+            },
+            {
+                path: 'PED/:pedId/atividades/:atividadeId',
+                element: <DetalhesAtividadeAluno />
+            }
+        ]
+    },
 ])
 
 export default router

@@ -31,7 +31,7 @@ const ListarAtividadesProfessor = () => {
     return (
         <Listagem
             editar={true}
-            visualizar={true}
+            visualizar={false}
             fetchDados={fetchAtividades}
             propMap={propMap}
             titulo={`Atividades ${modalidade}`}

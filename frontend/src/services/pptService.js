@@ -17,6 +17,18 @@ export const PPTService = {
     });
   },
 
+  listarAluno: async (retorno, pagina, formato, params) => {
+    return await api.get("api/ppts/listar/aluno", {
+      params: {
+        retorno,
+        page: pagina,
+        page_size: 4,
+        formato,
+        "params[]": params,
+      },
+    });
+  },
+
   porId: async (pptId, retorno, formato) => {
     return await api.get(`api/ppts/${pptId}/`, {
       params: {

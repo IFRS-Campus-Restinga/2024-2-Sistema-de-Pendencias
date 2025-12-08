@@ -41,6 +41,18 @@ export const PEDService = {
     });
   },
 
+  listarAluno: async (retorno, pagina, formato, params) => {
+    return await api.get(`api/peds/listar/aluno/`, {
+      params: {
+        retorno,
+        page: pagina,
+        page_size: 4,
+        formato,
+        "params[]": params,
+      },
+    });
+  },
+
   porId: async (pedId, modalidade, retorno, formato) => {
     const retornoLimpo = (retorno || "").replace(/\s+/g, "");
     return await api.get(`api/peds/${modalidade}/${pedId}/`, {

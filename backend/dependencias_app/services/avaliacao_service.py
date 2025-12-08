@@ -44,7 +44,7 @@ class AvaliacaoService:
 
     @staticmethod
     @transaction.atomic
-    def salvar_plano_estudos(request, modalidade, ped_id):
+    def salvar_plano_atividades(request, modalidade, ped_id):
         avaliacao_model_class, avaliacao_serializer_class = validar_modalidade(modalidade, "Avaliacao")
 
         professor = AvaliacaoService.validar_professor(request)
@@ -86,15 +86,32 @@ class AvaliacaoService:
             ped.atividades_proeja.all().delete()
 
         avaliacao_model_class.objects.bulk_create([avaliacao_model_class(**item) for item in serializer.validated_data])
-
-
+    
     @staticmethod
     def listar_avaliacoes(request, modalidade, ped_id):
         _, avaliacao_serializer_class = validar_modalidade(modalidade, "Avaliacao")
+        ped_model_class, _ = validar_modalidade(modalidade, "PED")
 
-        professor = AvaliacaoService.validar_professor(request)
-        _, avaliacoes_ped = AvaliacaoService.obter_atividades_por_ped(professor, modalidade, ped_id)
+        payload = TokenService.decode_token(request.COOKIES.get("access_token"))
 
-        serializer = avaliacao_serializer_class(avaliacoes_ped, many=True, context={'request': request})
+        if payload.get("group") == "gestao_escolar":
+            ped = ped_model_class.objects.get(id=uuid.UUID(ped_id))
+        if payload.get("group") == "aluno":
+            ped = ped_model_class.objects.get(id=uuid.UUID(ped_id), aluno__id=uuid.UUID(payload.get("user_id")))
+        if payload.get("group") == "professor":
+            professor = AvaliacaoService.validar_professor(request)
+            _, avaliacoes_ped = AvaliacaoService.obter_atividades_por_ped(professor, modalidade, ped_id)
+
+            serializer = avaliacao_serializer_class(avaliacoes_ped, many=True, context={'request': request})
+
+            return serializer.data
+
+
+        if modalidade == 'Integrado':
+            avaliacoes = ped.atividades_emi.all()
+        if modalidade == 'Proeja':
+            avaliacoes = ped.atividades_proeja.all()
+
+        serializer = avaliacao_serializer_class(avaliacoes, many=True, context={'request': request})
 
         return serializer.data
