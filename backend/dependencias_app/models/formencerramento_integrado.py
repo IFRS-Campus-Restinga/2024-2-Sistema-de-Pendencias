@@ -7,4 +7,3 @@ class FormEncerramentoIntegrado(FormEncerramento):
 
     class Meta:
         abstract = False
-        verbose_name = "Form Encerramento EMI"

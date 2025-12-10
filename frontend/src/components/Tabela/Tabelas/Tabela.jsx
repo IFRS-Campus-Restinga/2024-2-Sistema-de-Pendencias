@@ -15,6 +15,27 @@ const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setP
         redirect(`${itemId}/${action}`, {state: itemId})
     }
 
+    const formatarData = (valor) => {
+        if (!valor || valor.length == 0) return "-"
+        if (typeof valor !== "string") return valor;
+
+        // Regex para pegar datetime ISO – 2025-12-09T00:00:00-03:00
+        const isoDatetimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/;
+
+        if (isoDatetimeRegex.test(valor)) {
+            const date = new Date(valor);
+            if (!isNaN(date)) {
+                return date.toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                });
+            }
+        }
+
+        return valor;
+    };
+
     useEffect(() => {
         if (!primeiroRef.current || !ultimoRef.current) return;
 
@@ -94,7 +115,7 @@ const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setP
                                             Object.entries(item).map(([key, value]) => (
                                                 key !== 'id' ? (
                                                     <td key={key} className={styles.coluna}>
-                                                        {value ?? '-'}
+                                                        {formatarData(value)}
                                                     </td>
                                                 ) : null
                                             ))

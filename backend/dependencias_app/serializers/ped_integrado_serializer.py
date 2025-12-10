@@ -2,8 +2,6 @@ from rest_framework import serializers
 from dependencias_app.models.ped_integrado import PEDIntegrado
 from ..formatters.format_ped_integrado import URLFieldsParser
 from ..models.usuario import Usuario
-from ..serializers.planoestudos_integrado_serializer import PlanoEstudosIntegradoSerializer
-from ..serializers.formencerramento_integrado_serializer import FormEncerramentoIntegradoSerializer
 
 class PEDIntegradoSerializer(serializers.ModelSerializer):
     aluno = serializers.PrimaryKeyRelatedField(
@@ -28,6 +26,7 @@ class PEDIntegradoSerializer(serializers.ModelSerializer):
         from ..models.ppt import PPT
 
         aluno = attrs.get('aluno')
+        novo_status = attrs.get('status', getattr(self.instance, 'status', None))
 
         peds_integrado = PEDIntegrado.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
 
@@ -45,19 +44,43 @@ class PEDIntegradoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 "aluno": "Já existem 2 PEDs/PPTs ativos para este aluno."
             })
+        
+        status_atual = self.instance.status
+
+        transicoes_validas = {
+            "Criada": ["Em Andamento"],
+            "Em Andamento": ["Lançada"],
+            "Lançada": ["Finalizada"],
+            "Finalizada": [], 
+            "Desativada": ["Criada", "Em Andamento", "Lançada"]
+        }
+
+        if status_atual not in transicoes_validas:
+            raise serializers.ValidationError({"status": "Status atual inválido."})
+
+        if novo_status not in transicoes_validas[status_atual]:
+            raise serializers.ValidationError({
+                "status": f"Transição inválida de status"
+            })
+
 
         return super().validate(attrs)
     
     def update(self, instance, validated_data):
-        invalid_fields = [
-            field for field in validated_data.keys()
-            if field != 'observacao' and field != 'status'
-        ]
+        allowed_fields = {'observacao', 'status'}
 
-        if invalid_fields:
-            raise serializers.ValidationError({
-                "Campos inválidos": f"Apenas os campos observação e status podem ser alterados"
-            })
+        for field, new_value in validated_data.items():
+
+            if field in allowed_fields:
+                continue
+
+            current_value = getattr(instance, field, None)
+
+            if new_value != current_value:
+                raise serializers.ValidationError({
+                    field: f"Não é permitido alterar o campo '{field}'. "
+                       f"Valor recebido difere do registrado."
+                })
 
         return super().update(instance, validated_data)
 

@@ -45,7 +45,19 @@ const Listagem = ({titulo, fetchDados, urlCadastro, propMap, editar, visualizar}
                     />
                     {
                         urlCadastro ? (
-                            <div className={styles.addIcone} onClick={() => navigate(urlCadastro)}>+</div>
+                            <div className={styles.addIcone} 
+                                onClick={() => {
+                                    if (titulo.includes("PEDs Integrado")) {
+                                        navigate(urlCadastro, {state: {modalidade: "Integrado"}})
+                                    } else if (titulo.includes("PEDs ProEJA")) {
+                                        navigate(urlCadastro, {state: {modalidade: "ProEJA"}})
+                                    } else {
+                                        navigate(urlCadastro)
+                                    }
+                                }}
+                            >
+                                +
+                            </div>
                         ) : null
                     }
                 </div>

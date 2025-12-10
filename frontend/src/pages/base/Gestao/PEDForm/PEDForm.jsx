@@ -28,7 +28,7 @@ const PEDForm = () => {
   const { state } = location || {}
   const tipoPed = location.pathname.split('/')[4];
   const [carregando, setCarregando] = useState(true)
-  const [modalidade, setModalidade] = useState(state ? tipoPed : 'Integrado')
+  const [modalidade, setModalidade] = useState(state?.modalidade ? state.modalidade : tipoPed ? tipoPed : 'Integrado')
   const [opcoesTurmaAtual, setOpcoesTurmaAtual] = useState([])
   const [opcoesAlunos, setOpcoesAlunos] = useState([])
   const [opcoesProfessoresPED, setOpcoesProfessoresPED] = useState([])
@@ -108,7 +108,7 @@ const PEDForm = () => {
   }
 
   const trocaModalidade = (novoValor) => {
-    if (!state) {
+    if (state.modalidade) {
       setModalidade(novoValor);
       setOpcoesCalendarios(opcoesCalendarios.filter((calendario) => calendario.tipo_calendario === novoValor))
 
@@ -173,7 +173,7 @@ const PEDForm = () => {
 
     if (validarForm()) {
       let req
-      if (state) {
+      if (state && !state.modalidade) {
         req = PEDService.editar(formData, state, modalidade)
       } else {
         req = PEDService.criar(formData, modalidade);
@@ -194,7 +194,7 @@ const PEDForm = () => {
         if (res.status === 200 || res.status === 201) {
           setErros({})
           setTimeout(() => {
-            redirect('/session/gestao_escolar/peds/Integrado')
+            redirect(`/session/gestao_escolar/peds/${modalidade}/`)
           }, 3000);
         }
       }).catch((err) => {
@@ -266,7 +266,7 @@ const PEDForm = () => {
 
       setOpcoesCursos(res.data.results)
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
@@ -290,26 +290,20 @@ const PEDForm = () => {
     }
   }
 
+  const getFormat = () => {
+    if (modalidade === 'Integrado') return 'id, aluno, professor_ped, professor_disciplina, curso, disciplina, trimestre_recuperar, periodo_letivo, turma_atual, serie_progressao, observacao'
+    
+    if (modalidade === "ProEJA") return 'id, aluno, professor_ped, professor_disciplina, curso, disciplina, ano_semestre_reprov, periodo_letivo, observacao'
+  }
+
   const fetchPED = async () => {
+    const format = getFormat()
     try {
       const res = await PEDService.porId(
         state, 
         modalidade, 
-        `
-          id,
-          aluno,
-          professor_disciplina,
-          professor_ped,
-          curso,
-          disciplina,
-          periodo_letivo,
-          observacao,
-          turma_atual,
-          serie_progressao,
-          trimestre_recuperar,
-          ano_semestre_reprov
-        `
-        , 'obj'
+        format, 
+        'obj'
       );
       
       setFormData({
@@ -358,19 +352,22 @@ const PEDForm = () => {
     let novosErros = {}
 
     for (let campo in formData) {
-      if (campo !== 'observacao' && campo !== 'trimestre_recuperar' && campo !== 'serie_progressao' && campo !== 'ano_semestre_reprov') novosErros[campo] = validarCampoUUID4(formData[campo])
-
-      if (campo === 'serie_progressao') {
-        if (formData.serie_progressao === '') novosErros.serie_progressao = 'Campo obrigatório'
-
-        if (formData.serie_progressao[0] >= controleInputs.turma_atual[0]) novosErros.turma_serie = 'Turma atual deve ser superior à série de progressão'
+      if (modalidade === "Integrado") {
+        if (campo !== 'observacao' && campo !== 'trimestre_recuperar' && campo !== 'serie_progressao' && campo !== 'ano_semestre_reprov') novosErros[campo] = validarCampoUUID4(formData[campo])
+  
+        if (campo === 'serie_progressao') {
+          if (formData.serie_progressao === '') novosErros.serie_progressao = 'Campo obrigatório'
+  
+          if (formData.serie_progressao[0] >= controleInputs.turma_atual[0]) novosErros.turma_serie = 'Turma atual deve ser superior à série de progressão'
+        }
+  
+        if (campo === 'trimestre_recuperar') {
+          if (formData.trimestre_recuperar === '') novosErros.trimestre_recuperar = 'Campo obrigatório'
+        }
       }
-
-      if (campo === 'trimestre_recuperar') {
-        if (formData.trimestre_recuperar === '') novosErros.trimestre_recuperar = 'Campo obrigatório'
+      if (modalidade === "ProEJA") {
+        if (campo === 'ano_semestre_reprov') novosErros.ano_semestre_reprov = validarAnoSemestreReprov(formData.ano_semestre_reprov)
       }
-
-      if (campo === 'ano_semestre_reprov') novosErros.ano_semestre_reprov = validarAnoSemestreReprov(formData.ano_semestre_reprov)
     }
 
     setErros(novosErros)
@@ -379,10 +376,13 @@ const PEDForm = () => {
   }
 
   useEffect(() => {
-    console.log(state)
     if (state) {
-      setDesabilitado(true)
-      fetchPED()
+      if (!state.modalidade) {
+        setDesabilitado(true)
+        fetchPED()
+      } else {
+        setCarregando(false)
+      }
     } else {
       setCarregando(false)
     }
@@ -403,7 +403,7 @@ const PEDForm = () => {
             valor2='Integrado'
             valor={modalidade}
             stateHandler={trocaModalidade}
-            imagemCustom={state ? <FontAwesomeIcon icon={faLock} size="xl" color={modalidade === 'Integrado' ? '#006b3f' : '#fff'} /> : <></>}
+            imagemCustom={state && !state.modalidade ? <FontAwesomeIcon icon={faLock} size="xl" color={modalidade === 'Integrado' ? '#006b3f' : '#fff'} /> : <></>}
           />
         </span>
         {

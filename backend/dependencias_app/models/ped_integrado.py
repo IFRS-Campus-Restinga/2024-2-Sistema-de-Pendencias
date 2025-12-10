@@ -18,4 +18,3 @@ class PEDIntegrado(Progressao):
 
     class Meta:
         abstract = False
-        verbose_name_plural = 'PEDs EMI'

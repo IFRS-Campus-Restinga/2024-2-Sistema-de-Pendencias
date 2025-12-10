@@ -1,28 +1,52 @@
-import { useLocation } from "react-router-dom"
+import { useFetcher, useLocation } from "react-router-dom"
 import Listagem from "../../../../features/listagem/Listagem"
 import { PEDService } from "../../../../services/pedService"
+import { useEffect, useState } from "react"
 
-const propMap = {
-    'id': 'id',
-    'aluno': 'aluno',
-    'professor_disciplina': 'professor disciplina',
-    'professor_ped': 'professor progressão',
-    'curso': 'curso',
-    'disciplina': 'disciplina',
-    'trimestre_recuperar': 'trimestre(s) à recup.',
-    'data_inicio': 'data início',
-    'data_fim': 'data fim',
-    'status': 'status',
-    'situacao': 'situação'
-}
-
-const ListarPEDProfessor = () => {
+const ListarPEDGestao = () => {
     const location = useLocation()
     const modalidade = location.pathname.split('/')[4]
+    const [propMap, setPropMap] = useState({})
+
+    const getPropMap = () => {
+        if (modalidade === 'Integrado') setPropMap({
+            'id': 'id',
+            'aluno': 'aluno',
+            'professor_disciplina': 'professor disciplina',
+            'curso': 'curso',
+            'disciplina': 'disciplina',
+            'trimestre_recuperar': 'trimestre(s) à recup.',
+            'data_inicio': 'data início',
+            'data_fim': 'data fim',
+            'status': 'status',
+            'situacao': 'situação'
+        })
+        
+        if (modalidade === "ProEJA") setPropMap({
+            'id': 'id',
+            'aluno': 'aluno',
+            'professor_disciplina': 'professor disciplina',
+            'curso': 'curso',
+            'disciplina': 'disciplina',
+            'ano_semestre_reprov': 'semestre de reprovação',
+            'data_inicio': 'data início',
+            'data_fim': 'data fim',
+            'status': 'status',
+            'situacao': 'situação'
+        })
+    }
+
+    const getFormat = () => {
+        if (modalidade === 'Integrado') return 'id, aluno, professor_disciplina, curso, disciplina, trimestre_recuperar, data_inicio, data_fim, status, situacao'
+        
+        if (modalidade === "ProEJA") return 'id, aluno, professor_disciplina, curso, disciplina, ano_semestre_reprov, data_inicio, data_fim, status, situacao'
+    }
 
     const fetchPEDs = async (pagina, param) => {
+        const format = getFormat()
+
         const res = await PEDService.listarProfessor(
-            'id, aluno, professor_ped, professor_disciplina, curso, disciplina, trimestre_recuperar, data_inicio, data_fim, status, situacao', 
+            format,
             param, 
             pagina, 
             modalidade,
@@ -36,15 +60,18 @@ const ListarPEDProfessor = () => {
         }
     }
 
+    useEffect(() => {
+        getPropMap()
+    }, [modalidade])
+
     return (
         <Listagem
             fetchDados={fetchPEDs}
             titulo={`PEDs ${modalidade}`}
             propMap={propMap}
-            editar={false}
             visualizar={true}
         />
     )
 }
 
-export default ListarPEDProfessor
+export default ListarPEDGestao

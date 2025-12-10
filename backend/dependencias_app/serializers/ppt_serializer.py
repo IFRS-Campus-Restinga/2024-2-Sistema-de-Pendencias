@@ -26,7 +26,7 @@ class PPTSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate(self, attrs):
-        from ..models.ped_proeja import PEDProEJA
+        from ..models.ped_proeja import PEDProeja
         from ..models.ped_integrado import PEDIntegrado
 
         aluno = attrs.get('aluno')
@@ -35,7 +35,7 @@ class PPTSerializer(serializers.ModelSerializer):
 
         ppts = PPT.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
 
-        peds_proeja = PEDProEJA.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
+        peds_proeja = PEDProeja.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
 
         if self.instance is None and peds_proeja.exists():
             raise serializers.ValidationError({

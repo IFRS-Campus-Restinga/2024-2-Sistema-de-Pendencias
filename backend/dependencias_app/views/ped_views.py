@@ -74,7 +74,7 @@ def detalhes_PED(request, modalidade, ped_id):
 @has_permissions(['change_pedintegrado', 'change_pedproeja'])
 def editar_PED(request, modalidade, ped_id):
     try:
-        PEDService.editar(request.data, ped_id, modalidade)
+        PEDService.editar(request.data, modalidade, ped_id)
         return Response({'message': 'PED editada com sucesso'}, status=status.HTTP_200_OK)
     except serializers.ValidationError as e:
         return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
@@ -84,7 +84,15 @@ def editar_PED(request, modalidade, ped_id):
         return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
-@api_view(['PATCH'])
+@api_view(['PATCH', 'PUT'])
 @has_permissions(['change_pedintegrado', 'change_pedproeja'])
-def desativar_PED(request, modalidade, ped_id):
-    pass
+def trocar_status_PED(request, modalidade, ped_id):
+    try:
+        PEDService.trocar_status(request.data, modalidade, ped_id)
+        return Response({'message': 'Status da PED alterado com sucesso'}, status=status.HTTP_200_OK)
+    except serializers.ValidationError as e:
+        return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+    except Http404 as e:
+        return Response({'message': str(e)}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

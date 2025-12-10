@@ -15,7 +15,6 @@ class PEDProejaSerializer(serializers.ModelSerializer):
     curso = serializers.UUIDField()
     disciplina = serializers.UUIDField()
     periodo_letivo = serializers.UUIDField()
-    turma_atual = serializers.UUIDField()
 
     class Meta:
         model = PEDProeja
@@ -24,8 +23,10 @@ class PEDProejaSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         from ..models.ped_integrado import PEDIntegrado
         from ..models.ppt import PPT
+        print(">>> VALOR DE `aluno`:", attrs.get("aluno"), type(attrs.get("aluno")))
 
         aluno = attrs.get('aluno')
+        novo_status = attrs.get('status', getattr(self.instance, 'status', None))
 
         peds_integrado = PEDIntegrado.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
 
@@ -33,29 +34,52 @@ class PEDProejaSerializer(serializers.ModelSerializer):
 
         peds_proeja = PEDProeja.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
 
-        if self.instance is None and peds_proeja.exists():
+        if self.instance is None and peds_integrado.exists() or self.instance is None and ppts.exists():
             raise serializers.ValidationError({
-                "aluno": "Já existe uma PED da modalidade Proeja ativa para este aluno."
+                "aluno": "Já existe uma PED da modalidade Integrado ou PPT ativa para este aluno."
             })
         
-        total_integrado_ppt = peds_integrado.count() + ppts.count()
-        if total_integrado_ppt >= 2:
+        total_proeja_ppt = peds_proeja.count()
+        if total_proeja_ppt >= 2:
             raise serializers.ValidationError({
-                "aluno": "Já existem 2 PEDs/PPTs ativos para este aluno."
+                "aluno": "Já existem 2 PEDs ativos para este aluno."
+            })
+        
+        status_atual = self.instance.status
+
+        transicoes_validas = {
+            "Criada": ["Em Andamento", "Desativada"],
+            "Em Andamento": ["Lançada", "Desativada"],
+            "Lançada": ["Finalizada", "Desativada"],
+            "Finalizada": [], 
+            "Desativada": []
+        }
+
+        if status_atual not in transicoes_validas:
+            raise serializers.ValidationError({"status": "Status atual inválido."})
+
+        if novo_status not in transicoes_validas[status_atual]:
+            raise serializers.ValidationError({
+                "status": f"Transição inválida de status"
             })
 
         return super().validate(attrs)
     
     def update(self, instance, validated_data):
-        invalid_fields = [
-            field for field in validated_data.keys()
-            if field != 'observacao' and field != 'status'
-        ]
+        allowed_fields = {'observacao', 'status'}
 
-        if invalid_fields:
-            raise serializers.ValidationError({
-                "Campos inválidos": f"Apenas os campos observação e status podem ser alterados"
-            })
+        for field, new_value in validated_data.items():
+
+            if field in allowed_fields:
+                continue
+
+            current_value = getattr(instance, field, None)
+
+            if new_value != current_value:
+                raise serializers.ValidationError({
+                    field: f"Não é permitido alterar o campo '{field}'. "
+                        f"Valor recebido difere do registrado."
+                })
 
         return super().update(instance, validated_data)
 
@@ -76,9 +100,11 @@ class PEDProejaSerializer(serializers.ModelSerializer):
             rep['professor_ped'] = str(instance.professores_proeja.filter(responsavel_atual=True).first().professor.id)
         
         if "plano_estudos" in retorno:
-            rep["plano_estudos"] = instance.plano_estudos_proeja
+            if hasattr(instance, "plano_estudos_proeja"):
+                rep["plano_estudos"] = str(instance.plano_estudos_proeja.id)
 
         if "form_encerramento" in retorno:
-            rep["form_encerramento"] = instance.form_encerramento_proeja
+            if hasattr(instance, "form_encerramento_proeja"):
+                rep["form_encerramento"] = str(instance.form_encerramento_proeja.id)
 
         return URLFieldsParser.parse(rep, retorno)

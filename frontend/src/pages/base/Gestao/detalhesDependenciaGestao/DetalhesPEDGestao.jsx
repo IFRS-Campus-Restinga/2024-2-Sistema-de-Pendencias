@@ -13,27 +13,18 @@ const DetalhesPEDGestao = () => {
     const modalidade = useLocation().pathname.split('/')[4]
     const pedId = useLocation().state
 
+    const getFormat = () => {
+        if (modalidade === 'Integrado') return 'id, aluno, professores, professor_disciplina, curso, disciplina, trimestre_recuperar, data_inicio, data_fim, status, situacao, observacao, turma_atual, serie_progressao'
+        
+        if (modalidade === "ProEJA") return 'id, aluno, professores, professor_disciplina, curso, disciplina, ano_semestre_reprov, data_inicio, data_fim, status, situacao, observacao'
+    }
+
     const fetchDetalhesPED = async () => {
         try {
             const res = await PEDService.porId(
                 pedId,
                 modalidade,
-                `   
-                    id, 
-                    aluno, 
-                    professores, 
-                    professor_disciplina, 
-                    curso, 
-                    disciplina, 
-                    trimestre_recuperar, 
-                    data_inicio, 
-                    data_fim, 
-                    status, 
-                    situacao,
-                    turma_atual,
-                    serie_progressao,
-                    observacao
-                    `,
+                getFormat(),
                 'flat' 
             )
 

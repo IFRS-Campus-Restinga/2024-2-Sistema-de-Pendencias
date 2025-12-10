@@ -17,8 +17,19 @@ export const PPTService = {
     });
   },
 
+  listarPendentes: async (retorno, pagina, formato) => {
+    return await api.get("api/ppts/listar/pendentes/", {
+      params: {
+        retorno,
+        page: pagina,
+        page_size: 10,
+        formato,
+      },
+    });
+  },
+
   listarAluno: async (retorno, pagina, formato, params) => {
-    return await api.get("api/ppts/listar/aluno", {
+    return await api.get("api/ppts/listar/aluno/", {
       params: {
         retorno,
         page: pagina,
@@ -38,7 +49,7 @@ export const PPTService = {
     });
   },
 
-  desativar: async (pptId, params) => {
-    return await api.patch(`api/ppt/${pptId}/desativar`, params);
+  trocarStatus: async (pptId, status) => {
+    return await api.put(`api/ppt/${pptId}/editar/`, {status: status});
   },
 };

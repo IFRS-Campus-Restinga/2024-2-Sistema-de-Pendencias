@@ -54,14 +54,17 @@ export const PEDService = {
   },
 
   porId: async (pedId, modalidade, retorno, formato) => {
-    const retornoLimpo = (retorno || "").replace(/\s+/g, "");
     return await api.get(`api/peds/${modalidade}/${pedId}/`, {
-      params: { formato, retorno: retornoLimpo },
+      params: { formato, retorno },
     });
   },
 
   editar: async (params, pedId, modalidade) => {
     return await api.put(`api/peds/${modalidade}/${pedId}/editar/`, params);
+  },
+
+  trocarStatus: async (modalidade, pedId, status) => {
+    return await api.put(`api/peds/${modalidade}/${pedId}/editar/status/`, {status: status})
   },
 
   desativar: async (modalidade, pedId) => {

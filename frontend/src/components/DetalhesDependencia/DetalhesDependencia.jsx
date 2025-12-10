@@ -25,6 +25,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
   const [pagina, setPagina] = useState(1)
   const [prox, setProx] = useState(null)
   const [prev, setPrev] = useState(null)
+  const [status, setStatus] = useState("")
   const [acompanhamento, setAcompanhamento] = useState({
     id: '',
     parecer: '',
@@ -61,13 +62,13 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
     return null
   }
 
-  const desativarDependencia = async () => {
+  const trocarStatusDependencia = async () => {
     let req
 
     setBotaoDesabilitado(true)
 
-    if (tipo === 'PED') req = PEDService.desativar(modalidade, dependencia.id)
-    if (tipo === 'PPT') req = PPTService.trocarStatus(dependencia.id, { status: 'Desativada' })
+    if (tipo === 'PED') req = PEDService.trocarStatus(modalidade, dependencia.id, status)
+    if (tipo === 'PPT') req = PPTService.trocarStatus(dependencia.id, status)
 
     toast.promise(
       (async () => {
@@ -80,8 +81,8 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
         return res;
       })(),
       {
-        pending: 'Desativando progressão...',
-        success: 'Progressão desativada com sucesso!',
+        pending: `Atualizando status da progressão para ${status}...`,
+        success: 'Status alterado com sucesso!',
         error: {
           render({ data }) {
             if (data instanceof Error) {
@@ -102,17 +103,19 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
                   return mensagens[0];
                 }
 
-                return 'Erro ao desativar progressão.';
+                return 'Erro ao atualizar status da progressão.';
               } catch (e) {
                 return 'Erro inesperado ao processar mensagens.';
               }
             }
 
-            return 'Erro ao desativar progressão.';
+            return 'Erro ao atualizar status da progressão.';
           }
         }
       },
-    );
+    ).then((res) => {
+      if (res.status == 200) setModalAberto(false)
+    });
 
     setBotaoDesabilitado(false)
   }
@@ -222,6 +225,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
       titulo={`Detalhes da ${tipo} ${modalidade ? modalidade : ''}`}
       comprimento="80%"
     >
+      <ToastContainer/>
       <label className={styles.cabecalho}>
         <span className={styles.span}>
           Aluno - <p className={styles.nomeAluno}>{dependencia.aluno}</p>
@@ -286,7 +290,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
                 </>
               ) : modalidade === 'ProEJA' ? (
                 <label className={styles.label}>
-                  Ano/Semestre de Reprovação
+                  Ano/Semestre de Reprovacao
                   <p className={styles.p}>{dependencia.ano_semestre_reprov}</p>
                 </label>
               ) : (
@@ -302,7 +306,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
               )
             }
             <label className={styles.label}>
-              Observação
+              Observacao
               <p className={styles.p}>{dependencia.observacao}</p>
             </label>
           </span>
@@ -323,8 +327,8 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
                       {
                         link: 'editar',
                         name: 'Editar PED',
-                        state: dependencia.id,
-                        desabilitado: grupo !== 'gestao_escolar' || (dependencia.status !== "Criada" || dependencia.status !== "Em Andamento")
+                        state: dependencia.id,  
+                        desabilitado: grupo !== 'gestao_escolar' ? true : !(["Criada", "Em Andamento"]).includes(dependencia.status)
                       },
                       {
                         link: setLink(dependencia.plano_estudos, 'planoEstudos'),
@@ -349,23 +353,37 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
             <div className={styles.containerBotoes}>
               {(() => {
                 // Se estiver desativado: nada é renderizado
-                if (dependencia.status === "Desativado") return null;
+                if (dependencia.status === "Desativada") return null;
 
                 // 1) GESTÃO ESCOLAR
                 if (grupo === "gestao_escolar") {
                   return (
                     <>
-                      <Button texto={`Desativar ${tipo}`} color="#f00" />
+                      <Button 
+                        texto={`Desativar ${tipo}`} 
+                        color="#a02d2dff"
+                        onClick={() => {
+                          setStatus("Desativada")
+                          setTipoModal("acao")
+                          setModalAberto(true)
+                        }}
+                      />
                       <Button
                         texto="Adicionar Acompanhamento"
-                        onClick={() =>
+                        onClick={() =>{
+                          setTipoModal("acomp")
                           setModalAberto(true)
-                        }
+                        }}
                         disabled={['Lançada', 'Finalizada', 'Desativada'].includes(dependencia.status)}
                       />
                       <Button
-                        texto={`Encerrar ${tipo}`}
-                        disabled={dependencia.status !== "Finalizada"}
+                        texto={`Finalizar ${tipo}`}
+                        disabled={dependencia.status !== "Lançada"}
+                        onClick={() => {
+                          setStatus("Finalizada")
+                          setTipoModal("acao")
+                          setModalAberto(true)
+                        }}
                       />
                     </>
                   );
@@ -496,62 +514,72 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
                   parecer: '',
                   ped: '',
                   status: 'Leve'
-                })
+                });
 
-                setModalAberto(false)
+                setModalAberto(false);
               }
             }}
           >
-            {
-              tipoModal === 'acomp' ? (
-                <FormContainer titulo='Novo Acompanhamento' comprimento={'50%'}>
-                  <ToastContainer/>
-                  <form onSubmit={submit} className={styles.form}>
-                    <div className={styles.formGroup}>
-                      <Label titulo={"Parecer *"}>
-                        <textarea 
-                          className={styles.textArea}
-                          value={formData.parecer}
-                          onChange={(e) => setFormData({...formData, parecer: e.target.value})}
-                        />
-                      {erros.parecer ? <MensagemErro mensagem={erros.parecer}/> : null}
-                      </Label>
-                    </div>
-                    <div className={styles.formGroup}>
-                        <Label titulo={'Gravidade *'}>
-                          <div className={styles.rangeContainer}>
-                            <input
-                              type="range"
-                              min={0}
-                              max={3}
-                              step={1}
-                              value={gravidadeIndex}                     // veja nota abaixo sobre estado
-                              onChange={(e) => {
-                                const idx = Number(e.target.value);
-                                setGravidadeIndex(idx);
-                                const mapping = ['Leve', 'Moderada', 'Grave', 'Gravíssima'];
-                                setFormData({...formData, status: mapping[idx]});
-                              }}
-                              className={styles.range}
-                              aria-label="Gravidade do acompanhamento"
-                            />
+            {tipoModal === 'acomp' && (
+              <FormContainer titulo="Novo Acompanhamento" comprimento="50%">
+                <ToastContainer/>
+                <form onSubmit={submit} className={styles.form}>
+                  <div className={styles.formGroup}>
+                    <Label titulo="Parecer *">
+                      <textarea 
+                        className={styles.textArea}
+                        value={formData.parecer}
+                        onChange={(e) => setFormData({...formData, parecer: e.target.value})}
+                      />
+                      {erros.parecer && <MensagemErro mensagem={erros.parecer}/>}
+                    </Label>
+                  </div>
 
-                            <div className={styles.rangeTicks}>
-                              <span>Leve</span>
-                              <span>Moderada</span>
-                              <span>Grave</span>
-                              <span>Gravíssima</span>
-                            </div>
-                          </div>
-                        </Label>
+                  <div className={styles.formGroup}>
+                    <Label titulo="Gravidade *">
+                      <div className={styles.rangeContainer}>
+                        <input
+                          type="range"
+                          min={0}
+                          max={3}
+                          step={1}
+                          value={gravidadeIndex}
+                          onChange={(e) => {
+                            const idx = Number(e.target.value);
+                            setGravidadeIndex(idx);
+                            const mapping = ['Leve', 'Moderada', 'Grave', 'Gravíssima'];
+                            setFormData({...formData, status: mapping[idx]});
+                          }}
+                          className={styles.range}
+                        />
+
+                        <div className={styles.rangeTicks}>
+                          <span>Leve</span>
+                          <span>Moderada</span>
+                          <span>Grave</span>
+                          <span>Gravíssima</span>
+                        </div>
                       </div>
-                    <Button texto={formData.id ? "Salvar" : "Cadastrar"} tipo={'submit'}/>
-                  </form>
-                </FormContainer>
-              ) : (
-                <></>
-              )
-            }
+                    </Label>
+                  </div>
+
+                  <Button texto={formData.id ? "Salvar" : "Cadastrar"} tipo="submit"/>
+                </form>
+              </FormContainer>
+            )}
+
+            {tipoModal === 'acao' && (
+              <section className={styles.modalSection}>
+                <p>
+                  Deseja mudar o status dessa progressão para {status}?<br />
+                  Essa ação é irreversível.
+                </p>
+                <div className={styles.containerBotoes}>
+                  <Button texto="Confirmar" onClick={() => trocarStatusDependencia()}/>
+                  <Button color="#a02d2dff" texto="Cancelar" onClick={() => setModalAberto(false)}/>
+                </div>
+              </section>
+            )}
           </Modal>
         ) : null
       }

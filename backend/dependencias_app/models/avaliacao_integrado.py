@@ -9,4 +9,3 @@ class AvaliacaoIntegrado(Avaliacao):
 
     class Meta:
         abstract = False
-        verbose_name = "Avaliações EMI"

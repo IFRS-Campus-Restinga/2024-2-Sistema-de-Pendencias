@@ -67,19 +67,19 @@ msgid "Can view acompanhamento integrado"
 msgstr "Pode visualizar Acompanhamento EMI"
 
 #: .\locale_strings.py:18
-msgid "Can add acompanhamento pro eja"
+msgid "Can add acompanhamento proeja"
 msgstr "Pode adicionar Acompanhamento ProEJA"
 
 #: .\locale_strings.py:19
-msgid "Can change acompanhamento pro eja"
+msgid "Can change acompanhamento proeja"
 msgstr "Pode alterar Acompanhamento ProEJA"
 
 #: .\locale_strings.py:20
-msgid "Can delete acompanhamento pro eja"
+msgid "Can delete acompanhamento proeja"
 msgstr "Pode excluir Acompanhamento ProEJA"
 
 #: .\locale_strings.py:21
-msgid "Can view acompanhamento pro eja"
+msgid "Can view acompanhamento proeja"
 msgstr "Pode visualizar Acompanhamento ProEJA"
 
 #: .\locale_strings.py:23
@@ -99,83 +99,83 @@ msgid "Can view atividade integrado"
 msgstr "Pode visualizar Atividade EMI"
 
 #: .\locale_strings.py:28
-msgid "Can add atividade pro eja"
+msgid "Can add atividade proeja"
 msgstr "Pode adicionar Atividade ProEJA"
 
 #: .\locale_strings.py:29
-msgid "Can change atividade pro eja"
+msgid "Can change atividade proeja"
 msgstr "Pode alterar Atividade ProEJA"
 
 #: .\locale_strings.py:30
-msgid "Can delete atividade pro eja"
+msgid "Can delete atividade proeja"
 msgstr "Pode excluir Atividade ProEJA"
 
 #: .\locale_strings.py:31
-msgid "Can view atividade pro eja"
+msgid "Can view atividade proeja"
 msgstr "Pode visualizar Atividade ProEJA"
 
 #: .\locale_strings.py:33
-msgid "Can add Avaliações EMI"
+msgid "Can add avaliacao integrado"
 msgstr "Pode adicionar Avaliação EMI"
 
 #: .\locale_strings.py:34
-msgid "Can change Avaliações EMI"
+msgid "Can change avaliacao integrado"
 msgstr "Pode alterar Avaliação EMI"
 
 #: .\locale_strings.py:35
-msgid "Can delete Avaliações EMI"
+msgid "Can delete avaliacao integrado"
 msgstr "Pode excluir Avaliação EMI"
 
 #: .\locale_strings.py:36
-msgid "Can view Avaliações EMI"
+msgid "Can view avaliacao integrado"
 msgstr "Pode visualizar Avaliação EMI"
 
 #: .\locale_strings.py:38
-msgid "Can add Avaliações ProEJA"
+msgid "Can add avaliacao proeja"
 msgstr "Pode adicionar Avaliação ProEJA"
 
 #: .\locale_strings.py:39
-msgid "Can change Avaliações ProEJA"
+msgid "Can change avaliacao proeja"
 msgstr "Pode alterar Avaliação ProEJA"
 
 #: .\locale_strings.py:40
-msgid "Can delete Avaliações ProEJA"
+msgid "Can delete avaliacao proeja"
 msgstr "Pode excluir Avaliação ProEJA"
 
 #: .\locale_strings.py:41
-msgid "Can view Avaliações ProEJA"
+msgid "Can view avaliacao proeja"
 msgstr "Pode visualizar Avaliação ProEJA"
 
 #: .\locale_strings.py:43
-msgid "Can add Form Encerramento EMI"
+msgid "Can add form encerramento integrado"
 msgstr "Pode adicionar Form Encerramento EMI"
 
 #: .\locale_strings.py:44
-msgid "Can change Form Encerramento EMI"
+msgid "Can change form encerramento integrado"
 msgstr "Pode alterar Form Encerramento EMI"
 
 #: .\locale_strings.py:45
-msgid "Can delete Form Encerramento EMI"
+msgid "Can delete form encerramento integrado"
 msgstr "Pode excluir Form Encerramento EMI"
 
 #: .\locale_strings.py:46
-msgid "Can view Form Encerramento EMI"
+msgid "Can view form encerramento integrado"
 msgstr "Pode visualizar Form Encerramento EMI"
 
 #: .\locale_strings.py:48
-msgid "Can add Form Encerramento ProEJA"
+msgid "Can add form encerramento proeja"
 msgstr "Pode adicionar Form Encerramento ProEJA"
 
 #: .\locale_strings.py:49
-msgid "Can change Form Encerramento ProEJA"
+msgid "Can change form encerramento proeja"
 msgstr "Pode alterar Form Encerramento ProEJA"
 
 #: .\locale_strings.py:50
-msgid "Can delete Form Encerramento ProEJA"
+msgid "Can delete form encerramento proeja"
 msgstr "Pode excluir Form Encerramento ProEJA"
 
 #: .\locale_strings.py:51
-msgid "Can view Form Encerramento ProEJA"
+msgid "Can view form encerramento proeja"
 msgstr "Pode visualizar Form Encerramento ProEJA"
 
 #: .\locale_strings.py:53
@@ -195,19 +195,19 @@ msgid "Can view ped integrado"
 msgstr "Pode visualizar PED EMI"
 
 #: .\locale_strings.py:58
-msgid "Can add ped pro eja"
+msgid "Can add ped proeja"
 msgstr "Pode adicionar PED ProEJA"
 
 #: .\locale_strings.py:59
-msgid "Can change ped pro eja"
+msgid "Can change ped proeja"
 msgstr "Pode alterar PED ProEJA"
 
 #: .\locale_strings.py:60
-msgid "Can delete ped pro eja"
+msgid "Can delete ped proeja"
 msgstr "Pode excluir PED ProEJA"
 
 #: .\locale_strings.py:61
-msgid "Can view ped pro eja"
+msgid "Can view ped proeja"
 msgstr "Pode visualizar PED ProEJA"
 
 #: .\locale_strings.py:63
@@ -227,19 +227,19 @@ msgid "Can view plano estudos integrado"
 msgstr "Pode visualizar Plano de Estudos EMI"
 
 #: .\locale_strings.py:68
-msgid "Can add plano estudos pro eja"
+msgid "Can add plano estudos proeja"
 msgstr "Pode adicionar Plano de Estudos ProEJA"
 
 #: .\locale_strings.py:69
-msgid "Can change plano estudos pro eja"
+msgid "Can change plano estudos proeja"
 msgstr "Pode alterar Plano de Estudos ProEJA"
 
 #: .\locale_strings.py:70
-msgid "Can delete plano estudos pro eja"
+msgid "Can delete plano estudos proeja"
 msgstr "Pode excluir Plano de Estudos ProEJA"
 
 #: .\locale_strings.py:71
-msgid "Can view plano estudos pro eja"
+msgid "Can view plano estudos proeja"
 msgstr "Pode visualizar Plano de Estudos ProEJA"
 
 #: .\locale_strings.py:73

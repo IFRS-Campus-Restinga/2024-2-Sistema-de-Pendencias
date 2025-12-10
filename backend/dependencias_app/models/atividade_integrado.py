@@ -8,4 +8,3 @@ class AtividadeIntegrado(Atividade):
     
     class Meta:
         abstract = False
-        verbose_name_plural = 'Atividades EMI'

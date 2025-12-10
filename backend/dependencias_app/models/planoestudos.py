@@ -14,4 +14,3 @@ class PlanoEstudos(BaseModel):
 
     class Meta:
         abstract = True
-        verbose_name_plural = 'Planos de Estudos'

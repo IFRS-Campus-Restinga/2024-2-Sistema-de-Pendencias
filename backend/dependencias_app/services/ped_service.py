@@ -56,7 +56,7 @@ class PEDService:
         busca = request.GET.get('busca', '')
 
         paginator = PEDPagination()
-        ultimo_valor_cursor = request.GET.get('after')  # Ex: timestamp ou UUID de referência
+        ultimo_valor_cursor = request.GET.get('after')
 
         if modalidade == "Integrado":
             responsavel_subquery = ProfessorProgressaoIntegrado.objects.filter(
@@ -111,7 +111,6 @@ class PEDService:
                 else:
                     resultado.append(formatar_obj(ped_serializado, request.GET.get("formato")))
 
-                # atualiza o cursor
                 ultimo_valor_cursor = ped.data_criacao
 
             except Exception as e:
@@ -129,56 +128,63 @@ class PEDService:
         busca = request.GET.get('busca', '')
 
         paginator = PEDPagination()
+        ultimo_valor_cursor = request.GET.get('after')
 
+        # SUBQUERY FILTRA APENAS AS PEDS DO PROFESSOR
         if modalidade == "Integrado":
-            peds = model_class.objects.filter(
-                professores_emi__professor__id=uuid.UUID(professor_id),
-                professores_emi__responsavel_atual=True
-            ).annotate(
-                professor_ped=models.F('professores_emi__professor')
-            ).order_by('-data_criacao')
-
+            responsavel_subquery = ProfessorProgressaoIntegrado.objects.filter(
+                ped=OuterRef('pk'),
+                professor__id=uuid.UUID(professor_id),
+                responsavel_atual=True
+            ).values('professor')[:1]
         else:
-            peds = model_class.objects.filter(
-                professores_proeja__professor__id=uuid.UUID(professor_id),
-                professores_proeja__responsavel_atual=True
-            ).annotate(
-                professor_ped=models.F('professores_proeja__professor')
-            ).order_by('-data_criacao')
+            responsavel_subquery = ProfessorProgressaoProeja.objects.filter(
+                ped=OuterRef('pk'),
+                professor__id=uuid.UUID(professor_id),
+                responsavel_atual=True
+            ).values('professor')[:1]
 
-        lista_peds = serializer_class(peds, context={'request': request}, many=True)
         resultado = []
-
         cookies = {"system": settings.API_KEY}
         base_url = settings.BASE_SYSTEM_URL
 
-        for ped in lista_peds.data:
-            if len(resultado) < paginator.page_size:
-                # monta tasks diretamente na listagem
-                tasks = [
-                    {"key": "aluno", "url": f"{base_url}/api/users/get/{ped['aluno']}/", "params": {"fields": "id,username"}},
-                    {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ped['professor_disciplina']}/", "params": {"fields": "id,username"}},
-                    {"key": "professor_ped", "url": f"{base_url}/api/users/get/{ped['professor_ped']}/", "params": {"fields": "id,username"}},
-                    {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ped['curso']}/", "params": {"fields": "id,name"}},
-                    {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ped['disciplina']}/", "params": {"fields": "id,name"}},
-                ]
+        while len(resultado) < paginator.page_size:
+            filtro = {}
+            if ultimo_valor_cursor:
+                filtro['data_criacao__lt'] = ultimo_valor_cursor
 
-                try:
-                    # executa todas as requests simultaneamente
-                    dados_ped = AsyncRequestService.run_fetch(tasks, cookies=cookies)
-                    ped.update(dados_ped)
+            ped = (
+                model_class.objects
+                .annotate(professor_ped=Subquery(responsavel_subquery, output_field=UUIDField()))
+                .filter(professor_ped__isnull=False)  # <-- ESSENCIAL
+                .filter(**filtro)
+                .order_by('-data_criacao')
+                .first()
+            )
 
-                    # filtro de busca
-                    if busca.strip():
-                        busca_lower = busca.lower()
-                        if any(busca_lower in str(v).lower() for v in ped.values() if v is not None):
-                            resultado.append(formatar_obj(ped, request.GET.get("formato")))
-                    else:
-                        resultado.append(formatar_obj(ped, request.GET.get("formato")))
+            if not ped:
+                break
 
-                except Exception as e:
-                    raise Exception(f"Erro ao buscar dados do PED {ped['id']}: {str(e)}")
-        
+            ped_serializado = serializer_class(ped, context={'request': request}).data
+
+            tasks = [
+                {"key": "aluno", "url": f"{base_url}/api/users/get/{ped_serializado['aluno']}/", "params": {"fields": "id,username"}},
+                {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ped_serializado['professor_disciplina']}/", "params": {"fields": "id,username"}},
+                {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ped_serializado['curso']}/", "params": {"fields": "id,name"}},
+                {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ped_serializado['disciplina']}/", "params": {"fields": "id,name"}},
+            ]
+
+            dados_ped = AsyncRequestService.run_fetch(tasks, cookies=cookies)
+            ped_serializado.update(dados_ped)
+
+            if busca.strip():
+                busca_lower = busca.lower()
+                if any(busca_lower in str(v).lower() for v in ped_serializado.values() if v is not None):
+                    resultado.append(formatar_obj(ped_serializado, request.GET.get("formato")))
+            else:
+                resultado.append(formatar_obj(ped_serializado, request.GET.get("formato")))
+
+            ultimo_valor_cursor = ped.data_criacao
 
         page = paginator.paginate_queryset(resultado, request)
         return paginator.get_paginated_response(page)
@@ -349,6 +355,13 @@ class PEDService:
             {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{serializer.data['disciplina']}/", "params": {"fields": "id,name"}},
         ]
 
+        if "periodo_letivo" in retorno:
+            tasks.append({
+                "key": "periodo_letivo",
+                "url": f"{base_url}/api/calendars/get/{serializer.data['periodo_letivo']}/",
+                "params": {"fields": "id,title"},
+            })
+
         if "professor_ped" in retorno:
             prof_atual = serializer.data.get("professor_ped")
             if prof_atual:
@@ -398,7 +411,7 @@ class PEDService:
             ped_dict.update(dados_ped)
 
             if ped_dict.get('curso'):
-                ped_dict['curso'] = {'name': dados_ped['curso']['name'], 'coord': dados_ped['curso']['coord']['id']}
+                ped_dict['curso'] = {'id': dados_ped['curso']['id'], 'name': dados_ped['curso']['name'], 'coord': dados_ped['curso']['coord']['id']}
                 
         except Exception as e:
             raise Exception(f"Erro ao buscar dados do PED {ped.id}: {str(e)}")
@@ -407,7 +420,7 @@ class PEDService:
 
     @staticmethod
     @transaction.atomic
-    def editar(ped_data, ped_id, modalidade):
+    def editar(ped_data, modalidade, ped_id):
         model_class, serializer_class = validar_modalidade(modalidade, 'PED')
         ped = get_object_or_404(model_class, pk=uuid.UUID(ped_id))
         UsuarioService.criar_aluno(ped_data.get('aluno'))
@@ -432,7 +445,7 @@ class PEDService:
                 }
             )
         else:
-            ProfessorProgressaoIntegrado.objects.filter(ped=serializer.instance).exclude(professor=professor).update(responsavel_atual=False)
+            ProfessorProgressaoProeja.objects.filter(ped=serializer.instance).exclude(professor=professor).update(responsavel_atual=False)
 
             ProfessorProgressaoProeja.objects.get_or_create(
                 professor=professor,
@@ -441,3 +454,21 @@ class PEDService:
                     "responsavel_atual": True,
                 }
             )
+
+
+    @staticmethod
+    def trocar_status(ped_data, modalidade, ped_id):
+        status = ped_data.get('status')
+        model_class, serializer_class = validar_modalidade(modalidade, "PED")
+
+        ped = get_object_or_404(model_class, pk=uuid.UUID(ped_id))
+        
+        serializer = serializer_class(instance=ped, data={"status": status}, partial=True)
+
+        if not serializer.is_valid():
+            raise serializers.ValidationError(serializer.errors)
+        
+        serializer.save()
+        
+
+        

@@ -1,0 +1,145 @@
+.containerTabela {
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: block;
+}
+
+.tabela {
+    width: 100%;
+    border-collapse: collapse;
+    height: auto;
+    font-family: 'Roboto';
+}
+
+.cabecalho {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background-color: #006b3f;
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    z-index: 10;
+}
+
+.tituloTabela {
+    margin: auto;
+}
+
+.thead th {
+    /* para garantir que o sticky funcione */
+    background-color: inherit;
+}
+
+.corpo tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+.corpo tr:nth-child(even) {
+    background-color: #f0f0f0;
+}
+
+.table tbody .tr:hover {
+    transform: scale(1.02);
+    transition: all ease-in-out 0.3s;
+    position: relative;
+    z-index: 3;
+}
+
+.linha {
+    transform-origin: center; /* cresce para a direita, evitando ultrapassar a esquerda */
+}
+
+.th, .coluna{
+    width: auto;
+    text-align: center;
+    padding: 3px;
+}
+
+.thAction, .tdAction {
+    width: 0;
+    padding: 3px;
+}
+
+.coluna {
+    color: #767676;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.acoes {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    margin-right: 5px;
+    justify-content: center;
+}
+
+.acao {
+    padding: 3px;
+    display: flex;
+    border-radius: 50%;
+    border: 1px solid #767676;
+    background-color: transparent;
+    width: 20px;
+    height: 20px;
+
+    &:hover {
+        cursor: pointer;
+        transform: scale(1.05);
+        transition: all ease-in-out 0.3s;
+    }
+}
+
+.janelaCarregamento {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.remover {
+    width: 15px;
+    height: 15px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.containerMensagem {
+    display: flex;
+    width: fit-content;
+    border-radius: 8px;
+    border: 1px solid #767676;
+    color: #767676;
+    padding: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0px auto 0px auto;
+}
+
+.modalSection {
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    width: 40%;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 200px;
+    background-color: white;
+    border-radius: 10px;
+    border: none;
+
+    p {
+        color: #767676;
+        font-size: 18px;
+        text-align: center;
+    }
+}

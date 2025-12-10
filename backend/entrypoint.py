@@ -43,7 +43,7 @@ def main():
 
         # --- Vincular usuário existente ao grupo admin ---
         try:
-            Usuario.objects.create(id=uuid.UUID("8a32b245-16a4-4281-8f5a-52b950d7c350"), group=ge_group)
+            Usuario.objects.create(id=uuid.UUID("3460bab9-579e-4f28-8524-efeeaf820991"), group=ge_group)
         except Exception as e:
             print(f"❌ Erro ao criar usuário: {e}")
 

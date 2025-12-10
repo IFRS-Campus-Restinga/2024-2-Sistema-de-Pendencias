@@ -36,7 +36,7 @@ urlpatterns = [
     path('ppts/listar/coordenador', listar_PPT_coordenador),
     path('ppts/listar/aluno', listar_PPT_aluno),
     path('ppts/<str:ppt_id>/', detalhes_PPT),
-    path('ppts/<str:ppt_id>/desativar/', desativar_PPT),
+    path('ppts/<str:ppt_id>/editar/status/', trocar_status_PPT),
     
     # views de PED
     path('peds/<str:modalidade>/cadastrar/', cadastrar_PED),
@@ -46,7 +46,7 @@ urlpatterns = [
     path('peds/listar/aluno/', listar_PED_por_aluno), 
     path('peds/<str:modalidade>/<str:ped_id>/', detalhes_PED),
     path('peds/<str:modalidade>/<str:ped_id>/editar/', editar_PED),
-    path('peds/<str:modalidade>/<str:ped_id>/desativar/', desativar_PED),
+    path('peds/<str:modalidade>/<str:ped_id>/editar/status/', trocar_status_PED),
 
     # views para plano de estudos
     path('plano-estudos/<str:modalidade>/cadastrar/', cadastrar_plano_estudos),

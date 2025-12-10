@@ -61,6 +61,12 @@ def detalhes_PPT(request, ppt_id):
         return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['PUT'])
-@has_permissions(['change'])
-def desativar_PPT(request, ppt_id):
-    pass
+@has_permissions(['change_ppt'])
+def trocar_status_PPT(request, ppt_id):
+    try:
+        PPTService.trocar_status(request.data, ppt_id)
+        return Response({'message': "Status da PPT alterado com sucesso"}, status=status.HTTP_201_CREATED)
+    except serializers.ValidationError as e:
+        return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

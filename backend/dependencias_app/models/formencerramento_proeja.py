@@ -7,4 +7,3 @@ class FormEncerramentoProeja(FormEncerramento):
 
     class Meta:
         abstract = False
-        verbose_name = "Form Encerramento ProEJA"
