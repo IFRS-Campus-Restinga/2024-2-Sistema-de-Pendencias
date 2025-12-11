@@ -25,9 +25,10 @@ class PlanoEstudosService:
     @staticmethod
     def criar(request, modalidade):
         _, serializer_class = validar_modalidade(modalidade, "PlanoEstudos")
-        ped_model_class, _ = validar_modalidade(modalidade, "PED")
 
-        professor_payload = AcessoService.validar_acesso(request, modalidade, data.get('ped'))
+        data = request.data.copy()
+
+        professor_payload, ped  = AcessoService.validar_acesso(request, modalidade, data.get('ped'))
 
         data = request.data.copy()
 
@@ -37,34 +38,6 @@ class PlanoEstudosService:
             raise serializers.ValidationError(serializer.errors)
 
         plano_estudos_instance = serializer.Meta.model(**serializer.validated_data)
-
-        # Define a subquery conforme a modalidade
-        if modalidade == "Integrado":
-            responsavel_subquery = (
-                ProfessorProgressaoIntegrado.objects
-                .filter(
-                    ped=OuterRef('pk'), 
-                    responsavel_atual=True,
-                    professores_emi__professor__id=uuid.UUID(professor_payload.get("user_id"))
-                )
-                .values('professor')[:1]
-            )
-        else:
-            responsavel_subquery = (
-                ProfessorProgressaoProeja.objects
-                .filter(
-                    ped=OuterRef('pk'), 
-                    responsavel_atual=True,
-                    professores_proeja__professor__id=uuid.UUID(professor_payload.get("user_id"))
-                )
-                .values('professor')[:1]
-            )
-
-        ped = (
-            ped_model_class.objects
-            .annotate(professor_ped=Subquery(responsavel_subquery, output_field=UUIDField()))
-            .get(id=uuid.UUID(data.get("ped")))
-        )
 
         if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get("access_token"))['user_id']:
             raise serializers.ValidationError("Acesso não autorizado")
@@ -124,45 +97,18 @@ class PlanoEstudosService:
     @staticmethod
     def editar(request, modalidade, plano_estudos_id):
         model_class, serializer_class = validar_modalidade(modalidade, "PlanoEstudos")
-        ped_model_class, _ = validar_modalidade(modalidade, "PED")
-
-        professor_payload = AcessoService.validar_acesso(request, modalidade, data.get('ped'))
 
         data = request.data.copy()
+
+        _, ped = AcessoService.validar_acesso(request, modalidade, data.get('ped'))
+
 
         serializer = serializer_class(data=data)
 
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)
 
-        if modalidade == "Integrado":
-            responsavel_subquery = (
-                ProfessorProgressaoIntegrado.objects
-                .filter(
-                    ped=OuterRef('pk'), 
-                    responsavel_atual=True,
-                    professores_emi__professor__id=uuid.UUID(professor_payload.get("user_id"))
-                )
-                .values('professor')[:1]
-            )
-        else:
-            responsavel_subquery = (
-                ProfessorProgressaoProeja.objects
-                .filter(
-                    ped=OuterRef('pk'), 
-                    responsavel_atual=True,
-                    professores_proeja__professor__id=uuid.UUID(professor_payload.get("user_id"))
-                )
-                .values('professor')[:1]
-            )
-
         plano_estudos = get_object_or_404(model_class, pk=uuid.UUID(plano_estudos_id))
-
-        ped = (
-            ped_model_class.objects
-            .annotate(professor_ped=Subquery(responsavel_subquery, output_field=UUIDField()))
-            .get(id=uuid.UUID(data.get("ped")))
-        )
 
         if ped.status not in ['Criada', 'Em Andamento']:
             raise serializers.ValidationError({"PED": "status da PED inválido para edição do plano de estudos"})

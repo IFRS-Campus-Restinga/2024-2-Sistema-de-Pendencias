@@ -28,41 +28,42 @@ class PEDIntegradoSerializer(serializers.ModelSerializer):
         aluno = attrs.get('aluno')
         novo_status = attrs.get('status', getattr(self.instance, 'status', None))
 
-        peds_integrado = PEDIntegrado.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
+        if not self.instance:
+            peds_integrado = PEDIntegrado.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
 
-        ppts = PPT.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
+            ppts = PPT.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
 
-        peds_proeja = PEDProeja.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
+            peds_proeja = PEDProeja.objects.filter(aluno=aluno).exclude(status__in=["Desativada", "Finalizada"])
 
-        if self.instance is None and peds_proeja.exists():
-            raise serializers.ValidationError({
-                "aluno": "Já existe uma PED da modalidade Proeja ativa para este aluno."
-            })
-        
-        total_integrado_ppt = peds_integrado.count() + ppts.count()
-        if total_integrado_ppt >= 2:
-            raise serializers.ValidationError({
-                "aluno": "Já existem 2 PEDs/PPTs ativos para este aluno."
-            })
-        
-        status_atual = self.instance.status
+            if self.instance is None and peds_proeja.exists():
+                raise serializers.ValidationError({
+                    "aluno": "Já existe uma PED da modalidade Proeja ativa para este aluno."
+                })
+            
+            total_integrado_ppt = peds_integrado.count() + ppts.count()
+            if total_integrado_ppt >= 2:
+                raise serializers.ValidationError({
+                    "aluno": "Já existem 2 PEDs/PPTs ativos para este aluno."
+                })
+ 
+        else:
+            status_atual = self.instance.status
 
-        transicoes_validas = {
-            "Criada": ["Em Andamento"],
-            "Em Andamento": ["Lançada"],
-            "Lançada": ["Finalizada"],
-            "Finalizada": [], 
-            "Desativada": ["Criada", "Em Andamento", "Lançada"]
-        }
+            transicoes_validas = {
+                "Criada": ["Criada","Em Andamento", "Desativada"],
+                "Em Andamento": ["Em Adndamento", "Lançada", "Desativada"],
+                "Lançada": ["Lançada", "Finalizada", "Desativada"],
+                "Finalizada": ["Finalizada"], 
+                "Desativada": ["Desativada"]
+            }
 
-        if status_atual not in transicoes_validas:
-            raise serializers.ValidationError({"status": "Status atual inválido."})
+            if status_atual not in transicoes_validas:
+                raise serializers.ValidationError({"status": "Status atual inválido."})
 
-        if novo_status not in transicoes_validas[status_atual]:
-            raise serializers.ValidationError({
-                "status": f"Transição inválida de status"
-            })
-
+            if novo_status not in transicoes_validas[status_atual]:
+                raise serializers.ValidationError({
+                    "status": f"Transição inválida de status"
+                })
 
         return super().validate(attrs)
     

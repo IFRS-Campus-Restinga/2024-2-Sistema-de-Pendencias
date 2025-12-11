@@ -78,7 +78,7 @@ class FormEncerramentoService:
             raise serializers.ValidationError("Esta progressão não está em andamento")
 
         context["professor"] = requests.get(
-            f"{base_url}/api/users/get/{str(professor.id)}/",
+            f"{base_url}/api/users/get/{str(professor.get("user_id"))}/",
             params={"fields": "username"},
             cookies=cookies
         ).json().get("username")
@@ -94,7 +94,7 @@ class FormEncerramentoService:
         form_encerramento_instance.drive_id = upload_to_drive(
             file,
             f"form_encerramento_{str(ped.id)}",
-            professor.group.name,
+            professor.get("group"),
             DRIVE_FOLDER
         )
 
@@ -156,7 +156,7 @@ class FormEncerramentoService:
             raise serializers.ValidationError("Esta progressão ainda não foi lançada.")
 
         context["professor"] = requests.get(
-            f"{base_url}/api/users/get/{str(professor.id)}/",
+            f"{base_url}/api/users/get/{str(professor.get("user_id"))}/",
             params={"fields": "username"},
             cookies=cookies
         ).json().get("username")
@@ -174,7 +174,7 @@ class FormEncerramentoService:
             f"form_encerramento_{str(ped.id)}",
             instance.drive_id,
             DRIVE_FOLDER,
-            professor.group.name
+            professor.get("group"),
         )
 
         form_encerramento_instance.save()

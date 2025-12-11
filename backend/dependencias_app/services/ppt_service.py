@@ -163,32 +163,42 @@ class PPTService:
         cookies = {"system": settings.API_KEY}
         base_url = settings.BASE_SYSTEM_URL
 
+        # O model PPT deve ser acessado com ".", não com "[]"
         tasks = [
-            {"key": "aluno", "url": f"{base_url}/api/users/get/{ppt['aluno']}/", "params": {"fields": "id,username"}},
-            {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ppt['professor_disciplina']}/", "params": {"fields": "id,username"}},
-            {"key": "professor_ppt", "url": f"{base_url}/api/users/get/{ppt['professor_ppt']}/", "params": {"fields": "id,username"}},
-            {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ppt['curso']}/", "params": {"fields": "id,name"}},
-            {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ppt['disciplina']}/", "params": {"fields": "id,name"}},
+            {"key": "aluno", "url": f"{base_url}/api/users/get/{str(ppt.aluno.id)}/", "params": {"fields": "id,username"}},
+            {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{str(ppt.professor_disciplina.id)}/", "params": {"fields": "id,username"}},
+            {"key": "professor_ppt", "url": f"{base_url}/api/users/get/{str(ppt.professor_ppt.id)}/", "params": {"fields": "id,username"}},
+            {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{str(ppt.curso)}/", "params": {"fields": "id,name,course_class.id,course_class.number"}},
+            {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{str(ppt.disciplina)}/", "params": {"fields": "id,name"}},
         ]
 
         try:
-            # executa todas as requests simultaneamente
             dados_ppt = AsyncRequestService.run_fetch(tasks, cookies=cookies)
 
-            turma_atual_id = ppt['turma_atual']  # id da turma atual que você quer encontrar
-            turma_progressao_id = ppt['turma_progressao']
-            turmas = ppt['curso'].get('course_class', [])
+            # ↓ campos do model
+            turma_atual_id = ppt.turma_atual
+            turma_progressao_id = ppt.turma_progressao
 
-            # filtra a turma correta
-            ppt['turma_atual'] = next((turma for turma in turmas if turma['id'] == turma_atual_id), None)
-            ppt['turma_progressao'] = next((turma for turma in turmas if turma['id'] == turma_progressao_id), None)
+            # ↓ turmas vem da API (dentro de dados_ppt['curso'])
+            turmas = dados_ppt["curso"].get("course_class", [])
 
+            dados_ppt["turma_atual"] = next(
+                (t for t in turmas if t["id"] == turma_atual_id), None
+            )
+
+            dados_ppt["turma_progressao"] = next(
+                (t for t in turmas if t["id"] == turma_progressao_id), None
+            )
+
+            # serializer.data já contém o PPT serializado
             ppt_dict = serializer.data.copy()
             ppt_dict.update(dados_ppt)
+
         except Exception as e:
-            raise Exception(f"Erro ao buscar dados do PPT {ppt['id']}: {str(e)}")
+            raise Exception(f"Erro ao buscar dados do PPT {ppt.id}: {str(e)}")
 
         return formatar_obj(ppt_dict, request.GET.get("formato"))
+
 
     @staticmethod
     @transaction.atomic

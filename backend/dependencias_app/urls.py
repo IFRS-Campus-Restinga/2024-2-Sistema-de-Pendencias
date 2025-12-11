@@ -34,7 +34,7 @@ urlpatterns = [
     path('ppts/cadastrar/', cadastrar_PPT),
     path('ppts/listar/', listar_PPT),
     path('ppts/listar/coordenador', listar_PPT_coordenador),
-    path('ppts/listar/aluno', listar_PPT_aluno),
+    path('ppts/listar/aluno/', listar_PPT_aluno),
     path('ppts/<str:ppt_id>/', detalhes_PPT),
     path('ppts/<str:ppt_id>/editar/status/', trocar_status_PPT),
     
