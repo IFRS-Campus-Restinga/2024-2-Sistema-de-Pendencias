@@ -11,6 +11,7 @@ import AtividadeService from '../../../../services/atividadeService'
 const DetalhesAtividadeCoordenador = () => {
     const location = useLocation()
     const { state } = location
+    const modalidade = location.pathname.split('/')[4]
     const [isLoading, setIsLoading] = useState(true)
     const [formData, setFormData] = useState({
         titulo: '',
@@ -20,7 +21,7 @@ const DetalhesAtividadeCoordenador = () => {
 
     const fetchAtividade = async () => {
         try {
-            const res = await AtividadeService.porId(state.id, state.modalidade, 'titulo, descricao, arquivo')
+            const res = await AtividadeService.porId(state.id, modalidade, 'titulo, descricao, arquivo')
 
             if (res.status !== 200) throw new Error(res)
 

@@ -1,5 +1,6 @@
 import uuid
 from rest_framework import serializers
+from dependencias_app.services.acesso_service import AcessoService
 from dependencias_app.models.usuario import Usuario
 from dependencias_app.utils.validar_modalidade import validar_modalidade
 from dependencias_session.services.token_service import TokenService
@@ -89,24 +90,8 @@ class AvaliacaoService:
     @staticmethod
     def listar_avaliacoes(request, modalidade, ped_id):
         _, avaliacao_serializer_class = validar_modalidade(modalidade, "Avaliacao")
-        ped_model_class, _ = validar_modalidade(modalidade, "PED")
 
-        payload = TokenService.decode_token(request.COOKIES.get("access_token"))
-
-        if payload.get("group") == "gestao_escolar":
-            ped = ped_model_class.objects.get(id=uuid.UUID(ped_id))
-        if payload.get("group") == "aluno":
-            ped = ped_model_class.objects.get(id=uuid.UUID(ped_id), aluno__id=uuid.UUID(payload.get("user_id")))
-        if payload.get("group") == "coord":
-            ped = ped_model_class.objects.get(id=uuid.UUID(ped_id), aluno__id=uuid.UUID(payload.get("user_id")))
-        if payload.get("group") == "professor":
-            professor = AvaliacaoService.validar_professor(request)
-            _, avaliacoes_ped = AvaliacaoService.obter_atividades_por_ped(professor, modalidade, ped_id)
-
-            serializer = avaliacao_serializer_class(avaliacoes_ped, many=True, context={'request': request})
-
-            return serializer.data
-
+        _, ped = AcessoService.validar_acesso(request, modalidade, ped_id)
 
         if modalidade == 'Integrado':
             avaliacoes = ped.atividades_emi.all()

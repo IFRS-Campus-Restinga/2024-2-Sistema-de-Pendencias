@@ -34,6 +34,10 @@ class AcessoService:
         if payload['group'] == 'professor':
             if payload['user_id'] != str(ped.professor_ped):
                 raise AcessoException('Acesso não autorizado')
+            
+        if payload['group'] == 'aluno':
+            if payload['user_id'] != str(ped.aluno.id):
+                raise AcessoException('Acesso não autorizado')
 
         if payload['group'] == 'coord':
             res = requests.get(

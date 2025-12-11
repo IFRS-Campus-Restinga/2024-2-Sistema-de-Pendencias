@@ -11,12 +11,13 @@ const ListarAtividadesCoordenador = () => {
     const location = useLocation()
     const redirect = useNavigate()
     const { state } = location
+    const modalidade = location.pathname.split('/')[4]
     const [avaliacoes, setAvaliacoes] = useState([])
     const [loading, setLoading] = useState(true)
 
     const fetchAvaliacoes = async () => {
         try {
-            const res = await AvaliacaoService.listar(state.ped, state.modalidade, 'id, atividade.titulo, atividade.id, data_criacao, data_entrega, status, nota')
+            const res = await AvaliacaoService.listar(state.ped, modalidade, 'id, atividade.titulo, atividade.id, data_criacao, data_entrega, status, nota')
             setAvaliacoes(res.data)
         } catch (error) {
             console.error(error)
