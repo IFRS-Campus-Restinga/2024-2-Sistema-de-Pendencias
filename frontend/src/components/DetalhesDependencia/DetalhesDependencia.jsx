@@ -340,7 +340,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
                         link: setLink(dependencia.form_encerramento, 'formEncerramento'),
                         name: 'Formulário de Encerramento',
                         state: {ped: dependencia.id, form_encerramento: dependencia.form_encerramento, status: dependencia.status},
-                        desabilitado: grupo !== 'professor' ? !(dependencia.form_encerramento) : false
+                        desabilitado: grupo !== 'professor' ? !(dependencia.form_encerramento) : !(dependencia.plano_estudos)
                       },
                     ]}
                   />

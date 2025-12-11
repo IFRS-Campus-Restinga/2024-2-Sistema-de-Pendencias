@@ -31,7 +31,7 @@ const HomeAluno = () => {
     try {      
       const res = await Promise.all([
         PEDService.listarAluno('id, curso, disciplina, professor_ped, data_criacao, status, serie_progressao', paginaPED, 'flat', filtros),
-        PPTService.listarAluno('id, curso, disciplina, professor_ppt, turma_progressao.number, data_criacao, status', paginaPPT, 'flat', filtros)
+        PPTService.listarAluno('id, curso, disciplina, professor_ppt, turma_atual, data_criacao, status', paginaPPT, 'flat', filtros)
       ])
 
       setDependencias(groupByYear(res[0].data.results, res[1].data.results))
@@ -174,18 +174,18 @@ const HomeAluno = () => {
                   {ano.ano}
                   {
                     ano.dependencias.map((dependencia) => (
-                      <div className={styles.dependencia} onClick={() => redirect(`/session/aluno/${dependencia.turma_progressao ? "PPT" : "PED"}/${dependencia.id}/`, {state: {id: dependencia.id, modalidade: !dependencia.turma_progressao ? !dependencia.serie_progressao ? "Proeja" : "Integrado" : null }})}>
+                      <div className={styles.dependencia} onClick={() => redirect(`/session/aluno/${dependencia.turma_atual ? "PPT" : "PED"}/${dependencia.id}/`, {state: {id: dependencia.id, modalidade: !dependencia.turma_atual ? !dependencia.serie_progressao ? "Proeja" : "Integrado" : null }})}>
                         <div className={styles.cabecalho}>
                           <span className={styles.status} style={{backgroundColor: statusColors[dependencia.status]}}>
                             {dependencia.status}
                           </span>
-                          <span className={styles.tipo} style={{backgroundColor: dependencia.turma_progressao ? "red" : "#345995"}}>
-                            {dependencia.turma_progressao ? "PPT" : "PED"}
+                          <span className={styles.tipo} style={{backgroundColor: dependencia.turma_atual ? "red" : "#345995"}}>
+                            {dependencia.turma_atual ? "PPT" : "PED"}
                           </span>
                         </div>
                         <span className={styles.span}>
                           <p className={styles.p}>Professor: </p>
-                          {dependencia.professor_ped.username ?? dependencia.professor_ppt.username}
+                          {dependencia?.professor_ped?.username ?? dependencia.professor_ppt.username}
                         </span>
                         <span className={styles.span}>
                           <p className={styles.p}>Curso: </p>
@@ -196,10 +196,10 @@ const HomeAluno = () => {
                           {dependencia.disciplina.name}
                         </span>
                         {
-                          dependencia.turma_progressao ? (
+                          dependencia.turma_atual ? (
                             <span className={styles.span}>
                               <p className={styles.p}>Turma: </p>
-                              {dependencia.turma_progressao.number}
+                              {dependencia.turma_atual}
                             </span>
                           ) :  null
                         }
