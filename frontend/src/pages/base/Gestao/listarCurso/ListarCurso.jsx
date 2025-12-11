@@ -8,6 +8,7 @@ import IconeAdicionar from "../../../../assets/icone-adicionar-curso.png";
 import BarraPesquisa from '../../../../components/BarraPesquisa/BarraPesquisa';
 import Loading from '../../../../components/Loading/Loading';
 import cursoService from '../../../../services/cursoService';
+import { AxiosError } from 'axios';
 
 const ListarCurso = () => {
   const [carregando, setCarregando] = useState(true);
@@ -27,7 +28,11 @@ const ListarCurso = () => {
 
       setProximaURL(res.data.next)
     } catch (error) {
-      console.error(error.mensagem);
+      if (error instanceof AxiosError){
+          console.error(error.response?.data.message)
+      } else{
+          console.error(error)
+      }
     } finally {
       setCarregando(false);
       setCarregandoTabela(false)
@@ -43,7 +48,11 @@ const ListarCurso = () => {
 
       setProximaURL(res.data.next)
     } catch (error) {
-      console.error(error.mensagem);
+      if (error instanceof AxiosError){
+          console.error(error.response?.data.message)
+      } else{
+          console.error(error)
+      }
     } finally {
       setCarregando(false);
       setCarregandoTabela(false)

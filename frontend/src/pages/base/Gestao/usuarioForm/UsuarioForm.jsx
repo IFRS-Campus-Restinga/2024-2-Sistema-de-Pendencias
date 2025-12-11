@@ -1,5 +1,5 @@
 import styles from './UsuarioForm.module.css'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { toast, ToastContainer } from 'react-toastify'
 import { useEffect, useState } from 'react'
 import { AxiosError } from 'axios'
@@ -16,6 +16,7 @@ import Button from '../../../../components/Button/Button'
 
 
 const UsuarioForm = () => {
+    const redirect = useNavigate()
     const location = useLocation()
     const { state } = location
     const perfil = location.pathname.split('/')[3]
@@ -54,7 +55,7 @@ const UsuarioForm = () => {
             })
         } catch (error) {
             if (error instanceof AxiosError) {
-                toast.error(error.response.data.message)
+                console.error(error.response.data.message)
             } else {
                 console.error(error)
             }
@@ -84,7 +85,7 @@ const UsuarioForm = () => {
             setOpcoesGrupos(res.data.results)
         } catch (error) {
             if (error instanceof AxiosError) {
-                toast.error(error.response.data.message)
+                console.error(error.response.data.message)
             } else {
                 console.error(error)
             }
@@ -131,20 +132,25 @@ const UsuarioForm = () => {
                         return data.data.message;
                         },
                     },
-                    error: {
-                        render({ data }) {
-                            const response = data?.response?.data;
-
-                            if (response?.errors && Array.isArray(response.errors)) {
-                                // dispara um toast para cada erro
-                                response.errors.forEach((msg) => toast.error(msg));
-                            }
-
-                            return response?.message ?? "Ocorreu um erro ao registrar.";
-                        },
-                    },
+                    error: "Erro de validação"
                 }
-            );
+            ).then((res) => {
+                if (res.status === 200 || res.status === 201) {
+                    setTimeout(() => {
+                        redirect(`/session/gestao_escolar/${perfil}`)
+                    }, 3000);
+                }
+            }).catch((err) => {
+                if (err instanceof AxiosError) {
+                    const errors = err.response?.data?.message;
+
+                    if (Array.isArray(errors)) {
+                        errors.forEach((msg) => toast.error(msg));
+                    } else {
+                        toast.error(errors);
+                    }
+                }
+            })
         }
     }
 

@@ -7,6 +7,7 @@ import BarraPesquisa from '../../../../components/BarraPesquisa/BarraPesquisa'
 import IconeAdicionar from '../../../../assets/icone-adicionar-calendario.png'
 import Loading from '../../../../components/Loading/Loading'
 import { calendarioAcademicoService } from '../../../../services/calendarioAcademicoService'
+import { AxiosError } from 'axios'
 
 const ListarCalendario = () => {
     const [carregando, setCarregando] = useState(true);
@@ -26,7 +27,11 @@ const ListarCalendario = () => {
 
             setProximaURL(res.data.next)
         } catch (error) {
-            console.error(error.mensagem);
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
             setCarregando(false);
             setCarregandoTabela(false)
@@ -42,7 +47,11 @@ const ListarCalendario = () => {
 
             setProximaURL(res.data.next)
         } catch (error) {
-            console.error(error.mensagem);
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
             setCarregando(false);
             setCarregandoTabela(false)

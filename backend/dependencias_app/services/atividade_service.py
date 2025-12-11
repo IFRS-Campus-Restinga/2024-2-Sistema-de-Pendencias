@@ -1,7 +1,5 @@
 import uuid
 from rest_framework import serializers
-
-from dependencias_app.services.acesso_service import AcessoException, AcessoService
 from ..models.usuario import Usuario
 from django.shortcuts import get_object_or_404
 from rest_framework.pagination import PageNumberPagination

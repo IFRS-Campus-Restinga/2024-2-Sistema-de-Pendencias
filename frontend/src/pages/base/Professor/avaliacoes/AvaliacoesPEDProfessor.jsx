@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import AtividadeService from "../../../../services/atividadeService"
 import AvaliacaoService from "../../../../services/avaliacaoService"
 import styles from './AvaliacoesPEDProfessor.module.css'
@@ -14,9 +14,11 @@ import xIcone from '../../../../assets/close-svgrepo-com.svg'
 import { validarDataMinima } from "../../../../utils/validacoes"
 import MensagemErro from "../../../../components/MensagemErro/MensagemErro"
 import flattenAndClean from "../../../../utils/flatObject"
+import { AxiosError } from "axios"
 
 
 const AvaliacoesPEDProfessor = () => {
+    const redirect = useNavigate()
     const location = useLocation()
     const modalidade = location.pathname.split('/')[4]
     const {state} = location
@@ -32,7 +34,11 @@ const AvaliacoesPEDProfessor = () => {
             
             setAtividades(res.data.results)
         } catch (error) {
-            console.error(error)
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         }
     }
 
@@ -43,7 +49,11 @@ const AvaliacoesPEDProfessor = () => {
 
             setAtividadesPED(flatResp)
         } catch (error) {   
-            console.error(error)
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
             setCaregando(false)
         }
@@ -121,20 +131,28 @@ const AvaliacoesPEDProfessor = () => {
                     pending: "Salvando plano de atividades...",
                     success: {
                         render({ data }) {
-                            return data.data.mensagem
+                            return data.data.message
                         },
                     },
-                    error: {
-                        render({ data }) {
-                        const response = data?.response?.data
-                        if (response?.errors && Array.isArray(response.errors)) {
-                            response.errors.forEach(msg => toast.error(msg))
-                        }
-                        return response?.mensagem ?? "Ocorreu um erro ao registrar."
-                        },
-                    },
+                    error: "Erro de validação"
                 }
-            )
+            ).then((res) => {
+                if (res.status === 200 || res.status === 201) {
+                    setTimeout(() => {
+                        redirect(`/session/professor/peds/${modalidade}/${state.ped}/`, {state: state.ped})
+                    }, 3000);
+                }
+            }).catch((err) => {
+                if (err instanceof AxiosError) {
+                    const errors = err.response?.data?.message;
+
+                    if (Array.isArray(errors)) {
+                        errors.forEach((msg) => toast.error(msg));
+                    } else {
+                        toast.error(errors);
+                    }
+                }
+            })
         }
     }
 
@@ -210,7 +228,7 @@ const AvaliacoesPEDProfessor = () => {
                                                         <div className={styles.inputData}>
                                                             <Input
                                                                 tipo={'date'}
-                                                                valor={avaliacao.data_entrega}
+                                                                valor={avaliacao.data_entrega ? new Date(avaliacao.data_entrega).toISOString().split("T")[0] : ""}
                                                                 onChange={(e) => {
                                                                     setAtividadesPED((prev) => {
                                                                         const atividadesPED = [...prev]

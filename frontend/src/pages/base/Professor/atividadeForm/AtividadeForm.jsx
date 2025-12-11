@@ -3,7 +3,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import styles from './AtividadeForm.module.css'
 import Input from '../../../../components/Input/Input'
 import { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import Button from '../../../../components/Button/Button'
 import Switch from '../../../../components/Switch/Switch'
 import uploadCinza from '../../../../assets/upload-svgrepo-com.svg'
@@ -15,8 +15,10 @@ import CustomLoading from '../../../../components/customLoading/CustomLoading'
 import { validarCampoObrigatorio } from '../../../../utils/validacoes'
 import MensagemErro from '../../../../components/MensagemErro/MensagemErro'
 import AtividadeService from '../../../../services/atividadeService'
+import { AxiosError } from 'axios'
 
 const AtividadeForm = () => {
+    const redirect = useNavigate()
     const location = useLocation()
     const { state } = location
     const [modalidade, setModalidade] = useState(state?.modalidade ?? 'Integrado')
@@ -72,27 +74,38 @@ const AtividadeForm = () => {
                     pending: "Registrando Atividade...",
                     success: {
                         render({ data }) {
-                            return data.data.mensagem
+                            return data.data.message
                         },
                     },
-                    error: {
-                        render({ data }) {
-                        const response = data?.response?.data
-                        if (response?.errors && Array.isArray(response.errors)) {
-                            response.errors.forEach(msg => toast.error(msg))
-                        }
-                        return response?.mensagem ?? "Ocorreu um erro ao registrar."
-                        },
-                    },
+                    error: "Erro de validação"
                 }
-            )
+            ).then((res) => {
+                if (res.status === 200 || res.status === 201) {
+                    setTimeout(() => {
+                        redirect(`/session/professor/atividades/${modalidade}`)
+                    }, 3000);
+                }
+            }).catch((err) => {
+                if (err instanceof AxiosError) {
+                    const errors = err.response?.data?.message;
+
+                    if (Array.isArray(errors)) {
+                        errors.forEach((msg) => toast.error(msg));
+                    } else {
+                        toast.error(errors);
+                    }
+                }
+            })
 
             try {
-                const res = await promise
-                
+                await promise
 
-            } catch (err) {
-                console.error("Erro ao registrar atividade:", err)
+            } catch (error) {
+                if (error instanceof AxiosError){
+                    console.error(error.response?.data.message)
+                } else{
+                    console.error(error)
+                }
                 setDesabilitado(false)
             }
         } else {
@@ -117,7 +130,11 @@ const AtividadeForm = () => {
             
             setIsLoading(false)
         } catch (error) {
-            console.error(error)
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         }
     }
     

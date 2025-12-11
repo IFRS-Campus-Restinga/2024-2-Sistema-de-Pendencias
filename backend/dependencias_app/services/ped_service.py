@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from django.conf import settings
 from django.db import transaction, models
 from django.shortcuts import get_object_or_404
@@ -85,7 +86,7 @@ class PEDService:
                 .filter(**filtro)
                 .order_by('-data_criacao')
                 .first()
-            )
+            )   
 
             if not ped:
                 break  # acabou os registros
@@ -449,38 +450,48 @@ class PEDService:
     def editar(ped_data, modalidade, ped_id):
         model_class, serializer_class = validar_modalidade(modalidade, 'PED')
         ped = get_object_or_404(model_class, pk=uuid.UUID(ped_id))
+
         UsuarioService.criar_aluno(ped_data.get('aluno'))
+
+        # --- Validação obrigatória ---
+        professor_ped_id = ped_data.get("professor_ped")
+        if not professor_ped_id:
+            raise serializers.ValidationError({
+                "professor_ped": "O campo professor_ped é obrigatório para edição do PED."
+            })
 
         serializer = serializer_class(instance=ped, data=ped_data, partial=True)
 
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)
-        
+
         serializer.save()
 
-        professor = get_object_or_404(Usuario, pk=uuid.UUID(ped_data.get("professor_ped")))
+        # Se chegou aqui, existe professor_ped
+        professor = get_object_or_404(Usuario, pk=uuid.UUID(professor_ped_id))
 
         if modalidade == 'Integrado':
-            ProfessorProgressaoIntegrado.objects.filter(ped=serializer.instance).exclude(professor=professor).update(responsavel_atual=False)
+            ProfessorProgressaoIntegrado.objects.filter(
+                ped=serializer.instance
+            ).exclude(professor=professor).update(responsavel_atual=False)
 
             ProfessorProgressaoIntegrado.objects.get_or_create(
                 professor=professor,
                 ped=serializer.instance,
-                defaults={
-                    "responsavel_atual": True
-                }
+                defaults={"responsavel_atual": True}
             )
         else:
-            ProfessorProgressaoProeja.objects.filter(ped=serializer.instance).exclude(professor=professor).update(responsavel_atual=False)
+            ProfessorProgressaoProeja.objects.filter(
+                ped=serializer.instance
+            ).exclude(professor=professor).update(responsavel_atual=False)
 
             ProfessorProgressaoProeja.objects.get_or_create(
                 professor=professor,
                 ped=serializer.instance,
-                defaults={
-                    "responsavel_atual": True,
-                }
+                defaults={"responsavel_atual": True}
             )
 
+        return serializer.instance
 
     @staticmethod
     def trocar_status(ped_data, modalidade, ped_id):
@@ -488,8 +499,12 @@ class PEDService:
         model_class, serializer_class = validar_modalidade(modalidade, "PED")
 
         ped = get_object_or_404(model_class, pk=uuid.UUID(ped_id))
+        data = {'status': status}
+
+        if (status == 'Finalizada'):
+            data['data_final'] = datetime.now()
         
-        serializer = serializer_class(instance=ped, data={"status": status}, partial=True)
+        serializer = serializer_class(instance=ped, data=data, partial=True)
 
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)

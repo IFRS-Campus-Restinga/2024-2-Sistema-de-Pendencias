@@ -14,9 +14,9 @@ const DetalhesPEDCoordenador = () => {
     const pedId = useLocation().state
 
     const getFormat = () => {
-        if (modalidade === 'Integrado') return 'id, aluno, professores, professor_disciplina, curso, disciplina, trimestre_recuperar, data_inicio, data_fim, status, situacao, observacao, turma_atual, serie_progressao, plano_estudos, form_encerramento'
+        if (modalidade === 'Integrado') return 'id, aluno, professores, professor_disciplina, curso, disciplina, trimestre_recuperar, data_inicio, data_final, status, situacao, observacao, turma_atual, serie_progressao, plano_estudos, form_encerramento'
         
-        if (modalidade === "ProEJA") return 'id, aluno, professores, professor_disciplina, curso, disciplina, ano_semestre_reprov, data_inicio, data_fim, status, situacao, observacao, plano_estudos, form_encerramento'
+        if (modalidade === "ProEJA") return 'id, aluno, professores, professor_disciplina, curso, disciplina, ano_semestre_reprov, data_inicio, data_final, status, situacao, observacao, plano_estudos, form_encerramento'
     }
 
     const fetchDetalhesPED = async () => {
@@ -30,9 +30,9 @@ const DetalhesPEDCoordenador = () => {
 
             setPED(res.data)
         } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data.message)
-            } else {
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
                 console.error(error)
             }
         } finally {

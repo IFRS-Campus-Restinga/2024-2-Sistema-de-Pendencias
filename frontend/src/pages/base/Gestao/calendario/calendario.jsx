@@ -10,6 +10,7 @@ import FormContainer from "../../../../components/FormContainer/FormContainer";
 import styles from './calendario.module.css';
 import { calendarioAcademicoService } from '../../../../services/calendarioAcademicoService';
 import Loading from '../../../../components/Loading/Loading';
+import { AxiosError } from 'axios';
 
 const locales = {
     'pt-BR': ptBR,
@@ -58,7 +59,11 @@ const Calendario = () => {
 
             setDataMinima(data);
         } catch (error) {
-            console.error('Erro ao buscar eventos:', error);
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
             setCarregando(false)
         }

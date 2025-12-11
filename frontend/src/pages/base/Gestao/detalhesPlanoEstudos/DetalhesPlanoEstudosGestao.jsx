@@ -4,6 +4,7 @@ import PDFDisplay from "../../../../features/pdfDisplay/PDFDisplay"
 import { useLocation } from 'react-router-dom'
 import CustomLoading from "../../../../components/customLoading/CustomLoading"
 import { PlanoEstudosService } from "../../../../services/planoEstudosService"
+import { AxiosError } from "axios"
 
 const DetalhesPlanoEstudosGestao = () =>{
     const location = useLocation()
@@ -18,7 +19,11 @@ const DetalhesPlanoEstudosGestao = () =>{
 
             setArquivo(res.data.plano)
         } catch (error) {
-            console.error(error)
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
             setCarregando(false)
         }

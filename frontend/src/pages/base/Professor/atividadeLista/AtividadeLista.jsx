@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import atividadeService from "../../../../services/atividadeService"
 import Listagem from "../../../../features/listagem/Listagem"
 import { useLocation } from "react-router-dom"

@@ -27,7 +27,7 @@ const DetalhesPEDAluno = () => {
                     disciplina, 
                     trimestre_recuperar, 
                     data_inicio, 
-                    data_fim, 
+                    data_final, 
                     status, 
                     situacao,
                     turma_atual,
@@ -39,9 +39,9 @@ const DetalhesPEDAluno = () => {
 
             setPED(res.data)
         } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data.message)
-            } else {
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
                 console.error(error)
             }
         } finally {

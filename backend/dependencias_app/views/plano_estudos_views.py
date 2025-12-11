@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status, serializers
 from fs_auth_middleware.decorators import has_permissions
+from dependencias_app.services.acesso_service import AcessoException
 from ..services.plano_estudos_service import PlanoEstudosService
 from ..utils.formatar_erros import formatar_erros
 
@@ -13,6 +14,8 @@ def cadastrar_plano_estudos(request, modalidade):
         arquivo = PlanoEstudosService.criar(request, modalidade)
 
         return Response({'message': 'Plano de estudos cadastrado com sucesso', 'plano': arquivo}, status=status.HTTP_201_CREATED)
+    except AcessoException as e:
+        return Response({'message': str(e)}, status=status.HTTP_403_FORBIDDEN)
     except serializers.ValidationError as e:
         return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
@@ -26,6 +29,8 @@ def detalhes_plano_estudos(request, modalidade, plano_estudos_id):
         plano_estudos, arquivo = PlanoEstudosService.detalhes(request, modalidade, plano_estudos_id)
 
         return Response({**plano_estudos, 'plano': arquivo}, status=status.HTTP_200_OK)
+    except AcessoException as e:
+        return Response({'message': str(e)}, status=status.HTTP_403_FORBIDDEN)
     except Http404 as e:
         return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except serializers.ValidationError as e:
@@ -40,9 +45,11 @@ def editar_plano_estudos(request, modalidade, plano_estudos_id):
         arquivo = PlanoEstudosService.editar(request, modalidade, plano_estudos_id)
 
         return Response({'message': 'Plano de estudos alterado com sucesso', 'plano': arquivo}, status=status.HTTP_200_OK)
+    except AcessoException as e:
+        return Response({'message': str(e)}, status=status.HTTP_403_FORBIDDEN)
     except serializers.ValidationError as e:
         return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
     except Http404 as e:
-        return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': str(e)}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

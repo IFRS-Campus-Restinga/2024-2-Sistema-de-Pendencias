@@ -66,7 +66,7 @@ class PEDProejaSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
     
     def update(self, instance, validated_data):
-        allowed_fields = {'observacao', 'status'}
+        allowed_fields = {'observacao', 'status', 'data_final'}
 
         for field, new_value in validated_data.items():
 

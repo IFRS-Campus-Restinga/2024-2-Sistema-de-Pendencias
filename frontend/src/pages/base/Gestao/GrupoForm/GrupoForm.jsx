@@ -60,11 +60,12 @@ const GrupoForm = () => {
 
             setProximaDoGrupo(res[2].data.next ? paginaDoGrupo + 1 : null)
             setAnteriorDoGrupo(res[2].data.prev ? paginaDoGrupo - 1 : null)
-        } catch (erro) {
-            toast.error(erro.message || 'Erro ao carregar dados do grupo.', {
-                autoClose: 2000,
-                position: 'bottom-center'
-            })
+        } catch (error) {
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
             setCarregandoGeral(false)
             setCarregandoDisponiveis(false)
@@ -82,8 +83,12 @@ const GrupoForm = () => {
 
             setProximaDoGrupo(res.data.next ? paginaDoGrupo + 1 : null)
             setAnteriorDoGrupo(res.data.previous ? paginaDoGrupo - 1 : null)
-        } catch (erro) {
-            console.error(erro)
+        } catch (error) {
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
             setCarregandoGrupo(false)
         }
@@ -103,8 +108,12 @@ const GrupoForm = () => {
 
             setProximaDisponiveis(res.data.next ? paginaDisponiveis + 1 : null)
             setAnteriorDisponiveis(res.data.previous ? paginaDisponiveis - 1 : null)
-        } catch (erro) {
-            console.error(erro)
+        } catch (error) {
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
             setCarregandoGeral(false)
             setCarregandoDisponiveis(false)
@@ -125,27 +134,33 @@ const GrupoForm = () => {
         evento.preventDefault()
 
         if (validarFormulario()) {
-            const requisicao = state
+            const req = state
                 ? GrupoService.editar({id: state, name: grupo.name, addPermissoes, remPermissoes}, state)
                 : GrupoService.criar({name: grupo.name, addPermissoes, remPermissoes})
 
-            toast.promise(requisicao, {
+            toast.promise(req, {
                 pending: state ? 'Salvando alterações...' : 'Criando grupo...',
                 success: {
                     render({ data }) {
                         return data.data.message
                     }
                 },
-                error: {
-                    render({ data }) {
-                        if (data instanceof AxiosError) return data.response?.data.message
-                    }
-                }
+                error: "Erro de Validação"
             }).then((res) => {
                 if (res.status === 200 || res.status === 201) {
                     setTimeout(() => {
                         redirect('/session/gestao_escolar/grupos')
                     }, 3000);
+                }
+            }).catch((err) => {
+                if (err instanceof AxiosError) {
+                    const errors = err.response?.data?.message;
+
+                    if (Array.isArray(errors)) {
+                        errors.forEach((msg) => toast.error(msg));
+                    } else {
+                        toast.error(errors);
+                    }
                 }
             })
         }

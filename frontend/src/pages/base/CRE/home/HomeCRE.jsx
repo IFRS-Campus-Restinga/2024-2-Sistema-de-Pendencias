@@ -7,6 +7,7 @@ import check from '../../../../assets/check-svgrepo-com.svg'
 import Modal from '../../../../components/Modal/Modal'
 import Button from '../../../../components/Button/Button'
 import CustomLoading from '../../../../components/customLoading/CustomLoading'
+import { AxiosError } from 'axios'
 
 const propMap = {
     'id': 'id',
@@ -55,7 +56,11 @@ const HomeCRE = () => {
             setProxima(res.data.prox ? pagina + 1 : null)
             setAnterior(res.data.prev ? pagina - 1 : null)
         } catch (error) {
-            console.error(error)
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
             setCarregando(false)
         }

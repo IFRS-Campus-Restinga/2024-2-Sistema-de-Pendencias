@@ -33,6 +33,7 @@ textarea:focus {
 .section {
   display:  flex;
   width: 100%;
+  justify-content: center;
 }
 
 .pdfContainer {

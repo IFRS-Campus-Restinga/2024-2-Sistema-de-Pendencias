@@ -16,6 +16,7 @@ import { validarCampoObrigatorio } from "../../utils/validacoes";
 import AcompanhamentoService from "../../services/acompanhamentoService.js";
 import seta from '../../assets/chevron-down-svgrepo-com.svg'
 import editIcone from '../../assets/edit-3-svgrepo-com.svg'
+import { AxiosError } from "axios";
 
 const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
   const redirect = useNavigate()
@@ -82,40 +83,16 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
       })(),
       {
         pending: `Atualizando status da progressão para ${status}...`,
-        success: 'Status alterado com sucesso!',
-        error: {
-          render({ data }) {
-            if (data instanceof Error) {
-              try {
-                const mensagens = JSON.parse(data.message);
-
-                if (Array.isArray(mensagens)) {
-                  mensagens.forEach((mensagem, index) => {
-                    if (index > 0) {
-                      toast.error(mensagem, {
-                        autoClose: 3000,
-                        position: 'bottom-center',
-                        style: { textAlign: 'center', whiteSpace: 'pre-line' },
-                      });
-                    }
-                  });
-
-                  return mensagens[0];
-                }
-
-                return 'Erro ao atualizar status da progressão.';
-              } catch (e) {
-                return 'Erro inesperado ao processar mensagens.';
-              }
-            }
-
-            return 'Erro ao atualizar status da progressão.';
+        success: {
+          render({data}) {
+            return data.data.message
           }
-        }
+        },
+        error: "Erro de validação"
       },
-    ).then((res) => {
-      if (res.status == 200) setModalAberto(false)
-    });
+      ).then((res) => {
+        if (res.status == 200) setModalAberto(false)
+      });
 
     setBotaoDesabilitado(false)
   }
@@ -166,7 +143,11 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
                     },
                 }
             ).then((res) => {
-              if (res.status === 201 || res.status === 200) fetchAcompanhamento()
+              if (res.status === 201 || res.status === 200) {
+                setModalAberto(false)
+                setTipoModal('acomp')
+                fetchAcompanhamento()
+              }
             })
 
     }
@@ -180,7 +161,11 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
       setProx(res.data.next ? pagina + 1 : null)
       setPrev(res.data.previous ? pagina - 1 : null)
     } catch (error) {
-      console.error(error)
+      if (error instanceof AxiosError) {
+        console.error(error.response.data.message)
+      } else {
+        console.error(error)
+      }
     } finally {
       setIsLoading(false)
     }
@@ -314,7 +299,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
         <div className={styles.container}>
           <div className={styles.containerStatus}>
             {
-              grupo !== "aluno" && tipo !== 'PPT' && dependencia.status !== "Desativada" ? (
+              grupo !== "aluno" && tipo !== 'PPT' && dependencia.status !== "Desativada"  ? (
                 <div className={styles.opcoesContainer}>
                   <Dropdown icone={<img src={gearIcon} className={styles.icone}/>}
                     itens={[
@@ -353,7 +338,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
             <div className={styles.containerBotoes}>
               {(() => {
                 // Se estiver desativado: nada é renderizado
-                if (dependencia.status === "Desativada") return null;
+                if (["Desativada", "Finalizada"].includes(dependencia.status)) return null;
 
                 // 1) GESTÃO ESCOLAR
                 if (grupo === "gestao_escolar") {

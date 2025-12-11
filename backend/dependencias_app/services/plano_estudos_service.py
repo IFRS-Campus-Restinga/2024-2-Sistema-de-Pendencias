@@ -9,9 +9,7 @@ from ..utils.validar_modalidade import validar_modalidade
 from ..utils.flatten_obj import flatten_named_fields
 from ..utils.manage_files import upload_to_drive, get_from_drive, change_file
 from django.conf import settings
-from django.db.models import OuterRef, Subquery, UUIDField
 from django.forms.models import model_to_dict
-from ..models.professor_progressao import ProfessorProgressaoIntegrado, ProfessorProgressaoProeja
 from .async_request_service import AsyncRequestService
 from .file_service import FileService
 from dependencias_session.services.token_service import TokenService
@@ -28,7 +26,7 @@ class PlanoEstudosService:
 
         data = request.data.copy()
 
-        professor_payload, ped  = AcessoService.validar_acesso(request, modalidade, data.get('ped'))
+        _, ped  = AcessoService.validar_acesso(request, modalidade, data.get('ped'))
 
         data = request.data.copy()
 

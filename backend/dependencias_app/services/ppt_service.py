@@ -54,7 +54,7 @@ class PPTService:
                     {"key": "aluno", "url": f"{base_url}/api/users/get/{ppt['aluno']}/", "params": {"fields": "id,username"}},
                     {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ppt['professor_disciplina']}/", "params": {"fields": "id,username"}},
                     {"key": "professor_ppt", "url": f"{base_url}/api/users/get/{ppt['professor_ppt']}/", "params": {"fields": "id,username"}},
-                    {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ppt['curso']}/", "params": {"fields": "id,name"}},
+                    {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ppt['curso']}/", "params": {"fields": "id,name, course_class.id, course_class.number"}},
                     {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ppt['disciplina']}/", "params": {"fields": "id,name"}},
                 ]
 
@@ -64,7 +64,7 @@ class PPTService:
 
                     turma_atual_id = ppt['turma_atual']
                     turma_progressao_id = ppt['turma_progressao']
-                    turmas = ppt['curso'].get('course_class', [])
+                    turmas = ppt['curso'].pop('course_class', [])
 
                     # filtra a turma correta
                     ppt['turma_atual'] = next((turma for turma in turmas if turma['id'] == turma_atual_id), None)

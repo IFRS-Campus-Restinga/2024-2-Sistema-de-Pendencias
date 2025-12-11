@@ -5,6 +5,7 @@ import { PEDService } from "../../../../services/pedService";
 import { PPTService } from "../../../../services/pptService";
 import CustomLoading from "../../../../components/customLoading/CustomLoading";
 import seta from '../../../../assets/chevron-down-svgrepo-com.svg'
+import { AxiosError } from "axios";
 
 
 const statusColors = {
@@ -41,7 +42,11 @@ const HomeAluno = () => {
       setProxPPT(res[1].data.next ? paginaPPT + 1 : null)
       setPrevPPT(res[1].data.next ? paginaPPT - 1 : null)
     } catch (error) {
-      console.error(error)
+      if (error instanceof AxiosError){
+          console.error(error.response?.data.message)
+      } else{
+          console.error(error)
+      }
     } finally {
       setLoading(false)
     }

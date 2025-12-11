@@ -15,6 +15,8 @@ import flattenAndClean from "../../../../utils/flatObject"
 import { FormEncerramentoService } from "../../../../services/formEncerramentoService"
 import Label from '../../../../components/Label/Label'
 import PDFPreview from "../../../../components/PDFPreview/PDFPreview"
+import { AxiosError } from "axios"
+import PDFDisplay from "../../../../features/pdfDisplay/PDFDisplay"
 
 
 const FormEncerramentoForm = () => {
@@ -53,7 +55,11 @@ const FormEncerramentoForm = () => {
                 }))
             });
         } catch (error) {   
-            console.error(error)
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
             setCaregando(false)
         }
@@ -72,7 +78,11 @@ const FormEncerramentoForm = () => {
     
             setFormFile(res.data.form)
         } catch (error) {
-            console.error(error)
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
             setCaregando(false)
         }
@@ -137,34 +147,40 @@ const FormEncerramentoForm = () => {
                     pending: "Salvando formulário de encerramento...",
                     success: {
                         render({ data }) {
-                            return data.data.mensagem
+                            return data.data.message
                         },
                     },
-                    error: {
-                        render({ data }) {
-                        const response = data?.response?.data
-                        if (response?.errors && Array.isArray(response.errors)) {
-                            response.errors.forEach(msg => toast.error(msg))
-                        }
-                        return response?.mensagem ?? "Ocorreu um erro ao registrar."
-                        },
-                    },
+                    error: "Erro de validação"
                 }
-            )
+            ).catch((err) => {
+                if (err instanceof AxiosError) {
+                    const errors = err.response?.data?.message;
+
+                    if (Array.isArray(errors)) {
+                        errors.forEach((msg) => toast.error(msg));
+                    } else {
+                        toast.error(errors);
+                    }
+                }
+            })
 
             try {
                 const res = await promise
                 setFormFile(res.data.form)
                 redirect(`/session/professor/peds/${modalidade}/$${state.ped}/`, {state: state.ped})
-            } catch (err) {
-                console.error("Erro ao registrar formulário:", err)
+            } catch (error) {
+                if (error instanceof AxiosError){
+                    console.error(error.response?.data.message)
+                } else{
+                    console.error(error)
+                }
                 setDesabilitado(false)
             }
         }
     }
 
-    const removerAtividade = (avaliacao) => {
-
+    const removerAtividade = (avaliacaoIndex) => {
+        setFormData({...formData, atividades: formData.atividades.filter((_, index) => index != avaliacaoIndex)});
     }
 
     const addAvaliacao = () => {
@@ -193,7 +209,11 @@ const FormEncerramentoForm = () => {
     if (!state) return null
 
     return (
-        <FormContainer titulo={"Formulário de Encerramento"} textoInfo={"Preencha os campos obrigatórios (*)\n\nUtilize o botão '+' abaixo da tabela para adicionar atividades, preenchendo a data de criação, nome da atividade e respectiva data de entrega.\n\nCaso editado, a lista de atividades enviada, sobrescreverá a atual."}>
+        <FormContainer 
+            titulo={"Formulário de Encerramento"} 
+            comprimento={["Criada", "Finalizada", "Desativada"].includes(state.status) ? '30%' : '80%'} 
+            textoInfo={!["Criada", "Finalizada", "Desativada"].includes(state.status) ? "Preencha os campos obrigatórios (*)\n\nUtilize o botão '+' abaixo da tabela para adicionar atividades, preenchendo a data de criação, nome da atividade e respectiva data de entrega.\n\nCaso editado, a lista de atividades enviada, sobrescreverá a atual." : null}
+        >
             <ToastContainer/>
                 {
                     carregando ? (
@@ -202,207 +222,204 @@ const FormEncerramentoForm = () => {
                         <form className={styles.form} onSubmit={submit}>
                             {
                                 formFile ? (
-                                <div className={styles.pdfContainer}>
-                                    <PDFPreview
-                                        pdfData={formFile}
-                                        width={'120px'}
-                                        height={'150px'}
-                                    />
-                                    <p className={styles.p}>Clique para visualizar o PDF gerado</p>
-                                </div>
+                                    <PDFDisplay arquivo={formFile}/>
                                 ) : null
                             }
-                            <section className={styles.section}>
-                                <div className={styles.formGroup}>
-                                    <Label titulo={"Parecer final *"}>
-                                        <textarea 
-                                            className={styles.textArea}
-                                            value={formData.parecer_final}
-                                            onChange={(e) => setFormData({...formData, parecer_final: e.target.value})}
-                                            maxLength={500}
-                                        />
-                                        {erros.parecer_final ? <MensagemErro mensagem={erros.parecer_final}/> : null}
-                                    </Label>
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <div className={tableStyles.containerTabela}>
-                                        <table className={tableStyles.tabela}>
-                                            <thead className={tableStyles.cabecalho}>
-                                                <tr className={tableStyles.linha}>
-                                                    <th className={tableStyles.th}>
-                                                        Data
-                                                    </th>
-                                                    <th className={tableStyles.th}>
-                                                        Atividade
-                                                    </th>
-                                                    <th className={tableStyles.th}>
-                                                        Data de entrega
-                                                    </th>
-                                                    <th className={tableStyles.th}/>
-                                                </tr>
-                                            </thead>
-                                            <tbody className={tableStyles.corpo}>
-                                                {
-                                                    formData.atividades.map((avaliacao, index) => (
+                            {
+                                !["Criada", "Finalizada", "Desativada"].includes(state.status) ? (
+                                    <section className={styles.section}>
+                                        <div className={styles.formGroup}>
+                                            <Label titulo={"Parecer final *"}>
+                                                <textarea 
+                                                    className={styles.textArea}
+                                                    value={formData.parecer_final}
+                                                    onChange={(e) => setFormData({...formData, parecer_final: e.target.value})}
+                                                    maxLength={500}
+                                                />
+                                                {erros.parecer_final ? <MensagemErro mensagem={erros.parecer_final}/> : null}
+                                            </Label>
+                                        </div>
+                                        <div className={styles.formGroup}>
+                                            <div className={tableStyles.containerTabela}>
+                                                <table className={tableStyles.tabela}>
+                                                    <thead className={tableStyles.cabecalho}>
                                                         <tr className={tableStyles.linha}>
-                                                            <td className={tableStyles.coluna}>
-                                                                <Input
-                                                                    tipo={"date"}
-                                                                    desabilitado={avaliacao.id ? true : false}
-                                                                    valor={avaliacao.data_criacao ? new Date(avaliacao.data_criacao).toISOString().split("T")[0] : ""}
-                                                                    onChange={(e) => {
-                                                                        setFormData((prev) => {
-                                                                            let form = {...prev}
-
-                                                                            form.atividades[index].data_criacao = e.target.value
-
-                                                                            return form
-                                                                        })
-                                                                    }}
-                                                                    onBlur={() => {
-                                                                        setErros(prev => {
-                                                                            let err = {...prev};
-
-                                                                            if (!err.atividades[index]) {
-                                                                                err.atividades[index] = {
-                                                                                    data_criacao: null,
-                                                                                    data_entrega: null,
-                                                                                    atividade: { titulo: null }
-                                                                                };
-                                                                            }
-
-                                                                            err.atividades[index].data_criacao =
-                                                                                validarDataMaxima(formData.atividades[index].data_criacao);
-
-                                                                            return err;
-                                                                        });
-                                                                    }}
-                                                                    erro={erros.atividades[index]?.data_criacao}
-                                                                    valorMaximo={new Date().toISOString().split("T")[0]}
-                                                                />
-                                                            </td>
-                                                            <td className={tableStyles.coluna}>
-                                                                <div className={styles.inputData}>
-                                                                    <Input
-                                                                        tipo={'text'}
-                                                                        alinharCentro={true}
-                                                                        valor={avaliacao.atividade.titulo ?? ""}
-                                                                        desabilitado={avaliacao.id ? true : false}
-                                                                        onChange={(e) => {
-                                                                        setFormData((prev) => {
-                                                                            let form = {...prev}
-
-                                                                            form.atividades[index].atividade.titulo = e.target.value
-
-                                                                            return form
-                                                                        })
-                                                                    }}
-                                                                    onBlur={() => {
-                                                                        setErros(prev => {
-                                                                            let err = {...prev};
-
-                                                                            if (!err.atividades[index]) {
-                                                                                err.atividades[index] = {
-                                                                                    data_criacao: null,
-                                                                                    data_entrega: null,
-                                                                                    atividade: { titulo: null }
-                                                                                };
-                                                                            }
-
-                                                                            err.atividades[index].atividade.titulo =
-                                                                                validarCampoObrigatorio(formData.atividades[index].atividade.titulo);
-
-                                                                            return err;
-                                                                        });
-                                                                    }}
-                                                                    erro={erros.atividades[index]?.atividade.titulo}
-                                                                />
-                                                                </div>
-                                                            </td>
-                                                            <td className={tableStyles.coluna}>
-                                                                <div className={styles.inputData}>
-                                                                    <Input
-                                                                        tipo={"date"}
-                                                                        desabilitado={avaliacao.id ? true : false}
-                                                                        valor={avaliacao.data_entrega ? new Date(avaliacao.data_entrega).toISOString().split("T")[0] : ""}
-                                                                        onChange={(e) => {
-                                                                            setFormData((prev) => {
-                                                                                const form = {...prev}
-
-                                                                                form.atividades[index].data_entrega = e.target.value
-
-                                                                                return form
-                                                                            })
-                                                                        }}
-                                                                        onBlur={() => {
-                                                                            setErros(prev => {
-                                                                                let err = {...prev};
-
-                                                                                if (!err.atividades[index]) {
-                                                                                    err.atividades[index] = {
-                                                                                        data_criacao: null,
-                                                                                        data_entrega: null,
-                                                                                        atividade: { titulo: null }
-                                                                                    };
-                                                                                }
-
-                                                                                err.atividades[index].data_entrega =
-                                                                                    validarDataMaxima(formData.atividades[index].data_entrega);
-
-                                                                                return err;
-                                                                            });
-                                                                        }}
-                                                                        erro={erros.atividades[index]?.data_entrega}
-                                                                        valorMaximo={new Date().toISOString().split("T")[0]}
-                                                                    />
-                                                                </div>
-                                                            </td>
-                                                            <td className={tableStyles.coluna}>
-                                                                {
-                                                                    !avaliacao.id ? (
-                                                                        <img src={xIcone} className={styles.remover} onClick={() => removerAtividade(avaliacao)}/>
-                                                                    ) : null
-                                                                }
-                                                            </td>
+                                                            <th className={tableStyles.th}>
+                                                                Data
+                                                            </th>
+                                                            <th className={tableStyles.th}>
+                                                                Atividade
+                                                            </th>
+                                                            <th className={tableStyles.th}>
+                                                                Data de entrega
+                                                            </th>
+                                                            <th className={tableStyles.th}/>
                                                         </tr>
-                                                    ))
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <button className={styles.addButton} type="button" onClick={() => addAvaliacao()}>
-                                        +        
-                                    </button>
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <Label titulo={"Nota final *"}>
-                                        <Input
-                                            tipo={'text'}
-                                            alinharCentro={true}
-                                            valor={formData.nota ?? ""}
-                                            onChange={(e) => {
-                                                const valor = e.target.value
-                                                    setFormData(prev => {
-                                                        const form = {...prev};
-                                                        if (valor >= 0 && valor <= 10) form.nota = valor;
-                                                        return form;
-                                                    });
-                                                    return;
-                                            }}
-                                            onBlur={() => setErros({...erros, nota: validarCampoObrigatorio(formData.nota)})}
-                                            valorMaximo={10}
-                                            valorMinimo={0}
-                                            erro={erros.nota}
-                                        />
-                                        {erros.nota ? <MensagemErro mensagem={erros.nota}/> : null}
-                                    </Label>
-                                </div>
-                                {
-                                    !["Criada", "Finalizada", "Desativada"].includes(state.status) ? (
-                                        <Button disabled={desabilitado} tipo={"submit"} texto={"Salvar Formulário de Encerramento"}/>
-                                    ) : null
-                                }
-                            </section>
+                                                    </thead>
+                                                    <tbody className={tableStyles.corpo}>
+                                                        {
+                                                            formData.atividades.map((avaliacao, index) => (
+                                                                <tr className={tableStyles.linha}>
+                                                                    <td className={tableStyles.coluna}>
+                                                                        <Input
+                                                                            tipo={"date"}
+                                                                            desabilitado={avaliacao.id ? true : false}
+                                                                            valor={avaliacao.data_criacao ? new Date(avaliacao.data_criacao).toISOString().split("T")[0] : ""}
+                                                                            onChange={(e) => {
+                                                                                setFormData((prev) => {
+                                                                                    let form = {...prev}
+
+                                                                                    form.atividades[index].data_criacao = e.target.value
+
+                                                                                    return form
+                                                                                })
+                                                                            }}
+                                                                            onBlur={() => {
+                                                                                setErros(prev => {
+                                                                                    let err = {...prev};
+
+                                                                                    if (!err.atividades[index]) {
+                                                                                        err.atividades[index] = {
+                                                                                            data_criacao: null,
+                                                                                            data_entrega: null,
+                                                                                            atividade: { titulo: null }
+                                                                                        };
+                                                                                    }
+
+                                                                                    err.atividades[index].data_criacao =
+                                                                                        validarDataMaxima(formData.atividades[index].data_criacao);
+
+                                                                                    return err;
+                                                                                });
+                                                                            }}
+                                                                            erro={erros.atividades[index]?.data_criacao}
+                                                                            valorMaximo={new Date().toISOString().split("T")[0]}
+                                                                        />
+                                                                    </td>
+                                                                    <td className={tableStyles.coluna}>
+                                                                        <div className={styles.inputData}>
+                                                                            <Input
+                                                                                tipo={'text'}
+                                                                                alinharCentro={true}
+                                                                                valor={avaliacao.atividade.titulo ?? ""}
+                                                                                desabilitado={avaliacao.id ? true : false}
+                                                                                onChange={(e) => {
+                                                                                setFormData((prev) => {
+                                                                                    let form = {...prev}
+
+                                                                                    form.atividades[index].atividade.titulo = e.target.value
+
+                                                                                    return form
+                                                                                })
+                                                                            }}
+                                                                            onBlur={() => {
+                                                                                setErros(prev => {
+                                                                                    let err = {...prev};
+
+                                                                                    if (!err.atividades[index]) {
+                                                                                        err.atividades[index] = {
+                                                                                            data_criacao: null,
+                                                                                            data_entrega: null,
+                                                                                            atividade: { titulo: null }
+                                                                                        };
+                                                                                    }
+
+                                                                                    err.atividades[index].atividade.titulo =
+                                                                                        validarCampoObrigatorio(formData.atividades[index].atividade.titulo);
+
+                                                                                    return err;
+                                                                                });
+                                                                            }}
+                                                                            erro={erros.atividades[index]?.atividade.titulo}
+                                                                        />
+                                                                        </div>
+                                                                    </td>
+                                                                    <td className={tableStyles.coluna}>
+                                                                        <div className={styles.inputData}>
+                                                                            <Input
+                                                                                tipo={"date"}
+                                                                                desabilitado={avaliacao.id ? true : false}
+                                                                                valor={avaliacao.data_entrega ? new Date(avaliacao.data_entrega).toISOString().split("T")[0] : ""}
+                                                                                onChange={(e) => {
+                                                                                    setFormData((prev) => {
+                                                                                        const form = {...prev}
+
+                                                                                        form.atividades[index].data_entrega = e.target.value
+
+                                                                                        return form
+                                                                                    })
+                                                                                }}
+                                                                                onBlur={() => {
+                                                                                    setErros(prev => {
+                                                                                        let err = {...prev};
+
+                                                                                        if (!err.atividades[index]) {
+                                                                                            err.atividades[index] = {
+                                                                                                data_criacao: null,
+                                                                                                data_entrega: null,
+                                                                                                atividade: { titulo: null }
+                                                                                            };
+                                                                                        }
+
+                                                                                        err.atividades[index].data_entrega =
+                                                                                            validarDataMaxima(formData.atividades[index].data_entrega);
+
+                                                                                        return err;
+                                                                                    });
+                                                                                }}
+                                                                                erro={erros.atividades[index]?.data_entrega}
+                                                                                valorMaximo={new Date().toISOString().split("T")[0]}
+                                                                            />
+                                                                        </div>
+                                                                    </td>
+                                                                    <td className={tableStyles.coluna}>
+                                                                        {
+                                                                            !avaliacao.id ? (
+                                                                                <img src={xIcone} className={styles.remover} onClick={() => removerAtividade(index)}/>
+                                                                            ) : null
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            ))
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <button className={styles.addButton} type="button" onClick={() => addAvaliacao()}>
+                                                +        
+                                            </button>
+                                        </div>
+                                        <div className={styles.formGroup}>
+                                            <Label titulo={"Nota final *"}>
+                                                <Input
+                                                    tipo={'text'}
+                                                    alinharCentro={true}
+                                                    valor={formData.nota ?? ""}
+                                                    onChange={(e) => {
+                                                        const valor = e.target.value
+                                                            setFormData(prev => {
+                                                                const form = {...prev};
+                                                                if (valor >= 0 && valor <= 10) form.nota = valor;
+                                                                return form;
+                                                            });
+                                                            return;
+                                                    }}
+                                                    onBlur={() => setErros({...erros, nota: validarCampoObrigatorio(formData.nota)})}
+                                                    valorMaximo={10}
+                                                    valorMinimo={0}
+                                                    erro={erros.nota}
+                                                />
+                                                {erros.nota ? <MensagemErro mensagem={erros.nota}/> : null}
+                                            </Label>
+                                        </div>
+                                        {
+                                            !["Criada", "Finalizada", "Desativada"].includes(state.status) ? (
+                                                <Button disabled={desabilitado} tipo={"submit"} texto={"Salvar Formulário de Encerramento"}/>
+                                            ) : null
+                                        }
+                                    </section>
+                                ) : null
+                            }
                         </form>
                     )
                 }

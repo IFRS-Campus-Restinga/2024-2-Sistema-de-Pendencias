@@ -7,6 +7,7 @@ import PDFPreview from '../../../../components/PDFPreview/PDFPreview'
 import Label from '../../../../components/Label/Label'
 import CustomLoading from '../../../../components/customLoading/CustomLoading'
 import AtividadeService from '../../../../services/atividadeService'
+import { AxiosError } from 'axios'
 
 const DetalhesAtividadeCoordenador = () => {
     const location = useLocation()
@@ -29,7 +30,11 @@ const DetalhesAtividadeCoordenador = () => {
             
             setIsLoading(false)
         } catch (error) {
-            console.error(error)
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
           setIsLoading(false)
         }

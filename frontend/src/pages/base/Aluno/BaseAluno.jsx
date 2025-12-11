@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { validaUsuario } from '../validaUsuario'
 import PageContainer from '../../../components/PageContainer/PageContainer'
-import { jwtDecode } from 'jwt-decode'
 
 const BaseAluno = () => {
     const redirect = useNavigate()

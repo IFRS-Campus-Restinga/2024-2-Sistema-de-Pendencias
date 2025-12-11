@@ -4,6 +4,7 @@ import PDFDisplay from "../../../../features/pdfDisplay/PDFDisplay"
 import { FormEncerramentoService } from "../../../../services/formEncerramentoService"
 import { useLocation } from 'react-router-dom'
 import CustomLoading from "../../../../components/customLoading/CustomLoading"
+import { AxiosError } from "axios"
 
 const DetalhesFormEncerramentoCoordenador = () =>{
     const location = useLocation()
@@ -18,7 +19,11 @@ const DetalhesFormEncerramentoCoordenador = () =>{
 
             setArquivo(res.data.form)
         } catch (error) {
-            console.error(error)
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
             setCarregando(false)
         }

@@ -5,6 +5,7 @@ import FormContainer from "../../../../components/FormContainer/FormContainer"
 import styles from '../../../../components/Tabela/Tabela.module.css'
 import lupa from '../../../../assets/search-alt-svgrepo-com.svg'
 import CustomLoading from "../../../../components/customLoading/CustomLoading"
+import { AxiosError } from "axios"
 
 
 const ListarAtividadesGestao = () => {
@@ -20,7 +21,11 @@ const ListarAtividadesGestao = () => {
             const res = await AvaliacaoService.listar(state.ped, modalidade, 'id, atividade.titulo, atividade.id, data_criacao, data_entrega, status, nota')
             setAvaliacoes(res.data)
         } catch (error) {
-            console.error(error)
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
+                console.error(error)
+            }
         } finally {
             setLoading(false)
         }

@@ -11,6 +11,8 @@ import MensagemErro from "../../../../components/MensagemErro/MensagemErro";
 import PDFPreview from "../../../../components/PDFPreview/PDFPreview";
 import CustomLoading from "../../../../components/customLoading/CustomLoading";
 import { validarCampoObrigatorio } from "../../../../utils/validacoes";
+import { AxiosError } from "axios";
+import PDFDisplay from "../../../../features/pdfDisplay/PDFDisplay";
 
 const PlanoEstudosForm = () => {
   const location = useLocation();
@@ -41,7 +43,11 @@ const PlanoEstudosForm = () => {
 
       setPlanoFile(res.data.plano)
     } catch (error) {
-      console.error(error)
+      if (error instanceof AxiosError){
+          console.error(error.response?.data.message)
+      } else{
+          console.error(error)
+      }
     } finally {
       setIsLoading(false)
     }
@@ -63,23 +69,29 @@ const PlanoEstudosForm = () => {
             return data.data.message
           },
         },
-        error: {
-          render({ data }) {
-            const response = data?.response?.data
-            if (response?.errors && Array.isArray(response.errors)) {
-              response.errors.forEach(msg => toast.error(msg))
+        error: "Erro de validação"
+      }).catch((err) => {
+        if (err instanceof AxiosError) {
+            const errors = err.response?.data?.message;
+
+            if (Array.isArray(errors)) {
+                errors.forEach((msg) => toast.error(msg));
+            } else {
+                toast.error(errors);
             }
-            return response?.message ?? "Ocorreu um erro ao registrar."
-          },
-        },
+        }
       })
 
       try {
         const res = await promise
         setPlanoFile(res.data.plano)
-                redirect(`/session/professor/peds/${modalidade}/$${state.ped}/`, {state: state.ped})
-      } catch (err) {
-        console.error("Erro ao registrar plano:", err)
+        redirect(`/session/professor/peds/${modalidade}/$${state.ped}/`, {state: state.ped})
+      } catch (error) {
+        if (error instanceof AxiosError){
+            console.error(error.response?.data.message)
+        } else{
+            console.error(error)
+        }
         setDesabilitado(false)
       }
     } else {
@@ -127,92 +139,98 @@ const PlanoEstudosForm = () => {
   if (!state) return null
   
   return (
-    <FormContainer titulo={state.plano_estudos ? "Editar Plano de Estudos" : "Cadastro Plano de Estudos"} comprimento={"60%"}>
+    <FormContainer titulo={"Plano de Estudos"} comprimento={["Lançada", "Finalizada", "Desativada"].includes(state.status) ? '30%' : '60%'}>
       <section className={styles.section}>
         {
           isLoading ? (
             <CustomLoading/>
           ) : (
-            <>
-              <form className={styles.form} onSubmit={submit}>
-                <div className={styles.formGroup}>
-                  <Label titulo={'Forma de oferta *'}>
-                    <Select
-                      opcoes={[
-                        {
-                          valor: "Presencial"
-                        },
-                        {
-                          valor: "EAD"
-                        },
-                        {
-                          valor: "Híbrido"
-                        },
-                      ]}
-                      chave={'valor'}
-                      desabilitado={desabilitado}
-                      erro={erros.forma_oferta}
-                      selecionado={formData.forma_oferta}
-                      setValor={(opcao) => {
-                        setFormData({...formData, forma_oferta: opcao.valor})
-                      }}
-                    />
-                  </Label>
-                  <Label titulo={'Turno *'}>
-                    <Select
-                      opcoes={[
-                        {
-                          valor: "Manhã"
-                        },
-                        {
-                          valor: "Tarde"
-                        },
-                        {
-                          valor: "Noite"
-                        },
-                        {
-                          valor:"Integral"
-                        }
-                      ]}
-                      chave={'valor'}
-                      desabilitado={desabilitado}
-                      erro={erros.turno}
-                      selecionado={formData.turno}
-                      setValor={(opcao) => {
-                        setFormData({...formData, turno: opcao.valor})
-                      }}
-                    />
-                  </Label>
-                </div>
-                <div className={styles.formGroup}>
-                  <Label titulo={"Parecer pedagógico *"}>
-                    <textarea 
-                      className={styles.textArea}
-                      value={formData.parecer_pedagogico}
-                      onChange={(e) => setFormData({...formData, parecer_pedagogico: e.target.value})}
-                    />
-                    {erros.parecer_pedagogico ? <MensagemErro mensagem={erros.parecer_pedagogico}/> : null}
-                  </Label>
-                </div>
+            !["Lançada", "Finalizada", "Desativada"].includes(state.status) ? (
+              <>
+                <form className={styles.form} onSubmit={submit}>
+                  <div className={styles.formGroup}>
+                    <Label titulo={'Forma de oferta *'}>
+                      <Select
+                        opcoes={[
+                          {
+                            valor: "Presencial"
+                          },
+                          {
+                            valor: "EAD"
+                          },
+                          {
+                            valor: "Híbrido"
+                          },
+                        ]}
+                        chave={'valor'}
+                        desabilitado={desabilitado}
+                        erro={erros.forma_oferta}
+                        selecionado={formData.forma_oferta}
+                        setValor={(opcao) => {
+                          setFormData({...formData, forma_oferta: opcao.valor})
+                        }}
+                      />
+                    </Label>
+                    <Label titulo={'Turno *'}>
+                      <Select
+                        opcoes={[
+                          {
+                            valor: "Manhã"
+                          },
+                          {
+                            valor: "Tarde"
+                          },
+                          {
+                            valor: "Noite"
+                          },
+                          {
+                            valor:"Integral"
+                          }
+                        ]}
+                        chave={'valor'}
+                        desabilitado={desabilitado}
+                        erro={erros.turno}
+                        selecionado={formData.turno}
+                        setValor={(opcao) => {
+                          setFormData({...formData, turno: opcao.valor})
+                        }}
+                      />
+                    </Label>
+                  </div>
+                  <div className={styles.formGroup}>
+                    <Label titulo={"Parecer pedagógico *"}>
+                      <textarea 
+                        className={styles.textArea}
+                        value={formData.parecer_pedagogico}
+                        onChange={(e) => setFormData({...formData, parecer_pedagogico: e.target.value})}
+                      />
+                      {erros.parecer_pedagogico ? <MensagemErro mensagem={erros.parecer_pedagogico}/> : null}
+                    </Label>
+                  </div>
+                  {
+                    !["Lançada", "Finalizada", "Desativada"].includes(state.status) ? (
+                      <Button disabled={desabilitado} texto={state.plano_estudos ? "Salvar" : "Cadastrar"} tipo={"submit"}/>
+                    ) : null
+                  }
+                </form>
                 {
-                  !["Lançada", "Finalizada", "Desativada"].includes(state.status) ? (
-                    <Button disabled={desabilitado} texto={state.plano_estudos ? "Salvar" : "Cadastrar"} tipo={"submit"}/>
+                  planoFile ? (
+                    <div className={styles.pdfContainer}>
+                      <PDFPreview
+                        pdfData={planoFile}
+                        width={'120px'}
+                        height={'150px'}
+                      />
+                      <p className={styles.p}>Clique para visualizar o PDF gerado</p>
+                    </div>
                   ) : null
                 }
-              </form>
-              {
-                planoFile ? (
-                  <div className={styles.pdfContainer}>
-                    <PDFPreview
-                      pdfData={planoFile}
-                      width={'120px'}
-                      height={'150px'}
-                    />
-                    <p className={styles.p}>Clique para visualizar o PDF gerado</p>
-                  </div>
-                ) : null
-              }
-            </>
+              </>
+            ) : (
+              planoFile ? (
+                <PDFDisplay arquivo={planoFile}/>
+              ) : null
+            )
           )
         }
       </section>

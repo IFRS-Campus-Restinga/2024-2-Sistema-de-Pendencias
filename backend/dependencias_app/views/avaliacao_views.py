@@ -3,6 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status, serializers
 from fs_auth_middleware.decorators import has_permissions
+from dependencias_app.services.acesso_service import AcessoException
+from dependencias_app.utils.formatar_erros import formatar_erros
 from dependencias_app.services.avaliacao_service import AvaliacaoService
 
 @api_view(['POST'])
@@ -11,11 +13,13 @@ def salvar_plano_atividades(request, modalidade, ped_id):
     try:
         AvaliacaoService.salvar_plano_atividades(request, modalidade, ped_id)
 
-        return Response({'mensagem': 'Plano de estudos salvo com sucesso'}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'Plano de estudos salvo com sucesso'}, status=status.HTTP_201_CREATED)
+    except AcessoException as e:
+        return Response({'message': str(e)}, status=status.HTTP_403_FORBIDDEN)
     except serializers.ValidationError as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
 @api_view(['GET'])
@@ -23,7 +27,9 @@ def salvar_plano_atividades(request, modalidade, ped_id):
 def listar_avaliacoes_por_PED(request, modalidade, ped_id):
     try:
         return Response(AvaliacaoService.listar_avaliacoes(request, modalidade, ped_id), status=status.HTTP_200_OK)
+    except AcessoException as e:
+        return Response({'message': str(e)}, status=status.HTTP_403_FORBIDDEN)
     except serializers.ValidationError as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

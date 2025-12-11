@@ -48,7 +48,7 @@ def detalhes_usuario(request, usuario_id):
 
         return Response(usuario, status=status.HTTP_200_OK)
     except Http404 as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_404_NOT_FOUND)    
+        return Response({'message': str(e)}, status=status.HTTP_404_NOT_FOUND)    
     except serializers.ValidationError as e:
         return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
@@ -63,7 +63,7 @@ def editar_usuario(request, usuario_id):
 
         return Response({'message': 'Usuário editado com sucesso'}, status=status.HTTP_201_CREATED)
     except Http404 as e:
-        return Response({'mensagem': str(e)}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': str(e)}, status=status.HTTP_404_NOT_FOUND)
     except serializers.ValidationError as e:
         return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:

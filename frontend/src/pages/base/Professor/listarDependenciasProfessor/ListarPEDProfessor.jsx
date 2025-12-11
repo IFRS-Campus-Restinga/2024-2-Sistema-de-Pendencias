@@ -17,7 +17,7 @@ const ListarPEDGestao = () => {
             'disciplina': 'disciplina',
             'trimestre_recuperar': 'trimestre(s) à recup.',
             'data_inicio': 'data início',
-            'data_fim': 'data fim',
+            'data_final': 'data fim',
             'status': 'status',
             'situacao': 'situação'
         })
@@ -30,16 +30,16 @@ const ListarPEDGestao = () => {
             'disciplina': 'disciplina',
             'ano_semestre_reprov': 'semestre de reprovação',
             'data_inicio': 'data início',
-            'data_fim': 'data fim',
+            'data_final': 'data fim',
             'status': 'status',
             'situacao': 'situação'
         })
     }
 
     const getFormat = () => {
-        if (modalidade === 'Integrado') return 'id, aluno, professor_disciplina, curso, disciplina, trimestre_recuperar, data_inicio, data_fim, status, situacao'
+        if (modalidade === 'Integrado') return 'id, aluno, professor_disciplina, curso, disciplina, trimestre_recuperar, data_inicio, data_final, status, situacao'
         
-        if (modalidade === "ProEJA") return 'id, aluno, professor_disciplina, curso, disciplina, ano_semestre_reprov, data_inicio, data_fim, status, situacao'
+        if (modalidade === "ProEJA") return 'id, aluno, professor_disciplina, curso, disciplina, ano_semestre_reprov, data_inicio, data_final, status, situacao'
     }
 
     const fetchPEDs = async (pagina, param) => {

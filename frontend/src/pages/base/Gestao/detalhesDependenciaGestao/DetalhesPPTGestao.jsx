@@ -26,7 +26,7 @@ const DetalhesPPTGestao = () => {
                     turma_atual,
                     turma_progressao,
                     data_inicio,
-                    data_fim,
+                    data_final,
                     status,
                     situacao,
                     observacao,
@@ -36,9 +36,9 @@ const DetalhesPPTGestao = () => {
 
             setPPT(res.data)
         } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data.message)
-            } else {
+            if (error instanceof AxiosError){
+                console.error(error.response?.data.message)
+            } else{
                 console.error(error)
             }
         } finally {
