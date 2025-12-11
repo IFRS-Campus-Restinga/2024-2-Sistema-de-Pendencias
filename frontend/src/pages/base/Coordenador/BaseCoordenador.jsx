@@ -5,14 +5,14 @@ import { useEffect } from "react";
 import { verificarGrupos } from "../../../utils/permissões";
 import { ToastContainer } from "react-toastify";
 
-const BaseProfessor = () => {
+const BaseCoordenador = () => {
   const redirect = useNavigate();
   const homeUrl = `/${verificarGrupos(
     JSON.parse(sessionStorage.getItem("user")).group
   )}`;
 
   const validaProfessor = () => {
-    const res = validaUsuario("coord_reg_esc");
+    const res = validaUsuario("coord");
 
     if (!res.status) {
       if (res.grupo === undefined) redirect("/");
@@ -32,4 +32,4 @@ const BaseProfessor = () => {
   );
 };
 
-export default BaseProfessor;
+export default BaseCoordenador;

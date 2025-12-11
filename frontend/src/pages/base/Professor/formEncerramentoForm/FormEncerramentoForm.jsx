@@ -249,7 +249,7 @@ const FormEncerramentoForm = () => {
                                                                 <Input
                                                                     tipo={"date"}
                                                                     desabilitado={avaliacao.id ? true : false}
-                                                                    valor={avaliacao.data_criacao}
+                                                                    valor={new Date(avaliacao.data_criacao).toISOString().split("T")[0]}
                                                                     onChange={(e) => {
                                                                         setFormData((prev) => {
                                                                             let form = {...prev}
@@ -324,7 +324,7 @@ const FormEncerramentoForm = () => {
                                                                     <Input
                                                                         tipo={"date"}
                                                                         desabilitado={avaliacao.id ? true : false}
-                                                                        valor={avaliacao.data_entrega}
+                                                                        valor={new Date(avaliacao.data_entrega).toISOString().split("T")[0]}
                                                                         onChange={(e) => {
                                                                             setFormData((prev) => {
                                                                                 const form = {...prev}

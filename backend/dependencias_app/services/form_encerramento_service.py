@@ -2,17 +2,17 @@ import os
 import uuid
 import base64
 import locale
+import requests
 from datetime import datetime
 from django.shortcuts import get_object_or_404
 from django.db import models, transaction
-import requests
 from rest_framework import serializers
-from dependencias_app.models.usuario import Usuario
+from dependencias_app.services.acesso_service import AcessoService
+from dependencias_app.services.file_service import FileService
+from dependencias_session.services.token_service import TokenService
 from ..utils.validar_modalidade import validar_modalidade
 from ..utils.manage_files import upload_to_drive, get_from_drive, change_file
 from django.conf import settings
-from .file_service import FileService
-from dependencias_session.services.token_service import TokenService
 from types import SimpleNamespace
 
 DRIVE_FOLDER = settings.DRIVE_FORM_ENCERRAMENTO_FOLDER
@@ -23,17 +23,6 @@ locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
 
 class FormEncerramentoService:
     @staticmethod
-    def validar_professor(request):
-        usuario_id = TokenService.decode_token(request.COOKIES.get("access_token")).get("user_id")
-
-        professor = Usuario.objects.filter(id=usuario_id, group__name="professor").first()
-
-        if professor is None:
-            raise serializers.ValidationError("Usuário inválido")
-
-        return professor
-
-    @staticmethod
     def obter_atividades_por_ped(professor, modalidade, ped_id):
         ped_model_class, _ = validar_modalidade(modalidade, "PED")
 
@@ -42,7 +31,7 @@ class FormEncerramentoService:
                 professor_ped=models.F("professores_emi__professor")
             ).filter(
                 id=uuid.UUID(ped_id),
-                professores_emi__professor=professor,
+                professores_emi__professor__id=uuid.UUID(professor.get("user_id")),
                 professores_emi__responsavel_atual=True
             )
             atividades_attr = "atividades_emi"
@@ -52,7 +41,7 @@ class FormEncerramentoService:
                 professor_ped=models.F("professores_proeja__professor")
             ).filter(
                 id=uuid.UUID(ped_id),
-                professores_proeja__professor=professor,
+                professores_proeja__professor=uuid.UUID(professor.get("user_id")),
                 professores_proeja__responsavel_atual=True
             )
             atividades_attr = "atividades_proeja"
@@ -80,8 +69,7 @@ class FormEncerramentoService:
         serializer.validated_data.pop("nota", None)
         form_encerramento_instance = serializer.Meta.model(**serializer.validated_data)
 
-        professor = FormEncerramentoService.validar_professor(request)
-        ped, _ = FormEncerramentoService.obter_atividades_por_ped(professor, modalidade, ped_id)
+        professor, ped = AcessoService.validar_acesso(request, modalidade, ped_id)
 
         if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get("access_token"))["user_id"]:
             raise serializers.ValidationError("Acesso não autorizado")
@@ -130,14 +118,17 @@ class FormEncerramentoService:
 
         serializer = serializer_class(form_encerramento, context={"request": request})
 
-        professor = FormEncerramentoService.validar_professor(request)
-        ped, atividades = FormEncerramentoService.obter_atividades_por_ped(professor, modalidade, str(form_encerramento.ped.id))
+        payload_usuario, ped = AcessoService.validar_acesso(request, modalidade, str(form_encerramento.ped.id))
+        arquivo = get_from_drive(form_encerramento.drive_id, payload_usuario.get("group"))
 
-        arquivo = get_from_drive(form_encerramento.drive_id, professor.group.name)
+        if payload_usuario.get("group") == 'professor':
+            _, atividades = FormEncerramentoService.obter_atividades_por_ped(payload_usuario, modalidade, str(form_encerramento.ped.id))
 
-        serializer_avaliacoes = avaliacao_serializer_class(atividades, many=True, context={'request': req})
+            serializer_avaliacoes = avaliacao_serializer_class(atividades, many=True, context={'request': req})
 
-        return {**serializer.data, "nota": ped.nota_final, "atividades": serializer_avaliacoes.data}, arquivo["data"]
+            return {**serializer.data, "nota": ped.nota_final, "atividades": serializer_avaliacoes.data}, arquivo["data"]
+        else:
+            return {}, arquivo['data']
 
     @staticmethod
     @transaction.atomic
@@ -156,8 +147,7 @@ class FormEncerramentoService:
         
         form_encerramento_instance = instance
 
-        professor = FormEncerramentoService.validar_professor(request)
-        ped, _ = FormEncerramentoService.obter_atividades_por_ped(professor, modalidade, str(instance.ped.id))
+        professor, ped = AcessoService.validar_acesso(request, modalidade, str(instance.ped.id))
 
         if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get("access_token"))["user_id"]:
             raise serializers.ValidationError("Acesso não autorizado")

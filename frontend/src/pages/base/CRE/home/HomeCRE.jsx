@@ -1,12 +1,29 @@
-import { useState } from 'react'
-import styles from './HomeRegistro.module.css'
+import { useEffect, useRef, useState } from 'react'
+import styles from './HomeCRE.module.css'
 import FormContainer from '../../../../components/FormContainer/FormContainer'
 import { PPTService } from '../../../../services/pptService'
 import { toast } from 'react-toastify'
 import check from '../../../../assets/check-svgrepo-com.svg'
 import Modal from '../../../../components/Modal/Modal'
+import Button from '../../../../components/Button/Button'
+import CustomLoading from '../../../../components/customLoading/CustomLoading'
 
-const HomeRegistro = () => {
+const propMap = {
+    'id': 'id',
+    'aluno': 'aluno',
+    'professor_disciplina': 'professor disciplina',
+    'professor_ppt': 'professor progressão',
+    'curso': 'curso',
+    'turma_atual': 'turma atual',
+    'turma_progressao': 'turma progressão',
+    'disciplina': 'disciplina',
+    'status': 'status',
+    'situacao': 'situação'
+}
+
+const HomeCRE = () => {
+    const primeiroRef = useRef(null)
+    const ultimoRef = useRef(null)
     const [PPTs, setPPTs] = useState([])
     const [PPTSelecionada, setPPTSelecionada] = useState(null)
     const [modalAberto, setModalAberto] = useState(false)
@@ -17,9 +34,26 @@ const HomeRegistro = () => {
 
     const fetchPPTs = async () => {
         try {
-            const res = await PPTService.listarPendentes(pagina)
+            const res = await PPTService.listarPendentes(
+                `
+                id,
+                aluno,
+                professor_disciplina,
+                professor_ppt,
+                curso,
+                disciplina,
+                turma_atual,
+                turma_progressao,
+                status,
+                situacao
+            `,
+            pagina,
+            'flat'
+            )
 
             setPPTs(res.data.results)
+            setProxima(res.data.prox ? pagina + 1 : null)
+            setAnterior(res.data.prev ? pagina - 1 : null)
         } catch (error) {
             console.error(error)
         } finally {
@@ -200,4 +234,4 @@ const HomeRegistro = () => {
     )
 }
 
-export default HomeRegistro
+export default HomeCRE

@@ -28,6 +28,18 @@ export const PPTService = {
     });
   },
 
+  listarCoordenador: async (retorno, pagina, formato, param) => {
+    return await api.get("api/ppts/listar/coordenador/", {
+      params: {
+        retorno,
+        page: pagina,
+        page_size: 10,
+        formato,
+        busca: param
+      },
+    });
+  },
+
   listarAluno: async (retorno, pagina, formato, params) => {
     return await api.get("api/ppts/listar/aluno/", {
       params: {

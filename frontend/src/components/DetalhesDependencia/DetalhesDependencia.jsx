@@ -9,7 +9,7 @@ import { PEDService } from "../../services/pedService";
 import { PPTService } from "../../services/pptService";
 import { toast, ToastContainer } from "react-toastify";
 import gearIcon from '../../assets/gear-svgrepo-com.svg'
-import Modal from '../Modal/Modal.tsx'
+import Modal from '../Modal/Modal'
 import Label from "../Label/Label";
 import MensagemErro from "../MensagemErro/MensagemErro";
 import { validarCampoObrigatorio } from "../../utils/validacoes";

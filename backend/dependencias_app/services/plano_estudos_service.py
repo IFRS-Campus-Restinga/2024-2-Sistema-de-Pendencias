@@ -4,14 +4,13 @@ import base64
 from datetime import datetime
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from dependencias_app.services.acesso_service import AcessoService
 from ..utils.validar_modalidade import validar_modalidade
 from ..utils.flatten_obj import flatten_named_fields
 from ..utils.manage_files import upload_to_drive, get_from_drive, change_file
 from django.conf import settings
 from django.db.models import OuterRef, Subquery, UUIDField
 from django.forms.models import model_to_dict
-from ..models.ped_integrado import PEDIntegrado
-from ..models.ped_proeja import PEDProeja
 from ..models.professor_progressao import ProfessorProgressaoIntegrado, ProfessorProgressaoProeja
 from .async_request_service import AsyncRequestService
 from .file_service import FileService
@@ -28,6 +27,8 @@ class PlanoEstudosService:
         _, serializer_class = validar_modalidade(modalidade, "PlanoEstudos")
         ped_model_class, _ = validar_modalidade(modalidade, "PED")
 
+        professor_payload = AcessoService.validar_acesso(request, modalidade, data.get('ped'))
+
         data = request.data.copy()
 
         serializer = serializer_class(data=data)
@@ -41,13 +42,21 @@ class PlanoEstudosService:
         if modalidade == "Integrado":
             responsavel_subquery = (
                 ProfessorProgressaoIntegrado.objects
-                .filter(ped=OuterRef('pk'), responsavel_atual=True)
+                .filter(
+                    ped=OuterRef('pk'), 
+                    responsavel_atual=True,
+                    professores_emi__professor__id=uuid.UUID(professor_payload.get("user_id"))
+                )
                 .values('professor')[:1]
             )
         else:
             responsavel_subquery = (
                 ProfessorProgressaoProeja.objects
-                .filter(ped=OuterRef('pk'), responsavel_atual=True)
+                .filter(
+                    ped=OuterRef('pk'), 
+                    responsavel_atual=True,
+                    professores_proeja__professor__id=uuid.UUID(professor_payload.get("user_id"))
+                )
                 .values('professor')[:1]
             )
 
@@ -104,6 +113,8 @@ class PlanoEstudosService:
 
         plano_estudos = get_object_or_404(model_class, pk=uuid.UUID(plano_estudos_id))
 
+        AcessoService.validar_acesso(request, modalidade, str(plano_estudos.ped.id))
+
         serializer = serializer_class(plano_estudos, context={'request': request})
 
         arquivo = get_from_drive(plano_estudos.drive_id, TokenService.decode_token(request.COOKIES.get('access_token'))['group'])
@@ -113,7 +124,9 @@ class PlanoEstudosService:
     @staticmethod
     def editar(request, modalidade, plano_estudos_id):
         model_class, serializer_class = validar_modalidade(modalidade, "PlanoEstudos")
-        ped_model_class = PEDIntegrado if modalidade == 'Integrado' else PEDProeja
+        ped_model_class, _ = validar_modalidade(modalidade, "PED")
+
+        professor_payload = AcessoService.validar_acesso(request, modalidade, data.get('ped'))
 
         data = request.data.copy()
 
@@ -125,17 +138,26 @@ class PlanoEstudosService:
         if modalidade == "Integrado":
             responsavel_subquery = (
                 ProfessorProgressaoIntegrado.objects
-                .filter(ped=OuterRef('pk'), responsavel_atual=True)
+                .filter(
+                    ped=OuterRef('pk'), 
+                    responsavel_atual=True,
+                    professores_emi__professor__id=uuid.UUID(professor_payload.get("user_id"))
+                )
                 .values('professor')[:1]
             )
         else:
             responsavel_subquery = (
                 ProfessorProgressaoProeja.objects
-                .filter(ped=OuterRef('pk'), responsavel_atual=True)
+                .filter(
+                    ped=OuterRef('pk'), 
+                    responsavel_atual=True,
+                    professores_proeja__professor__id=uuid.UUID(professor_payload.get("user_id"))
+                )
                 .values('professor')[:1]
             )
 
         plano_estudos = get_object_or_404(model_class, pk=uuid.UUID(plano_estudos_id))
+
         ped = (
             ped_model_class.objects
             .annotate(professor_ped=Subquery(responsavel_subquery, output_field=UUIDField()))

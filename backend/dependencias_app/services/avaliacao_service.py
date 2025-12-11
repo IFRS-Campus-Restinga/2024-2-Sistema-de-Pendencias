@@ -5,7 +5,6 @@ from dependencias_app.utils.validar_modalidade import validar_modalidade
 from dependencias_session.services.token_service import TokenService
 from django.db import transaction
 
-
 class AvaliacaoService:
     @staticmethod
     def validar_professor(request):
@@ -97,6 +96,8 @@ class AvaliacaoService:
         if payload.get("group") == "gestao_escolar":
             ped = ped_model_class.objects.get(id=uuid.UUID(ped_id))
         if payload.get("group") == "aluno":
+            ped = ped_model_class.objects.get(id=uuid.UUID(ped_id), aluno__id=uuid.UUID(payload.get("user_id")))
+        if payload.get("group") == "coord":
             ped = ped_model_class.objects.get(id=uuid.UUID(ped_id), aluno__id=uuid.UUID(payload.get("user_id")))
         if payload.get("group") == "professor":
             professor = AvaliacaoService.validar_professor(request)

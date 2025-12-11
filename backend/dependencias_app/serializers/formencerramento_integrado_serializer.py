@@ -19,30 +19,46 @@ class FormEncerramentoIntegradoSerializer(serializers.ModelSerializer):
             "nota": {"write_only": True},
         }
 
+    def _parse_date(self, value):
+        if not value:
+            raise ValueError("Data vazia.")
+
+        try:
+            return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except:
+            pass
+
+        try:
+            return datetime.strptime(value, "%Y-%m-%d")
+        except:
+            pass
+
+        raise ValueError("Formato de data inválido.")
+
     def to_internal_value(self, data):
         internal = super().to_internal_value(data)
 
         atividades = data.get("atividades", [])
         nota_raw = data.get("nota")
 
-        # Converter nota para float
         try:
             internal["nota"] = float(nota_raw)
         except Exception:
             raise serializers.ValidationError({"nota": "A nota deve ser um número."})
 
         lista_convertida = []
+
         for item in atividades:
             nova = item.copy()
 
             try:
-                dtc = datetime.strptime(item["data_criacao"], "%Y-%m-%d")
+                dtc = self._parse_date(item["data_criacao"])
                 nova["data_criacao"] = dtc.strftime("%d/%m/%Y")
             except:
                 raise serializers.ValidationError({"data_criacao": "Data inválida."})
 
             try:
-                dte = datetime.strptime(item["data_entrega"], "%Y-%m-%d")
+                dte = self._parse_date(item["data_entrega"])
                 nova["data_entrega"] = dte.strftime("%d/%m/%Y")
             except:
                 raise serializers.ValidationError({"data_entrega": "Data inválida."})
@@ -77,7 +93,6 @@ class FormEncerramentoIntegradoSerializer(serializers.ModelSerializer):
             if not isinstance(atividade_info, dict) or not atividade_info.get("titulo"):
                 raise serializers.ValidationError({"Atividade": "Título obrigatório."})
 
-            # agora datas já vêm no formato d/m/Y — converter de volta para comparar
             dt_criacao = datetime.strptime(item["data_criacao"], "%d/%m/%Y")
             dt_entrega = datetime.strptime(item["data_entrega"], "%d/%m/%Y")
 
@@ -86,8 +101,6 @@ class FormEncerramentoIntegradoSerializer(serializers.ModelSerializer):
                     "Data de criação deve ser menor que a data de entrega."
                 )
 
-    # ---------------------------------------------------------
-   
     def create(self, validated_data):
         validated_data.pop("atividades", None)
         validated_data.pop("nota", None)

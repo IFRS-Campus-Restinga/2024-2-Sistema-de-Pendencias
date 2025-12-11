@@ -1,12 +1,8 @@
 import styles from './Modal.module.css'
 import close from '../../assets/close-svgrepo-com.svg'
 
-interface ModalProps {
-    setIsOpen: (isOpen: boolean) => void
-    children: React.ReactNode
-}
 
-const Modal = ({setIsOpen, children}: ModalProps) => {
+const Modal = ({setIsOpen, children}) => {
 
     return (
         <section className={styles.section}>

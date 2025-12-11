@@ -56,7 +56,7 @@ class PEDService:
         busca = request.GET.get('busca', '')
 
         paginator = PEDPagination()
-        ultimo_valor_cursor = request.GET.get('after')
+        ultimo_valor_cursor = request.GET.get('last')
 
         if modalidade == "Integrado":
             responsavel_subquery = ProfessorProgressaoIntegrado.objects.filter(
@@ -128,7 +128,7 @@ class PEDService:
         busca = request.GET.get('busca', '')
 
         paginator = PEDPagination()
-        ultimo_valor_cursor = request.GET.get('after')
+        ultimo_valor_cursor = request.GET.get('last')
 
         # SUBQUERY FILTRA APENAS AS PEDS DO PROFESSOR
         if modalidade == "Integrado":
@@ -197,7 +197,9 @@ class PEDService:
         busca = request.GET.get('busca', '')
 
         paginator = PEDPagination()
+        ultimo_valor_cursor = request.GET.get('after')
 
+        # Subquery correta para o responsável
         if modalidade == "Integrado":
             responsavel_subquery = ProfessorProgressaoIntegrado.objects.filter(
                 ped=OuterRef('pk'),
@@ -206,46 +208,70 @@ class PEDService:
         else:
             responsavel_subquery = ProfessorProgressaoProeja.objects.filter(
                 ped=OuterRef('pk'),
-                responsavel_atual=True,
+                responsavel_atual=True
             ).values('professor')[:1]
 
-        peds = model_class.objects.all().annotate(professor_ped=Subquery(responsavel_subquery, output_field=UUIDField())).order_by('-data_criacao')
-
-        lista_peds = serializer_class(peds, context={'request': request}, many=True)
         resultado = []
 
         cookies = {"system": settings.API_KEY}
         base_url = settings.BASE_SYSTEM_URL
 
-        for ped in lista_peds.data:
-            if len(resultado) < paginator.page_size:
-                # monta tasks diretamente na listagem
-                tasks = [
-                    {"key": "aluno", "url": f"{base_url}/api/users/get/{ped['aluno']}/", "params": {"fields": "id,username"}},
-                    {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ped['professor_disciplina']}/", "params": {"fields": "id,username"}},
-                    {"key": "professor_ped", "url": f"{base_url}/api/users/get/{ped['professor_ped']}/", "params": {"fields": "id,username"}},
-                    {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ped['curso']}/", "params": {"fields": "id,name,coord.id"}},
-                    {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ped['disciplina']}/", "params": {"fields": "id,name"}},
-                ]
+        while len(resultado) < paginator.page_size:
 
-                try:
-                    # executa todas as requests simultaneamente
-                    dados_ped = AsyncRequestService.run_fetch(tasks, cookies=cookies)
-                    ped.update(dados_ped)
+            filtro = {}
+            if ultimo_valor_cursor:
+                filtro['data_criacao__lt'] = ultimo_valor_cursor
 
-                    curso_coord_id = str(dados_ped['course']['coord']['id'])
+            ped = (
+                model_class.objects
+                .annotate(professor_ped=Subquery(responsavel_subquery, output_field=UUIDField()))
+                .filter(**filtro)
+                .order_by('-data_criacao')
+                .first()
+            )
 
-                    if curso_coord_id == str(coordenador_id):
-                        if busca.strip():
-                            busca_lower = busca.lower()
-                            if any(busca_lower in str(v).lower() for v in ped.values() if v is not None):
-                                resultado.append(formatar_obj(ped, request.GET.get("formato")))
-                        else:
-                            resultado.append(formatar_obj(ped, request.GET.get("formato")))
+            if not ped:
+                break
 
-                except Exception as e:
-                    raise Exception(f"Erro ao buscar dados do PED {ped['id']}: {str(e)}")
-        
+            ped_serializado = serializer_class(ped, context={'request': request}).data
+            task_curso = [{
+                "key": "curso",
+                "url": f"{base_url}/api/academic/courses/get/{ped_serializado['curso']}/",
+                "params": {"fields": "id,name,coord.id"}
+            }]
+
+            dados_curso = AsyncRequestService.run_fetch(task_curso, cookies=cookies)
+            curso = dados_curso["curso"]
+
+            coord_curso = curso.pop("coord")
+            curso_coord_id = coord_curso["id"]
+
+            if curso_coord_id != str(coordenador_id):
+                ultimo_valor_cursor = ped.data_criacao
+                continue
+
+            outras_tasks = [
+                {"key": "aluno", "url": f"{base_url}/api/users/get/{ped_serializado['aluno']}/",
+                "params": {"fields": "id,username"}},
+                {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ped_serializado['professor_disciplina']}/",
+                "params": {"fields": "id,username"}},
+                {"key": "professor_ped", "url": f"{base_url}/api/users/get/{ped_serializado['professor_ped']}/",
+                "params": {"fields": "id,username"}},
+                {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ped_serializado['disciplina']}/",
+                "params": {"fields": "id,name"}},
+            ]
+
+            dados_extra = AsyncRequestService.run_fetch(outras_tasks, cookies=cookies)
+            ped_final = {**ped_serializado, **dados_extra, **dados_curso}
+
+            if busca.strip():
+                busca_lower = busca.lower()
+                if any(busca_lower in str(v).lower() for v in ped_final.values() if v is not None):
+                    resultado.append(formatar_obj(ped_final, request.GET.get("formato")))
+            else:
+                resultado.append(formatar_obj(ped_final, request.GET.get("formato")))
+
+            ultimo_valor_cursor = ped.data_criacao
 
         page = paginator.paginate_queryset(resultado, request)
         return paginator.get_paginated_response(page)

@@ -60,7 +60,7 @@ class AtividadeService:
     def listar(request, modalidade):
         model_class, serializer_class = validar_modalidade(modalidade, 'Atividade')
 
-        professor = Usuario.objects.filter(id=TokenService.decode_token(request.COOKIES.get("access_token")).get('user_id'), group__name='professor').first()
+        professor = AtividadeService.validar_professor(request)
 
         if professor is None:
             raise serializers.ValidationError("Grupo inválido")
@@ -81,7 +81,9 @@ class AtividadeService:
     def detalhes(request, modalidade, atividade_id):
         model_class, serializer_class = validar_modalidade(modalidade, 'Atividade')
 
-        atividade = get_object_or_404(model_class, pk=uuid.UUID(atividade_id))
+        professor = AtividadeService.validar_professor(request)
+
+        atividade = get_object_or_404(model_class, pk=uuid.UUID(atividade_id), professor=professor)
 
         serializer = serializer_class(atividade, context={'request': request})
         data = dict(serializer.data)
@@ -89,7 +91,7 @@ class AtividadeService:
         if atividade.drive_id:
             file = get_from_drive(
                 atividade.drive_id,
-                TokenService.decode_token(request.COOKIES.get('access_token')).get('group')
+                professor.group.name
             )
             data['arquivo'] = file  # 🔹 adiciona o conteúdo base64 do arquivo
 

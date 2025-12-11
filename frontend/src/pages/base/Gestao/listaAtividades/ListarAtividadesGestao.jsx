@@ -7,7 +7,7 @@ import lupa from '../../../../assets/search-alt-svgrepo-com.svg'
 import CustomLoading from "../../../../components/customLoading/CustomLoading"
 
 
-const ListarAtividadesAluno = () => {
+const ListarAtividadesGestao = () => {
     const location = useLocation()
     const redirect = useNavigate()
     const { state } = location
@@ -80,4 +80,4 @@ const ListarAtividadesAluno = () => {
     )
 }
 
-export default ListarAtividadesAluno
+export default ListarAtividadesGestao

@@ -7,7 +7,7 @@ import { toast } from "react-toastify"
 import CustomLoading from "../../../../components/customLoading/CustomLoading"
 
 
-const DetalhesPEDGestao = () => {
+const DetalhesPEDCoordenador = () => {
     const [PED, setPED] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const modalidade = useLocation().pathname.split('/')[4]
@@ -51,4 +51,4 @@ const DetalhesPEDGestao = () => {
     )
 }
 
-export default DetalhesPEDGestao
+export default DetalhesPEDCoordenador
