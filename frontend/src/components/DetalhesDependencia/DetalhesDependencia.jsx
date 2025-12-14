@@ -18,7 +18,7 @@ import seta from '../../assets/chevron-down-svgrepo-com.svg'
 import editIcone from '../../assets/edit-3-svgrepo-com.svg'
 import { AxiosError } from "axios";
 
-const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
+const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDependencia }) => {
   const redirect = useNavigate()
   const [botaoDesabilitado, setBotaoDesabilitado] = useState(false)
   const [modalAberto, setModalAberto] = useState(false);
@@ -91,7 +91,10 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo }) => {
         error: "Erro de validação"
       },
       ).then((res) => {
-        if (res.status == 200) setModalAberto(false)
+        if (res.status == 200) {
+          setModalAberto(false)
+          fetchDependencia()
+        }
       });
 
     setBotaoDesabilitado(false)

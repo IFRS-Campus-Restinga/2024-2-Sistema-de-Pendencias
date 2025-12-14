@@ -10,7 +10,7 @@ class Progressao(BaseModel):
     data_criacao = models.DateTimeField(auto_now_add=True, verbose_name="Data de criação", editable=False)
     data_inicio = models.DateTimeField(null=True, blank=True, verbose_name="Data de início")
     data_final = models.DateTimeField(null=True, blank=True, verbose_name="Data final")
-    nota_final = models.FloatField(default=0, verbose_name="Nota")
+    nota_final = models.FloatField(default=None, null=True, blank=True)
     situacao = models.CharField(max_length=255, choices=Situacao_Dependencia.choices, default='Em avaliação', verbose_name="Situação")
     observacao = models.TextField(null=True, blank=True, verbose_name="Observação")
     

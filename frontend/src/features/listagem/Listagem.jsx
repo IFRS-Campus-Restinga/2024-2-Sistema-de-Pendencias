@@ -5,7 +5,7 @@ import Tabela from "../../components/Tabela/Tabelas/Tabela"
 import styles from "./Listagem.module.css"
 import { useNavigate } from "react-router-dom"
 
-const Listagem = ({titulo, fetchDados, urlCadastro, propMap, editar, visualizar}) => {
+const Listagem = ({titulo, fetchDados, urlCadastro, propMap, editar, visualizar, comprimento}) => {
     const navigate = useNavigate()
     const [filtro, setFiltro] = useState('')
     const [lista, setLista] = useState([])
@@ -33,7 +33,7 @@ const Listagem = ({titulo, fetchDados, urlCadastro, propMap, editar, visualizar}
 
     return (
         <>
-            <FormContainer titulo={`Gerenciar ${titulo}`} comprimento='70%'>
+            <FormContainer titulo={`Gerenciar ${titulo}`} comprimento={comprimento ?? '70%'}>
                 <div className={styles.container}>
                     <BarraPesquisa 
                         setFiltro={setFiltro} 
@@ -47,9 +47,13 @@ const Listagem = ({titulo, fetchDados, urlCadastro, propMap, editar, visualizar}
                         urlCadastro ? (
                             <div className={styles.addIcone} 
                                 onClick={() => {
-                                    if (titulo.includes("PEDs Integrado")) {
+                                    const tituloNormalizado = titulo?.trim().normalize("NFC")
+
+                                    console.log(titulo)
+
+                                    if (["PEDs Integrado", "Atividades Integrado"].includes(tituloNormalizado)) {
                                         navigate(urlCadastro, {state: {modalidade: "Integrado"}})
-                                    } else if (titulo.includes("PEDs ProEJA")) {
+                                    } else if (["PEDs ProEJA", "Atividades ProEJA"].includes(tituloNormalizado)) {
                                         navigate(urlCadastro, {state: {modalidade: "ProEJA"}})
                                     } else {
                                         navigate(urlCadastro)

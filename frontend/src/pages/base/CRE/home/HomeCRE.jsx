@@ -8,6 +8,9 @@ import Modal from '../../../../components/Modal/Modal'
 import Button from '../../../../components/Button/Button'
 import CustomLoading from '../../../../components/customLoading/CustomLoading'
 import { AxiosError } from 'axios'
+import Label from '../../../../components/Label/Label'
+import Input from '../../../../components/Input/Input'
+import { validarCampoObrigatorio } from '../../../../utils/validacoes'
 
 const propMap = {
     'id': 'id',
@@ -19,7 +22,8 @@ const propMap = {
     'turma_progressao': 'turma progressão',
     'disciplina': 'disciplina',
     'status': 'status',
-    'situacao': 'situação'
+    'situacao': 'situação',
+    'nota_final': 'nota'
 }
 
 const HomeCRE = () => {
@@ -32,10 +36,11 @@ const HomeCRE = () => {
     const [anterior, setAnterior] = useState(null)
     const [proxima, setProxima] = useState(null)
     const [carregando, setCarregando] = useState(true)
+    const [erro, setErro] = useState(null)
 
     const fetchPPTs = async () => {
         try {
-            const res = await PPTService.listarPendentes(
+            const res = await PPTService.listarCRE(
                 `
                 id,
                 aluno,
@@ -46,7 +51,8 @@ const HomeCRE = () => {
                 turma_atual,
                 turma_progressao,
                 status,
-                situacao
+                situacao,
+                nota_final,
             `,
             pagina,
             'flat'
@@ -68,12 +74,12 @@ const HomeCRE = () => {
 
     const confirmarCadastro = async () => {
         toast.promise(
-            PPTService.trocarStatus(PPTSelecionada, "Lançada"),
+            PPTService.trocarStatus(PPTSelecionada.id, PPTSelecionada),
             {
                 pending: "Salvando alterações...",
                 success: {
                     render({ data }) {
-                    return data.data.message;
+                        return data.data.message;
                     },
                 },
                 error: {
@@ -89,7 +95,12 @@ const HomeCRE = () => {
                     },
                 },
             }
-        );
+        ).then((res) => {
+            if (res.status == 200) {
+                setModalAberto(false)
+                fetchPPTs()
+            }
+        });
     }
 
     const formatarData = (valor) => {
@@ -198,7 +209,7 @@ const HomeCRE = () => {
                                                         alt="detalhes" 
                                                         className={styles.acao} 
                                                         onClick={() => {
-                                                            setPPTSelecionada(item.id)
+                                                            setPPTSelecionada({id: item.id, status: item.status === 'Criada' ? 'Em Andamento' : 'Finalizada', nota_final: null})
                                                             setModalAberto(true)
                                                         }} 
                                                     />
@@ -223,13 +234,36 @@ const HomeCRE = () => {
                         }}
                     >
                         <section className={styles.modalSection}>
-                            <p>
-                                Deseja mudar o status dessa progressão para Lançada?<br />
+                            <p style={{textAlign: 'center', fontSize: '18px', color: '#767676'}}>
+                                Deseja mudar o status dessa progressão para <b>{PPTSelecionada.status}</b>?<br />
                                 Essa ação é irreversível.
                             </p>
+                            {
+                                PPTSelecionada.status === "Finalizada" ? (
+                                    <div style={{width: '50%'}}>
+                                        <Input
+                                            tipo={'number'}
+                                            textoAjuda={"Insira a nota final do aluno"}
+                                            valor={PPTSelecionada.nota}
+                                            onChange={(e) => {
+                                                const valor = e.target.value
+
+                                                if (!isNaN(valor)) {
+                                                    setPPTSelecionada({...PPTSelecionada, nota_final: valor})
+                                                }
+                                            }}
+                                            onBlur={() => setErro(validarCampoObrigatorio(PPTSelecionada.nota_final))}
+                                            erro={erro}
+                                            valorMinimo={0}
+                                            valorMaximo={10}
+                                            alinharCentro={true}
+                                        />
+                                    </div>
+                                ) : null
+                            }
                             <div className={styles.containerBotoes}>
-                            <Button texto="Confirmar" onClick={() => confirmarCadastro()}/>
-                            <Button color="#a02d2dff" texto="Cancelar" onClick={() => setModalAberto(false)}/>
+                                <Button texto="Confirmar" onClick={() => confirmarCadastro()}/>
+                                <Button color="#a02d2dff" texto="Cancelar" onClick={() => setModalAberto(false)}/>
                             </div>
                         </section>
                     </Modal>

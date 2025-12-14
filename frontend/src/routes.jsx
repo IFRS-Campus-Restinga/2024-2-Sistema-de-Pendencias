@@ -82,6 +82,10 @@ const router = createBrowserRouter([
         path: 'session/auth/',
         element: <AuthPage />,
     },
+    {
+        path: 'session/token/',
+        element: <AuthPage />,
+    },
     // Rotas do perfil de Gestao Escolar
     {
         path: 'session/gestao_escolar',

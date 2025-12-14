@@ -32,7 +32,7 @@ const AtividadeForm = () => {
     })
 
     const trocarModalidade = () => {
-        if (!state) {
+        if (!state.id) {
             setModalidade(modalidade === 'Integrado' ? 'ProEJA' : 'Integrado')
         }
     }
@@ -65,8 +65,8 @@ const AtividadeForm = () => {
         setDesabilitado(true)
         
         if (validarForm()) {
-            const promise = state 
-            ? AtividadeService.editar(state, modalidade, formData)
+            const promise = state.id 
+            ? AtividadeService.editar(state.id, modalidade, formData)
             : AtividadeService.criar(modalidade, formData)
         
             toast.promise(promise, 
@@ -122,7 +122,7 @@ const AtividadeForm = () => {
 
     const fetchAtividade = async () => {
         try {
-            const res = await AtividadeService.porId(state, modalidade, 'id, titulo, descricao, arquivo')
+            const res = await AtividadeService.porId(state.id, modalidade, 'id, titulo, descricao, arquivo')
 
             if (res.status !== 200) throw new Error(res)
 
@@ -139,18 +139,22 @@ const AtividadeForm = () => {
     }
     
     useEffect(() => {
-        if (state) {
+        if (state?.id) {
             fetchAtividade()
         } else {
             setIsLoading(false)
         }
     }, []);
 
+    useEffect(() => {
+        console.log(state)
+    }, [])
+
     if (isLoading) return <CustomLoading/>
 
     return (
         <FormContainer 
-            titulo={state ? 'Editar Atividade' : 'Cadastrar Atividade'} 
+            titulo={state?.id ? 'Editar Atividade' : 'Cadastrar Atividade'} 
             comprimento={'60%'}
             textoInfo={"Preencha os campos obrigatórios (*)\n\nCaso desejar, faça o upload de um arquivo (png, jpeg, pdf) para auxiliar o aluno na atividade"}
         >
@@ -162,7 +166,7 @@ const AtividadeForm = () => {
                     valor2={'Integrado'} 
                     valor={modalidade} 
                     stateHandler={trocarModalidade} 
-                    imagemCustom={state ? <img src={lock} style={{width: '25px', height: '25px'}}/> : <></>}
+                    imagemCustom={state?.id ? <img src={lock} style={{width: '25px', height: '25px'}}/> : <></>}
                 />
             </span>
             <form className={styles.form} onSubmit={handleSubmit} encType="multipart/form-data">

@@ -453,7 +453,6 @@ class PEDService:
 
         UsuarioService.criar_aluno(ped_data.get('aluno'))
 
-        # --- Validação obrigatória ---
         professor_ped_id = ped_data.get("professor_ped")
         if not professor_ped_id:
             raise serializers.ValidationError({
@@ -461,35 +460,26 @@ class PEDService:
             })
 
         serializer = serializer_class(instance=ped, data=ped_data, partial=True)
-
-        if not serializer.is_valid():
-            raise serializers.ValidationError(serializer.errors)
-
+        serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        # Se chegou aqui, existe professor_ped
         professor = get_object_or_404(Usuario, pk=uuid.UUID(professor_ped_id))
 
-        if modalidade == 'Integrado':
-            ProfessorProgressaoIntegrado.objects.filter(
-                ped=serializer.instance
-            ).exclude(professor=professor).update(responsavel_atual=False)
+        ProgressaoModel = (
+            ProfessorProgressaoIntegrado
+            if modalidade == 'Integrado'
+            else ProfessorProgressaoProeja
+        )
 
-            ProfessorProgressaoIntegrado.objects.get_or_create(
-                professor=professor,
-                ped=serializer.instance,
-                defaults={"responsavel_atual": True}
-            )
-        else:
-            ProfessorProgressaoProeja.objects.filter(
-                ped=serializer.instance
-            ).exclude(professor=professor).update(responsavel_atual=False)
+        ProgressaoModel.objects.filter(
+            ped=serializer.instance
+        ).update(responsavel_atual=False)
 
-            ProfessorProgressaoProeja.objects.get_or_create(
-                professor=professor,
-                ped=serializer.instance,
-                defaults={"responsavel_atual": True}
-            )
+        ProgressaoModel.objects.update_or_create(
+            ped=serializer.instance,
+            professor=professor,
+            defaults={"responsavel_atual": True}
+        )
 
         return serializer.instance
 
@@ -503,6 +493,9 @@ class PEDService:
 
         if (status == 'Finalizada'):
             data['data_final'] = datetime.now()
+
+        if (status == 'Desativada'):
+            data['situacao'] = 'Cancelada'
         
         serializer = serializer_class(instance=ped, data=data, partial=True)
 

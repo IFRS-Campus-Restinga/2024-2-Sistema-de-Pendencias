@@ -40,6 +40,17 @@ export const PPTService = {
     });
   },
 
+  listarCRE: async (retorno, pagina, formato) => {
+    return await api.get("api/ppts/listar/CRE/", {
+      params: {
+        retorno,
+        page: pagina,
+        page_size: 10,
+        formato,
+      },
+    });
+  },
+
   listarAluno: async (retorno, pagina, formato, params) => {
     return await api.get("api/ppts/listar/aluno/", {
       params: {
@@ -61,7 +72,7 @@ export const PPTService = {
     });
   },
 
-  trocarStatus: async (pptId, status) => {
-    return await api.put(`api/ppt/${pptId}/editar/`, {status: status});
+  trocarStatus: async (pptId, params) => {
+    return await api.put(`api/ppts/${pptId}/editar/status/`, params);
   },
 };

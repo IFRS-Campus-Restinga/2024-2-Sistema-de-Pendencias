@@ -128,6 +128,7 @@
 .modalSection {
     display: flex;
     flex-direction: column;
+    gap: 20px;
     padding: 30px;
     width: 40%;
     align-items: center;
@@ -136,10 +137,8 @@
     background-color: white;
     border-radius: 10px;
     border: none;
+}
 
-    p {
-        color: #767676;
-        font-size: 18px;
-        text-align: center;
-    }
+.containerBotoes {
+    display: flex;
 }

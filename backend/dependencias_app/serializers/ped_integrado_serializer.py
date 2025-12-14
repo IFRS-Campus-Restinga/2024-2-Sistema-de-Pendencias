@@ -16,6 +16,7 @@ class PEDIntegradoSerializer(serializers.ModelSerializer):
     disciplina = serializers.UUIDField()
     periodo_letivo = serializers.UUIDField()
     turma_atual = serializers.UUIDField()
+    nota_final = serializers.FloatField(required=False, allow_null=True)
 
     class Meta:
         model = PEDIntegrado
@@ -48,6 +49,7 @@ class PEDIntegradoSerializer(serializers.ModelSerializer):
  
         else:
             status_atual = self.instance.status
+            nota = self.instance.nota_final
 
             transicoes_validas = {
                 "Criada": ["Criada","Em Andamento", "Desativada"],
@@ -64,11 +66,21 @@ class PEDIntegradoSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({
                     "status": f"Transição inválida de status"
                 })
+            
+            if novo_status in ['Criada', 'Em Andamento'] and nota:
+                raise serializers.ValidationError({
+                    "nota": "Esta PED não pode receber nota ainda."
+                })
+            
+            if novo_status == 'Finalizada' and not nota:
+                raise serializers.ValidationError({
+                    "nota": "É necessário registrar uma nota para finalizar esta PED."
+                })
 
         return super().validate(attrs)
     
     def update(self, instance, validated_data):
-        allowed_fields = {'observacao', 'status', 'data_final'}
+        allowed_fields = {'observacao', 'status', 'data_final', 'situacao'}
 
         for field, new_value in validated_data.items():
 
@@ -96,7 +108,7 @@ class PEDIntegradoSerializer(serializers.ModelSerializer):
 
         if "professores" in retorno:
             # adiciona os IDs de professores_emi no dicionário
-            rep['professores'] = [{'id': str(p.professor.id), 'resp_atual': p.responsavel_atual} for p in instance.professores_emi.all()]
+            rep['professores'] = [{'id': str(p.professor.id), 'resp_atual': p.responsavel_atual} for p in instance.professores_emi.all().order_by('-responsavel_atual')]
         
         if "professor_ped" in retorno:
             rep['professor_ped'] = str(instance.professores_emi.filter(responsavel_atual=True).first().professor.id)

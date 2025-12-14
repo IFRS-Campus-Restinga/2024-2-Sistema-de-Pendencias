@@ -95,7 +95,7 @@ class AvaliacaoService:
 
         if modalidade == 'Integrado':
             avaliacoes = ped.atividades_emi.all()
-        if modalidade == 'Proeja':
+        if modalidade == 'ProEJA':
             avaliacoes = ped.atividades_proeja.all()
 
         serializer = avaliacao_serializer_class(avaliacoes, many=True, context={'request': request})

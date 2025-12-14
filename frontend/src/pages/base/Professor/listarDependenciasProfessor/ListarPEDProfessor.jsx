@@ -70,6 +70,7 @@ const ListarPEDGestao = () => {
             titulo={`PEDs ${modalidade}`}
             propMap={propMap}
             visualizar={true}
+            comprimento={"85%"}
         />
     )
 }

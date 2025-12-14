@@ -74,6 +74,7 @@ const ListarPEDGestao = () => {
             propMap={propMap}
             editar={true}
             visualizar={true}
+            comprimento={"85%"}
         />
     )
 }

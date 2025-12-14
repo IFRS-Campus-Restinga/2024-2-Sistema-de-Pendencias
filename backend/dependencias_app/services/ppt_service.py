@@ -1,3 +1,4 @@
+from datetime import datetime
 import uuid
 from django.conf import settings
 from django.db import transaction
@@ -78,6 +79,50 @@ class PPTService:
                     else:
                         resultado.append(formatar_obj(ppt, request.GET.get("formato")))
 
+                except Exception as e:
+                    raise Exception(f"Erro ao buscar dados do PPT {ppt['id']}: {str(e)}")
+
+        page = paginator.paginate_queryset(resultado, request)
+        return paginator.get_paginated_response(page)
+    
+    @staticmethod
+    def listar_CRE(request):
+        paginator = PPTPagintation()
+
+        ppts = PPT.objects.filter(status__in=["Criada", "Lançada"]).order_by('-data_criacao')
+
+        lista_ppts = PPTSerializer(ppts, context={'request': request}, many=True)
+        resultado = []
+
+        cookies = {"system": settings.API_KEY}
+        base_url = settings.BASE_SYSTEM_URL
+
+        for ppt in lista_ppts.data:
+            if len(resultado) == paginator.page_size + 1:
+                break
+            else:
+                tasks = [
+                    {"key": "aluno", "url": f"{base_url}/api/users/get/{ppt['aluno']}/", "params": {"fields": "id,username"}},
+                    {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ppt['professor_disciplina']}/", "params": {"fields": "id,username"}},
+                    {"key": "professor_ppt", "url": f"{base_url}/api/users/get/{ppt['professor_ppt']}/", "params": {"fields": "id,username"}},
+                    {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ppt['curso']}/", "params": {"fields": "id,name, course_class.id, course_class.number"}},
+                    {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ppt['disciplina']}/", "params": {"fields": "id,name"}},
+                ]
+
+                try:
+                    dados_ppt = AsyncRequestService.run_fetch(tasks, cookies=cookies)
+                    ppt.update(dados_ppt)
+
+                    turma_atual_id = ppt['turma_atual']
+                    turma_progressao_id = ppt['turma_progressao']
+                    turmas = ppt['curso'].pop('course_class', [])
+
+                    # filtra a turma correta
+                    ppt['turma_atual'] = next((turma for turma in turmas if turma['id'] == turma_atual_id), None)
+                    ppt['turma_progressao'] = next((turma for turma in turmas if turma['id'] == turma_progressao_id), None)
+
+                    
+                    resultado.append(formatar_obj(ppt, request.GET.get("formato")))
                 except Exception as e:
                     raise Exception(f"Erro ao buscar dados do PPT {ppt['id']}: {str(e)}")
 
@@ -202,11 +247,28 @@ class PPTService:
 
     @staticmethod
     @transaction.atomic
-    def editar(ppt_data, ppt_id):
-        ped = get_object_or_404(PPT, pk=uuid.UUID(ppt_id))
-        UsuarioService.criar_aluno(ppt_data.get('aluno'))
+    def trocar_status(ppt_data, ppt_id):
+        ppt = get_object_or_404(PPT, pk=uuid.UUID(ppt_id))
+        data = ppt_data.copy()
 
-        serializer = PPTSerializer(instance=ped, data=ppt_data, partial=True)
+        nota = data.get('nota_final')
+        status = data.get('status')
+
+        if status == 'Finalizada' and nota:
+            data['data_final'] = datetime.now()
+            if len(nota) > 0:
+                if float(nota) >= 7.0:
+                    data['situacao'] = "Aprovado"
+                else:
+                    data['situacao'] = "Reprovado"
+
+        if (status == 'Desativada'):
+            data['situacao'] = 'Cancelada'
+
+        if status == 'Em Andamento':
+            data['data_inicio'] = datetime.now()
+
+        serializer = PPTSerializer(instance=ppt, data=data, partial=True)
 
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)
