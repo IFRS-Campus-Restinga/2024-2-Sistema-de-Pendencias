@@ -72,15 +72,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
     if (tipo === 'PPT') req = PPTService.trocarStatus(dependencia.id, status)
 
     toast.promise(
-      (async () => {
-        const res = await req;
-
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error(JSON.stringify(["Erro ao desativar progressão"]));
-        }
-
-        return res;
-      })(),
+      req,
       {
         pending: `Atualizando status da progressão para ${status}...`,
         success: {
@@ -94,6 +86,12 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
         if (res.status == 200) {
           setModalAberto(false)
           fetchDependencia()
+        }
+      }).catch((err) => {
+        if (err instanceof AxiosError) {
+          err.response.data.message.map((message) => {
+            toast.error(message)
+          })
         }
       });
 
@@ -160,7 +158,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
     try {
       const res = await AcompanhamentoService.listar(modalidade, dependencia.id, pagina)
 
-      setAcompanhamento(res.data.results[0])
+      setAcompanhamento(res.data.results[0] ?? null)
       setProx(res.data.next ? pagina + 1 : null)
       setPrev(res.data.previous ? pagina - 1 : null)
     } catch (error) {
@@ -356,23 +354,30 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
                           setModalAberto(true)
                         }}
                       />
-                      <Button
-                        texto="Adicionar Acompanhamento"
-                        onClick={() =>{
-                          setTipoModal("acomp")
-                          setModalAberto(true)
-                        }}
-                        disabled={['Lançada', 'Finalizada', 'Desativada'].includes(dependencia.status)}
-                      />
-                      <Button
-                        texto={`Finalizar ${tipo}`}
-                        disabled={dependencia.status !== "Lançada"}
-                        onClick={() => {
-                          setStatus("Finalizada")
-                          setTipoModal("acao")
-                          setModalAberto(true)
-                        }}
-                      />
+                      {
+                        tipo === 'PED' ? (
+
+                          <>
+                            <Button
+                              texto="Adicionar Acompanhamento"
+                              onClick={() =>{
+                                setTipoModal("acomp")
+                                setModalAberto(true)
+                              }}
+                              disabled={['Lançada', 'Finalizada', 'Desativada'].includes(dependencia.status)}
+                            />
+                            <Button
+                              texto={`Finalizar ${tipo}`}
+                              disabled={dependencia.status !== "Lançada"}
+                              onClick={() => {
+                                setStatus("Finalizada")
+                                setTipoModal("acao")
+                                setModalAberto(true)
+                              }}
+                            />
+                          </>
+                        ) : null
+                      }
                     </>
                   );
                 }
@@ -390,7 +395,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
                     );
                   }
 
-                  if (validarAutor()) {
+                  if (validarAutor() && tipo === 'PED') {
                     return (
                       <Button
                         texto="Adicionar Acompanhamento"
@@ -409,7 +414,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
           </div>
           <div className={styles.acompanhamentoContainer}>
             {
-              acompanhamento && grupo !== 'aluno' ? (
+              acompanhamento && grupo !== 'aluno' && tipo === 'PED' ? (
                 <>
                   {prev && (
                     <button

@@ -11,12 +11,12 @@ const AtividadeService = {
     return res;
   },
 
-  listar: async (modalidade, pagina, param, retorno) => {
+  listar: async (modalidade, pagina, param, retorno, _) => {
     const res = await api.get(`api/atividades/${modalidade}/`,
       {
         params: {
           pagina,
-          param,
+          busca: param,
           retorno,
         },
       })

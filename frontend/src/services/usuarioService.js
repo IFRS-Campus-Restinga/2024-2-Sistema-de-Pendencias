@@ -15,16 +15,13 @@ export const UsuarioService = {
     });
   },
 
-  listarPerfil: async (perfil, pagina = 1, busca, retorno, ultimo) => {
+  listarPerfil: async (perfil, pagina = 1, busca, retorno, cursor) => {
     return api.get(`api/usuarios/listar/perfil/${perfil}/`, {
       params: {
         pagina,
         busca,
         retorno,
-        ...(ultimo && {
-          ultimo: ultimo.id,
-          data_criacao: ultimo.created_at,
-        }),
+        cursor
       },
     });
   },

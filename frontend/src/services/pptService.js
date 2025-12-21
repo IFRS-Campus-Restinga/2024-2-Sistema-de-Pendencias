@@ -5,7 +5,7 @@ export const PPTService = {
     return await api.post("/api/ppts/cadastrar/", params);
   },
 
-  listar: async (retorno, param, pagina, formato) => {
+  listar: async (retorno, param, pagina, formato, cursor) => {
     return await api.get("api/ppts/listar/", {
       params: {
         retorno,
@@ -13,40 +13,44 @@ export const PPTService = {
         page_size: 10,
         busca: param,
         formato,
+        cursor
       },
     });
   },
 
-  listarPendentes: async (retorno, pagina, formato) => {
+  listarPendentes: async (retorno, pagina, formato, cursor) => {
     return await api.get("api/ppts/listar/pendentes/", {
       params: {
         retorno,
         page: pagina,
         page_size: 10,
         formato,
+        cursor
       },
     });
   },
 
-  listarCoordenador: async (retorno, pagina, formato, param) => {
+  listarCoordenador: async (retorno, pagina, formato, param, cursor) => {
     return await api.get("api/ppts/listar/coordenador/", {
       params: {
         retorno,
         page: pagina,
         page_size: 10,
         formato,
-        busca: param
+        busca: param,
+        cursor
       },
     });
   },
 
-  listarCRE: async (retorno, pagina, formato) => {
+  listarCRE: async (retorno, pagina, formato, cursor) => {
     return await api.get("api/ppts/listar/CRE/", {
       params: {
         retorno,
         page: pagina,
         page_size: 10,
         formato,
+        cursor
       },
     });
   },

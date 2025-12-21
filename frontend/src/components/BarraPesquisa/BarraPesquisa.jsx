@@ -1,19 +1,14 @@
 import styles from './BarraPesquisa.module.css'
 import search from '../../assets/search-alt-svgrepo-com-white.svg'
 import clear from '../../assets/close-svgrepo-com-white.svg'
-import { useEffect } from 'react'
 
 const BarraPesquisa = ({ onSearch, setFiltro, filtro }) => {
 
     const handleEnter = (event) => {
         if (event.key === 'Enter') {
-            onSearch(1, filtro)
+            onSearch()
         }
     }
-
-    useEffect(() => {
-        if (filtro === '') onSearch(1, filtro)
-    }, [filtro])
 
     return (
         <div className={styles.containerBarraPesquisa}>
@@ -26,7 +21,7 @@ const BarraPesquisa = ({ onSearch, setFiltro, filtro }) => {
                 className={styles.inputPesquisa}
             />
             <div className={styles.containerAcoes}>
-                <img src={search} className={styles.acao} alt="Buscar" onClick={() => onSearch(1 ,filtro)} />
+                <img src={search} className={styles.acao} alt="Buscar" onClick={() => onSearch()} />
                 <img src={clear} className={styles.acao} alt="Limpar campo" onClick={() => setFiltro('')}/>
             </div>
         </div>

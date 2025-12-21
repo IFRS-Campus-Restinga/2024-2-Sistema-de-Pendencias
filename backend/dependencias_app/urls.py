@@ -33,7 +33,7 @@ urlpatterns = [
     # view de PPT
     path('ppts/cadastrar/', cadastrar_PPT),
     path('ppts/listar/', listar_PPT),
-    path('ppts/listar/coordenador', listar_PPT_coordenador),
+    path('ppts/listar/coordenador/', listar_PPT_coordenador),
     path('ppts/listar/aluno/', listar_PPT_aluno),
     path('ppts/listar/CRE/', listar_PPT_CRE),
     path('ppts/<str:ppt_id>/', detalhes_PPT),

@@ -21,6 +21,7 @@ const propMap = {
     'turma_atual': 'turma atual',
     'turma_progressao': 'turma progressão',
     'disciplina': 'disciplina',
+    'data_criacao': 'data criação',
     'status': 'status',
     'situacao': 'situação',
     'nota_final': 'nota'
@@ -51,11 +52,12 @@ const HomeCRE = () => {
                 turma_atual,
                 turma_progressao,
                 status,
+                data_criacao,
                 situacao,
                 nota_final,
             `,
             pagina,
-            'flat'
+            'flat',
             )
 
             setPPTs(res.data.results)

@@ -17,11 +17,10 @@
 }
 
 .containerTabela {
-    width: 100%;
+    position: relative;
     max-height: 200px;
     overflow-y: auto;
-    overflow-x: hidden;
-    display: block;
+    min-height: 200px;
 }
 
 .tabela {
@@ -111,15 +110,17 @@
     }
 }
 
-.janelaCarregamento {
-    position: absolute;
+.loadingWrapper {
+    position: sticky;
+    top: 0;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.3);
+    height: 100%;          /* cobre a área visível do container */
+    min-height: 200px;     /* garante visibilidade mesmo sem linhas */
+    z-index: 50;
     display: flex;
-    flex: 1;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    pointer-events: none; /* opcional */
 }
 
 .remover {

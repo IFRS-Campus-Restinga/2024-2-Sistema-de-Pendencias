@@ -7,7 +7,7 @@ const AvaliacaoService = {
         return res;
     },
 
-    listar: async (pedId, modalidade, retorno) => {
+    listar: async (pedId, modalidade, retorno, _) => {
         const res = await api.get(`api/plano-atividades/${modalidade}/${pedId}/`, {
             params: {
                 retorno,

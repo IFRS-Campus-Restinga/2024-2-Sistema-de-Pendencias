@@ -2,17 +2,13 @@ import { useEffect, useState } from "react";
 import styles from "./Header.module.css";
 import logo from "../../assets/logo-ifrs-branco.png";
 import Dropdown from '../Dropdown/Dropdown'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { authService } from '../../services/authService'
 import { useNavigate } from "react-router-dom";
-import Notificacoes from "../Notificacoes/Notificacoes";
 import { AxiosError } from "axios";
 import { toast } from 'react-toastify'
 
 
 const Header = () => {
-  const [notificAberta, setNotificAberta] = useState(false)
   const [nome, setNome] = useState()
   const redirect = useNavigate()
 

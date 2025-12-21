@@ -33,18 +33,19 @@ const ListarPEDCoordenador = () => {
             'ano_semestre_reprov': 'semestre de reprovação',
             'data_inicio': 'data início',
             'data_final': 'data fim',
+            'data_criacao': 'data criação',
             'status': 'status',
             'situacao': 'situação'
         })
     }
 
     const getFormat = () => {
-        if (modalidade === 'Integrado') return 'id, aluno, professor_ped, professor_disciplina, curso, disciplina, trimestre_recuperar, data_inicio, data_final, status, situacao'
+        if (modalidade === 'Integrado') return 'id, aluno, professor_ped, professor_disciplina, curso, disciplina, trimestre_recuperar, data_inicio, data_final, data_criacao, status, situacao'
         
-        if (modalidade === "ProEJA") return 'id, aluno, professor_ped, professor_disciplina, curso, disciplina, ano_semestre_reprov, data_inicio, data_final, status, situacao'
+        if (modalidade === "ProEJA") return 'id, aluno, professor_ped, professor_disciplina, curso, disciplina, ano_semestre_reprov, data_inicio, data_final, data_criacao, status, situacao'
     }
 
-    const fetchPEDs = async (pagina, param) => {
+    const fetchPEDs = async (pagina, param, cursor) => {
         const format = getFormat()
 
         const res = await PEDService.listarCoordenador(
@@ -52,13 +53,14 @@ const ListarPEDCoordenador = () => {
             param, 
             pagina, 
             modalidade,
-            'flat'
+            'flat',
+            cursor
         )
 
         return {
             proxima: res.data.next,
             anterior: res.data.prev,
-            lista: res.data.results
+            resultados: res.data.results
         }
     }
 

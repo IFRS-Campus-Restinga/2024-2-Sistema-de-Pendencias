@@ -1,5 +1,6 @@
-from datetime import datetime
+import threading
 import uuid
+from datetime import datetime
 from django.conf import settings
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -14,11 +15,13 @@ from ..utils.formatar_obj import formatar_obj
 from ..services.usuario_service import UsuarioService
 from .async_request_service import AsyncRequestService
 
-
 class PPTPagintation(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 30
+
+    def get_page_number(self, request, paginator):
+        return 1
 
 class PPTService:
     @staticmethod
@@ -38,100 +41,206 @@ class PPTService:
         busca = request.GET.get('busca', '')
 
         paginator = PPTPagintation()
+        ultimo_valor_cursor = request.GET.get('cursor')
 
-        ppts = PPT.objects.all().order_by('-data_criacao')
-
-        lista_ppts = PPTSerializer(ppts, context={'request': request}, many=True)
         resultado = []
 
         cookies = {"system": settings.API_KEY}
         base_url = settings.BASE_SYSTEM_URL
 
-        for ppt in lista_ppts.data:
-            if len(resultado) == paginator.page_size + 1:
+        while len(resultado) < paginator.page_size + 1:
+            filtro = {}
+            if ultimo_valor_cursor:
+                filtro['data_criacao__lt'] = ultimo_valor_cursor
+
+            ppt = (
+                PPT.objects
+                .filter(**filtro)
+                .order_by('-data_criacao')
+                .first()
+            )
+
+            if not ppt:
                 break
-            else:
-                tasks = [
-                    {"key": "aluno", "url": f"{base_url}/api/users/get/{ppt['aluno']}/", "params": {"fields": "id,username"}},
-                    {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ppt['professor_disciplina']}/", "params": {"fields": "id,username"}},
-                    {"key": "professor_ppt", "url": f"{base_url}/api/users/get/{ppt['professor_ppt']}/", "params": {"fields": "id,username"}},
-                    {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ppt['curso']}/", "params": {"fields": "id,name, course_class.id, course_class.number"}},
-                    {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ppt['disciplina']}/", "params": {"fields": "id,name"}},
-                ]
 
-                try:
-                    dados_ppt = AsyncRequestService.run_fetch(tasks, cookies=cookies)
-                    ppt.update(dados_ppt)
+            ppt_serializado = PPTSerializer(ppt, context={'request': request}).data
+            tasks = [
+                {"key": "aluno", "url": f"{base_url}/api/users/get/{ppt_serializado['aluno']}/", "params": {"fields": "id,username"}},
+                {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ppt_serializado['professor_disciplina']}/", "params": {"fields": "id,username"}},
+                {"key": "professor_ppt", "url": f"{base_url}/api/users/get/{ppt_serializado['professor_ppt']}/", "params": {"fields": "id,username"}},
+                {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ppt_serializado['curso']}/", "params": {"fields": "id,name, course_class.id, course_class.number"}},
+                {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ppt_serializado['disciplina']}/", "params": {"fields": "id,name"}},
+            ]
 
-                    turma_atual_id = ppt['turma_atual']
-                    turma_progressao_id = ppt['turma_progressao']
-                    turmas = ppt['curso'].pop('course_class', [])
+            try:
+                dados_ppt = AsyncRequestService.run_fetch(tasks, cookies=cookies)
+                ppt_final = {**ppt_serializado, **dados_ppt}
 
-                    # filtra a turma correta
-                    ppt['turma_atual'] = next((turma for turma in turmas if turma['id'] == turma_atual_id), None)
-                    ppt['turma_progressao'] = next((turma for turma in turmas if turma['id'] == turma_progressao_id), None)
+                turma_atual_id = ppt_final['turma_atual']
+                turma_progressao_id = ppt_final['turma_progressao']
+                turmas = ppt_final['curso'].pop('course_class', [])
 
-                    # filtro de busca
-                    if busca.strip():
-                        busca_lower = busca.lower()
-                        if any(busca_lower in str(v).lower() for v in ppt.values() if v is not None):
-                            resultado.append(formatar_obj(ppt, request.GET.get("formato")))
-                    else:
-                        resultado.append(formatar_obj(ppt, request.GET.get("formato")))
+                # filtra a turma correta
+                ppt_final['turma_atual'] = next((turma for turma in turmas if turma['id'] == turma_atual_id), None)
+                ppt_final['turma_progressao'] = next((turma for turma in turmas if turma['id'] == turma_progressao_id), None)
 
-                except Exception as e:
-                    raise Exception(f"Erro ao buscar dados do PPT {ppt['id']}: {str(e)}")
+                # filtro de busca
+                if busca.strip():
+                    busca_lower = busca.lower()
+                    if any(busca_lower in str(v).lower() for v in ppt_final.values() if v is not None):
+                        resultado.append(formatar_obj(ppt_final, request.GET.get("formato")))
+                else:
+                    resultado.append(formatar_obj(ppt_final, request.GET.get("formato")))
+
+            except Exception as e:
+                raise Exception(f"Erro ao buscar dados do PPT {ppt_final['id']}: {str(e)}")
+            
+            ultimo_valor_cursor = ppt.data_criacao
 
         page = paginator.paginate_queryset(resultado, request)
         return paginator.get_paginated_response(page)
     
     @staticmethod
     def listar_CRE(request):
+        busca = request.GET.get('busca', '')
+
         paginator = PPTPagintation()
+        ultimo_valor_cursor = request.GET.get('cursor')
 
-        ppts = PPT.objects.filter(status__in=["Criada", "Lançada"]).order_by('-data_criacao')
-
-        lista_ppts = PPTSerializer(ppts, context={'request': request}, many=True)
         resultado = []
 
         cookies = {"system": settings.API_KEY}
         base_url = settings.BASE_SYSTEM_URL
 
-        for ppt in lista_ppts.data:
-            if len(resultado) == paginator.page_size + 1:
+        while len(resultado) < paginator.page_size + 1:
+            filtro = {}
+            if ultimo_valor_cursor:
+                filtro['data_criacao__lt'] = ultimo_valor_cursor
+
+            ppt = (
+                PPT.objects
+                .filter(**filtro, status__in=['Criada', 'Lançada'])
+                .order_by('-data_criacao')
+                .first()
+            )
+
+            if not ppt:
                 break
-            else:
-                tasks = [
-                    {"key": "aluno", "url": f"{base_url}/api/users/get/{ppt['aluno']}/", "params": {"fields": "id,username"}},
-                    {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ppt['professor_disciplina']}/", "params": {"fields": "id,username"}},
-                    {"key": "professor_ppt", "url": f"{base_url}/api/users/get/{ppt['professor_ppt']}/", "params": {"fields": "id,username"}},
-                    {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ppt['curso']}/", "params": {"fields": "id,name, course_class.id, course_class.number"}},
-                    {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ppt['disciplina']}/", "params": {"fields": "id,name"}},
-                ]
 
-                try:
-                    dados_ppt = AsyncRequestService.run_fetch(tasks, cookies=cookies)
-                    ppt.update(dados_ppt)
+            ppt_serializado = PPTSerializer(ppt, context={'request': request}).data
+            tasks = [
+                {"key": "aluno", "url": f"{base_url}/api/users/get/{ppt_serializado['aluno']}/", "params": {"fields": "id,username"}},
+                {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ppt_serializado['professor_disciplina']}/", "params": {"fields": "id,username"}},
+                {"key": "professor_ppt", "url": f"{base_url}/api/users/get/{ppt_serializado['professor_ppt']}/", "params": {"fields": "id,username"}},
+                {"key": "curso", "url": f"{base_url}/api/academic/courses/get/{ppt_serializado['curso']}/", "params": {"fields": "id,name, course_class.id, course_class.number"}},
+                {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ppt_serializado['disciplina']}/", "params": {"fields": "id,name"}},
+            ]
 
-                    turma_atual_id = ppt['turma_atual']
-                    turma_progressao_id = ppt['turma_progressao']
-                    turmas = ppt['curso'].pop('course_class', [])
+            try:
+                dados_ppt = AsyncRequestService.run_fetch(tasks, cookies=cookies)
+                ppt_final = {**ppt_serializado, **dados_ppt}
 
-                    # filtra a turma correta
-                    ppt['turma_atual'] = next((turma for turma in turmas if turma['id'] == turma_atual_id), None)
-                    ppt['turma_progressao'] = next((turma for turma in turmas if turma['id'] == turma_progressao_id), None)
+                turma_atual_id = ppt_final['turma_atual']
+                turma_progressao_id = ppt_final['turma_progressao']
+                turmas = ppt_final['curso'].pop('course_class', [])
 
-                    
-                    resultado.append(formatar_obj(ppt, request.GET.get("formato")))
-                except Exception as e:
-                    raise Exception(f"Erro ao buscar dados do PPT {ppt['id']}: {str(e)}")
+                # filtra a turma correta
+                ppt_final['turma_atual'] = next((turma for turma in turmas if turma['id'] == turma_atual_id), None)
+                ppt_final['turma_progressao'] = next((turma for turma in turmas if turma['id'] == turma_progressao_id), None)
+
+                # filtro de busca
+                if busca.strip():
+                    busca_lower = busca.lower()
+                    if any(busca_lower in str(v).lower() for v in ppt_final.values() if v is not None):
+                        resultado.append(formatar_obj(ppt_final, request.GET.get("formato")))
+                else:
+                    resultado.append(formatar_obj(ppt_final, request.GET.get("formato")))
+
+            except Exception as e:
+                raise Exception(f"Erro ao buscar dados do PPT {ppt_final['id']}: {str(e)}")
+            
+            ultimo_valor_cursor = ppt.data_criacao
 
         page = paginator.paginate_queryset(resultado, request)
         return paginator.get_paginated_response(page)
 
     @staticmethod
     def listar_coordenador(request):
-        pass
+        coordenador_id = TokenService.decode_token(request.COOKIES.get("access_token")).get("user_id")
+        busca = request.GET.get('busca', '')
+
+        paginator = PPTPagintation()
+        ultimo_valor_cursor = request.GET.get('cursor')
+
+        resultado = []
+
+        cookies = {"system": settings.API_KEY}
+        base_url = settings.BASE_SYSTEM_URL
+
+        while len(resultado) < paginator.page_size + 1:
+            filtro = {}
+            if ultimo_valor_cursor:
+                filtro['data_criacao__lt'] = ultimo_valor_cursor
+
+            ppt = (
+                PPT.objects
+                .filter(**filtro)
+                .order_by('-data_criacao')
+                .first()
+            )
+
+            if not ppt:
+                break
+
+            ppt_serializado = PPTSerializer(ppt, context={'request': request}).data
+            task_curso = [{
+                "key": "curso",
+                "url": f"{base_url}/api/academic/courses/get/{ppt_serializado['curso']}/",
+                "params": {"fields": "id, name, coord.id, course_class.id, course_class.number"}
+            }]
+
+            dados_curso = AsyncRequestService.run_fetch(task_curso, cookies=cookies)
+            curso = dados_curso["curso"]
+
+            coord_curso = curso.pop("coord")
+            curso_coord_id = coord_curso["id"]  
+
+            if curso_coord_id != str(coordenador_id):
+                ultimo_valor_cursor = ppt.data_criacao
+                continue
+
+            outras_tasks = [
+                {"key": "aluno", "url": f"{base_url}/api/users/get/{ppt_serializado['aluno']}/",
+                "params": {"fields": "id,username"}},
+                {"key": "professor_disciplina", "url": f"{base_url}/api/users/get/{ppt_serializado['professor_disciplina']}/",
+                "params": {"fields": "id,username"}},
+                {"key": "professor_ppt", "url": f"{base_url}/api/users/get/{ppt_serializado['professor_ppt']}/",
+                "params": {"fields": "id,username"}},
+                {"key": "disciplina", "url": f"{base_url}/api/academic/subjects/get/{ppt_serializado['disciplina']}/",
+                "params": {"fields": "id,name"}},
+            ]
+
+            dados_ppt = AsyncRequestService.run_fetch(outras_tasks, cookies=cookies)
+            ppt_final = {**ppt_serializado, **dados_ppt, **dados_curso}
+
+            turma_atual_id = ppt_final['turma_atual']
+            turma_progressao_id = ppt_final['turma_progressao']
+            turmas = ppt_final['curso'].pop('course_class', [])
+
+            ppt_final['turma_atual'] = next((turma for turma in turmas if turma['id'] == turma_atual_id), None)
+            ppt_final['turma_progressao'] = next((turma for turma in turmas if turma['id'] == turma_progressao_id), None)
+
+            if busca.strip():
+                busca_lower = busca.lower()
+                if any(busca_lower in str(v).lower() for v in ppt_final.values() if v is not None):
+                    resultado.append(formatar_obj(ppt_final, request.GET.get("formato")))
+            else:
+                resultado.append(formatar_obj(ppt_final, request.GET.get("formato")))
+
+            ultimo_valor_cursor = ppt.data_criacao
+
+        page = paginator.paginate_queryset(resultado, request)
+        return paginator.get_paginated_response(page)
 
     @staticmethod
     def listar_aluno(request):
@@ -243,7 +352,6 @@ class PPTService:
             raise Exception(f"Erro ao buscar dados do PPT {ppt.id}: {str(e)}")
 
         return formatar_obj(ppt_dict, request.GET.get("formato"))
-
 
     @staticmethod
     @transaction.atomic

@@ -20,7 +20,7 @@ const ListarAtividadesProfessor = () => {
         return {
             proxima: res.data.next,
             anterior: res.data.prev,
-            lista: res.data.results
+            resultados: res.data.results
         }
     }
 

@@ -17,6 +17,7 @@ const ListarPEDGestao = () => {
             'disciplina': 'disciplina',
             'trimestre_recuperar': 'trimestre(s) à recup.',
             'data_inicio': 'data início',
+            'data_criacao': 'data criação',
             'data_final': 'data fim',
             'status': 'status',
             'situacao': 'situação'
@@ -30,6 +31,7 @@ const ListarPEDGestao = () => {
             'disciplina': 'disciplina',
             'ano_semestre_reprov': 'semestre de reprovação',
             'data_inicio': 'data início',
+            'data_criacao': 'data criação',
             'data_final': 'data fim',
             'status': 'status',
             'situacao': 'situação'
@@ -37,12 +39,12 @@ const ListarPEDGestao = () => {
     }
 
     const getFormat = () => {
-        if (modalidade === 'Integrado') return 'id, aluno, professor_disciplina, curso, disciplina, trimestre_recuperar, data_inicio, data_final, status, situacao'
+        if (modalidade === 'Integrado') return 'id, aluno, professor_disciplina, curso, disciplina, trimestre_recuperar, data_inicio, data_final, data_criacao, status, situacao'
         
-        if (modalidade === "ProEJA") return 'id, aluno, professor_disciplina, curso, disciplina, ano_semestre_reprov, data_inicio, data_final, status, situacao'
+        if (modalidade === "ProEJA") return 'id, aluno, professor_disciplina, curso, disciplina, ano_semestre_reprov, data_inicio, data_final, data_criacao, status, situacao'
     }
 
-    const fetchPEDs = async (pagina, param) => {
+    const fetchPEDs = async (pagina, param, cursor) => {
         const format = getFormat()
 
         const res = await PEDService.listarProfessor(
@@ -50,13 +52,14 @@ const ListarPEDGestao = () => {
             param, 
             pagina, 
             modalidade,
-            'flat'
+            'flat',
+            cursor
         )
 
         return {
             proxima: res.data.next,
             anterior: res.data.prev,
-            lista: res.data.results
+            resultados: res.data.results
         }
     }
 

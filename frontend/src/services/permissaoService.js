@@ -1,7 +1,7 @@
 import { api } from "../config/axiosConfig";
 
 const PermissaoService = {
-  listar: async (pagina = 1) => {
+  listar: async (pagina = 1, _) => {
     return api.get(`api/permissoes/listar/`, {
       params: {
         retorno: "id, name",
@@ -10,7 +10,7 @@ const PermissaoService = {
     });
   },
 
-  listarPorGrupo: async (grupoId, pagina = 1) => {
+  listarPorGrupo: async (grupoId, pagina = 1, _) => {
     return api.get(`api/permissoes/listar/${grupoId}/`, {
       params: {
         retorno: "id, name",
@@ -19,7 +19,7 @@ const PermissaoService = {
     });
   },
 
-  naoVinculadas: async (grupoId, pagina = 1) => {
+  naoVinculadas: async (grupoId, pagina = 1, _) => {
     return api.get(`api/permissoes/listar/${grupoId}/nao_vinculadas/`, {
       params: {
         retorno: "id, name",

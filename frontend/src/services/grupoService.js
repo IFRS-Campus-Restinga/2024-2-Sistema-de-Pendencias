@@ -5,7 +5,7 @@ const GrupoService = {
     return await api.post("api/grupos/cadastrar/", params);
   },
 
-  listar: async (pagina = 1, param = "") => {
+  listar: async (pagina = 1, param = "", _) => {
     try {
       return await api.get("api/grupos/listar/", {
         params: {

@@ -6,7 +6,7 @@ const AcompanhamentoService = {
         return await api.post(`api/acompanhamentos/${modalidade}/cadastrar/`, params)
     },
 
-    listar: async (modalidade, pedId, pagina) => {
+    listar: async (modalidade, pedId, pagina, _) => {
         return await api.get(`api/acompanhamentos/${modalidade}/${pedId}/listar/`, {
             params: {
                 page: pagina,

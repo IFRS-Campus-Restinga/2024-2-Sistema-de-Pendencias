@@ -59,13 +59,14 @@ class AtividadeService:
     @staticmethod
     def listar(request, modalidade):
         model_class, serializer_class = validar_modalidade(modalidade, 'Atividade')
+        busca = request.GET.get('busca', "")
 
         professor = AtividadeService.validar_professor(request)
 
         if professor is None:
             raise serializers.ValidationError("Grupo inválido")
         
-        atividades = model_class.objects.filter(professor=professor)
+        atividades = model_class.objects.filter(professor=professor, titulo__icontains=busca)
 
         paginator = AtividadePagination()
         resultado_paginado = paginator.paginate_queryset(atividades, request)

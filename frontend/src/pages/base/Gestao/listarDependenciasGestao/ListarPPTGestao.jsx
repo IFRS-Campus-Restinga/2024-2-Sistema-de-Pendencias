@@ -9,13 +9,14 @@ const propMap = {
     'curso': 'curso',
     'turma_atual': 'turma atual',
     'turma_progressao': 'turma progressão',
+    'data_criacao': 'data criação',
     'disciplina': 'disciplina',
     'status': 'status',
     'situacao': 'situação'
 }
 
 const ListarPPTGestao = () => {
-    const fetchPPTs = async (filtro, pagina) => {
+    const fetchPPTs = async (filtro, pagina, cursor) => {
         const res = await PPTService.listar(
             `
                 id,
@@ -26,18 +27,20 @@ const ListarPPTGestao = () => {
                 disciplina,
                 turma_atual,
                 turma_progressao,
+                data_criacao,
                 status,
                 situacao
             `, 
             filtro, 
             pagina,
-            'flat'
+            'flat',
+            cursor
         )
 
         return {
             proxima: res.data.next,
             anterior: res.data.prev,
-            lista: res.data.results
+            resultados: res.data.results
         }
     }
 

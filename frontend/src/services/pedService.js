@@ -5,7 +5,7 @@ export const PEDService = {
     return await api.post(`api/peds/${modalidade}/cadastrar/`, params);
   },
 
-  listar: async (retorno, param, pagina, modalidade, formato) => {
+  listar: async (retorno, param, pagina, modalidade, formato, cursor) => {
     return await api.get(`api/peds/${modalidade}/listar/`, {
       params: {
         retorno,
@@ -13,11 +13,12 @@ export const PEDService = {
         page_size: 10,
         busca: param,
         formato,
+        cursor
       },
     });
   },
 
-  listarProfessor: async (retorno, param, pagina, modalidade, formato) => {
+  listarProfessor: async (retorno, param, pagina, modalidade, formato, cursor) => {
     return await api.get(`api/peds/${modalidade}/listar/professor/`, {
       params: {
         retorno,
@@ -25,11 +26,12 @@ export const PEDService = {
         page_size: 10,
         busca: param,
         formato,
+        cursor
       },
     });
   },
 
-  listarCoordenador: async (retorno, param, pagina, modalidade, formato) => {
+  listarCoordenador: async (retorno, param, pagina, modalidade, formato, cursor) => {
     return await api.get(`api/peds/${modalidade}/listar/coordenador/`, {
       params: {
         retorno,
@@ -37,6 +39,7 @@ export const PEDService = {
         page_size: 10,
         busca: param,
         formato,
+        cursor
       },
     });
   },

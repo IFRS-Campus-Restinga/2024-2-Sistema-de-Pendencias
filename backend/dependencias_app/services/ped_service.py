@@ -21,6 +21,9 @@ class PEDPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 30
 
+    def get_page_number(self, request, paginator):
+        return 1
+
 class PEDService:
     @staticmethod
     @transaction.atomic
@@ -57,7 +60,7 @@ class PEDService:
         busca = request.GET.get('busca', '')
 
         paginator = PEDPagination()
-        ultimo_valor_cursor = request.GET.get('last')
+        ultimo_valor_cursor = request.GET.get('cursor')
 
         if modalidade == "Integrado":
             responsavel_subquery = ProfessorProgressaoIntegrado.objects.filter(
@@ -75,7 +78,7 @@ class PEDService:
         cookies = {"system": settings.API_KEY}
         base_url = settings.BASE_SYSTEM_URL
 
-        while len(resultado) < paginator.page_size:
+        while len(resultado) < paginator.page_size + 1:
             filtro = {}
             if ultimo_valor_cursor:
                 filtro['data_criacao__lt'] = ultimo_valor_cursor
@@ -116,7 +119,6 @@ class PEDService:
 
             except Exception as e:
                 raise Exception(f"Erro ao buscar dados do PED {ped_serializado['id']}: {str(e)}")
-        
 
         page = paginator.paginate_queryset(resultado, request)
         return paginator.get_paginated_response(page)
@@ -129,7 +131,7 @@ class PEDService:
         busca = request.GET.get('busca', '')
 
         paginator = PEDPagination()
-        ultimo_valor_cursor = request.GET.get('last')
+        ultimo_valor_cursor = request.GET.get('cursor')
 
         # SUBQUERY FILTRA APENAS AS PEDS DO PROFESSOR
         if modalidade == "Integrado":
@@ -149,7 +151,7 @@ class PEDService:
         cookies = {"system": settings.API_KEY}
         base_url = settings.BASE_SYSTEM_URL
 
-        while len(resultado) < paginator.page_size:
+        while len(resultado) < paginator.page_size + 1:
             filtro = {}
             if ultimo_valor_cursor:
                 filtro['data_criacao__lt'] = ultimo_valor_cursor
@@ -198,7 +200,7 @@ class PEDService:
         busca = request.GET.get('busca', '')
 
         paginator = PEDPagination()
-        ultimo_valor_cursor = request.GET.get('after')
+        ultimo_valor_cursor = request.GET.get('cursor')
 
         # Subquery correta para o responsável
         if modalidade == "Integrado":
@@ -217,7 +219,7 @@ class PEDService:
         cookies = {"system": settings.API_KEY}
         base_url = settings.BASE_SYSTEM_URL
 
-        while len(resultado) < paginator.page_size:
+        while len(resultado) < paginator.page_size + 1:
 
             filtro = {}
             if ultimo_valor_cursor:

@@ -11,11 +11,12 @@ const propMap = {
     'turma_progressao': 'turma progressão',
     'disciplina': 'disciplina',
     'status': 'status',
+    'data_criacao': 'data criação',
     'situacao': 'situação'
 }
 
 const ListarPPTCoordenador = () => {
-    const fetchPPTs = async (filtro, pagina) => {
+    const fetchPPTs = async (filtro, pagina, cursor) => {
         const res = await PPTService.listarCoordenador(
             `
                 id,
@@ -26,18 +27,20 @@ const ListarPPTCoordenador = () => {
                 disciplina,
                 turma_atual,
                 turma_progressao,
+                data_criacao,
                 status,
                 situacao
             `, 
-            filtro, 
-            pagina,
-            'flat'
+            pagina, 
+            'flat',
+            filtro,
+            cursor
         )
 
         return {
             proxima: res.data.next,
             anterior: res.data.prev,
-            lista: res.data.results
+            resultados: res.data.results
         }
     }
 
@@ -48,6 +51,7 @@ const ListarPPTCoordenador = () => {
             propMap={propMap}
             visualizar={true}
             editar={false}
+            comprimento={'85%'}
         />
     )
 }

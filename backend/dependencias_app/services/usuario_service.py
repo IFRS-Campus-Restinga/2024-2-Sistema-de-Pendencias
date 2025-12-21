@@ -15,6 +15,9 @@ class UsuarioPagination(PageNumberPagination):
     max_page_size = 30
     page_query_param = 'pagina'
 
+    def get_page_number(self, request, paginator):
+        return 1
+
 class UsuarioService:
     @staticmethod
     def criar(data):
@@ -33,30 +36,23 @@ class UsuarioService:
     def listar_perfil(request, perfil):
         busca = request.GET.get('busca', None)
         retorno = request.GET.get('retorno', None)
-        ultimo_id = request.GET.get('ultimo', None)
-        ultimo_created_at = request.GET.get('data_criacao', None)
 
         paginator = UsuarioPagination()
-
-        # Query base
-        if perfil == 'aluno':
-            usuarios = Usuario.objects.filter(group__name='aluno')
-        else:
-            usuarios = Usuario.objects.exclude(group__name='aluno')
-
-        usuarios = usuarios.order_by('-created_at', '-id')
-
-        # Aplica cursor se fornecido
-        if ultimo_id and ultimo_created_at:
-            usuarios = usuarios.filter(
-                Q(created_at__lt=ultimo_created_at) |
-                Q(created_at=ultimo_created_at, id__lt=ultimo_id)
-            )
-
+        ultimo_valor_cursor = request.GET.get('cursor')
 
         lista_usuarios_hub = []
-        for usuario in usuarios:
-            if len(lista_usuarios_hub) == paginator.page_size + 1:
+
+        while len(lista_usuarios_hub) < paginator.page_size + 1:
+            filtro = {}
+            if ultimo_valor_cursor:
+                filtro['data_criacao__lt'] = ultimo_valor_cursor
+            
+            if perfil == 'aluno':
+                usuario = Usuario.objects.filter(**filtro, group__name='aluno').order_by('-data_criacao').first()
+            else:
+                usuario = Usuario.objects.exclude(group__name='aluno').filter(**filtro).order_by('-data_criacao').first()
+
+            if not usuario:
                 break
 
             url = f'{settings.BASE_SYSTEM_URL}/api/users/get/{str(usuario.id)}/'
@@ -73,23 +69,22 @@ class UsuarioService:
 
             usuario_hub = response.json()
 
-            # Filtro de busca
+            dados_usuario = {
+                'id': str(usuario.id),
+                'username': usuario_hub.get('username'),
+                'email': usuario_hub.get('email'),
+                'group': usuario.group.name,
+                'data_criacao': usuario.data_criacao,
+            }
+
             if busca and busca.strip():
                 busca_lower = busca.lower()
-                if any(busca_lower in str(value).lower() for value in usuario_hub.values() if value is not None):
-                    lista_usuarios_hub.append({
-                        'id': str(usuario.id),
-                        'username': usuario_hub.get('username'),
-                        'email': usuario_hub.get('email'),
-                        'group': usuario.group.name
-                    })
+                if any(busca_lower in str(value).lower() for value in dados_usuario.values() if value is not None):
+                    lista_usuarios_hub.append(dados_usuario)
             else:
-                lista_usuarios_hub.append({
-                    'id': str(usuario.id),
-                    'username': usuario_hub.get('username'),
-                    'email': usuario_hub.get('email'),
-                    'group': usuario.group.name
-                })
+                lista_usuarios_hub.append(dados_usuario)
+            
+            ultimo_valor_cursor = usuario.data_criacao
 
         resultado = paginator.paginate_queryset(lista_usuarios_hub, request)
         return paginator.get_paginated_response(resultado)
@@ -101,7 +96,7 @@ class UsuarioService:
 
         paginator = UsuarioPagination()
 
-        usuarios = Usuario.objects.filter(group__name=grupo).order_by('-created_at')
+        usuarios = Usuario.objects.filter(group__name=grupo).order_by('-data_criacao')
         
         lista_usuarios_hub = []
         for usuario in usuarios:

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef  } from 'react';
 
 
-const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setPagina, editar, visualizar, propMap }) => {
+const Tabela = ({ lista, carregando, proxima, anterior, setPagina, editar, visualizar, propMap }) => {
     const redirect = useNavigate()
     const primeiroRef = useRef(null)
     const ultimoRef = useRef(null)
@@ -43,15 +43,16 @@ const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setP
             (entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        if (entry.target === ultimoRef.current && proxima) {
+                        if (entry.target === ultimoRef.current && proxima && !carregando) {
+                            console.log(proxima)
                             setPagina(proxima)
                         }
-                        if (entry.target === primeiroRef.current && anterior) {
+                        if (entry.target === primeiroRef.current && anterior && !carregando) {
                             setPagina(anterior)
                         }
                     }
                 })
-            },{ threshold: 1.0 });
+            },{ threshold: 0.5 });
 
         observer.observe(primeiroRef.current);
         observer.observe(ultimoRef.current);
@@ -61,24 +62,25 @@ const Tabela = ({ fetchDados, lista, carregando, pagina, proxima, anterior, setP
         }
     }, [lista, proxima, anterior]);
 
-
-    useEffect(() => {
-        fetchDados()
-    }, [pagina])
-
     return (
         <div className={styles.containerTabela}>
             {
                 carregando ? (
-                    <div className={styles.loadingTable}>
-                        <div className={styles.loadingContainer}>
-                            <CustomLoading color='white' />
+                    <div 
+                        className={styles.loadingWrapper}
+                        style={{backgroundColor: lista.length === 0 ? 'transparent' : 'rgba(0,0,0,0.3)'}}
+                    >
+                        <CustomLoading color='white' />
+                    </div>
+                ) : null
+            }
+            {
+                lista.length == 0 ? (
+                    !carregando ? (
+                        <div className={styles.containerMensagem}>
+                            <p className={styles.mensagem}>Não há resultados para serem mostrados</p>
                         </div>
-                    </div>
-                ) : lista.length == 0 ? (
-                    <div className={styles.containerMensagem}>
-                        <p className={styles.mensagem}>Não há resultados para serem mostrados</p>
-                    </div>
+                    ) : null
                 ) : (
                     <table className={styles.tabela}>
                         <thead className={styles.cabecalho}>
