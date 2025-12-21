@@ -1,5 +1,13 @@
 export const validarCampoObrigatorio = (valor) => {
-  if (!valor || valor.length === 0) return "Campo obrigatório";
+  if (!valor || valor.trim().length === 0) {
+    return "Campo obrigatório";
+  }
+
+  const regexSegura = /^[a-zA-Z0-9À-ÿ\s.,;:!?()-]*$/;
+
+  if (!regexSegura.test(valor)) {
+    return "Caracteres inválidos detectados";
+  }
 
   return null;
 };
