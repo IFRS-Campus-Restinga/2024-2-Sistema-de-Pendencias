@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import styles from './HomeCRE.module.css'
 import FormContainer from '../../../../components/FormContainer/FormContainer'
 import { PPTService } from '../../../../services/pptService'
-import { toast } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 import check from '../../../../assets/check-svgrepo-com.svg'
 import Modal from '../../../../components/Modal/Modal'
 import Button from '../../../../components/Button/Button'
@@ -157,6 +157,7 @@ const HomeCRE = () => {
 
     return (
         <FormContainer titulo={"Gerenciar PPTs"} comprimento={"80%"} infoTexto={"Clique no botão de cormação em uma linha da tabela para selecionar uma PPT.\n\nVerifique os dados e confirme que já foi realizado o cadastro no SIGAA"}>
+            <ToastContainer autoClose={2000} position="bottom-right" />
             <div className={styles.containerTabela}>
                 {
                     carregando ? (

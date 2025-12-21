@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../../../../components/Button/Button";
 import FormContainer from "../../../../components/FormContainer/FormContainer";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { PlanoEstudosService } from "../../../../services/planoEstudosService";
 import Label from "../../../../components/Label/Label";
 import Select from "../../../../components/Select/Select";
@@ -54,52 +54,55 @@ const PlanoEstudosForm = () => {
   }
 
   const submit = async (e) => {
-    e.preventDefault()
-    setDesabilitado(true)
-    
-    if (validar()) {
-      const promise = state.plano_estudos
-        ? PlanoEstudosService.editar(state.plano_estudos, modalidade, formData)
-        : PlanoEstudosService.criar(formData, modalidade)
-  
-      toast.promise(promise, {
-        pending: "Registrando Plano de Estudos...",
-        success: {
-          render({ data }) {
-            return data.data.message
-          },
-        },
-        error: "Erro de validação"
-      }).catch((err) => {
-        if (err instanceof AxiosError) {
-            const errors = err.response?.data?.message;
+        e.preventDefault()
+        setDesabilitado(true)
 
-            if (Array.isArray(errors)) {
-                errors.forEach((msg) => toast.error(msg));
-            } else {
-                toast.error(errors);
-            }
-        }
-      })
+        if (validarForm()) {
+            const promise = state.plano_estudos ?
+            PlanoEstudosService.editar(state.plano_estudos, modalidade, formData) :
+            PlanoEstudosService.criar(formData, modalidade)
+        
+            toast.promise(
+              promise, 
+              {
+                  pending: "Salvando plano de estudos...",
+                  success: {
+                      render({ data }) {
+                          return data.data.message
+                      },
+                  },
+                  error: "Erro de validação"
+              }
+            ).catch((err) => {
+                if (err instanceof AxiosError) {
+                    const errors = err.response?.data?.message;
 
-      try {
-        const res = await promise
-        setPlanoFile(res.data.plano)
-        redirect(`/session/professor/peds/${modalidade}/$${state.ped}/`, {state: state.ped})
-      } catch (error) {
-        if (error instanceof AxiosError){
-            console.error(error.response?.data.message)
-        } else{
-            console.error(error)
+                    if (Array.isArray(errors)) {
+                        errors.forEach((msg) => toast.error(msg));
+                    } else {
+                        toast.error(errors);
+                    }
+                }
+            })
+
+          try {
+              const res = await promise
+              setPlanoFile(res.data.plano)
+              redirect(`/session/professor/peds/${modalidade}/$${state.ped}/`, {state: state.ped})
+          } catch (error) {
+              if (error instanceof AxiosError){
+                  console.error(error.response?.data.message)
+              } else{
+                  console.error(error)
+              }
+              setDesabilitado(false)
+          }
+        } else {
+          setDesabilitado(false)
         }
-        setDesabilitado(false)
-      }
-    } else {
-      setDesabilitado(false)
-    }
   }
 
-  const validar = () => {
+  const validarForm = () => {
     let novosErros = {
       forma_oferta: null,
       turno: null,
@@ -140,6 +143,7 @@ const PlanoEstudosForm = () => {
   
   return (
     <FormContainer titulo={"Plano de Estudos"} comprimento={["Lançada", "Finalizada", "Desativada"].includes(state.status) ? '30%' : '60%'}>
+      <ToastContainer autoClose={2000} position="bottom-right" />
       <section className={styles.section}>
         {
           isLoading ? (

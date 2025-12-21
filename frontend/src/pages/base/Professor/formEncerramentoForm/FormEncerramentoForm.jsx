@@ -136,6 +136,7 @@ const FormEncerramentoForm = () => {
 
     const submit = async (e) => {
         e.preventDefault()
+        setDesabilitado(true)
 
         if (validarForm()) {
             const promise = state.form_encerramento ?
@@ -214,7 +215,7 @@ const FormEncerramentoForm = () => {
             comprimento={["Criada", "Finalizada", "Desativada"].includes(state.status) ? '30%' : '80%'} 
             textoInfo={!["Criada", "Finalizada", "Desativada"].includes(state.status) ? "Preencha os campos obrigatórios (*)\n\nUtilize o botão '+' abaixo da tabela para adicionar atividades, preenchendo a data de criação, nome da atividade e respectiva data de entrega.\n\nCaso editado, a lista de atividades enviada, sobrescreverá a atual." : null}
         >
-            <ToastContainer/>
+            <ToastContainer autoClose={2000} position="bottom-right" />
                 {
                     carregando ? (
                         <CustomLoading/>

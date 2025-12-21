@@ -167,6 +167,7 @@ const UsuarioForm = () => {
 
     return (
         <FormContainer titulo={state ? 'Editar Servidor' : 'Cadastro Servidor'} comprimento={'50%'} textoInfo={"Preencha os campos obrigatórios (*)\n\nUtilize o campo superior para buscar um usuário\nUtilize os botões para definir o grupo."}>
+            <ToastContainer autoClose={2000} position="bottom-right" />
             <form className={styles.form} onSubmit={enviar}>
                 <div className={styles.formGroup}>
                     <Label titulo={'Usuário *'}>
@@ -243,8 +244,8 @@ const UsuarioForm = () => {
                                         ) : null
                                     ))
                                 }
-                                {erros.group ? <MensagemErro mensagem={erros.group}/> : null}
                                 </div>
+                                {erros.group ? <MensagemErro mensagem={erros.group}/> : null}
                             </Label>
                         )
                     }

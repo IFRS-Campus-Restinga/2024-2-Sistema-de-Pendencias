@@ -13,7 +13,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { UsuarioService } from "../../../../services/usuarioService";
-import { validarAnoSemestreReprov, validarCampoUUID4, validarSerieProgressao } from "../../../../utils/validacoes";
+import { validarAnoSemestreReprov, validarCampoUUID4 } from "../../../../utils/validacoes";
 import { AxiosError } from "axios";
 import { calendarioService } from "../../../../services/calendarioService";
 import cursoService from "../../../../services/cursoService";
@@ -266,7 +266,11 @@ const PEDForm = () => {
 
       setOpcoesCursos(res.data.results)
     } catch (error) {
-      console.error(error)
+      if (error instanceof AxiosError) {
+        toast.error(error.response.data.message)
+      } else {
+        console.error(error)
+      }
     }
   }
 
@@ -373,6 +377,7 @@ const PEDForm = () => {
     setErros(novosErros)
 
     return Object.values(novosErros).every((erro) => erro === null) ?? Object.keys(novosErros).length === 0
+
   }
 
   useEffect(() => {
@@ -393,6 +398,7 @@ const PEDForm = () => {
   return (
     <FormContainer titulo={state ? 'Editar PED' : 'Cadastro PED'}>
       {Object.values(erros).some((erro) => erro !== null) ? <MensagemErro mensagem={'*Preencha os campos obrigatórios'} /> : null}
+      <ToastContainer autoClose={2000} position="bottom-right" />
       <form onSubmit={handleSubmit}>
         <span className={styles.span}>
           <p className={styles.p}>

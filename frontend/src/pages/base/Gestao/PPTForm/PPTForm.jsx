@@ -189,6 +189,7 @@ const CadastroPPT = () => {
       <ToastContainer />
       <FormContainer titulo={"Cadastrar PPT"}>
         {Object.values(erros).some((erro) => erro !== null) ? <MensagemErro mensagem={"Preencha os campos obrigatórios (*)"}/> : null}
+        <ToastContainer autoClose={2000} position="bottom-right" />
           <form onSubmit={handleSubmit} className={styles.form}>
               <section className={styles.section}>
                 <div className={styles.formGroup}>

@@ -12,7 +12,7 @@ const GrupoLista = () => {
         return {
             proxima: res.data.next,
             anterior: res.data.previous,
-            lista: res.data.results
+            resultados: res.data.results
         }
     }
 

@@ -199,6 +199,7 @@ const GrupoForm = () => {
             titulo={`${state ? 'Editar' : 'Cadastrar'} Grupo`}
             textoInfo={`Preencha os campos obrigatórios (*)\n\nVincule ou Desvincule permissões ao grupo utilizando as tabelas abaixo.`}
         >
+        <ToastContainer autoClose={2000} position="bottom-right" />
             {carregandoGeral ? (
                 <CustomLoading />
             ) : (

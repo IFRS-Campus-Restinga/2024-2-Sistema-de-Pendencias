@@ -146,10 +146,6 @@ const AtividadeForm = () => {
         }
     }, []);
 
-    useEffect(() => {
-        console.log(state)
-    }, [])
-
     if (isLoading) return <CustomLoading/>
 
     return (
@@ -158,7 +154,7 @@ const AtividadeForm = () => {
             comprimento={'60%'}
             textoInfo={"Preencha os campos obrigatórios (*)\n\nCaso desejar, faça o upload de um arquivo (png, jpeg, pdf) para auxiliar o aluno na atividade"}
         >
-            <ToastContainer />
+            <ToastContainer autoClose={2000} position="bottom-right" />
             <br />
             <span className={styles.span}>
                 <Switch 
