@@ -1,3 +1,4 @@
+import os
 import threading
 import uuid
 from datetime import datetime
@@ -6,6 +7,7 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from dependencias_app.services.notificacao_service import NotificacaoService
 from dependencias_session.services.token_service import TokenService
 from ..models.ppt import PPT
 from ..serializers.ppt_serializer import PPTSerializer
@@ -23,6 +25,13 @@ class PPTPagintation(PageNumberPagination):
     def get_page_number(self, request, paginator):
         return 1
 
+template_path = os.path.join(
+    settings.BASE_DIR,
+    "dependencias_app",
+    "templates_email",
+    "novaPPT.html"
+)
+
 class PPTService:
     @staticmethod
     @transaction.atomic
@@ -34,7 +43,17 @@ class PPTService:
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)
         
-        serializer.save()
+        ppt_instance = serializer.save()
+
+        transaction.on_commit(
+            lambda: threading.Thread(
+                target=NotificacaoService.criar_notificacao,
+                args=([{'id': str(ppt_instance.aluno.id), 'grupo': 'aluno'}], "Nova PPT Criada", template_path),
+                daemon=True
+            ).start()
+        )
+
+        return ppt_instance
 
     @staticmethod
     def listar(request):

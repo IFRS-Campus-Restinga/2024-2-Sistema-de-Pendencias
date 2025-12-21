@@ -412,11 +412,7 @@
 
     <body class="body"
         style="width:100%;height:100%;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;padding:0;Margin:0">
-        <div dir="ltr" class="es-wrapper-color" lang="pt" style="background-color:#F6F6F6"><!--[if gte mso 9]>
-			<v:background xmlns:v="urn:schemas-microsoft-com:vml" fill="t">
-				<v:fill type="tile" color="#f6f6f6"></v:fill>
-			</v:background>
-		<![endif]-->
+        <div dir="ltr" class="es-wrapper-color" lang="pt" style="background-color:#F6F6F6">
             <table width="100%" cellspacing="0" cellpadding="0" class="es-wrapper" role="none"
                 style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;padding:0;Margin:0;width:100%;height:100%;background-repeat:repeat;background-position:center top;background-color:#F6F6F6">
                 <tr>
@@ -490,22 +486,12 @@
                                                                     <td align="center"
                                                                         class="es-m-p20r es-m-p20l es-m-p15b"
                                                                         style="padding:0;Margin:0;padding-bottom:10px;padding-right:10px;padding-left:10px">
-                                                                        {% if modalidade == 'Integrado' %}
-                                                                            <img src="http://localhost:8080/backend/dependencias_app/templates_email/icones/book-2-svgrepo-com.png" />
-                                                                        {% elif modalidade == 'ProEJA' %}
-                                                                            <img src="http://localhost:8080/backend/dependencias_app/templates_email/icones/college-graduation-svgrepo-com.png" />
-                                                                        {% endif %}
+                                                                        <img src="./icones/calendar-svgrepo-com.png" />
                                                                         <p
                                                                             style="Margin:0;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;letter-spacing:0;color:#333333;font-size:14px">
-                                                                            {% if grupo == 'aluno' %}
-                                                                            Uma nova progressão foi cadastrada para
-                                                                            você. Acesse o sistema clicando no botão abaixo.
-                                                                            {% elif grupo == 'professor' %}
-                                                                            Você foi registrado como professor
-                                                                            responsável de uma progressão. Para
-                                                                            preencher o plano de estudos, acesse o site
-                                                                            clicando no botão abaixo.
-                                                                            {% endif %}
+                                                                            O calendário acadêmico corrente chegou ao fim.
+                                                                            Para preencher as notas das progressões lançadas, acesse o 
+                                                                            sistema de progressões clicando no botão abaixo. 
                                                                         </p>
                                                                     </td>
                                                                 </tr>
@@ -521,7 +507,7 @@
                                                                                 style="mso-style-priority:100 !important;text-decoration:none !important;mso-line-height-rule:exactly;color:#FFFFFF;font-size:10px;padding:10px 20px 10px 20px;display:inline-block;background:#006b3f; border-radius:10px; font-family:arial, 'helvetica neue', helvetica, sans-serif;font-weight:bold;font-style:normal;line-height:21.6px;width:auto;text-align:center;letter-spacing:0;mso-padding-alt:0;mso-border-alt:10px solid #006b3f">Ir
                                                                                 para Sistema de Progressões</a></span>
                                                                     </td>
-                                                                </tr> 
+                                                                </tr>
                                                             </table>
                                                         </td>
                                                     </tr>

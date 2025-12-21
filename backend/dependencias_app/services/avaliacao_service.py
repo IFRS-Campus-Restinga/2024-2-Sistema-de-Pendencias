@@ -1,10 +1,16 @@
+import os
+import threading
 import uuid
+from django.conf import settings
 from rest_framework import serializers
+from dependencias_app.services.notificacao_service import NotificacaoService
 from dependencias_app.services.acesso_service import AcessoService
 from dependencias_app.models.usuario import Usuario
 from dependencias_app.utils.validar_modalidade import validar_modalidade
 from dependencias_session.services.token_service import TokenService
 from django.db import transaction
+
+template_path = os.path.join(settings.BASE_DIR, "dependencias_app", "templates_email", "planoDeAtividades.html")
 
 class AvaliacaoService:
     @staticmethod
@@ -86,6 +92,15 @@ class AvaliacaoService:
             ped.atividades_proeja.all().delete()
 
         avaliacao_model_class.objects.bulk_create([avaliacao_model_class(**item) for item in serializer.validated_data])
+
+        transaction.on_commit(
+            lambda: threading.Thread(
+                target=NotificacaoService.criar_notificacao,
+                args=([{'id': str(ped.aluno.id), 'grupo': 'aluno'}], template_path, "Plano de atividades alterado", ped),
+                daemon=True
+            ).start()
+        )
+
     
     @staticmethod
     def listar_avaliacoes(request, modalidade, ped_id):

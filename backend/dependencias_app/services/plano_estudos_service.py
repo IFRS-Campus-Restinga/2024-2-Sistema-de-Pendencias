@@ -1,9 +1,12 @@
 import os
+import threading
 import uuid
 import base64
 from datetime import datetime
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from dependencias_app.services.notificacao_service import NotificacaoService
 from dependencias_app.services.acesso_service import AcessoService
 from ..utils.validar_modalidade import validar_modalidade
 from ..utils.flatten_obj import flatten_named_fields
@@ -18,6 +21,7 @@ DRIVE_FOLDER = settings.DRIVE_PLANO_ESTUDOS_FOLDER
 cookies = {"system": settings.API_KEY}
 base_url = settings.BASE_SYSTEM_URL
 logo_path = os.path.join(settings.BASE_DIR, "dependencias_app", "templates_pdf", "logo-ifrs-colorido.png")
+template_path = os.path.join(settings.BASE_DIR, "dependencias_app", "templates_email", "planoDeEstudos.html")
 
 class PlanoEstudosService:
     @staticmethod
@@ -75,6 +79,14 @@ class PlanoEstudosService:
         ped.status = "Em Andamento"
         ped.data_inicio = datetime.today().date()
         ped.save()
+
+        transaction.on_commit(
+            lambda: threading.Thread(
+                target=NotificacaoService.criar_notificacao,
+                args=([{'id': str(ped.aluno.id), 'grupo': 'aluno'}], template_path, "Plano de estudos adicionado", ped),
+                daemon=True
+            ).start()
+        )
 
         return pdf_base64
     

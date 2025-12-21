@@ -439,7 +439,6 @@ const PEDForm = () => {
                         ) : null
                       }
                     </div>
-                    {erros.aluno !== '' ? <MensagemErro mensagem={erros.aluno} /> : null}
                   </Label>
                   <Label titulo={'Docente responsável pela progressão *'}>
                     <div className={styles.inputContainer}>
@@ -468,7 +467,6 @@ const PEDForm = () => {
                         ) : null
                       }
                     </div>
-                    {erros.professor_ped !== '' ? <MensagemErro mensagem={erros.professor_ped} /> : null}
                   </Label>
                   <Label titulo={'Docente que ministrou a disciplina *'}>
                     <div className={styles.inputContainer}>
@@ -498,7 +496,6 @@ const PEDForm = () => {
                         ) : null
                       }
                     </div>
-                    {erros.professor_disciplina !== '' ? <MensagemErro mensagem={erros.professor_disciplina} /> : null}
                   </Label>
                 </div>
                 <div className={styles.formGroup}>
@@ -540,7 +537,6 @@ const PEDForm = () => {
                         ) : null
                       }
                     </div>
-                    {erros.periodo_letivo !== '' ? <MensagemErro mensagem={erros.periodo_letivo} /> : null}
                   </Label>
                 </div>
               </section>
@@ -574,7 +570,6 @@ const PEDForm = () => {
                         ) : null
                       }
                     </div>
-                    {erros.curso !== '' ? <MensagemErro mensagem={erros.curso} /> : null}
                   </Label>
                   <Label titulo={'Disciplina *'}>
                     <div className={styles.inputContainer}>
@@ -602,7 +597,6 @@ const PEDForm = () => {
                           />
                         ) : null
                       }
-                      {erros.disciplina !== '' ? <MensagemErro mensagem={erros.disciplina} /> : null}
                     </div>
                   </Label>
                 </div>
@@ -668,7 +662,6 @@ const PEDForm = () => {
                       />
                     ) : null
                   }
-                  {erros.aluno !== '' ? <MensagemErro mensagem={erros.aluno} /> : null}
                 </div>
               </Label>
               <Label titulo={'Docente responsável pela progressão *'}>
@@ -697,7 +690,6 @@ const PEDForm = () => {
                       />
                     ) : null
                   }
-                  {erros.professor_ped !== '' ? <MensagemErro mensagem={erros.professor_ped} /> : null}
                 </div>
               </Label>
               <Label titulo={'Docente que ministrou a disciplina *'}>
@@ -727,7 +719,6 @@ const PEDForm = () => {
                       />
                     ) : null
                   }
-                  {erros.professor_ped !== '' ? <MensagemErro mensagem={erros.professor_ped} /> : null}
                 </div>
               </Label>
               <Label titulo={'Curso *'}>
@@ -756,7 +747,6 @@ const PEDForm = () => {
                       />
                     ) : null
                   }
-                  {erros.curso !== '' ? <MensagemErro mensagem={erros.curso} /> : null}
                 </div>
               </Label>
               <Label titulo={'Disciplina *'}>
@@ -785,7 +775,6 @@ const PEDForm = () => {
                       />
                     ) : null
                   }
-                  {erros.disciplina !== '' ? <MensagemErro mensagem={erros.disciplina} /> : null}
                 </div>
               </Label>
               <Label titulo={'Ano/Semestre de reprovação *'}>
@@ -802,7 +791,6 @@ const PEDForm = () => {
                     textoAjuda='Insira no formato Ano/Semestre - xxxx/x'
                     desabilitado={desabilitado}
                   />
-                  {erros.ano_semestre_reprov !== '' ? <MensagemErro mensagem={erros.ano_semestre_reprov} /> : null}
                 </div>
               </Label>
               <Label titulo={'Período Letivo *'}>
@@ -831,7 +819,6 @@ const PEDForm = () => {
                       />
                     ) : null
                   }
-                  {erros.periodo_letivo !== '' ? <MensagemErro mensagem={erros.periodo_letivo} /> : null}
                 </div>
               </Label>
             </>

@@ -196,7 +196,7 @@ const AvaliacoesPEDProfessor = () => {
                 {
                     carregando ? (
                         <CustomLoading/>
-                    ) : (
+                    ) : atividadesPED.length > 0 ? (
                         <form className={styles.form} onSubmit={submit}>
                             <div className={tableStyles.containerTabela}>
                                 <table className={tableStyles.tabela}>
@@ -282,7 +282,7 @@ const AvaliacoesPEDProfessor = () => {
                                 ) : null
                             }
                         </form>
-                    )
+                    ) : null
                 }
             </section>
         </FormContainer>

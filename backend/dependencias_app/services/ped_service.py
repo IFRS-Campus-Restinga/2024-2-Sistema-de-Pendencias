@@ -1,11 +1,14 @@
+import os
+import threading
 import uuid
 from datetime import datetime
 from django.conf import settings
-from django.db import transaction, models
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.db.models import OuterRef, Subquery, UUIDField
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from dependencias_app.services.notificacao_service import NotificacaoService
 from ..models.professor_progressao import ProfessorProgressaoIntegrado, ProfessorProgressaoProeja
 from ..models.usuario import Usuario
 from rest_framework import serializers
@@ -23,6 +26,13 @@ class PEDPagination(PageNumberPagination):
 
     def get_page_number(self, request, paginator):
         return 1
+
+template_path = os.path.join(
+    settings.BASE_DIR,
+    "dependencias_app",
+    "templates_email",
+    "novaPED.html"
+)
 
 class PEDService:
     @staticmethod
@@ -53,6 +63,21 @@ class PEDService:
                 responsavel_atual=True,
                 ped=ped_instance
             )
+
+        destinatarios = [
+                {'id': ped_instance.aluno.id, 'grupo': 'aluno'},
+                {'id': professor.id, 'grupo': 'professor'}
+            ]
+
+        transaction.on_commit(
+            lambda: threading.Thread(
+                target=NotificacaoService.criar_notificacao,
+                args=(destinatarios, template_path, "Nova PED criada", ped_instance),
+                daemon=True
+            ).start()
+        )
+
+        return ped_instance
 
     @staticmethod
     def listar(request, modalidade):
@@ -463,7 +488,7 @@ class PEDService:
 
         serializer = serializer_class(instance=ped, data=ped_data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        ped_instance = serializer.save()
 
         professor = get_object_or_404(Usuario, pk=uuid.UUID(professor_ped_id))
 
@@ -483,7 +508,19 @@ class PEDService:
             defaults={"responsavel_atual": True}
         )
 
-        return serializer.instance
+        destinatarios = [
+            {'id': professor.id, 'grupo': 'professor'}
+        ]
+
+        transaction.on_commit(
+            lambda: threading.Thread(
+                target=NotificacaoService.criar_notificacao,
+                args=(destinatarios, template_path, "Mudança de professor responsável", ped_instance),
+                daemon=True
+            ).start()
+        )
+
+        return ped_instance
 
     @staticmethod
     def trocar_status(ped_data, modalidade, ped_id):

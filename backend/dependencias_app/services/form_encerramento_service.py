@@ -1,4 +1,5 @@
 import os
+import threading
 import uuid
 import base64
 import locale
@@ -7,6 +8,8 @@ from datetime import datetime
 from django.shortcuts import get_object_or_404
 from django.db import models, transaction
 from rest_framework import serializers
+from dependencias_app.models.usuario import Usuario
+from dependencias_app.services.notificacao_service import NotificacaoService
 from dependencias_app.services.acesso_service import AcessoService
 from dependencias_app.services.file_service import FileService
 from dependencias_session.services.token_service import TokenService
@@ -19,6 +22,7 @@ DRIVE_FOLDER = settings.DRIVE_FORM_ENCERRAMENTO_FOLDER
 cookies = {"system": settings.API_KEY}
 base_url = settings.BASE_SYSTEM_URL
 logo_path = os.path.join(settings.BASE_DIR, "dependencias_app", "templates_pdf", "logo-ifrs-colorido.png")
+template_path = os.path.join(settings.BASE_DIR, "dependencias_app", "templates_email", "formEncerramento.html")
 locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
 
 class FormEncerramentoService:
@@ -104,6 +108,16 @@ class FormEncerramentoService:
         ped.nota_final = float(context.get("nota"))
         ped.situacao = "Aprovado" if float(context.get("nota")) >= 7.0 else "Reprovado"
         ped.save()
+
+        destinatarios = Usuario.objects.filter(group__name='gestao_escolar')
+
+        transaction.on_commit(
+            lambda: threading.Thread(
+                target=NotificacaoService.criar_notificacao,
+                args=([{'id': str(destinatario.id), 'grupo': 'Gestão Escolar'} for destinatario in destinatarios], template_path, "Formulário de encerramento preenchido", ped),
+                daemon=True
+            ).start()
+        )
 
         return pdf_base64
 
