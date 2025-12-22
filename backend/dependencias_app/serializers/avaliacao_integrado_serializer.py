@@ -1,10 +1,9 @@
+import datetime
 from rest_framework import serializers
 from dependencias_app.formatters.format_avaliacoes import URLFieldsParser
 from dependencias_app.models.atividade_integrado import AtividadeIntegrado
 from dependencias_app.models.ped_integrado import PEDIntegrado
 from ..models.avaliacao_integrado import AvaliacaoIntegrado
-from django.utils import timezone
-
 
 class AvaliacaoIntegradoSerializer(serializers.ModelSerializer):
     data_entrega = serializers.DateTimeField(
@@ -48,12 +47,13 @@ class AvaliacaoIntegradoSerializer(serializers.ModelSerializer):
                 })
 
         data_entrega = item.get("data_entrega")
-        agora = timezone.now()
+        if data_entrega is None:
+            raise serializers.ValidationError({"data_entrega": "A data de entrega é obrigatória."})
 
-        if not data_entrega or data_entrega < agora:
-            raise serializers.ValidationError({
-                "data_entrega": "A data de entrega não pode ser menor que agora."
-            })
+        # compara apenas o dia
+        hoje = datetime.date.today()
+        if data_entrega.date() < hoje:
+            raise serializers.ValidationError({"data_entrega": "A data de não pode ser inferior à data de hoje."})
 
         return item
 
