@@ -55,7 +55,6 @@ def upload_to_drive(file, file_name, grupo, parents):
         return uploaded_file.get('id')
 
     except Exception as e:
-        # Retorna a mensagem de erro se algo falhar
         print(f"Erro ao tentar fazer upload: {str(e)}")
         raise Exception(f"Erro ao tentar fazer upload: {str(e)}")
     

@@ -6,7 +6,7 @@ import Switch from '../../../../components/Switch/Switch'
 import OpcoesBusca from "../../../../components/OpcoesBusca/OpcoesBusca";
 import Label from "../../../../components/Label/Label";
 import MensagemErro from "../../../../components/MensagemErro/MensagemErro";
-import { toast } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 import { useEffect, useState } from "react";
 import { PEDService } from "../../../../services/pedService";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -396,7 +396,10 @@ const PEDForm = () => {
   if (carregando) return <CustomLoading/>
 
   return (
-    <FormContainer titulo={state ? 'Editar PED' : 'Cadastro PED'}>
+    <FormContainer 
+      titulo={state ? 'Editar PED' : 'Cadastro PED'}
+      textoInfo={"Preencha os campos obrigatórios (*)\n\nUtilize os campos de texto abaixo para pesquisar alunos, professores, cursos, disciplinas e calendários.\n\nPara progressões do EMI, apenas será possível selecionar uma turma após escolher o curso"}
+    >
       {Object.values(erros).some((erro) => erro !== null) ? <MensagemErro mensagem={'*Preencha os campos obrigatórios'} /> : null}
       <ToastContainer autoClose={2000} position="bottom-right" />
       <form onSubmit={handleSubmit}>
@@ -631,7 +634,7 @@ const PEDForm = () => {
                           setFormData({...formData, turma_atual: opcao.id})
                           setControleInputs({...controleInputs, turma_atual: opcao.number})
                         }}
-                        desabilitado={state ? desabilitado : formData.curso ? false : true}
+                        desabilitado={state.modalidade ? formData.curso.length > 0 ? false : true : desabilitado}
                       />
                       {erros.turma_serie !== '' ? <MensagemErro mensagem={erros.turma_serie} /> : null}
                     </div>

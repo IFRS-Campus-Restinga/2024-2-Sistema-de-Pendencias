@@ -34,7 +34,11 @@ const DetalhesFormEncerramentoCoordenador = () =>{
     }, [])
 
     return (
-        <FormContainer titulo={"Formulário de Encerramento"} comprimento={'30%'}>
+        <FormContainer 
+            titulo={"Formulário de Encerramento"} 
+            comprimento={'30%'}
+            textoInfo={"Clique no arquivo para visualizá-lo. E após aberto, clique novamente sobre a página ampliada para fazer o download."}
+        >
             {
                 carregando ? (
                     <CustomLoading/>

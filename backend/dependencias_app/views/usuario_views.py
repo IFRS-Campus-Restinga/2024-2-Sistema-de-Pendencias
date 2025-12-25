@@ -2,6 +2,7 @@ from django.http import Http404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status, serializers
+from dependencias_session.services.token_service import TokenService
 from ..services.usuario_service import UsuarioService
 from ..utils.formatar_erros import formatar_erros
 from fs_auth_middleware.decorators import has_permissions
@@ -45,6 +46,26 @@ def listar_usuarios_grupo(request, grupo):
 def detalhes_usuario(request, usuario_id):
     try:
         usuario = UsuarioService.detalhes(usuario_id)
+
+        return Response(usuario, status=status.HTTP_200_OK)
+    except Http404 as e:
+        return Response({'message': str(e)}, status=status.HTTP_404_NOT_FOUND)    
+    except serializers.ValidationError as e:
+        return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'message': "Ocorreu um erro"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+def obter_dados_sessao(request):
+    try:
+        token = request.COOKIES.get("access_token", None)
+
+        if not token:
+            return Response({"message": "Necessário autenticar"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        user_id = TokenService.decode_token(token).get('user_id')
+        
+        usuario = UsuarioService.obter_dados(user_id)
 
         return Response(usuario, status=status.HTTP_200_OK)
     except Http404 as e:

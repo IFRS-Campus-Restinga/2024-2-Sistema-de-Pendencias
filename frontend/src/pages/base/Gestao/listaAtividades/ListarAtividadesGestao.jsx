@@ -36,7 +36,10 @@ const ListarAtividadesGestao = () => {
     }, [])
 
     return (
-        <FormContainer titulo={"Atividades da PED"}>
+        <FormContainer 
+            titulo={"Atividades da PED"}
+            textoInfo={"Clique no botão com a lupa para visualizar os detalhes de uma atividade (caso disponível)."}
+        >
             <section style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>
                 {
                     avaliacoes.length == 0 ? (

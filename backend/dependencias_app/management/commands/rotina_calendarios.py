@@ -13,7 +13,6 @@ from dependencias_app.models.usuario import Usuario
 
 cookies = {'system': settings.API_KEY}
 base_url = settings.BASE_SYSTEM_URL
-template_path = os.path.join(settings.BASE_DIR, "dependencias_app", "templates_email", "conselhoDeClasse.html")
 
 class Command(BaseCommand):
     help = "Executa rotinas automáticas de consulta a calendários e eventos"
@@ -27,6 +26,8 @@ class Command(BaseCommand):
         self.stdout.write("Rotina finalizada com sucesso")
 
     def verificar_conselho_classe(self):
+        template_path = os.path.join(settings.BASE_DIR, "dependencias_app", "templates_email", "conselhoDeClasse.html")
+
         hoje = datetime.today().date()
 
         eventos = requests.get(
@@ -93,6 +94,8 @@ class Command(BaseCommand):
                 self.stdout.write("Conselho de classe do ProEJA daqui 7 dias, notificações emitidas.")
 
     def verificar_calendario_academico(self):
+        template_path = os.path.join(settings.BASE_DIR, "dependencias_app", "templates_email", "encerramentoCalendario.html")
+
         hoje = date.today()
 
         calendarios = requests.get(
@@ -107,22 +110,39 @@ class Command(BaseCommand):
         ).json().get('results')
 
         if not calendarios:
+            self.stdout.write("Nenhum calendário ativo encontrado.")
             return
 
         calendario_mais_recente = max(calendarios, key=lambda c: c['end'])
-
         data_fim = date.fromisoformat(calendario_mais_recente['end'])
 
-        usuarios_cre = Usuario.objects.filter(group__name='coord_reg_esc')
-        destinatarios = []
-        for usuario in usuarios_cre:
-            destinatarios.append({'id': usuario.id, 'grupo': 'Coord. Reg. Esc.'})
+        if data_fim <= hoje:
 
-        NotificacaoService.criar_notificacao(destinatarios, template_path, "Encerramento do período letivo")
+            usuarios_cre = Usuario.objects.filter(group__name='coord_reg_esc')
+            destinatarios = [
+                {'id': usuario.id, 'grupo': 'Coord. Reg. Esc.'}
+                for usuario in usuarios_cre
+            ]
 
-        self.stdout.write("Notificações emitidas para Coord. Reg. Esc.")
+            NotificacaoService.criar_notificacao(
+                destinatarios,
+                template_path,
+                "Encerramento do período letivo"
+            )
 
-        if data_fim == hoje:
-            PPT.objects.filter(status="Em Andamento").update(status="Lançada")
+            atualizados = PPT.objects.filter(
+                status="Em Andamento"
+            ).update(
+                status="Lançada"
+            )
 
-        self.stdout.write("Status das PPTs atualizado de 'Em Andamento' para 'Lançada'.")
+            self.stdout.write(
+                f"Encerramento detectado (data_fim={data_fim}). "
+                f"{atualizados} PPTs atualizadas."
+            )
+
+        else:
+            self.stdout.write(
+                f"Período ainda ativo (data_fim={data_fim}, hoje={hoje}). "
+                "Nenhuma ação executada."
+            )

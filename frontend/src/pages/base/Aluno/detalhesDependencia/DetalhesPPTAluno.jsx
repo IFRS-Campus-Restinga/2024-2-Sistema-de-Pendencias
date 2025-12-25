@@ -53,7 +53,7 @@ const DetalhesPPTAluno = () => {
     if (isLoading) return <CustomLoading/>
 
     return (
-        <DetalhesDependencia dependencia={PPT} modalidade={null} tipo={'PPT'} grupo={JSON.parse(sessionStorage.getItem('user')).group} />
+        <DetalhesDependencia dependencia={PPT} modalidade={null} tipo={'PPT'} />
     )
 }
 

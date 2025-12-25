@@ -3,36 +3,62 @@ import axios from "axios";
 export const api = axios.create({
   baseURL: process.env.REACT_APP_BASE_API_URL,
   withCredentials: true,
+  timeout: 15000,
 });
 
+/**
+ * Controle de refresh
+ */
 let isRefreshing = false;
 let failedQueue = [];
 
-const processQueue = (error, token = null) => {
+const processQueue = (error) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
     } else {
-      prom.resolve(token);
+      prom.resolve();
     }
   });
+
   failedQueue = [];
 };
 
+/**
+ * RESPONSE INTERCEPTOR
+ */
 api.interceptors.response.use(
   (response) => response,
+
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (!originalRequest) {
+      return Promise.reject(error);
+    }
+
+    const is401 = error.response?.status === 401;
+    const isRefreshUrl = originalRequest.url?.includes(
+      "session/tokens/refresh"
+    );
+
+    /**
+     * Só tenta refresh se:
+     * - for 401
+     * - não for a request de refresh
+     * - ainda não tentou retry
+     */
+    if (is401 && !isRefreshUrl && !originalRequest._retry) {
       originalRequest._retry = true;
 
+      /**
+       * Se já estiver renovando o token,
+       * coloca a request na fila
+       */
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        })
-          .then(() => api(originalRequest))
-          .catch((err) => Promise.reject(err));
+        }).then(() => api(originalRequest));
       }
 
       isRefreshing = true;
@@ -42,7 +68,7 @@ api.interceptors.response.use(
         processQueue(null);
         return api(originalRequest);
       } catch (refreshError) {
-        processQueue(refreshError, null);
+        processQueue(refreshError);
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

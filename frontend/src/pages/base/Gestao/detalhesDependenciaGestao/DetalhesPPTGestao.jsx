@@ -4,8 +4,6 @@ import DetalhesDependencia from "../../../../components/DetalhesDependencia/Deta
 import { PPTService } from "../../../../services/pptService"
 import CustomLoading from "../../../../components/customLoading/CustomLoading"
 import { AxiosError } from "axios"
-import { toast } from "react-toastify"
-
 
 const DetalhesPPTGestao = () => {
     const [PPT, setPPT] = useState(null)
@@ -53,7 +51,7 @@ const DetalhesPPTGestao = () => {
     if (isLoading) return <CustomLoading/>
 
     return (
-        <DetalhesDependencia dependencia={PPT} fetchDependencia={fetchDetalhesPPT} modalidade={null} tipo={'PPT'} grupo={JSON.parse(sessionStorage.getItem('user')).group} />
+        <DetalhesDependencia dependencia={PPT} fetchDependencia={fetchDetalhesPPT} modalidade={null} tipo={'PPT'} />
     )
 }
 

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
 from rest_framework import serializers
+from dependencias_app.models.professor_progressao import ProfessorProgressaoIntegrado, ProfessorProgressaoProeja
 from ..models.usuario import Usuario
 from ..serializers.usuario_serializer import UsuarioSerializer
 from rest_framework.pagination import PageNumberPagination
@@ -176,6 +177,14 @@ class UsuarioService:
     
     @staticmethod
     def editar(data, usuario_id):
+        responsavel_proeja = ProfessorProgressaoProeja
+        responsavel_integrado = ProfessorProgressaoIntegrado
+
+        if responsavel_proeja.objects.filter(professor__id=uuid.UUID(usuario_id)).exists():
+            raise serializers.ValidationError({'professor': 'Este usuário é um professor responsável por progressões do ProEJA'})
+        if responsavel_integrado.objects.filter(professor__id=uuid.UUID(usuario_id)).exists():
+            raise serializers.ValidationError({'professor': 'Este usuário é um professor responsável por progressões do EMI'})
+
         usuario = get_object_or_404(Usuario, pk=uuid.UUID(usuario_id))
         grupo = get_object_or_404(Group, uuid_map__uuid=uuid.UUID(data.get('group')))
 

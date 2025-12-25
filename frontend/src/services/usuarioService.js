@@ -30,6 +30,10 @@ export const UsuarioService = {
     return api.get(`api/usuarios/${usuarioId}/`);
   },
 
+  obterSessao: async () => {
+    return api.get(`api/sessao/`);
+  },
+
   editar: async (usuarioId, params) => {
     return api.put(`api/usuarios/${usuarioId}/editar/`, params);
   },

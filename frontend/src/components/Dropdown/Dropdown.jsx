@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import styles from "./Dropdown.module.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const Dropdown = ({ itens, icone, img, titulo, elementos, fontSize }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);

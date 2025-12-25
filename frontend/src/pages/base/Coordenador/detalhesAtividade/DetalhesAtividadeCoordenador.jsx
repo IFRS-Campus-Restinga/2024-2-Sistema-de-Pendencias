@@ -50,6 +50,7 @@ const DetalhesAtividadeCoordenador = () => {
         <FormContainer 
             titulo={"Detalhes da atividade"} 
             comprimento={'60%'}
+            textoInfo={"Clique no arquivo da atividade (caso disponível) para visualizá-lo. E após aberto, clique novamente sobre a página ampliada para fazer o download."}
         >            
             <form className={styles.form}>
               {

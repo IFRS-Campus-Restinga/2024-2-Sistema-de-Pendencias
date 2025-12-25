@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styles from "./AuthPage.module.css";
 import { authService } from "../../services/authService";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomLoading from "../../components/customLoading/CustomLoading";
 import { verificarGrupos } from "../../utils/permissões";
+import { UserContext } from "../../store/UserContext";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -11,6 +14,8 @@ function useQuery() {
 
 const AuthPage = () => {
   const redirect = useNavigate()
+  const context = UserContext
+  const {user, setUser} = useContext(context)
   const query = useQuery()
   const [autenticado, setAutenticado] = useState('pendente')
 
@@ -21,17 +26,16 @@ const AuthPage = () => {
     try {
       const res = await authService.obterTokens(user)
 
-      if (res.status !== 200) throw new Error()
-
-      const grupo = verificarGrupos(res.data.group)
-
-      res.data.profile_picture = profilePicture
+      setUser(res.data);
       
-      sessionStorage.setItem('user', JSON.stringify(res.data))
-
-      redirect(`/session/${grupo}/home`)
+      localStorage.setItem('profilePicture', JSON.stringify(profilePicture))
+      redirect(`/session/${res.data.group}/home`)
     } catch (error) {
-      console.error(error)
+      if (error instanceof AxiosError) {
+        toast.error(error.response.data.message)
+      } else {
+        console.error(error)
+      }
       setAutenticado('recusado')
     }
   }

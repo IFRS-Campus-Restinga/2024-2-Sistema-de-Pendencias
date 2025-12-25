@@ -46,6 +46,11 @@ const FormEncerramentoForm = () => {
             const flatResp = res.data.map((atividade) => flattenAndClean(atividade, "atividade"))
 
             setFormData({...formData, atividades: flatResp})
+
+            if (flatResp.every((atividade) => atividade.nota !== null)) {
+                setFormData({...formData, nota: flatResp.reduce((sum, atividade) => sum + atividade.nota, 0)/flatResp.length})
+            }
+
             setErros({
                 ...erros,
                 atividades: flatResp.map(() => ({
@@ -213,7 +218,7 @@ const FormEncerramentoForm = () => {
         <FormContainer 
             titulo={"Formulário de Encerramento"} 
             comprimento={["Criada", "Finalizada", "Desativada"].includes(state.status) ? '30%' : '80%'} 
-            textoInfo={!["Criada", "Finalizada", "Desativada"].includes(state.status) ? "Preencha os campos obrigatórios (*)\n\nUtilize o botão '+' abaixo da tabela para adicionar atividades, preenchendo a data de criação, nome da atividade e respectiva data de entrega.\n\nCaso editado, a lista de atividades enviada, sobrescreverá a atual." : null}
+            textoInfo={!["Criada", "Finalizada", "Desativada"].includes(state.status) ? "Preencha os campos obrigatórios (*)\n\nUtilize o botão '+' abaixo da tabela para adicionar atividades, preenchendo a data de criação, nome da atividade e respectiva data de entrega.\n\nCaso editado, a lista de atividades enviada, sobrescreverá a atual.\n\nA nota será calculada automaticamente via média aritmética, (podendo ser alterada) apenas se todas as atividades da progressão tiverem sido avaliadas." : null}
         >
             <ToastContainer autoClose={2000} position="bottom-right" />
                 {
@@ -221,11 +226,6 @@ const FormEncerramentoForm = () => {
                         <CustomLoading/>
                     ) : (
                         <form className={styles.form} onSubmit={submit}>
-                            {
-                                formFile ? (
-                                    <PDFDisplay arquivo={formFile}/>
-                                ) : null
-                            }
                             {
                                 !["Criada", "Finalizada", "Desativada"].includes(state.status) ? (
                                     <section className={styles.section}>
@@ -391,27 +391,29 @@ const FormEncerramentoForm = () => {
                                             </button>
                                         </div>
                                         <div className={styles.formGroup}>
-                                            <Label titulo={"Nota final *"}>
-                                                <Input
-                                                    tipo={'text'}
-                                                    alinharCentro={true}
-                                                    valor={formData.nota ?? ""}
-                                                    onChange={(e) => {
-                                                        const valor = e.target.value
-                                                            setFormData(prev => {
-                                                                const form = {...prev};
-                                                                if (valor >= 0 && valor <= 10) form.nota = valor;
-                                                                return form;
-                                                            });
-                                                            return;
-                                                    }}
-                                                    onBlur={() => setErros({...erros, nota: validarCampoObrigatorio(formData.nota)})}
-                                                    valorMaximo={10}
-                                                    valorMinimo={0}
-                                                    erro={erros.nota}
-                                                />
-                                                {erros.nota ? <MensagemErro mensagem={erros.nota}/> : null}
-                                            </Label>
+                                            <div className={styles.inputContainer}>
+                                                <Label titulo={"Nota final *"}>
+                                                    <Input
+                                                        tipo={'text'}
+                                                        alinharCentro={true}
+                                                        valor={formData.nota ?? ""}
+                                                        onChange={(e) => {
+                                                            const valor = e.target.value
+                                                                setFormData(prev => {
+                                                                    const form = {...prev};
+                                                                    if (valor >= 0 && valor <= 10) form.nota = valor;
+                                                                    return form;
+                                                                });
+                                                                return;
+                                                        }}
+                                                        onBlur={() => setErros({...erros, nota: validarCampoObrigatorio(formData.nota)})}
+                                                        valorMaximo={10}
+                                                        valorMinimo={0}
+                                                        erro={erros.nota}
+                                                    />
+                                                    {erros.nota ? <MensagemErro mensagem={erros.nota}/> : null}
+                                                </Label>
+                                            </div>
                                         </div>
                                         {
                                             !["Criada", "Finalizada", "Desativada"].includes(state.status) ? (
@@ -419,6 +421,13 @@ const FormEncerramentoForm = () => {
                                             ) : null
                                         }
                                     </section>
+                                ) : null
+                            }
+                            {
+                                formFile ? (
+                                    <div className={styles.fileContainer}>
+                                        <PDFDisplay arquivo={formFile}/>
+                                    </div>
                                 ) : null
                             }
                         </form>

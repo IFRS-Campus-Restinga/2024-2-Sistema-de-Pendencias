@@ -166,7 +166,7 @@ const UsuarioForm = () => {
     }, [state, perfil])
 
     return (
-        <FormContainer titulo={state ? 'Editar Servidor' : 'Cadastro Servidor'} comprimento={'50%'} textoInfo={"Preencha os campos obrigatórios (*)\n\nUtilize o campo superior para buscar um usuário\nUtilize os botões para definir o grupo."}>
+        <FormContainer titulo={state ? perfil === 'alunos' ? 'Detalhes aluno' : `Editar Servidor` : `Cadastrar ${perfil}`} comprimento={'50%'} textoInfo={"Preencha os campos obrigatórios (*)\n\nUtilize o campo superior para buscar um usuário\nUtilize os botões para definir o grupo."}>
             <ToastContainer autoClose={2000} position="bottom-right" />
             <form className={styles.form} onSubmit={enviar}>
                 <div className={styles.formGroup}>

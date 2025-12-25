@@ -187,7 +187,10 @@ const CadastroPPT = () => {
   return (
     <>
       <ToastContainer />
-      <FormContainer titulo={"Cadastrar PPT"}>
+      <FormContainer 
+        titulo={"Cadastrar PPT"}
+        textoInfo={"Preencha os campos obrigatórios (*)\n\nUtilize os campos de texto abaixo para pesquisar alunos, professores, cursos e disciplinas.\n\nApenas será possível selecionar uma turma após escolher o curso"}
+      >
         {Object.values(erros).some((erro) => erro !== null) ? <MensagemErro mensagem={"Preencha os campos obrigatórios (*)"}/> : null}
         <ToastContainer autoClose={2000} position="bottom-right" />
           <form onSubmit={handleSubmit} className={styles.form}>
@@ -348,6 +351,7 @@ const CadastroPPT = () => {
                         setControleInputs({...controleInputs, turma_progressao: opcao.number})
                       }}
                       chave={'number'}
+                      desabilitado={formData.curso.length === 0}
                     />
                   </Label>
                   <Label titulo={'Turma Atual *'}>
@@ -359,6 +363,7 @@ const CadastroPPT = () => {
                         setControleInputs({...controleInputs, turma_atual: opcao.number})
                       }}
                       chave={'number'}
+                      desabilitado={formData.curso.length === 0}
                     />
                   </Label>
                 </div>

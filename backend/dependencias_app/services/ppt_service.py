@@ -353,17 +353,15 @@ class PPTService:
             turma_progressao_id = ppt.turma_progressao
 
             # ↓ turmas vem da API (dentro de dados_ppt['curso'])
-            turmas = dados_ppt["curso"].get("course_class", [])
-
+            turmas = dados_ppt["curso"].pop("course_class", [])
             dados_ppt["turma_atual"] = next(
-                (t for t in turmas if t["id"] == turma_atual_id), None
+                (t['number'] for t in turmas if t["id"] == str(turma_atual_id)), None
             )
 
             dados_ppt["turma_progressao"] = next(
-                (t for t in turmas if t["id"] == turma_progressao_id), None
+                (t['number'] for t in turmas if t["id"] == str(turma_progressao_id)), None
             )
 
-            # serializer.data já contém o PPT serializado
             ppt_dict = serializer.data.copy()
             ppt_dict.update(dados_ppt)
 

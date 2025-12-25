@@ -167,7 +167,7 @@ const AvaliacoesPEDProfessor = () => {
     if (!state) return null
 
     return (
-        <FormContainer titulo={"Plano de Atividades"} textoInfo={"Utilize a barra de pesquisa para buscar uma atividade pré cadastrada para a modalidade desta dependência.\n\nAo ser avaliada, a nota de uma atividade não pode ser removida, apenas alterada.\n\nApós o encerramento de uma progressão, o plano de atividades não pode mais ser alterado."}>
+        <FormContainer titulo={"Plano de Atividades"} textoInfo={"Utilize a barra de pesquisa para buscar uma atividade pré cadastrada para a modalidade desta progressão.\n\nAo ser avaliada, a nota de uma atividade não pode ser removida, apenas alterada.\n\nApós o encerramento de uma progressão, o plano de atividades não pode mais ser alterado."}>
             <ToastContainer autoClose={2000} position="bottom-right" />
             <section className={styles.section}>
                 <div className={styles.inputContainer}>

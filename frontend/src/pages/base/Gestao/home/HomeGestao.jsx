@@ -1,7 +1,6 @@
 import styles from './HomeGestao.module.css'
 import ppt from '../../../../assets/classroom-svgrepo-white-com.svg'
 import lock from '../../../../assets/lock-filled-svgrepo-com-white.svg'
-import calendar from '../../../../assets/calendar-svgrepo-com-white.svg'
 import proeja from '../../../../assets/college-graduation-svgrepo-com.svg'
 import emi from '../../../../assets/book-2-svgrepo-com.svg'
 import aluno from '../../../../assets/user-graduate-svgrepo-com-white.svg'

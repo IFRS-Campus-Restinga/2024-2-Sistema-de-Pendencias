@@ -156,7 +156,11 @@ const HomeCRE = () => {
     }, [pagina])
 
     return (
-        <FormContainer titulo={"Gerenciar PPTs"} comprimento={"80%"} infoTexto={"Clique no botão de cormação em uma linha da tabela para selecionar uma PPT.\n\nVerifique os dados e confirme que já foi realizado o cadastro no SIGAA"}>
+        <FormContainer 
+            titulo={"Gerenciar PPTs"} 
+            comprimento={"80%"} 
+            textoInfo={"Clique no botão de confirmação em uma linha da tabela para selecionar uma PPT.\n\nVerifique os dados e confirme que já foi realizado o cadastro no SIGAA\n\nCaso o status da PPT seja 'Lançada', preencha a nota da progressão conforme SIGAA e confirme."}
+        >
             <ToastContainer autoClose={2000} position="bottom-right" />
             <div className={styles.containerTabela}>
                 {

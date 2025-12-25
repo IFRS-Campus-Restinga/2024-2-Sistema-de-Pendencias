@@ -1,5 +1,5 @@
 import styles from "./DetalhesDependencia.module.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import FormContainer from "../FormContainer/FormContainer";
 import Button from "../Button/Button";
 import StatusBalls from "../StatusBall/StatusBall";
@@ -17,9 +17,11 @@ import AcompanhamentoService from "../../services/acompanhamentoService.js";
 import seta from '../../assets/chevron-down-svgrepo-com.svg'
 import editIcone from '../../assets/edit-3-svgrepo-com.svg'
 import { AxiosError } from "axios";
+import { UserContext } from "../../store/UserContext.jsx";
 
-const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDependencia }) => {
+const DetalhesDependencia = ({ dependencia, tipo, modalidade, fetchDependencia }) => {
   const redirect = useNavigate()
+  const { user } = useContext(UserContext)
   const [botaoDesabilitado, setBotaoDesabilitado] = useState(false)
   const [modalAberto, setModalAberto] = useState(false);
   const [isLoading, setIsLoading] = useState(true)
@@ -58,7 +60,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
   const setLink = (id, nome) => {
     if (id) return `${nome}/${id}`
 
-    if (grupo === 'professor') return `${nome}`
+    if (user.group === 'professor') return `${nome}`
 
     return null
   }
@@ -173,17 +175,15 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
   }
 
   const validarAutor = () => {
-    const usuario = JSON.parse(sessionStorage.getItem('user'))
+    if (user.group === 'gestao_escolar') return true
 
-    if (grupo === 'gestao_escolar') return true
-
-    if (grupo === 'coord' && dependencia.curso.coord === usuario.id) return true
+    if (user.group === 'coord' && dependencia.curso.coord === user.id) return true
 
     if (
-      grupo === 'professor' &&
+      user.group === 'professor' &&
       dependencia.professores?.some(
         (professor) =>
-          professor.id === usuario.id && professor.resp_atual === true
+          professor.id === user.id && professor.resp_atual === true
       )
     ) {
       return true;
@@ -193,9 +193,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
   }
 
   const validarEdicao = () => {
-    const usuario = JSON.parse(sessionStorage.getItem('user'))
-
-    if (acompanhamento.autor.id === usuario.id && ['Criada', 'Em Andamento'].includes(dependencia.status)) return true
+    if (acompanhamento.autor.id === user.id && ['Criada', 'Em Andamento'].includes(dependencia.status)) return true
   }
 
   useEffect(() => {
@@ -300,7 +298,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
         <div className={styles.container}>
           <div className={styles.containerStatus}>
             {
-              grupo !== "aluno" && tipo !== 'PPT' && dependencia.status !== "Desativada"  ? (
+              user.group !== "aluno" && tipo !== 'PPT' && dependencia.status !== "Desativada"  ? (
                 <div className={styles.opcoesContainer}>
                   <Dropdown icone={<img src={gearIcon} className={styles.icone}/>}
                     itens={[
@@ -314,19 +312,19 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
                         link: 'editar',
                         name: 'Editar PED',
                         state: dependencia.id,  
-                        desabilitado: grupo !== 'gestao_escolar' ? true : !(["Criada", "Em Andamento"]).includes(dependencia.status)
+                        desabilitado: user.group !== 'gestao_escolar' ? true : !(["Criada", "Em Andamento"]).includes(dependencia.status)
                       },
                       {
                         link: setLink(dependencia.plano_estudos, 'planoEstudos'),
                         name: 'Plano de Estudos',
                         state: {ped: dependencia.id, plano_estudos: dependencia.plano_estudos, status: dependencia.status},
-                        desabilitado: !(dependencia.plano_estudos) ? grupo !== 'professor' : false
+                        desabilitado: !(dependencia.plano_estudos) ? user.group !== 'professor' : false
                       },
                       {
                         link: setLink(dependencia.form_encerramento, 'formEncerramento'),
                         name: 'Formulário de Encerramento',
                         state: {ped: dependencia.id, form_encerramento: dependencia.form_encerramento, status: dependencia.status},
-                        desabilitado: grupo !== 'professor' ? !(dependencia.form_encerramento) : !(dependencia.plano_estudos)
+                        desabilitado: user.group !== 'professor' ? !(dependencia.form_encerramento) : !(dependencia.plano_estudos)
                       },
                     ]}
                   />
@@ -342,7 +340,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
                 if (["Desativada", "Finalizada"].includes(dependencia.status)) return null;
 
                 // 1) GESTÃO ESCOLAR
-                if (grupo === "gestao_escolar") {
+                if (user.group === "gestao_escolar") {
                   return (
                     <>
                       <Button 
@@ -384,7 +382,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
 
                 // 2) ALUNO / PROFESSOR (quando tipo !== 'PPT')
                 if (tipo !== "PPT") {
-                  if (grupo === "aluno") {
+                  if (user.group === "aluno") {
                     return (
                       <Button
                         texto="Atividades"
@@ -414,7 +412,7 @@ const DetalhesDependencia = ({ dependencia, tipo, modalidade, grupo, fetchDepend
           </div>
           <div className={styles.acompanhamentoContainer}>
             {
-              acompanhamento && grupo !== 'aluno' && tipo === 'PED' ? (
+              acompanhamento && user.group !== 'aluno' && tipo === 'PED' ? (
                 <>
                   {prev && (
                     <button

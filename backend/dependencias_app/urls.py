@@ -12,6 +12,9 @@ from dependencias_app.views.form_encerramento_views import *
 
 
 urlpatterns = [
+    # views de sessao
+    path('sessao/', obter_dados_sessao),
+
     # views de usuário
     path('usuarios/cadastrar/', cadastrar_usuario),
     path('usuarios/listar/perfil/<str:perfil>/', listar_usuarios_perfil),

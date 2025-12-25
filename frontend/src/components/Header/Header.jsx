@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import styles from "./Header.module.css";
 import logo from "../../assets/logo-ifrs-branco.png";
 import Dropdown from '../Dropdown/Dropdown'
@@ -6,17 +6,20 @@ import { authService } from '../../services/authService'
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import { toast } from 'react-toastify'
+import { UserContext } from "../../store/UserContext";
+import userIcon from '../../assets/user-svgrepo-com-white.svg'
 
 
-const Header = () => {
-  const [nome, setNome] = useState()
+const Header = ({homeUrl}) => {
   const redirect = useNavigate()
+  const {user, setUser} = useContext(UserContext)
 
   const handleLogout = async () => {
     try {
         await authService.logout()
     
-        sessionStorage.clear()
+        localStorage.clear()
+        setUser(null)
     
         redirect('/session')
     } catch (error) {
@@ -28,38 +31,21 @@ const Header = () => {
     }
   };
 
-  const escreveNome = () => {
-    const user = JSON.parse(sessionStorage.getItem('user'))
-
-    try {
-      if (!user) throw new Error('Token inválido')
-
-      setNome(`${user.username}`)
-
-    } catch (error) {
-      redirect('/')
-    }
-  }
-
-  useEffect(() => {
-    escreveNome()
-  }, [])
-
   return (
     <header className={styles.header}>
-      <img src={logo} alt="Logo do Site" className={styles.logo} onClick={() => redirect(`/session/${JSON.parse(sessionStorage.getItem('user')).group}/home`)}/>
+      <img src={logo} alt="Logo do Site" className={styles.logo} onClick={() => redirect(homeUrl)}/>
       {
-        sessionStorage.getItem('user') ? (
+        user ? (
           <div className={styles.menu}>
             <span className={styles.titulo}>
               <h2 className={styles.saudacao}>
                 Bem vindo,
               </h2>
-              <p className={styles.nome}>{nome}</p>
-              <p className={styles.grupo}>{JSON.parse(sessionStorage.getItem('user')).group}</p>
+              <p className={styles.grupo}>{user.group}</p>
+              <p className={styles.nome}>{user.username}</p>
             </span>
             <Dropdown
-              img={JSON.parse(sessionStorage.getItem('user')).profile_picture}
+              img={JSON.parse(localStorage.getItem('profilePicture')) ?? userIcon}
               fontSize={'12px'}
               itens={[
                 {

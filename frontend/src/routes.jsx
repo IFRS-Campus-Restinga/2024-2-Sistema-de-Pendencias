@@ -13,26 +13,20 @@ import BaseAluno from './pages/base/Aluno/BaseAluno'
 
 // Filhos de Gestao
 import HomeGestao from './pages/base/Gestao/home/HomeGestao'
-
-// Grupos & Permissoes
 import GrupoLista from './pages/base/Gestao/grupoLista/GrupoLista'
 import GrupoForm from './pages/base/Gestao/grupoForm/GrupoForm'
 import UsuarioLista from './pages/base/Gestao/usuarioLista/UsuarioLista'
 import UsuarioForm from './pages/base/Gestao/usuarioForm/UsuarioForm'
-
-// PED
 import CadastroPED from './pages/base/Gestao/PEDForm/PEDForm'
 import ListarPEDGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPEDGestao'
 import DetalhesPEDGestao from './pages/base/Gestao/detalhesDependenciaGestao/DetalhesPEDGestao'
-
-// PPT
 import CadastroPPT from './pages/base/Gestao/PPTForm/PPTForm'
 import ListarPPTGestao from './pages/base/Gestao/listarDependenciasGestao/ListarPPTGestao'
 import DetalhesPPTGestao from './pages/base/Gestao/detalhesDependenciaGestao/DetalhesPPTGestao'
-
-// Plano Estudos
-
-// Atividades
+import DetalhesPlanoEstudosGestao from './pages/base/Gestao/detalhesPlanoEstudos/DetalhesPlanoEstudosGestao'
+import ListarAtividadesGestao from './pages/base/Gestao/listaAtividades/ListarAtividadesGestao'
+import DetalhesAtividadeGestao from './pages/base/Gestao/detalhesAtividade/DetalhesAtividadeGestao'
+import DetalhesFormEncerramentoGestao from './pages/base/Gestao/detalhesFormEncerramento/DetalhesFormEncerramentoGestao'
 
 // Filhos de CRE
 import HomeCRE from './pages/base/CRE/home/HomeCRE'
@@ -43,6 +37,10 @@ import ListarPEDCoordenador from './pages/base/Coordenador/listarDependenciasCoo
 import DetalhesPEDCoordenador from './pages/base/Coordenador/detalhesDependenciaCoordenador/DetalhesPEDCoordenador'
 import ListarPPTCoordenador from './pages/base/Coordenador/listarDependenciasCoordenador/ListarPPTCoordenador'
 import DetalhesPPTCoordenador from './pages/base/Coordenador/detalhesDependenciaCoordenador/DetalhesPPTCoordenador'
+import DetalhesPlanoEstudosCoordenador from './pages/base/Coordenador/detalhesPlanoEstudos/DetalhesPlanoEstudosCoordenador'
+import ListarAtividadesCoordenador from './pages/base/Coordenador/listaAtividadesCoordenador/ListaAtividadesCoordenador'
+import DetalhesAtividadeCoordenador from './pages/base/Coordenador/detalhesAtividade/DetalhesAtividadeCoordenador'
+import DetalhesFormEncerramentoCoordenador from './pages/base/Coordenador/detalhesFormEncerramento/DetalhesFormEncerramentoCoordenador'
 
 // Filhos de Professor
 import HomeProfessor from './pages/base/Professor/home/HomeProfessor'
@@ -60,14 +58,6 @@ import DetalhesPPTAluno from './pages/base/Aluno/detalhesDependencia/DetalhesPPT
 import DetalhesPEDAluno from './pages/base/Aluno/detalhesDependencia/DetalhesPEDAluno'
 import ListarAtividadesAluno from './pages/base/Aluno/listarAtividades/ListarAtividadesAluno'
 import DetalhesAtividadeAluno from './pages/base/Aluno/detalhesAtividade/DetalhesAtividadeAluno'
-import DetalhesPlanoEstudosCoordenador from './pages/base/Coordenador/detalhesPlanoEstudos/DetalhesPlanoEstudosCoordenador'
-import ListarAtividadesCoordenador from './pages/base/Coordenador/listaAtividadesCoordenador/ListaAtividadesCoordenador'
-import DetalhesAtividadeCoordenador from './pages/base/Coordenador/detalhesAtividade/DetalhesAtividadeCoordenador'
-import DetalhesFormEncerramentoCoordenador from './pages/base/Coordenador/detalhesFormEncerramento/DetalhesFormEncerramentoCoordenador'
-import DetalhesPlanoEstudosGestao from './pages/base/Gestao/detalhesPlanoEstudos/DetalhesPlanoEstudosGestao'
-import ListarAtividadesGestao from './pages/base/Gestao/listaAtividades/ListarAtividadesGestao'
-import DetalhesAtividadeGestao from './pages/base/Gestao/detalhesAtividade/DetalhesAtividadeGestao'
-import DetalhesFormEncerramentoGestao from './pages/base/Gestao/detalhesFormEncerramento/DetalhesFormEncerramentoGestao'
 
 const router = createBrowserRouter([
     {
@@ -75,20 +65,20 @@ const router = createBrowserRouter([
         element: <Home/>
     },
     {
-        path: 'session/',
+        path: '/session/',
         element: <LoginPage/>
     },
     {
-        path: 'session/auth/',
+        path: '/session/auth/',
         element: <AuthPage />,
     },
     {
-        path: 'session/token/',
+        path: '/session/token/',
         element: <AuthPage />,
     },
     // Rotas do perfil de Gestao Escolar
     {
-        path: 'session/gestao_escolar',
+        path: '/session/gestao_escolar',
         element: <BaseGestao />,
         children: [
             {
@@ -124,7 +114,7 @@ const router = createBrowserRouter([
                 element: <UsuarioForm/>
             },
             {
-                path: 'alunos/:alunoId/editar/',
+                path: 'alunos/:alunoId/',
                 element: <UsuarioForm/>
             },
             {
@@ -246,7 +236,7 @@ const router = createBrowserRouter([
     },
     // Rotas de Professor
     {
-        path: 'session/professor/',
+        path: '/session/professor/',
         element: <BaseProfessor />,
         //   adicionar abaixo, as children de professor
         children: [

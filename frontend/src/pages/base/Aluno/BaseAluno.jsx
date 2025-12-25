@@ -1,30 +1,38 @@
-import { useEffect } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
-import { validaUsuario } from '../validaUsuario'
-import PageContainer from '../../../components/PageContainer/PageContainer'
+import { Outlet, useNavigate } from "react-router-dom";
+import PageContainer from "../../../components/PageContainer/PageContainer";
+import { useContext, useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import { UserContext } from "../../../store/UserContext";
+import CustomLoading from "../../../components/customLoading/CustomLoading";
 
 const BaseAluno = () => {
-    const redirect = useNavigate()
-    const homeUrl = `/session/${JSON.parse(sessionStorage.getItem('user')).group}/`
+  const { user, loading } = useContext(UserContext);
+  const redirect = useNavigate();
 
-    const validaAluno = () => {
-        const res = validaUsuario('aluno')
+  useEffect(() => {
+    if (loading) return;
 
-        if (!res.status) {
-            if (res.grupo === undefined) redirect('/')
-            else redirect(`/session/${res.grupo}/`)
-        }
+    if (!user) {
+      redirect("/session");
+      return;
     }
 
-    useEffect(() => {
-        validaAluno()
-    },[])
+    if (user.group !== "aluno") {
+      redirect(`/session/${user.group}/home/`);
+    }
+  }, [user, loading, redirect]);
 
-    return (
-        <PageContainer homeUrl={homeUrl}>
-            <Outlet/>
-        </PageContainer>
-    )
-}
+  if (loading) {
+    return <CustomLoading />;
+  }
 
-export default BaseAluno
+  return (
+    <PageContainer homeUrl="/session/aluno/home/">
+      <ToastContainer position="botto-right" autoClose={2000}/>
+      <Outlet />
+    </PageContainer>
+  );
+};
+
+
+export default BaseAluno;

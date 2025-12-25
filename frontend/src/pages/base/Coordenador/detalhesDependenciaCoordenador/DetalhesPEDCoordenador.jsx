@@ -47,7 +47,7 @@ const DetalhesPEDCoordenador = () => {
     if (isLoading) return <CustomLoading />
 
     return (
-        <DetalhesDependencia dependencia={PED} modalidade={modalidade} tipo={'PED'} grupo={JSON.parse(sessionStorage.getItem('user')).group} />
+        <DetalhesDependencia dependencia={PED} modalidade={modalidade} tipo={'PED'} />
     )
 }
 

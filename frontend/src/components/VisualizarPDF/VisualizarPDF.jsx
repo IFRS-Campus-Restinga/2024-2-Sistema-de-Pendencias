@@ -7,7 +7,6 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/legacy/build/pdf.worker.min.mjs', import.meta.url).toString()
 
 const VisualizarPDF = ({ pdfData, onClick }) => {
-    const [paginasPDF, setPaginasPDF] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
     const renderPDF = async () => {

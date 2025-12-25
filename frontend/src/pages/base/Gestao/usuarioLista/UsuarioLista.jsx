@@ -29,8 +29,8 @@ const UsuarioLista = () => {
             titulo={perfilUsuarios}
             urlCadastro={`/session/gestao_escolar/${perfilUsuarios}/cadastro/`}
             propMap={UsuarioMap}
-            visualizar={false}
-            editar={true}
+            visualizar={perfilUsuarios === 'alunos' ? true : false}
+            editar={perfilUsuarios === 'servidores' ? true : false}
         />
     )
 }

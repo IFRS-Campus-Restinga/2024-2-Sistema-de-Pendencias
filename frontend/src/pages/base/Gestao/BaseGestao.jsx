@@ -1,34 +1,38 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import PageContainer from "../../../components/PageContainer/PageContainer";
-import { validaUsuario } from "../validaUsuario";
-import { useEffect } from "react";
-import { verificarGrupos } from "../../../utils/permissões";
+import { useContext, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
+import { UserContext } from "../../../store/UserContext";
+import CustomLoading from "../../../components/customLoading/CustomLoading";
 
 const BaseGestao = () => {
-  const redirect = useNavigate()
-  const homeUrl = `/${verificarGrupos(JSON.parse(sessionStorage.getItem('user')).group)}`
-
-  const validaGestao = () => {
-    const res = validaUsuario('gestao_escolar')
-
-    if (!res.status) {
-      if (res.grupo === undefined) redirect('/')
-      else redirect(`/${res.grupo}`)
-    }
-  }
+  const { user, loading } = useContext(UserContext);
+  const redirect = useNavigate();
 
   useEffect(() => {
-    validaGestao()
-  }, [])
+    if (loading) return;
 
+    if (!user) {
+      redirect("/session");
+      return;
+    }
+
+    if (user.group !== "gestao_escolar") {
+      redirect(`/session/${user.group}/home/`);
+    }
+  }, [user, loading, redirect]);
+
+  if (loading) {
+    return <CustomLoading />;
+  }
 
   return (
-    <PageContainer homeUrl={homeUrl}>
-      <ToastContainer autoClose={2000} position="bottom-right" />
+    <PageContainer homeUrl="/session/gestao_escolar/home/">
+      <ToastContainer position="botto-right" autoClose={2000}/>
       <Outlet />
     </PageContainer>
   );
 };
+
 
 export default BaseGestao;

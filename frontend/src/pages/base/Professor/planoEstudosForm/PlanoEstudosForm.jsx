@@ -142,7 +142,11 @@ const PlanoEstudosForm = () => {
   if (!state) return null
   
   return (
-    <FormContainer titulo={"Plano de Estudos"} comprimento={["Lançada", "Finalizada", "Desativada"].includes(state.status) ? '30%' : '60%'}>
+    <FormContainer 
+      titulo={"Plano de Estudos"} 
+      comprimento={["Lançada", "Finalizada", "Desativada"].includes(state.status) ? '30%' : '60%'}
+      textoInfo={"Preencha os campos obrigatórios (*)\n\nProgressões na modalidade EMI não podem ocorrer o turno noturno."}
+    >
       <ToastContainer autoClose={2000} position="bottom-right" />
       <section className={styles.section}>
         {

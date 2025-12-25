@@ -34,7 +34,11 @@ const DetalhesPlanoEstudosCoordenador = () =>{
     }, [])
 
     return (
-        <FormContainer titulo={"Plano de Estudos"} comprimento={'30%'}>
+        <FormContainer 
+            titulo={"Plano de Estudos"} 
+            comprimento={'30%'}
+            textoInfo={"Clique no arquivo para visualizá-lo. E após aberto, clique novamente sobre a página ampliada para fazer o download."}
+        >
             {
                 carregando ? (
                     <CustomLoading/>
