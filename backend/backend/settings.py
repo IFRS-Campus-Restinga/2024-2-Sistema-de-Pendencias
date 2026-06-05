@@ -19,6 +19,7 @@ environ.Env.read_env(BASE_DIR / ".env")
 # ------------------------------------------------------------------------------
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
+ENVIRONMENT = env("ENVIRONMENT", default="dev").lower()
 
 ALLOWED_HOSTS = env.list(
     "ALLOWED_HOSTS",
@@ -100,12 +101,26 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # ------------------------------------------------------------------------------
 # DATABASE
 # ------------------------------------------------------------------------------
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if ENVIRONMENT == "prod":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("POSTGRES_DB", default=env("DB_NAME", default="sistema_de_progressoes_ifrs")),
+            "USER": env("POSTGRES_USER", default=env("DB_USER", default="postgres")),
+            "PASSWORD": env("POSTGRES_PASSWORD", default=env("DB_PASSWORD", default="postgres")),
+            "HOST": env("POSTGRES_HOST", default=env("DB_HOST", default="db")),
+            "PORT": env("POSTGRES_PORT", default=env("DB_PORT", default="5432")),
+        }
     }
-}
+elif ENVIRONMENT == "dev":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+else:
+    raise ValueError("ENVIRONMENT deve ser 'dev' ou 'prod'.")
 
 # ------------------------------------------------------------------------------
 # REST_FRAMEWORK
@@ -167,9 +182,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # ------------------------------------------------------------------------------
 # CUSTOM SYSTEM VARS
 # ------------------------------------------------------------------------------
+BASE_APP_URL = env("BASE_APP_URL", default="http://localhost:3000")
 BASE_SYSTEM_URL = env("BASE_SYSTEM_URL")
 SYSTEM_ID = env("SYSTEM_ID")
 API_KEY = env("API_KEY")
+
+SIMPLE_JWT = {
+    "AUTH_COOKIE": env("AUTH_COOKIE_NAME", default="access_token"),
+    "AUTH_COOKIE_REFRESH": env("REFRESH_COOKIE_NAME", default="refresh_token"),
+}
+
+ROOT_USER = env("ROOT_USER")
 
 DRIVE_PLANO_ESTUDOS_FOLDER = env("DRIVE_PLANO_ESTUDOS_FOLDER")
 DRIVE_ATIVIDADES_FOLDER = env("DRIVE_ATIVIDADES_FOLDER")

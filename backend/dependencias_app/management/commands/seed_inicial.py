@@ -1,4 +1,5 @@
 import uuid
+from django.conf import settings
 from django.db import transaction
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
@@ -45,41 +46,40 @@ class Command(BaseCommand):
         else:
             self.stdout.write("ℹ️ Permissões já estavam configuradas.")
 
-        # --- Vincular usuários ---
-        self.stdout.write("\n👥 Vinculando usuários de gestão escolar...")
+        # --- Vincular usuário raíz ---
+        self.stdout.write("\n👥 Vinculando usuário raíz de gestão escolar...")
 
-        usuarios_ges = [
-            "3460bab9-579e-4f28-8524-efeeaf820991",
-            "8bdae3d8-02b4-41a2-9c05-c04efd24929d",
-        ]
+        root_user_uuid = settings.ROOT_USER
 
-        for user_uuid in usuarios_ges:
-            user_uuid_obj = uuid.UUID(user_uuid)
+        try:
+            user_uuid_obj = uuid.UUID(root_user_uuid)
+        except ValueError:
+            raise ValueError(f"ROOT_USER '{root_user_uuid}' não é um UUID válido.")
 
-            usuario, created = Usuario.objects.get_or_create(
-                id=user_uuid_obj,
-                defaults={"group": grupo}
+        usuario, created = Usuario.objects.get_or_create(
+            id=user_uuid_obj,
+            defaults={"group": grupo}
+        )
+
+        if created:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"🆕 Usuário raíz {root_user_uuid} criado e vinculado ao grupo gestao_escolar."
+                )
             )
-
-            if created:
+        else:
+            if force or usuario.group != grupo:
+                usuario.group = grupo
+                usuario.save()
                 self.stdout.write(
                     self.style.SUCCESS(
-                        f"🆕 Usuário {user_uuid} criado e vinculado ao grupo."
+                        f"🔁 Usuário raíz {root_user_uuid} já existia. Grupo atualizado para gestao_escolar."
                     )
                 )
             else:
-                if force or usuario.group != grupo:
-                    usuario.group = grupo
-                    usuario.save()
-                    self.stdout.write(
-                        self.style.SUCCESS(
-                            f"🔁 Usuário {user_uuid} já existia. Grupo atualizado."
-                        )
-                    )
-                else:
-                    self.stdout.write(
-                        f"ℹ️ Usuário {user_uuid} já estava no grupo correto."
-                    )
+                self.stdout.write(
+                    f"ℹ️ Usuário raíz {root_user_uuid} já estava no grupo correto."
+                )
 
         # --- Mapeamento de UUIDs ---
         self.stdout.write("\n📊 Mapeando UUIDs de grupos e permissões...")

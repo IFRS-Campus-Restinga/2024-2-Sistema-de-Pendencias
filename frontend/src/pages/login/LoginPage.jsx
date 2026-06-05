@@ -17,7 +17,7 @@ const LoginPage = () => {
 
   const handleRedirect = () => {
     window.location.href =
-      `${process.env.REACT_APP_BASE_SYSTEM_URL}/session?system=${process.env.REACT_APP_SYSTEM_ID}`;
+      `${process.env.REACT_APP_HUB_FRONTEND}/session?system=${process.env.REACT_APP_SYSTEM_ID}`;
   };
 
   if (loading) {

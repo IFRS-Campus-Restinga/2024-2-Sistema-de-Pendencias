@@ -17,94 +17,68 @@ Plataforma web para gerenciamento de dependências acadêmicas com integração 
 
 ---
 
-## 🚀 Execução com Docker (Recomendado)
+## 🚀 Execução com Docker Compose (Recomendado)
+
+A stack Docker Compose deste projeto se chama `sistema-de-progressoes-ifrs` e sobe:
+
+- Frontend React em `http://localhost:3000`
+- Backend Django em `http://localhost:8000`
+- Banco PostgreSQL em `localhost:5432`
 
 ### 1️⃣ Preparar Variáveis de Ambiente
 
-```bash
-# Na pasta backend
-cd backend
+O `docker-compose.yml` possui valores padrão para desenvolvimento local. Para sobrescrever variáveis da stack, crie um `.env` na raiz do projeto:
 
-# Copiar arquivo de exemplo
+```bash
 cp .env.example .env
-
-# Editar .env com suas configurações
-# Variáveis essenciais:
-# - SECRET_KEY (gerar uma nova)
-# - DEBUG (False para produção)
-# - ALLOWED_HOSTS
-# - CORS_ALLOWED_ORIGINS
 ```
 
-### 2️⃣ Adicionar Credenciais do Google
-
-1. Acesse: https://console.cloud.google.com/apis/credentials?project=sistema-de-dependencias
-2. Faça login com a conta de sistemas
-3. Vá até **Credenciais**
-4. Encontre o OAuth do projeto "dependencias"
-5. Clique em **Baixar JSON**
-6. Renomeie para `client_secret.json`
-7. Coloque na pasta `backend/credentials/`
-
-### 3️⃣ Iniciar Backend com Docker
+Para executar o backend fora do Docker, use também o exemplo específico do Django:
 
 ```bash
-# Na pasta backend
-cd backend
-
-# Subir os containers (desenvolvimento)
-docker-compose up -d
-
-# Verificar logs
-docker-compose logs -f backend
-
-# O servidor estará disponível em: http://localhost:8000
+cp backend/.env.example backend/.env
 ```
 
-**Serviços iniciados:**
-- 🟦 Backend Django: http://localhost:8000
-- 🔴 Redis: localhost:6379
-- 👷 Celery Worker (assíncrono)
-- ⏰ Celery Beat (scheduler)
+Variáveis que normalmente precisam ser ajustadas para integração real:
 
-### 4️⃣ Iniciar Frontend
+```env
+SECRET_KEY=sua-chave-secreta
+BASE_SYSTEM_URL=http://localhost:8000
+SYSTEM_ID=sistema-de-progressoes-ifrs
+API_KEY=sua-api-key
+REACT_APP_HUB_FRONTEND=http://localhost:8000
+REACT_APP_SYSTEM_ID=sistema-de-progressoes-ifrs
+```
+
+### 2️⃣ Subir a Stack
+
+Na raiz do projeto:
 
 ```bash
-# Em outro terminal, na pasta frontend
-cd frontend
-
-# Instalar dependências
-npm install
-
-# Iniciar servidor de desenvolvimento
-npm start
-
-# A aplicação abrirá em: http://localhost:3000
+docker compose up --build
 ```
 
----
+Para subir em segundo plano:
 
-## 🐳 Variantes Docker
-
-### Desenvolvimento
 ```bash
-cd backend
-docker-compose up -d
+docker compose up --build -d
 ```
 
-### Produção (com PostgreSQL)
-```bash
-cd backend
-docker-compose -f docker-compose.prod.yml up -d
+O compose define `ENVIRONMENT=prod` no backend para que o Django use PostgreSQL. Para executar o backend fora do Docker com SQLite, configure `ENVIRONMENT=dev` no `backend/.env`.
+
+### 3️⃣ Banco de Dados
+
+No compose, o PostgreSQL usa por padrão:
+
+```env
+POSTGRES_DB=sistema_de_progressoes_ifrs
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
 ```
 
-**Diferenças:**
-- Usa PostgreSQL em lugar de SQLite
-- Gunicorn com 4 workers
-- Volumes persistentes
-- Network isolada
-
----
+O backend executa `python manage.py migrate` automaticamente antes de iniciar o servidor.
 
 ## 📡 Acessando Serviços
 
@@ -121,37 +95,37 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ```bash
 # Ver status dos containers
-docker-compose ps
+docker compose ps
 
 # Ver logs de um serviço específico
-docker-compose logs -f backend
+docker compose logs -f backend
 
 # Parar containers
-docker-compose down
+docker compose down
 
 # Remover volumes (cuidado!)
-docker-compose down -v
+docker compose down -v
 
 # Reconstruir imagens
-docker-compose build --no-cache
+docker compose build --no-cache
 ```
 
 ### Executar Comandos Django
 
 ```bash
 # Migrations
-docker-compose exec backend python manage.py makemigrations
-docker-compose exec backend python manage.py migrate
+docker compose exec backend python manage.py makemigrations
+docker compose exec backend python manage.py migrate
 
 # Seed/Fixtures
-docker-compose exec backend python manage.py loaddata grupos_permissoes.json
-docker-compose exec backend python manage.py seed_inicial
+docker compose exec backend python manage.py loaddata grupos_permissoes.json
+docker compose exec backend python manage.py seed_inicial
 
 # Shell Django
-docker-compose exec backend python manage.py shell
+docker compose exec backend python manage.py shell
 
 # Criar superuser
-docker-compose exec backend python manage.py createsuperuser
+docker compose exec backend python manage.py createsuperuser
 ```
 
 ---
@@ -162,6 +136,7 @@ Variáveis principais em `backend/.env`:
 
 ```env
 # Django
+ENVIRONMENT=dev
 DEBUG=True
 SECRET_KEY=sua-chave-secreta-aqui
 ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
@@ -169,12 +144,19 @@ ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
 # CORS/Frontend
 CORS_ALLOWED_ORIGINS=http://localhost:3000
 
+# Banco PostgreSQL usado quando ENVIRONMENT=prod
+POSTGRES_DB=sistema_de_progressoes_ifrs
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+
 # OAuth Google
 OAUTHLIB_INSECURE_TRANSPORT=1
 
-# Cookies
-AUTH_COOKIE_HTTP_ONLY=True
-AUTH_COOKIE_SECURE=False
+# Cookies (SIMPLE_JWT)
+AUTH_COOKIE_NAME=access_token
+REFRESH_COOKIE_NAME=refresh_token
 ```
 
 Veja `backend/.env.example` para todas as variáveis disponíveis.
@@ -185,12 +167,11 @@ Veja `backend/.env.example` para todas as variáveis disponíveis.
 
 ```
 2024-2-Sistema-de-Pendencias/
+├── docker-compose.yml
 ├── backend/                 # Django REST API
 │   ├── manage.py
 │   ├── requirements.txt
 │   ├── Dockerfile
-│   ├── docker-compose.yml
-│   ├── docker-compose.prod.yml
 │   ├── .env.example
 │   ├── backend/             # Configurações Django
 │   ├── dependencias_app/    # App principal
@@ -201,7 +182,8 @@ Veja `backend/.env.example` para todas as variáveis disponíveis.
     ├── package.json
     ├── src/
     ├── public/
-    └── .env
+    ├── Dockerfile
+    └── .dockerignore
 ```
 
 ---
@@ -224,32 +206,32 @@ docker rm -f <container_id>
 ### Erro: "Cannot connect to Django"
 ```bash
 # Verifique se o container está rodando
-docker-compose ps
+docker compose ps
 
 # Veja os logs
-docker-compose logs backend
+docker compose logs backend
 
 # Reinicie
-docker-compose restart backend
+docker compose restart backend
 ```
 
 ### Erro: "ModuleNotFoundError: No module named '...'"
 ```bash
 # Reconstrua a imagem com dependências atualizadas
-docker-compose build --no-cache
-docker-compose up -d
+docker compose build --no-cache
+docker compose up -d
 ```
 
 ---
 
 ## 📝 Notas Importantes
 
-- **Desenvolvimento**: Use `docker-compose.yml` (SQLite)
-- **Produção**: Use `docker-compose.prod.yml` (PostgreSQL)
-- **Migrations**: Executadas automaticamente via `setup.sh`
-- **Static Files**: Em produção, colete com `collectstatic`
-- **Segurança**: Altere `SECRET_KEY` em produção
-- **Debug**: Nunca deixe `DEBUG=True` em produção
+- **Stack Compose**: Use `docker compose up --build` na raiz do projeto.
+- **Banco no Compose**: O backend recebe `ENVIRONMENT=prod` e usa PostgreSQL.
+- **Banco local sem Docker**: Use `ENVIRONMENT=dev` para manter SQLite.
+- **Migrations**: Executadas automaticamente no container do backend antes do servidor iniciar.
+- **Segurança**: Altere `SECRET_KEY`, `API_KEY` e senhas antes de uso real.
+- **Debug**: Nunca deixe `DEBUG=True` em produção.
 
 ---
 
