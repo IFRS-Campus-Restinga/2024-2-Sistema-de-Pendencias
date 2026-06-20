@@ -14,7 +14,7 @@ import BaseAluno from './pages/base/Aluno/BaseAluno'
 // Filhos de Gestao
 import HomeGestao from './pages/base/Gestao/home/HomeGestao'
 import GrupoLista from './pages/base/Gestao/grupoLista/GrupoLista'
-import GrupoForm from './pages/base/Gestao/grupoForm/GrupoForm'
+import GrupoForm from './pages/base/Gestao/GrupoForm/GrupoForm'
 import UsuarioLista from './pages/base/Gestao/usuarioLista/UsuarioLista'
 import UsuarioForm from './pages/base/Gestao/usuarioForm/UsuarioForm'
 import CadastroPED from './pages/base/Gestao/PEDForm/PEDForm'

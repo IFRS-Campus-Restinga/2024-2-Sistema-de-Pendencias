@@ -1,127 +1,122 @@
-# 🎓 Sistema de Dependências
+# Sistema de Progressões IFRS
 
 Plataforma web para gerenciamento de dependências acadêmicas com integração ao Google OAuth.
 
----
+## Dependências
 
-## 📋 Pré-requisitos
-
-### Para executar com Docker (Recomendado)
-- [Docker](https://www.docker.com/products/docker-desktop)
-- [Docker Compose](https://docs.docker.com/compose/install/)
-
-### Para executar sem Docker
-- [Python 3.12+](https://www.python.org/)
-- [Node.js 14+](https://nodejs.org/)
-- [npm](https://www.npmjs.com/)
+- [Docker](https://www.docker.com/products/docker-desktop) e [Docker Compose](https://docs.docker.com/compose/install/)
+- [VS Code](https://code.visualstudio.com/) com a extensão [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) (modo dev)
 
 ---
 
-## 🚀 Execução com Docker Compose (Recomendado)
+## Modos de Execução
 
-A stack Docker Compose deste projeto se chama `sistema-de-progressoes-ifrs` e sobe:
+### Modo Dev — Devcontainer
 
-- Frontend React em `http://localhost:3000`
-- Backend Django em `http://localhost:8000`
-- Banco PostgreSQL em `localhost:5432`
+Usa `.devcontainer/docker-compose.yml` com `ENVIRONMENT=dev` (SQLite). Cada serviço lê seu próprio arquivo `.env`:
 
-### 1️⃣ Preparar Variáveis de Ambiente
+- Backend: `backend/.env`
+- Frontend: `frontend/.env`
 
-O `docker-compose.yml` possui valores padrão para desenvolvimento local. Para sobrescrever variáveis da stack, crie um `.env` na raiz do projeto:
+**1. Criar os arquivos de ambiente:**
+
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+```
+
+Variáveis que precisam ser ajustadas em `backend/.env`:
+
+| Variável | Descrição |
+|----------|-----------|
+| `SECRET_KEY` | Chave secreta do Django |
+| `API_KEY` | Chave de integração com o Hub |
+| `ROOT_USER` | UUID do usuário que recebe o grupo `gestao_escolar` no seed |
+| `REACT_APP_GOOGLE_OAUTH2_CLIENT_ID` | Client ID do Google OAuth (opcional) |
+
+**2. Abrir no VS Code e iniciar o devcontainer:**
+
+```
+Ctrl+Shift+P → Dev Containers: Reopen in Container
+```
+
+O VS Code cria a rede Docker `ifrs-dev-network` automaticamente e sobe os serviços. As portas são encaminhadas automaticamente:
+
+| Serviço | URL |
+|---------|-----|
+| Frontend | http://localhost:3001 |
+| Backend API | http://localhost:8001 |
+
+---
+
+### Modo Produção — Docker Compose raiz
+
+Usa `docker-compose.yml` na raiz com `ENVIRONMENT=prod` (PostgreSQL). Ambos os serviços leem o arquivo `.env` da raiz.
+
+**1. Criar o arquivo de ambiente:**
 
 ```bash
 cp .env.example .env
 ```
 
-Para executar o backend fora do Docker, use também o exemplo específico do Django:
+Variáveis obrigatórias em `.env`:
 
-```bash
-cp backend/.env.example backend/.env
-```
+| Variável | Descrição |
+|----------|-----------|
+| `SECRET_KEY` | Chave secreta do Django |
+| `POSTGRES_DB` | Nome do banco de dados |
+| `POSTGRES_USER` | Usuário do PostgreSQL |
+| `POSTGRES_PASSWORD` | Senha do PostgreSQL |
+| `API_KEY` | Chave de integração com o Hub |
+| `ROOT_USER` | UUID do usuário que recebe o grupo `gestao_escolar` no seed |
+| `REACT_APP_GOOGLE_OAUTH2_CLIENT_ID` | Client ID do Google OAuth |
 
-Variáveis que normalmente precisam ser ajustadas para integração real:
-
-```env
-SECRET_KEY=sua-chave-secreta
-BASE_SYSTEM_URL=http://localhost:8000
-SYSTEM_ID=sistema-de-progressoes-ifrs
-API_KEY=sua-api-key
-REACT_APP_HUB_FRONTEND=http://localhost:8000
-REACT_APP_SYSTEM_ID=sistema-de-progressoes-ifrs
-```
-
-### 2️⃣ Subir a Stack
-
-Na raiz do projeto:
+**2. Subir a stack:**
 
 ```bash
 docker compose up --build
 ```
 
-Para subir em segundo plano:
+| Serviço | URL |
+|---------|-----|
+| Frontend | http://localhost:3001 |
+| Backend API | http://localhost:8001 |
 
-```bash
-docker compose up --build -d
-```
-
-O compose define `ENVIRONMENT=prod` no backend para que o Django use PostgreSQL. Para executar o backend fora do Docker com SQLite, configure `ENVIRONMENT=dev` no `backend/.env`.
-
-### 3️⃣ Banco de Dados
-
-No compose, o PostgreSQL usa por padrão:
-
-```env
-POSTGRES_DB=sistema_de_progressoes_ifrs
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_HOST=db
-POSTGRES_PORT=5432
-```
-
-O backend executa `python manage.py migrate` automaticamente antes de iniciar o servidor.
-
-## 📡 Acessando Serviços
-
-| Serviço | URL | Descrição |
-|---------|-----|-----------|
-| Frontend | http://localhost:3000 | Aplicação React |
-| Backend API | http://localhost:8000 | API Django REST |
+O backend executa `migrate` e o seed inicial automaticamente antes de iniciar.
 
 ---
 
-## 📦 Comandos Úteis Docker
-
-### Gerenciar Containers
+## Comandos Úteis
 
 ```bash
 # Ver status dos containers
 docker compose ps
 
-# Ver logs de um serviço específico
+# Logs de um serviço
 docker compose logs -f backend
 
 # Parar containers
 docker compose down
 
-# Remover volumes (cuidado!)
+# Remover volumes
 docker compose down -v
 
 # Reconstruir imagens
 docker compose build --no-cache
 ```
 
-### Executar Comandos Django
+### Comandos Django
 
 ```bash
 # Migrations
 docker compose exec backend python manage.py makemigrations
 docker compose exec backend python manage.py migrate
 
-# Seed/Fixtures
+# Seed
 docker compose exec backend python manage.py loaddata grupos_permissoes.json
 docker compose exec backend python manage.py seed_inicial
 
-# Shell Django
+# Shell
 docker compose exec backend python manage.py shell
 
 # Criar superuser
@@ -130,128 +125,21 @@ docker compose exec backend python manage.py createsuperuser
 
 ---
 
-## 🛠️ Configuração de Ambiente (.env)
+## Troubleshooting
 
-Variáveis principais em `backend/.env`:
-
-```env
-# Django
-ENVIRONMENT=dev
-DEBUG=True
-SECRET_KEY=sua-chave-secreta-aqui
-ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
-
-# CORS/Frontend
-CORS_ALLOWED_ORIGINS=http://localhost:3000
-
-# Banco PostgreSQL usado quando ENVIRONMENT=prod
-POSTGRES_DB=sistema_de_progressoes_ifrs
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_HOST=db
-POSTGRES_PORT=5432
-
-# OAuth Google
-OAUTHLIB_INSECURE_TRANSPORT=1
-
-# Cookies (SIMPLE_JWT)
-AUTH_COOKIE_NAME=access_token
-REFRESH_COOKIE_NAME=refresh_token
-```
-
-Veja `backend/.env.example` para todas as variáveis disponíveis.
-
----
-
-## 🔄 Estrutura do Projeto
-
-```
-2024-2-Sistema-de-Pendencias/
-├── docker-compose.yml
-├── backend/                 # Django REST API
-│   ├── manage.py
-│   ├── requirements.txt
-│   ├── Dockerfile
-│   ├── .env.example
-│   ├── backend/             # Configurações Django
-│   ├── dependencias_app/    # App principal
-│   ├── dependencias_session/ # Autenticação
-│   └── hub_tools/           # Ferramentas
-│
-└── frontend/                # React App
-    ├── package.json
-    ├── src/
-    ├── public/
-    ├── Dockerfile
-    └── .dockerignore
-```
-
----
-
-## ⚠️ Troubleshooting
-
-### Erro: "port 8000 is already in use"
+**Porta já em uso:**
 ```bash
-# Encontre o container
-docker ps | grep 8000
-
-# Remova
+docker ps | grep 8001
 docker rm -f <container_id>
-
-# Ou altere a porta em docker-compose.yml
-# ports:
-#   - "8001:8000"  # Mudou de 8000 para 8001
 ```
 
-### Erro: "Cannot connect to Django"
+**Backend não responde:**
 ```bash
-# Verifique se o container está rodando
-docker compose ps
-
-# Veja os logs
 docker compose logs backend
-
-# Reinicie
 docker compose restart backend
 ```
 
-### Erro: "ModuleNotFoundError: No module named '...'"
+**Módulo não encontrado:**
 ```bash
-# Reconstrua a imagem com dependências atualizadas
-docker compose build --no-cache
-docker compose up -d
+docker compose build --no-cache && docker compose up -d
 ```
-
----
-
-## 📝 Notas Importantes
-
-- **Stack Compose**: Use `docker compose up --build` na raiz do projeto.
-- **Banco no Compose**: O backend recebe `ENVIRONMENT=prod` e usa PostgreSQL.
-- **Banco local sem Docker**: Use `ENVIRONMENT=dev` para manter SQLite.
-- **Migrations**: Executadas automaticamente no container do backend antes do servidor iniciar.
-- **Segurança**: Altere `SECRET_KEY`, `API_KEY` e senhas antes de uso real.
-- **Debug**: Nunca deixe `DEBUG=True` em produção.
-
----
-
-## 🤝 Contribuindo
-
-1. Clone o repositório
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
----
-
-## 📄 Licença
-
-Este projeto está sob a licença [LICENSE](LICENSE)
-
----
-
-## 📧 Suporte
-
-Para dúvidas ou problemas, entre em contato com a equipe de sistemas.
-

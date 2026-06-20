@@ -130,7 +130,8 @@ ENV/
 env.bak/
 venv.bak/
 credentials/
-migrations/
+migrations/*
+!migrations/__init__.py
 
 
 # Spyder project settings

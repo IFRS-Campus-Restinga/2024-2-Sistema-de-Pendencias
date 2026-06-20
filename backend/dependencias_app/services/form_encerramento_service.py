@@ -23,7 +23,10 @@ cookies = {"system": settings.API_KEY}
 base_url = settings.BASE_SYSTEM_URL
 logo_path = os.path.join(settings.BASE_DIR, "dependencias_app", "templates_pdf", "logo-ifrs-colorido.png")
 template_path = os.path.join(settings.BASE_DIR, "dependencias_app", "templates_email", "formEncerramento.html")
-locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
+try:
+    locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
+except locale.Error:
+    locale.setlocale(locale.LC_TIME, "")
 
 class FormEncerramentoService:
     @staticmethod
@@ -75,7 +78,7 @@ class FormEncerramentoService:
 
         professor, ped = AcessoService.validar_acesso(request, modalidade, ped_id)
 
-        if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get("access_token"))["user_id"]:
+        if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME))["user_id"]:
             raise serializers.ValidationError("Acesso não autorizado")
 
         if ped.status != "Em Andamento":
@@ -163,7 +166,7 @@ class FormEncerramentoService:
 
         professor, ped = AcessoService.validar_acesso(request, modalidade, str(instance.ped.id))
 
-        if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get("access_token"))["user_id"]:
+        if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME))["user_id"]:
             raise serializers.ValidationError("Acesso não autorizado")
 
         if ped.status != "Lançada":

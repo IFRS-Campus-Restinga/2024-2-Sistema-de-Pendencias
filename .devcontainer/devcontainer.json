@@ -5,12 +5,12 @@
   "workspaceFolder": "/workspace",
   "runServices": ["backend", "frontend"],
   "shutdownAction": "stopCompose",
-  "initializeCommand": "docker network inspect ifrs-dev-network >/dev/null 2>&1 || docker network create ifrs-dev-network",
-  "forwardPorts": ["3000:3001", "8000:8001"],
+  "initializeCommand": "fuser -k 3001/tcp 2>/dev/null; docker network inspect ifrs-dev-network >/dev/null 2>&1 || docker network create ifrs-dev-network",
+  "forwardPorts": [8001],
   "portsAttributes": {
     "3001": {
       "label": "Frontend - Sistema de Progressões",
-      "onAutoForward": "notify"
+      "onAutoForward": "ignore"
     },
     "8001": {
       "label": "Backend - Sistema de Progressões",

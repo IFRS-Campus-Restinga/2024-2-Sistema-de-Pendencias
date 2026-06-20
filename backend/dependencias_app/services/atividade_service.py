@@ -19,7 +19,7 @@ DRIVE_FOLDER = settings.DRIVE_ATIVIDADES_FOLDER
 class AtividadeService:
     @staticmethod
     def validar_professor(request):
-        usuario_id = TokenService.decode_token(request.COOKIES.get("access_token")).get('user_id')
+        usuario_id = TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME)).get('user_id')
 
         professor = Usuario.objects.filter(id=usuario_id, group__name='professor').first()
 
@@ -84,7 +84,7 @@ class AtividadeService:
 
         atividade = get_object_or_404(model_class, pk=uuid.UUID(atividade_id))
 
-        grupo = TokenService.decode_token(request.COOKIES.get("access_token")).get("group")
+        grupo = TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME)).get("group")
 
         serializer = serializer_class(atividade, context={'request': request})
         data = dict(serializer.data)

@@ -185,7 +185,7 @@ class PPTService:
 
     @staticmethod
     def listar_coordenador(request):
-        coordenador_id = TokenService.decode_token(request.COOKIES.get("access_token")).get("user_id")
+        coordenador_id = TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME)).get("user_id")
         busca = request.GET.get('busca', '')
 
         paginator = PPTPagintation()
@@ -263,7 +263,7 @@ class PPTService:
 
     @staticmethod
     def listar_aluno(request):
-        aluno_id = uuid.UUID(TokenService.decode_token(request.COOKIES.get("access_token")).get("user_id"))
+        aluno_id = uuid.UUID(TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME)).get("user_id"))
         filtros = request.GET.getlist("params[]", [])
 
         ppts = PPT.objects.filter(aluno__id=aluno_id).order_by('-data_criacao')

@@ -41,7 +41,7 @@ class PlanoEstudosService:
 
         plano_estudos_instance = serializer.Meta.model(**serializer.validated_data)
 
-        if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get("access_token"))['user_id']:
+        if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME))['user_id']:
             raise serializers.ValidationError("Acesso não autorizado")
 
         tasks = [
@@ -70,7 +70,7 @@ class PlanoEstudosService:
         plano_estudos_instance.drive_id = upload_to_drive(
             file,
             f'parecer_inicial_{context_plano_estudos.get("ped")}',
-            TokenService.decode_token(request.COOKIES.get("access_token")).get("group"),
+            TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME)).get("group"),
             DRIVE_FOLDER
         )
 
@@ -100,7 +100,7 @@ class PlanoEstudosService:
 
         serializer = serializer_class(plano_estudos, context={'request': request})
 
-        arquivo = get_from_drive(plano_estudos.drive_id, TokenService.decode_token(request.COOKIES.get('access_token'))['group'])
+        arquivo = get_from_drive(plano_estudos.drive_id, TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME))['group'])
 
         return serializer.data, arquivo['data']
 
@@ -123,7 +123,7 @@ class PlanoEstudosService:
         if ped.status not in ['Criada', 'Em Andamento']:
             raise serializers.ValidationError({"PED": "status da PED inválido para edição do plano de estudos"})
 
-        if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get("access_token"))['user_id']:
+        if str(ped.professor_ped) != TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME))['user_id']:
             raise serializers.ValidationError("Acesso não autorizado")
 
         tasks = [
@@ -154,7 +154,7 @@ class PlanoEstudosService:
             f'parecer_inicial_{context_plano_estudos.get("ped")}',
             plano_estudos.drive_id,
             DRIVE_FOLDER,
-            TokenService.decode_token(request.COOKIES.get("access_token"))["group"],
+            TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME))["group"],
         )
 
         for attr, value in serializer.validated_data.items():

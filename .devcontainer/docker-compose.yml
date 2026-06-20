@@ -6,14 +6,19 @@ services:
       context: ..
       dockerfile: .devcontainer/backend.Dockerfile
     working_dir: /workspace/backend
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     env_file: ../backend/.env
     environment:
       ENVIRONMENT: "dev"
     volumes:
       - ..:/workspace:cached
-    expose:
-      - "8000"
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import socket; socket.create_connection(('localhost', 8001), timeout=5).close()\" 2>/dev/null || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 180s
     networks:
       ifrs-dev-network:
         aliases:
@@ -21,17 +26,19 @@ services:
           - sistema-progressoes-backend
 
   frontend:
-    image: node:20-alpine
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     working_dir: /workspace/frontend
-    command: sh -c "npm install && npx react-scripts start"
     env_file: ../frontend/.env
     volumes:
       - ..:/workspace:cached
       - progressoes_node_modules:/workspace/frontend/node_modules
-    expose:
-      - "3000"
+    ports:
+      - "3001:3001"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       ifrs-dev-network:
         aliases:

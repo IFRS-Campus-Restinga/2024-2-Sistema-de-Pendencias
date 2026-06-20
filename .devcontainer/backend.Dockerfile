@@ -10,16 +10,21 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         git \
+        gettext \
         libffi-dev \
         libcairo2 \
         libpango-1.0-0 \
         libpangocairo-1.0-0 \
         libgdk-pixbuf-2.0-0 \
         shared-mime-info \
+        locales \
+    && locale-gen pt_BR.UTF-8 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY backend/requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip \
     && pip install -r /tmp/requirements.txt
 
-EXPOSE 8000
+EXPOSE 8001
+
+CMD ["bash", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py compilemessages && python entrypoint.py"]

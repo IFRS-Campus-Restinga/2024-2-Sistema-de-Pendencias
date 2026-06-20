@@ -10,6 +10,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         git \
+        gettext \
         libffi-dev \
         libpq-dev \
         libcairo2 \
@@ -25,6 +26,6 @@ RUN pip install --upgrade pip \
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 8001
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["bash", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py compilemessages && python entrypoint.py"]

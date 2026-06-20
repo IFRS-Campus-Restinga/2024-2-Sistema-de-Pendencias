@@ -152,6 +152,7 @@ class UsuarioService:
         usuario = get_object_or_404(Usuario, pk=uuid.UUID(usuario_hub.get('id')))
 
         usuario_hub['group'] = str(usuario.group.uuid_map.uuid)
+        usuario_hub['is_active'] = usuario.is_active
 
         return usuario_hub
 

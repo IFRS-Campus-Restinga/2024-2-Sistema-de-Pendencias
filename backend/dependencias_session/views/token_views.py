@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import Http404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -19,7 +20,7 @@ def obter_tokens(request):
 
         response.set_cookie(
             httponly=True,
-            key='access_token',
+            key=settings.AUTH_COOKIE_NAME,
             value=access_token,
             secure=False,
             samesite='Lax',
@@ -28,7 +29,7 @@ def obter_tokens(request):
 
         response.set_cookie(
             httponly=True,
-            key='refresh_token',
+            key=settings.REFRESH_COOKIE_NAME,
             value=refresh_token,
             secure=False,
             samesite='Lax',
@@ -45,7 +46,7 @@ def obter_tokens(request):
     
 @api_view(['GET'])
 def renovar_token(request):
-    refresh_token = request.COOKIES.get('refresh_token', None)
+    refresh_token = request.COOKIES.get(settings.REFRESH_COOKIE_NAME, None)
 
     try:
         access_token = TokenService.refresh_token(refresh_token)
@@ -53,7 +54,7 @@ def renovar_token(request):
         response = Response({'message': 'Token renovado com sucesso'},status=status.HTTP_200_OK)
 
         response.set_cookie(
-            key='access_token',
+            key=settings.AUTH_COOKIE_NAME,
             value=access_token,
             httponly=True,
             secure=False,

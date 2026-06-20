@@ -13,6 +13,7 @@ import GrupoService from '../../../../services/grupoService'
 import MensagemErro from '../../../../components/MensagemErro/MensagemErro'
 import { validarCampoUUID4 } from '../../../../utils/validacoes'
 import Button from '../../../../components/Button/Button'
+import Switch from '../../../../components/Switch/Switch'
 
 
 const UsuarioForm = () => {
@@ -28,7 +29,8 @@ const UsuarioForm = () => {
     const [opcoesGrupos, setOpcoesGrupos] = useState([])
     const [formData, setFormData] = useState({
         id: state,
-        group: ''
+        group: '',
+        is_active: true
     })
     const [erros, setErros] = useState({
         id: null,
@@ -51,7 +53,8 @@ const UsuarioForm = () => {
             setEmailUsuario(res.data.email)
             setFormData({
                 id: res.data.id,
-                group: res.data.group
+                group: res.data.group,
+                is_active: res.data.is_active ?? true
             })
         } catch (error) {
             if (error instanceof AxiosError) {
@@ -249,6 +252,16 @@ const UsuarioForm = () => {
                             </Label>
                         )
                     }
+                </div>
+                <div className={styles.formGroup}>
+                    <Label titulo={'Situação'}>
+                        <Switch
+                            valor1='Ativo'
+                            valor2='Inativo'
+                            valor={formData.is_active ? 'Ativo' : 'Inativo'}
+                            stateHandler={(v) => setFormData(prev => ({...prev, is_active: v === 'Ativo'}))}
+                        />
+                    </Label>
                 </div>
                 <Button texto={state ? 'Editar' : 'Cadastrar'} tipo='submit'/>
             </form>

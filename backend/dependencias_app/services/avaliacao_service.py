@@ -15,7 +15,7 @@ template_path = os.path.join(settings.BASE_DIR, "dependencias_app", "templates_e
 class AvaliacaoService:
     @staticmethod
     def validar_professor(request):
-        usuario_id = TokenService.decode_token(request.COOKIES.get("access_token")).get('user_id')
+        usuario_id = TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME)).get('user_id')
 
         professor = Usuario.objects.filter(id=usuario_id, group__name='professor').first()
 

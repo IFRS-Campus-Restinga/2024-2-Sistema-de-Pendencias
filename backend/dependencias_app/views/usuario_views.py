@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import Http404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -58,7 +59,7 @@ def detalhes_usuario(request, usuario_id):
 @api_view(['GET'])
 def obter_dados_sessao(request):
     try:
-        token = request.COOKIES.get("access_token", None)
+        token = request.COOKIES.get(settings.AUTH_COOKIE_NAME, None)
 
         if not token:
             return Response({"message": "Necessário autenticar"}, status=status.HTTP_401_UNAUTHORIZED)

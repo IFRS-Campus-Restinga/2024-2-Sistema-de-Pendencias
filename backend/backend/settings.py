@@ -144,8 +144,8 @@ EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", default=False)
 
-EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 
 # ------------------------------------------------------------------------------
 # AUTH / PASSWORDS
@@ -179,6 +179,8 @@ STATIC_URL = "/static/"
 # ------------------------------------------------------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+AUTH_USER_MODEL = "dependencias_app.Usuario"
+
 # ------------------------------------------------------------------------------
 # CUSTOM SYSTEM VARS
 # ------------------------------------------------------------------------------
@@ -187,10 +189,8 @@ BASE_SYSTEM_URL = env("BASE_SYSTEM_URL")
 SYSTEM_ID = env("SYSTEM_ID")
 API_KEY = env("API_KEY")
 
-SIMPLE_JWT = {
-    "AUTH_COOKIE": env("AUTH_COOKIE_NAME", default="access_token"),
-    "AUTH_COOKIE_REFRESH": env("REFRESH_COOKIE_NAME", default="refresh_token"),
-}
+AUTH_COOKIE_NAME = env("AUTH_COOKIE_NAME", default="access_token")
+REFRESH_COOKIE_NAME = env("REFRESH_COOKIE_NAME", default="refresh_token")
 
 ROOT_USER = env("ROOT_USER")
 

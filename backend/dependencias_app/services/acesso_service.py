@@ -14,7 +14,7 @@ class AcessoService:
     def validar_acesso(request, modalidade, ped_id):
         ped_model_class, _ = validar_modalidade(modalidade, 'PED')
 
-        payload = TokenService.decode_token(request.COOKIES.get('access_token'))
+        payload = TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME))
 
         if modalidade == "Integrado":
             responsavel_subquery = ProfessorProgressaoIntegrado.objects.filter(

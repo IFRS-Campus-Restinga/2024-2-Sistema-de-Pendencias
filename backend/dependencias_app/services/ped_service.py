@@ -150,7 +150,7 @@ class PEDService:
 
     @staticmethod
     def listar_professor(request, modalidade):
-        professor_id = TokenService.decode_token(request.COOKIES.get("access_token")).get("user_id")
+        professor_id = TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME)).get("user_id")
 
         model_class, serializer_class = validar_modalidade(modalidade, 'PED')
         busca = request.GET.get('busca', '')
@@ -219,7 +219,7 @@ class PEDService:
 
     @staticmethod
     def listar_coordenador(request, modalidade):
-        coordenador_id = TokenService.decode_token(request.COOKIES.get("access_token")).get("user_id")
+        coordenador_id = TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME)).get("user_id")
 
         model_class, serializer_class = validar_modalidade(modalidade, 'PED')
         busca = request.GET.get('busca', '')
@@ -309,7 +309,7 @@ class PEDService:
         model_ped_emi, serializer_ped_emi = validar_modalidade('Integrado', 'PED')
         model_ped_proeja, serializer_ped_proeja = validar_modalidade('Proeja', 'PED')
 
-        aluno_id = uuid.UUID(TokenService.decode_token(request.COOKIES.get("access_token")).get("user_id"))
+        aluno_id = uuid.UUID(TokenService.decode_token(request.COOKIES.get(settings.AUTH_COOKIE_NAME)).get("user_id"))
         filtros = request.GET.getlist("params[]", [])
 
         responsavel_subquery_integrado = ProfessorProgressaoIntegrado.objects.filter(

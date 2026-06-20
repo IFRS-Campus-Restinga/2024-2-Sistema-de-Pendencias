@@ -1,15 +1,10 @@
 FROM node:20-alpine
 
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci
-
-COPY . .
+WORKDIR /workspace/frontend
 
 ENV HOST=0.0.0.0 \
-    PORT=3000
+    PORT=3001
 
-EXPOSE 3000
+EXPOSE 3001
 
-CMD ["npx", "react-scripts", "start"]
+CMD ["sh", "-c", "npm install && npx react-scripts start"]
