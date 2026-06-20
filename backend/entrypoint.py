@@ -25,7 +25,7 @@ MODELOS_SEM_PERMISSAO = [
     ("admin", "logentry"),
     ("sessions", "session"),
     ("auth", "user"),
-    ("dependencias_app", "usuario"),
+    ("contenttypes", "contenttype"),
 ]
 
 

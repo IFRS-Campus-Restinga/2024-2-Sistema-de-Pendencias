@@ -27,4 +27,3 @@ class Usuario(BaseModel):
 
     class Meta:
         abstract = False
-        default_permissions = ()

@@ -260,16 +260,16 @@ msgstr "Pode visualizar PPT"
 
 #: .\locale_strings.py:78
 msgid "Can add usuario"
-msgstr "Pode adicionar Usuario"
+msgstr "Pode adicionar Usuário"
 
 #: .\locale_strings.py:79
 msgid "Can change usuario"
-msgstr "Pode alterar Usuario"
+msgstr "Pode alterar Usuário"
 
 #: .\locale_strings.py:80
 msgid "Can delete usuario"
-msgstr "Pode excluir Usuario"
+msgstr "Pode excluir Usuário"
 
 #: .\locale_strings.py:81
 msgid "Can view usuario"
-msgstr "Pode visualizar Usuario"
+msgstr "Pode visualizar Usuário"
