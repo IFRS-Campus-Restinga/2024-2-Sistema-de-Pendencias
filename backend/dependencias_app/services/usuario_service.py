@@ -160,19 +160,21 @@ class UsuarioService:
     def obter_dados(user_id: str):
         user = get_object_or_404(Usuario, pk=uuid.UUID(user_id))
 
-        user_data = requests.get(
-            f'{settings.BASE_SYSTEM_URL}/api/users/get/{user_id}/', 
-            params={
-                'fields': 'username'
-            },
-            cookies={
-                'system': settings.API_KEY
-            }
-        ).json()
+        try:
+            response = requests.get(
+                f'{settings.BASE_SYSTEM_URL}/api/users/get/{user_id}/',
+                params={'fields': 'username'},
+                cookies={'system': settings.API_KEY},
+                timeout=5
+            )
+            response.raise_for_status()
+            username = response.json().get('username')
+        except Exception:
+            username = None
 
         return {
             'id': str(user.id),
-            'username': user_data.get('username'),
+            'username': username,
             'group': user.group.name,
         }
     

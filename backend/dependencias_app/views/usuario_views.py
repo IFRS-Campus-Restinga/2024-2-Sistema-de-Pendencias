@@ -63,18 +63,22 @@ def obter_dados_sessao(request):
 
         if not token:
             return Response({"message": "Necessário autenticar"}, status=status.HTTP_401_UNAUTHORIZED)
-        
-        user_id = TokenService.decode_token(token).get('user_id')
-        
+
+        try:
+            payload = TokenService.decode_token(token)
+        except ValueError:
+            return Response({"message": "Token expirado ou inválido"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        user_id = payload.get('user_id')
         usuario = UsuarioService.obter_dados(user_id)
 
         return Response(usuario, status=status.HTTP_200_OK)
     except Http404 as e:
-        return Response({'message': str(e)}, status=status.HTTP_404_NOT_FOUND)    
+        return Response({'message': str(e)}, status=status.HTTP_404_NOT_FOUND)
     except serializers.ValidationError as e:
         return Response({'message': formatar_erros(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({'message': "Ocorreu um erro"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
 @api_view(['PUT'])
